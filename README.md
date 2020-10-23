@@ -38,6 +38,12 @@ sudo apt-get install ffmpeg
 
 You can use any other audio lib if you like, or pass raw audio signals to the model.
 
+If you don't use Librosa, make sure to install NumPy:
+
+```
+sudo pip3 install numpy
+```
+
 Note: BirdNET expects 3-second chunks of raw audio data, sampled at 48 kHz.
 
 # Usage
