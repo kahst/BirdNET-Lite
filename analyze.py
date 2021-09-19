@@ -179,6 +179,22 @@ def writeResultsToFile(detections, min_conf, path):
                     rcnt += 1
     print('DONE! WROTE', rcnt, 'RESULTS.')
 
+
+def parseTestSet(path, file_type='wav'):
+
+    # Find all soundscape files
+    dataset = []
+    if os.path.isfile(path):
+        dataset.append(path)
+    else:
+        for dirpath, _, filenames in os.walk(path):
+            for f in filenames:
+                if f.rsplit('.', 1)[-1].lower() == file_type:
+                    dataset.append(os.path.abspath(os.path.join(dirpath, f)))
+
+    return dataset
+
+
 def main():
 
     global WHITE_LIST
@@ -194,30 +210,53 @@ def main():
     parser.add_argument('--sensitivity', type=float, default=1.0, help='Detection sensitivity; Higher values result in higher sensitivity. Values in [0.5, 1.5]. Defaults to 1.0.')
     parser.add_argument('--min_conf', type=float, default=0.1, help='Minimum confidence threshold. Values in [0.01, 0.99]. Defaults to 0.1.')   
     parser.add_argument('--custom_list', default='', help='Path to text file containing a list of species. Not used if not provided.')
+    parser.add_argument('--filetype', default='wav', help='Filetype of soundscape recordings. Defaults to \'wav\'.')
 
     args = parser.parse_args()
 
     # Load model
     interpreter = loadModel()
+    
+    dataset = parseTestSet(args.i, args.filetype)
 
-    # Load custom species list
-    if not args.custom_list == '':
-        WHITE_LIST = loadCustomSpeciesList(args.custom_list)
+    if len(dataset) > 0:
+        # Load custom species list
+        if not args.custom_list == '':
+            WHITE_LIST = loadCustomSpeciesList(args.custom_list)
+        else:
+            WHITE_LIST = []
+
+        # Write detections to output file
+        min_conf = max(0.01, min(args.min_conf, 0.99))
+        
+        # Process audio data and get detections
+        week = max(1, min(args.week, 48))
+        sensitivity = max(0.5, min(1.0 - (args.sensitivity - 1.0), 1.5))
+
+        for datafile in dataset:
+            try:
+                # Read audio data
+                audioData = readAudioData(datafile, args.overlap)
+            
+                detections = analyzeAudioData(audioData, args.lat, args.lon, week, sensitivity, args.overlap, interpreter)
+            
+                directory, filename = datafile.rsplit('/', 1)
+                if args.o == 'result.csv':
+                    if not os.path.exists(directory):
+                        os.makedirs(directory)
+                    output_file = '.'.join((datafile.rsplit('.', 1)[0], 'csv'))
+                else:
+                    root_folder = args.i.strip('/').rsplit('/', 1)[-1]
+                    output_directory = '{}/{}/{}'.format(args.o.strip('/'), root_folder, directory.split(root_folder)[-1].strip('/'))
+                    if not os.path.exists(output_directory): 
+                        os.makedirs(output_directory)
+                    output_file = '{}/{}.{}'.format(output_directory, filename.split('.')[0], 'csv')
+    
+                writeResultsToFile(detections, min_conf, output_file)
+            except:
+                print("Error in processing file: {}".format(datafile)) 
     else:
-        WHITE_LIST = []
-
-
-    # Read audio data
-    audioData = readAudioData(args.i, args.overlap)
-
-    # Process audio data and get detections
-    week = max(1, min(args.week, 48))
-    sensitivity = max(0.5, min(1.0 - (args.sensitivity - 1.0), 1.5))
-    detections = analyzeAudioData(audioData, args.lat, args.lon, week, sensitivity, args.overlap, interpreter)
-
-    # Write detections to output file
-    min_conf = max(0.01, min(args.min_conf, 0.99))
-    writeResultsToFile(detections, min_conf, args.o)
+        print("No input file/folder passed")
 
 if __name__ == '__main__':
 
