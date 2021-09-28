@@ -20,9 +20,6 @@ fi
 sudo ./install_services.sh || exit 1
 source /etc/birdnet/birdnet.conf
 
-CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"
-TFLITE_URL="https://drive.google.com/uc?export=download&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
-TF_COOKIE="https://drive.google.com/uc?export=download&confirm=${CODE}&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
 APT_DEPS=(swig ffmpeg wget unzip curl cmake make)
 LIBS_MODULES=(libjpeg-dev zlib1g-dev python3-dev python3-pip)
 
@@ -54,7 +51,10 @@ install_birdnet() {
   echo "Upgrading pip, whell, and setuptools"
   sudo pip3 install --upgrade pip wheel setuptools
   echo "Fetching the TFLite pre-built binaries"
+  TFLITE_URL="https://drive.google.com/uc?export=download&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
   curl -sc /tmp/cookie ${TFLITE_URL} > /dev/null
+  CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"
+  TF_COOKIE="https://drive.google.com/uc?export=download&confirm=${CODE}&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
   curl -Lb /tmp/cookie ${TF_COOKIE} -o tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
   echo "Installing the new TFLite bin wheel"
   sudo pip3 install --upgrade tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
