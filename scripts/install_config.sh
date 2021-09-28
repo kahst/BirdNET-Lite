@@ -144,6 +144,12 @@ get_INSTALL_NOMACHINE() {
 }
 
 get_CHANNELS() {
+  REC_CARD="\$(sudo -u pi aplay -L \
+    | grep dsnoop \
+    | cut -d, -f1  \
+    | grep -ve 'vc4' -e 'Head' -e 'PCH' \
+    | uniq)"
+    
   [ -f $(dirname ${my_dir})/soundcard_params.txt ] || touch $(dirname ${my_dir})/soundcard_params.txt
   SOUND_PARAMS=$(dirname ${my_dir})/soundcard_params.txt
   SOUND_CARD="$(sudo -u ${USER} aplay -L \
@@ -151,8 +157,10 @@ get_CHANNELS() {
     | grep -ve 'vc4' -e 'Head' -e 'PCH' \
     | uniq)"
   script -c "arecord -D ${SOUND_CARD} --dump-hw-params" -a "${SOUND_PARAMS}" &> /dev/null
-  
   CHANNELS=$(awk '/CHANN/ { print $2 }' "${SOUND_PARAMS}" | sed 's/\r$//')
+  [ ! -z REC_CARD ] || REC_CARD=default
+  [ ! -z CHANNELS ] || CHANNELS=2
+  echo "REC_CARD variable set to ${REC_CARD}"  
   echo "Number of channels available: ${CHANNELS}"
 }
 
@@ -329,11 +337,7 @@ INSTALL_NOMACHINE=${INSTALL_NOMACHINE}
 ## dsnoop device, you can set this explicitly from a list of the available
 ## devices from the output of running 'aplay -L'
 
-REC_CARD="\$(sudo -u pi aplay -L \
-    | grep dsnoop \
-    | cut -d, -f1  \
-    | grep -ve 'vc4' -e 'Head' -e 'PCH' \
-    | uniq)"
+REC_CARD=${REC_CARD}
     
 ## PROCESSED is the directory where the formerly 'Analyzed' files are moved 
 ## after extractions have been made from them. This includes both WAVE and 
