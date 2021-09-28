@@ -74,8 +74,8 @@ create_necessary_dirs() {
   echo "Creating necessary directories"
   [ -d ${EXTRACTED} ] || sudo -u ${USER} mkdir -p ${EXTRACTED}
   [ -d ${EXTRACTED}/By_Date ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Date
-  [ -d ${EXTRACTED}/By_Common_Name] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
-  [ -d ${EXTRACTED}/By_Scientific_Name] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
+  [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
+  [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 }
  
