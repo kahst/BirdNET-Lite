@@ -67,8 +67,8 @@ for h in "${SCAN_DIRS[@]}";do
 	    | awk -F\; '!/birdnet/{print $3}')""
     NEWFILE="${COMMON_NAME// /_}-${OLDFILE}"
     NEWSPECIES_BYDATE="${EXTRACTED}/By_Date/${DATE}/${COMMON_NAME// /_}"
-    NEWSPECIES_BY_COMMON="${EXTRACTED}/By_Species/${COMMON_NAME// /_}"
-    NEWSPECIES_BY_SCIENCE="${EXTRACTED}/By_Species/${SCIENTIFIC_NAME// /_}"
+    NEWSPECIES_BY_COMMON="${EXTRACTED}/By_Common_Name/${COMMON_NAME// /_}"
+    NEWSPECIES_BY_SCIENCE="${EXTRACTED}/By_Scientific_Name/${SCIENTIFIC_NAME// /_}"
 
     # If the extracted file already exists, increment the 'a' variable once
     # but move onto the next line of the TMPFILE for extraction.
