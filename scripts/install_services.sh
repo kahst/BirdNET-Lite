@@ -53,7 +53,7 @@ Requires=extraction.service
 
 [Timer]
 Unit=extraction.service
-OnCalendar=*:0/10
+OnCalendar=*:*:0/10
 
 [Install]
 WantedBy=multi-user.target
