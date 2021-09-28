@@ -24,10 +24,10 @@
 # Example: these coordinates would indicate the Eiffel Tower in Paris, France.
 #LATITUDE=48.858
 #LONGITUDE=2.294
-LATITUDE=35.311
-LONGITUDE=-80.749
-CADDY_PWD=caddypaddy
-ICE_PWD=icepaddy
+LATITUDE=
+LONGITUDE=
+CADDY_PWD=
+ICE_PWD=
 
 # This section can be left alone. If you setup a Pushed.co
 # mobile application, you can enter the App secret and secret
