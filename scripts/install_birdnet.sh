@@ -48,7 +48,7 @@ install_deps() {
 install_birdnet() {
   set -e
   cd ~/BirdNET-Lite || exit 1
-  echo "Upgrading pip, whell, and setuptools"
+  echo "Upgrading pip, wheel, and setuptools"
   sudo pip3 install --upgrade pip wheel setuptools
   echo "Fetching the TFLite pre-built binaries"
   TFLITE_URL="https://drive.google.com/uc?export=download&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
