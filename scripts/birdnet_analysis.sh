@@ -46,16 +46,17 @@ run_analysis() {
   echo "Starting run_analysis() for ${1}"
   WEEK=$(date --date="${2}" +"%U")
   cd ${HOME}/BirdNET-Lite || exit 1
-  FILES=("$(find ${1} | tail -n+2)")
   for i in "${files[@]}";do
-  python3 analyze.py \
-    --i "${1}/${i}" \
-    --o "${1}/${i}.csv" \
-    --lat "${LATITUDE}" \
-    --lon "${LONGITUDE}" \
-    --week "${WEEK}" \
-    --overlap "${OVERLAP}" \
-    --min_conf "${CONFIDENCE}"
+    if [ -f ${1}/${i} ];then
+      python3 analyze.py \
+        --i "${1}/${i}" \
+        --o "${1}/${i}.csv" \
+        --lat "${LATITUDE}" \
+        --lon "${LONGITUDE}" \
+        --week "${WEEK}" \
+        --overlap "${OVERLAP}" \
+        --min_conf "${CONFIDENCE}"
+    fi
   done
 }
 

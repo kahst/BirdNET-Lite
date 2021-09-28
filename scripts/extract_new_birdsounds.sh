@@ -35,20 +35,19 @@ echo "Starting numbering at ${a}"
 
 for h in "${SCAN_DIRS[@]}";do
   echo "Creating the TMPFILE"
-  # The TMPFILE is created from each "Selection" txt file BirdNET creates
+  # The TMPFILE is created from each .csv file BirdNET creates
   # within each "Analyzed" directory
-  #  Field 1: Original WAVE file name
-  #  Field 2: Extraction start time in seconds
-  #  Field 3: Extraction end time in seconds
-  #  Field 4: New WAVE file name to use
-  #  Field 5: The species name
+  #  Field 1: Start (s)
+  #  Field 2: End (s)
+  #  Field 3: Scientific name
+  #  Field 4: Common name
+  #  Field 5: Confidence
   # Iterates over each "Analyzed" directory
-  for i in $(find ${h} -name '*txt' | sort );do 
-    # Iterates over each '.txt' file found in each "Analyzed" directory
+  for i in $(find ${h} -name '*csv' | sort );do 
+    # Iterates over each '.csv' file found in each "Analyzed" directory
     # to create the TMPFILE
-    sort -k 6n "$i" \
-    | awk '/Spect/ {print}' \
-    >> $TMPFILE
+    echo "${i}" | cut -d'/' -f7 >> ${TMPFILE}
+    sort -k1n -t\; "${i}" | awk '!/Start/{print}' >> ${TMPFILE}
   done
 
   # The extraction reads each line of the TMPFILE and sets the variables ffmpeg
@@ -56,18 +55,17 @@ for h in "${SCAN_DIRS[@]}";do
   while read -r line;do
     a=$a
     DATE="$(echo "${line}" \
-	   | awk '{print $5}' \
-	   | awk -F- '{print $1"-"$2"-"$3}')"
-    OLDFILE="$(echo "${line}" | awk '{print $5}')" 
-    START="$(echo "${line}" | awk '{print $6}')" 
-    END="$(echo "${line}" | awk '{print $7}')" 
-    SPECIES=""$(echo ${line//\'} \
-	      | awk '{for(i=11;i<=NF;++i)printf $i""FS ; print ""}' \
-	      | cut -d'0' -f1 \
-	      | xargs)""
-    NEWFILE="${SPECIES// /_}-${OLDFILE}" 
-    NEWSPECIES_BYDATE="${EXTRACTED}/By_Date/${DATE}/${SPECIES// /_}"
-    NEWSPECIES_BYSPEC="${EXTRACTED}/By_Species/${SPECIES// /_}"
+	   | awk -F- '/birdnet/{print $1"-"$2"-"$3}')"
+    if [ ! -z ${DATE} ];then
+      OLDFILE="$(echo "${line}" | awk -F. '/birdnet/{print $1"."$2}')" ; continue
+    fi
+    START="$(echo "${line}" | awk -F\; '!/birdnet/{print $1}')" 
+    END="$(echo "${line}" | awk -F\; '!/birdnet/{print $2}')" 
+    COMMON_NAME=""$(echo ${line} \
+	    | awk -F\; '!/birdnet/{print $3}')""
+    NEWFILE="${COMMON_NAME// /_}-${OLDFILE}"
+    NEWSPECIES_BYDATE="${EXTRACTED}/By_Date/${DATE}/${COMMON_NAME// /_}"
+    NEWSPECIES_BYSPEC="${EXTRACTED}/By_Species/${COMMON_NAME// /_}"
 
     # If the extracted file already exists, increment the 'a' variable once
     # but move onto the next line of the TMPFILE for extraction.
@@ -110,7 +108,7 @@ for h in "${SCAN_DIRS[@]}";do
     # structured by-species, symbolic links are made to populate the new 
     # directory.
 
-    ffmpeg -hide_banner -loglevel error -nostdin -i "${h}/${OLDFILE}" \
+    ffmpeg -hide_banner -loglevel 52 -nostdin -i "${h}/${OLDFILE}" \
       -acodec copy -ss "${START}" -to "${END}"\
         "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"
     if [[ "$(find ${NEWSPECIES_BYSPEC} | wc -l)" -ge 21 ]];then
@@ -119,7 +117,7 @@ for h in "${SCAN_DIRS[@]}";do
       ls -1t . | tail -n +21 | xargs -r rm -vv
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
         "${NEWSPECIES_BYSPEC}/${a}-${NEWFILE}"
-      echo "Success! New extraction for ${SPECIES}"
+      echo "Success! New extraction for ${COMMON_NAME}"
     else
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
         "${NEWSPECIES_BYSPEC}/${a}-${NEWFILE}"
