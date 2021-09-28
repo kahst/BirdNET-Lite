@@ -53,7 +53,7 @@ An installation one-liner is available [HERE](https://birdnetwiki.pmcgui.xyz/wik
 
 ## How to install
 #### Option 1 (Recommended) -- Install All Services
-1. In the terminal run: `curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Lite/BirdNET-Lite-for-raspi4/Birders_Guide_Installer.sh | bash`
+1. In the terminal run: `curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Lite/rpi4/Birders_Guide_Installer.sh | bash`
 
 ##### Options 2 & 3 require you setup 4GB of swapping. That step is included in the directions below.
 #### Option 2 -- Pre-fill birdnet.conf
