@@ -26,7 +26,7 @@ get_files() {
 move_analyzed() {
   echo "Starting move_analyzed() for ${1}"
   for i in "${files[@]}";do 
-  j="$(echo "${i}" | cut -d'.' -f1).BirdNET.selections.txt" 
+  j="$(echo "${i}" | cut -d'.' -f1-2).csv" 
   if [ -f "${1}/${j}" ];then
     if [ ! -d "${1}-Analyzed" ];then
       mkdir -vvvvvvvp "${1}-Analyzed" && echo "'Analyzed' directory created"
@@ -46,14 +46,17 @@ run_analysis() {
   echo "Starting run_analysis() for ${1}"
   WEEK=$(date --date="${2}" +"%U")
   cd ${HOME}/BirdNET-Lite || exit 1
+  FILES=("$(find ${1} | tail -n+2)")
+  for i in "${files[@]}";do
   python3 analyze.py \
-    --i "${1}" \
-    --o "${1}.csv" \
+    --i "${1}/${i}" \
+    --o "${1}/${i}.csv" \
     --lat "${LATITUDE}" \
     --lon "${LONGITUDE}" \
     --week "${WEEK}" \
     --overlap "${OVERLAP}" \
     --min_conf "${CONFIDENCE}"
+  done
 }
 
 # The three main functions
