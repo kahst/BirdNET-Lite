@@ -9,8 +9,9 @@ Want to use BirdNET to analyze a large dataset? Don't hesitate to contact us: cc
 
 # Setup (Ubuntu 18.04)
 
-TFLite for x86 platforms comes with the standard Tensorflow package. If you are on a different platform, you need to install a dedicated version of TFLite (e.g., a pre-compiled version for Raspberry Pi).
+TFLite for x86 platforms comes with the standard Tensorflow package. If you are on a different platform, you need to install a dedicated version of TFLite (e.g., a pre-compiled version for Raspberry Pi). See Raspberry Pi 4B installation instructions below.
 
+## x86
 We need to setup TF2.3+ for BirdNET. First, we install Python 3 and pip:
 
 ```
@@ -45,6 +46,21 @@ sudo pip3 install numpy
 ```
 
 Note: BirdNET expects 3-second chunks of raw audio data, sampled at 48 kHz.
+
+## Raspberry Pi 4B running AArch64 OS
+These steps install BirdNET-Lite on a Raspberry Pi 4B running an AArch64 OS using pre-built TFLite binaries.
+1. Install dependencies<br>`sudo apt install swig libjpeg-dev zlib1g-dev python3-dev unzip wget python3-pip curl git cmake make`
+1. Update pip, whell, and setuptools:<br>`sudo pip3 install --upgrade pip wheel setuptools`
+1. Fetch pre-built binaries:
+   1. `curl -sc /tmp/cookie "https://drive.google.com/uc?export=download&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA" > /dev/null`
+   1. `CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"`
+   1. `curl -Lb /tmp/cookie "https://drive.google.com/uc?export=download&confirm=${CODE}&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA" -o tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl` 
+1. `sudo pip3 install --upgrade tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl`
+1. `sudo pip3 install librosa`
+1. `sudo apt-get install ffmpeg`
+1. `git clone https://github.com/kahst/BirdNET-Lite.git`
+1. `cd BirdNET-Lite/`<br>and test:
+1. `python3 analyze.py --i 'example/XC558716 - Soundscape.mp3' --lat 35.4244 --lon -120.7463 --week 18`
 
 # Usage
 
