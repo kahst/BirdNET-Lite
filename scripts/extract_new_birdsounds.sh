@@ -62,10 +62,13 @@ for h in "${SCAN_DIRS[@]}";do
     START="$(echo "${line}" | awk -F\; '!/birdnet/{print $1}')" 
     END="$(echo "${line}" | awk -F\; '!/birdnet/{print $2}')" 
     COMMON_NAME=""$(echo ${line} \
+	    | awk -F\; '!/birdnet/{print $4}')""
+    SCIENTIFIC_NAME=""$(echo ${line} \
 	    | awk -F\; '!/birdnet/{print $3}')""
     NEWFILE="${COMMON_NAME// /_}-${OLDFILE}"
     NEWSPECIES_BYDATE="${EXTRACTED}/By_Date/${DATE}/${COMMON_NAME// /_}"
-    NEWSPECIES_BYSPEC="${EXTRACTED}/By_Species/${COMMON_NAME// /_}"
+    NEWSPECIES_BY_COMMON="${EXTRACTED}/By_Species/${COMMON_NAME// /_}"
+    NEWSPECIES_BY_SCIENCE="${EXTRACTED}/By_Species/${SCIENTIFIC_NAME// /_}"
 
     # If the extracted file already exists, increment the 'a' variable once
     # but move onto the next line of the TMPFILE for extraction.
@@ -88,10 +91,15 @@ for h in "${SCAN_DIRS[@]}";do
     [[ -d "${NEWSPECIES_BYDATE}" ]] || mkdir -p "${NEWSPECIES_BYDATE}"
 
 
-    echo "Checking for ${NEWSPECIES_BYSPEC}"
+    echo "Checking for ${NEWSPECIES_BY_COMMON}"
     # If a directory does not already exist for the species (by-species),
     # it is created.
-    [[ -d "${NEWSPECIES_BYSPEC}" ]] || mkdir -p "${NEWSPECIES_BYSPEC}"
+    [[ -d "${NEWSPECIES_BY_COMMON}" ]] || mkdir -p "${NEWSPECIES_BY_COMMON}"
+
+    echo "Checking for ${NEWSPECIES_BY_SCIENCE}"
+    # If a directory does not already exist for the species (by-species),
+    # it is created.
+    [[ -d "${NEWSPECIES_BY_SCIENCE}" ]] || mkdir -p "${NEWSPECIES_BY_SCIENCE}"
 
 
     # If there are already 20 extracted entries for a given species
@@ -111,16 +119,28 @@ for h in "${SCAN_DIRS[@]}";do
     ffmpeg -hide_banner -loglevel 52 -nostdin -i "${h}/${OLDFILE}" \
       -acodec copy -ss "${START}" -to "${END}"\
         "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"
-    if [[ "$(find ${NEWSPECIES_BYSPEC} | wc -l)" -ge 21 ]];then
+    if [[ "$(find ${NEWSPECIES_BY_COMMON} | wc -l)" -ge 21 ]];then
       echo "20 ${SPECIES}s, already! Removing the oldest by-species and making a new one"
-      cd ${NEWSPECIES_BYSPEC} || exit 1
+      cd ${NEWSPECIES_BY_COMMON} || exit 1
       ls -1t . | tail -n +21 | xargs -r rm -vv
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
-        "${NEWSPECIES_BYSPEC}/${a}-${NEWFILE}"
+        "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}"
       echo "Success! New extraction for ${COMMON_NAME}"
     else
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
-        "${NEWSPECIES_BYSPEC}/${a}-${NEWFILE}"
+        "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}"
+    fi   
+
+    if [[ "$(find ${NEWSPECIES_BY_SCIENCE} | wc -l)" -ge 21 ]];then
+      echo "20 ${SPECIES}s, already! Removing the oldest by-species and making a new one"
+      cd ${NEWSPECIES_BY_SCIENCE} || exit 1
+      ls -1t . | tail -n +21 | xargs -r rm -vv
+      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
+        "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}"
+      echo "Success! New extraction for ${COMMON_NAME}"
+    else
+      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
+        "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}"
     fi   
 
 
