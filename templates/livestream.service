@@ -1,0 +1,11 @@
+[Unit]
+Description=BirdNET-Lite Live Stream
+[Service]
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Restart=always
+Type=simple
+RestartSec=3
+User=${BIRDNET_USER}
+ExecStart=ffmpeg -loglevel 52 -ac 2 -f alsa -i ${REC_CARD} -acodec libmp3lame -b:a 320k -ac 2 -content_type 'audio/mpeg' -f mp3 icecast://source:${ICE_PWD}@localhost:8000/stream -re
+[Install]
+WantedBy=multi-user.target

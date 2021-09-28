@@ -1,0 +1,14 @@
+[Unit]
+Description=BirdNET Analysis
+Requires=${SYSTEMD_MOUNT}
+After=network-online.target ${SYSTEMD_MOUNT}
+
+[Service]
+Restart=always
+Type=simple
+RestartSec=3
+User=${BIRDNET_USER}
+ExecStart=/usr/local/bin/birdnet_analysis.sh
+
+[Install]
+WantedBy=multi-user.target

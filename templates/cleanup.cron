@@ -1,0 +1,2 @@
+#birdnet
+0 1 * * * /usr/local/bin/cleanup.sh &> /dev/null

@@ -1,0 +1,13 @@
+[Unit]
+Description=A BirdNET-Lite Web Terminal
+
+[Service]
+Restart=on-failure
+RestartSec=3
+Type=simple
+User=${BIRDNET_USER}
+Environment=TERM=xterm-256color
+ExecStart=/usr/local/bin/gotty -w --title-format "Login!" -p 9111 tmux new -A -s Login sudo bash -c login
+
+[Install]
+WantedBy=multi-user.target

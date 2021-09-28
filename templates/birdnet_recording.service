@@ -1,0 +1,11 @@
+[Unit]
+Description=BirdNET Recording
+[Service]
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Restart=always
+Type=simple
+RestartSec=3
+User=${BIRDNET_USER}
+ExecStart=/usr/local/bin/birdnet_recording.sh
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+[Unit]
+Description=BirdNET Extraction Log
+[Service]
+Restart=on-failure
+RestartSec=3
+Type=simple
+User=${BIRDNET_USER}
+Environment=TERM=xterm-256color
+ExecStart=/usr/local/bin/gotty -p 8888 --title-format "Extractions Log" journalctl -fu extraction.service
+[Install]
+WantedBy=multi-user.target
