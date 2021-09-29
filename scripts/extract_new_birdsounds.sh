@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Exit when any command fails
-#set -x
+set -x
 set -e
 # Keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
@@ -55,16 +55,20 @@ for h in "${SCAN_DIRS[@]}";do
   while read -r line;do
     a=$a
     DATE="$(echo "${line}" \
-	   | awk -F- '/birdnet/{print $1"-"$2"-"$3}')"
+      | awk -F- '/birdnet/{print $1"-"$2"-"$3}')"
     if [ ! -z ${DATE} ];then
       OLDFILE="$(echo "${line}" | awk -F. '/birdnet/{print $1"."$2}')" ; continue
+    fi
+
+    if [ -z ${DATE} ];then
+      DATE=$(date "+%F")
     fi
     START="$(echo "${line}" | awk -F\; '!/birdnet/{print $1}')" 
     END="$(echo "${line}" | awk -F\; '!/birdnet/{print $2}')" 
     COMMON_NAME=""$(echo ${line} \
-	    | awk -F\; '!/birdnet/{print $4}')""
+            | awk -F\; '!/birdnet/{print $4}')""
     SCIENTIFIC_NAME=""$(echo ${line} \
-	    | awk -F\; '!/birdnet/{print $3}')""
+            | awk -F\; '!/birdnet/{print $3}')""
     NEWFILE="${COMMON_NAME// /_}-${OLDFILE}"
     NEWSPECIES_BYDATE="${EXTRACTED}/By_Date/${DATE}/${COMMON_NAME// /_}"
     NEWSPECIES_BY_COMMON="${EXTRACTED}/By_Common_Name/${COMMON_NAME// /_}"
