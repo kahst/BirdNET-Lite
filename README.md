@@ -50,7 +50,7 @@ Note: BirdNET expects 3-second chunks of raw audio data, sampled at 48 kHz.
 ## Raspberry Pi 4B running AArch64 OS
 These steps install BirdNET-Lite on a Raspberry Pi 4B running an AArch64 OS using pre-built TFLite binaries.
 1. Install dependencies<br>`sudo apt install swig libjpeg-dev zlib1g-dev python3-dev unzip wget python3-pip curl git cmake make`
-1. Update pip, whell, and setuptools:<br>`sudo pip3 install --upgrade pip wheel setuptools`
+1. Update pip, wheel, and setuptools:<br>`sudo pip3 install --upgrade pip wheel setuptools`
 1. Fetch pre-built binaries:
    1. `curl -sc /tmp/cookie "https://drive.google.com/uc?export=download&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA" > /dev/null`
    1. `CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"`
