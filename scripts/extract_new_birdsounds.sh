@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Exit when any command fails
-set -x
+#set -x
 set -e
 # Keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
