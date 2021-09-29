@@ -2,6 +2,7 @@
 # Runs BirdNET in virtual environment
 #set -x
 source /etc/birdnet/birdnet.conf
+CUSTOM_LIST="/home/pi/BirdNET-Lite/custom_species_list.txt"
 DAYS=(
 "2 days ago"
 "yesterday"
@@ -47,7 +48,7 @@ run_analysis() {
   WEEK=$(date --date="${2}" +"%U")
   cd ${HOME}/BirdNET-Lite || exit 1
   for i in "${files[@]}";do
-    if [ -f ${1}/${i} ];then
+    if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -56,7 +57,17 @@ run_analysis() {
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
         --min_conf "${CONFIDENCE}"
-    fi
+    elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ];then
+      python3 analyze.py \
+        --i "${1}/${i}" \
+        --o "${1}/${i}.csv" \
+        --lat "${LATITUDE}" \
+        --lon "${LONGITUDE}" \
+        --week "${WEEK}" \
+        --overlap "${OVERLAP}" \
+        --min_conf "${CONFIDENCE}" \
+	--custom_list "${CUSTOM_LIST}"
+   fi
   done
 }
 

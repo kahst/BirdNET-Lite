@@ -69,7 +69,11 @@ for h in "${SCAN_DIRS[@]}";do
             | awk -F\; '!/birdnet/{print $4}')""
     SCIENTIFIC_NAME=""$(echo ${line} \
             | awk -F\; '!/birdnet/{print $3}')""
-    NEWFILE="${COMMON_NAME// /_}-${OLDFILE}"
+    CONFIDENCE=""$(echo ${line} \
+	    | awk -F\; '{print $5}' \
+	    | cut -d'.' -f2)""
+    CONFIDENCE_SCORE="${CONFIDENCE:0:2}%"
+    NEWFILE="${COMMON_NAME// /_}-${CONFIDENCE_SCORE}-${OLDFILE}"
     NEWSPECIES_BYDATE="${EXTRACTED}/By_Date/${DATE}/${COMMON_NAME// /_}"
     NEWSPECIES_BY_COMMON="${EXTRACTED}/By_Common_Name/${COMMON_NAME// /_}"
     NEWSPECIES_BY_SCIENCE="${EXTRACTED}/By_Scientific_Name/${SCIENTIFIC_NAME// /_}"
