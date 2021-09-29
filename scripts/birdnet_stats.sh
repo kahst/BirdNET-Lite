@@ -23,13 +23,14 @@ else
   a=0
 fi
 echo
-SOFAR=$(wc -l ${IDFILE}| cut -d' ' -f1)
+SOFAR=$(($(wc -l ${IDFILE}| cut -d' ' -f1)/2))
 echo "  -$a detections so far"
 echo
 echo "  -$SOFAR species identified so far"
+echo
 while read -r line;do
-  echo "    + $line"
-done < ${IDFILE}
+  echo "    | $line"
+done < <(awk -v n=2 '1; NR % n == 0 {print ""}' ${IDFILE})
 echo
 echo -n "Listening since "${INSTALL_DATE}""
 sleep 180
