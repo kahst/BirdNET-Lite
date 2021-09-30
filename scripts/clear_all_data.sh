@@ -31,3 +31,5 @@ echo "Recreating necessary directories"
 [ -d ${EXTRACTED}/By_Common_Name ] || mkdir -p ${EXTRACTED}/By_Common_Name
 [ -d ${EXTRACTED}/By_Scientific_Name ] || mkdir -p ${EXTRACTED}/By_Scientific_Name
 [ -d ${PROCESSED} ] || mkdir -p ${PROCESSED}
+
+cp ~/BirdNET-Lite/templates/index.html ${EXTRACTED}/
