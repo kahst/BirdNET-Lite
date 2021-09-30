@@ -10,7 +10,7 @@ TMPFILE=$(mktemp)
 [ -f ${IDFILE} ] || touch ${IDFILE}
 cat "${IDFILE}" > "${TMPFILE}"
 
-/usr/local/bin/update_species.sh &> /dev/null
+/usr/local/bin/update_species.sh > /dev/null
 
 if ! diff "${IDFILE}" "${TMPFILE}" &> /dev/null; then 
   SPECIES=("$(diff "${IDFILE}" "${TMPFILE}" \
@@ -19,9 +19,10 @@ if ! diff "${IDFILE}" "${TMPFILE}" &> /dev/null; then
     | awk '{for(i=4;i<=NF;++i)printf $i""FS ; print ""}')")
   
   NOTIFICATION="New Species Detection: "${SPECIES[@]}""
-  
+  echo "Sending the following notification:
+${NOTIFICATION}"
   if [ ! -z ${PUSHED_APP_KEY} ];then
-    curl -X POST -s \
+    curl -X POST \
       --form-string "app_key=${PUSHED_APP_KEY}" \
       --form-string "app_secret=${PUSHED_APP_SECRET}" \
       --form-string "target_type=app" \

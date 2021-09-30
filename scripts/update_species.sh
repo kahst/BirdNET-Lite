@@ -9,8 +9,6 @@ TMPFILE=$(mktemp) || exit 1
 
 [ -f ${IDFILE} ] || touch ${IDFILE}
 
-IDFILEBAKUP="${IDFILE}.bak"
-
 if [ $(find ${PROCESSED} -name '*csv' | wc -l) -ge 1 ];then
   sort $(find ${PROCESSED} ${ANALYZED} ${EXTRACTED} -name '*csv') \
     | awk -F\; '!/Scientific/ {print"Common Name: " $4 "\nScientific Name: " $3""}' \

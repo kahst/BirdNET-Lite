@@ -1,17 +1,14 @@
 #!/usr/bin/env bash
-# Runs BirdNET in virtual environment
+# Runs BirdNET-Lite
 #set -x
 source /etc/birdnet/birdnet.conf
 CUSTOM_LIST="/home/pi/BirdNET-Lite/custom_species_list.txt"
-DAYS=(
-"today"
-) 
 
-# Create an array of the day's audio files
-# Uses 1st argument: 
+# Create an array of the audio files
+# Takes one argument:
 #   - {DIRECTORY}
 get_files() {
-  echo "Starting get_files() for ${1}"
+  echo "get_files() for ${1:19}"
   files=($( find ${1} -maxdepth 1 -name '*wav' \
   | sort \
   | awk -F "/" '{print $NF}' ))
@@ -20,33 +17,33 @@ get_files() {
 
 # Move all files that have been analyzed already into newly created "Analyzed"
 # directory
-# Uses 1st argument:
+# Takes one argument:
 #   - {DIRECTORY}
 move_analyzed() {
-  echo "Starting move_analyzed() for ${1}"
+  echo "Starting move_analyzed() for ${1:19}"
   for i in "${files[@]}";do 
-  j="$(echo "${i}" | cut -d'.' -f1-2).csv" 
-  if [ -f "${1}/${j}" ];then
-    if [ ! -d "${1}-Analyzed" ];then
-      mkdir -vvvvvvvp "${1}-Analyzed" && echo "'Analyzed' directory created"
+    j="${i}.csv" 
+    if [ -f "${1}/${j}" ];then
+      if [ ! -d "${1}-Analyzed" ];then
+        mkdir -p "${1}-Analyzed" && echo "'Analyzed' directory created"
+      fi
+      echo "Moving analyzed files to new directory"
+      mv "${1}/${i}" "${1}-Analyzed/"
+      mv "${1}/${j}" "${1}-Analyzed/"
     fi
-    echo "Moving analyzed files to new directory"
-    mv "${1}/${i}" "${1}-Analyzed/"
-    mv "${1}/${j}" "${1}-Analyzed/"
-  fi
-done
+  done
 }
 
-# Run BirdNET analysis on the remaining WAVE files for the day
-# Uses 1st and 2nd arguments:
+# Run BirdNET-Lite on the WAVE files from get_files()
+# Uses one argument:
 #   - {DIRECTORY}
-#   - {"today", "yesterday", "2 days ago",...}
 run_analysis() {
-  echo "Starting run_analysis() for ${1}"
+  echo "Starting run_analysis() for ${1:19}"
   WEEK=$(date --date="${2}" +"%U")
   cd ${HOME}/BirdNET-Lite || exit 1
   for i in "${files[@]}";do
     if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
+      set -x
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -55,7 +52,9 @@ run_analysis() {
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
         --min_conf "${CONFIDENCE}"
+      set +x
     elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ];then
+      set -x
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -65,6 +64,7 @@ run_analysis() {
         --overlap "${OVERLAP}" \
         --min_conf "${CONFIDENCE}" \
 	--custom_list "${CUSTOM_LIST}"
+      set +x
    fi
   done
 }
@@ -74,22 +74,17 @@ run_analysis() {
 #   - {DIRECTORY}
 #   - {"today", "yesterday", "2 days ago",...}
 run_birdnet() {
-  echo "Starting run_birdnet() in \"${1}\" for \""${2}"\""
-  sleep 1
+  echo "Starting run_birdnet() for \"${1:19}\""
   get_files "${1}"
-  sleep 1
   move_analyzed "${1}"
-  sleep 1
-  run_analysis "${1}" "${2}"
+  run_analysis "${1}"
 }
 
 if [ $(find ${RECS_DIR} -maxdepth 1 -name '*wav' | wc -l) -gt 0 ];then
-  run_birdnet "${RECS_DIR}" "today"
+  run_birdnet "${RECS_DIR}"
 fi
 
-for i in ${!DAYS[@]};do
-  DIRECTORY="$RECS_DIR/$(date --date="${DAYS[$i]}" "+%B-%Y/%d-%A")"
-  if [ $(find ${DIRECTORY} -name '*wav' | wc -l) -gt 0 ];then
-    run_birdnet "${DIRECTORY}" "${DAYS[$i]}"
-  fi
-done
+DIRECTORY="$RECS_DIR/$(date "+%B-%Y/%d-%A")"
+if [ $(find ${DIRECTORY} -name '*wav' | wc -l) -gt 0 ];then
+  run_birdnet "${DIRECTORY}"
+fi

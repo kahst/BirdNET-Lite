@@ -390,14 +390,7 @@ CONFIDENCE="0.7"
 
 CHANNELS=2
 
-# Don't the three below
-## ANALYZED is where the extraction.service looks for audio and 
-## BirdNET.selection.txt files after they have been processed by the 
-## birdnet_analysis.service. This is NOT where the analyzed files are moved -- 
-## analyzed files are always created within the same directory 
-## birdnet_analysis.service finds them.
-
-ANALYZED=${RECS_DIR}/*/*Analyzed
+# Don't touch the variables below
 
 ## SYSTEMD_MOUNT is created from the RECS_DIR variable to comply with systemd 
 ## mount naming requirements.

@@ -13,6 +13,7 @@ source /etc/birdnet/birdnet.conf
 
 # Set Variables
 TMPFILE=$(mktemp)
+ANALYZED=${RECS_DIR}/*/*Analyzed
 # SCAN_DIRS are all directories marked "Analyzed"
 SCAN_DIRS=($(find ${ANALYZED} -type d | sort ))
 
