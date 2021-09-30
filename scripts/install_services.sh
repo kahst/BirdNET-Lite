@@ -421,7 +421,7 @@ install_selected_services() {
     install_livestream_service
   fi
 
-  if [ ! -z "${INSTALL_NOMACHINE}" ];then
+  if [[ "${INSTALL_NOMACHINE}" =~ [Yy] ]];then
     install_nomachine
   fi
 

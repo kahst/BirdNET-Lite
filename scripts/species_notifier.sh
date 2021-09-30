@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Sends a notification if a new species is detected
-# set -x
+#set -x
 trap 'rm -f $TMPFILE' SIGINT SIGHUP EXIT
 
 source /etc/birdnet/birdnet.conf
@@ -12,11 +12,14 @@ cat "${IDFILE}" > "${TMPFILE}"
 
 /usr/local/bin/update_species.sh &> /dev/null
 
-if ! diff "${IDFILE}" "${TMPFILE}"; then 
-	SPECIES=("$(diff "${IDFILE}" "${TMPFILE}" \
-    | awk '/</ {print $2" "$3}')")
-
-  NOTIFICATION="New Species Detected: ${SPECIES[@]}"
+if ! diff "${IDFILE}" "${TMPFILE}" &> /dev/null; then 
+  SPECIES=("$(diff "${IDFILE}" "${TMPFILE}" \
+    | grep "Common Name" \
+    | sort \
+    | awk '{for(i=4;i<=NF;++i)printf $i""FS ; print ""}')")
+  
+  NOTIFICATION="New Species Detection: "${SPECIES[@]}""
+  echo "${NOTIFICATION}" && exit
   
   sudo systemctl restart birdnet_analysis && sleep 30
   sudo systemctl start extraction

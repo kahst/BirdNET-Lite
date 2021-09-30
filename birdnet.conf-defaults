@@ -28,6 +28,8 @@ LONGITUDE=
 
 ################################################################################
 #------------------------------ Extraction Service  ---------------------------#
+#__________________The variable below can be set to enable the ________________#
+#______________________________ extraction.service ____________________________#
 
 #   Keep this EMPTY if you do not want this device to perform the extractions  #
 
@@ -38,17 +40,34 @@ DO_EXTRACTIONS=
 
 ################################################################################
 #-----------------------------  Recording Service  ----------------------------#
+#_______________The two variables below can be set to enable __________________#
+#________________________the birdnet_recording.service ________________________#
 
 #   Keep this EMPTY if you do not want this device to perform the recording.   #
 
-## DO_RECORDING is simply a setting for enabling the 24/7 birdnet_recording.service.
+## DO_RECORDING is simply a setting for enabling the 24/7 
+## birdnet_recording.service.
 ## Set this to Y or y to enable recording.
 
 DO_RECORDING=
 
+## TIMESTAMP_FORMAT is the format the recording service will use to name its
+## files. Setting this variable to "12" will name the recorded (and extracted)
+## files using the 12-hour AM/PM time format. Setting this variable to "24"
+## will name the files using the 24-hour time format. See examples below:
+#
+## TIMESTAMP_FORMAT=12
+## example filename: 236-Northern_Cardinal-86%2021-09-30-birdnet-01:00:19pm.wav
+#
+## TIMESTAMP_FORMAT=24
+## example filename: 236-Northern_Cardinal-86%2021-09-30-birdnet-13:00:19.wav
+
+
+TIMESTAMP_FORMAT=
+
 ################################################################################
 #-----------------  Mounting a remote directory with systemd  -----------------#
-#_______________The four variables below can be set to enable a_______________#
+#_______________The four variables below can be set to enable a________________#
 #___________________systemd.mount for analysis, extraction,____________________#
 #______________________________or file-serving_________________________________#
 
@@ -155,11 +174,7 @@ INSTALL_NOMACHINE=
 ## dsnoop device, you can set this explicitly from a list of the available
 ## devices from the output of running 'aplay -L'
 
-REC_CARD="\$(sudo -u pi aplay -L \
-    | grep dsnoop \
-    | cut -d, -f1  \
-    | grep -ve 'vc4' -e 'Head' -e 'PCH' \
-    | uniq)"
+REC_CARD=default
    
 ## PROCESSED is the directory where the formerly 'Analyzed' files are moved 
 ## after extractions have been made from them. This includes both WAVE and 

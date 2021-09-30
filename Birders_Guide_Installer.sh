@@ -155,7 +155,7 @@ Good luck!"
    | uniq)"
   script -c "arecord -D ${SOUND_CARD} --dump-hw-params" -a ${SOUND_PARAMS} &> /dev/null
   install_birdnet_config || exit 1
-  echo "Installing the BirdNET-Lite"
+  echo "Installing BirdNET-Lite"
   if ${my_dir}/scripts/install_birdnet.sh << EOF ; then
 
 n
@@ -211,13 +211,31 @@ DO_EXTRACTIONS=y
 
 ################################################################################
 #-----------------------------  Recording Service  ----------------------------#
+#_______________The two variables below can be set to enable __________________#
+#________________________the birdnet_recording.service ________________________#
 
 #   Keep this EMPTY if you do not want this device to perform the recording.   #
 
-## DO_RECORDING is simply a setting for enabling the 24/7 birdnet_recording.service.
+## DO_RECORDING is simply a setting for enabling the 24/7
+## birdnet_recording.service.
 ## Set this to Y or y to enable recording.
 
 DO_RECORDING=y
+
+## TIMESTAMP_FORMAT is the format the recording service will use to name its
+## files. Setting this variable to "12" will name the recorded (and extracted)
+## files using the 12-hour AM/PM time format. Setting this variable to "24"
+## will name the files using the 24-hour time format. See examples below:
+#
+## TIMESTAMP_FORMAT=12
+## example filename: 236-Northern_Cardinal-86%2021-09-30-birdnet-01:00:19pm.wav
+#
+## TIMESTAMP_FORMAT=24
+## example filename: 236-Northern_Cardinal-86%2021-09-30-birdnet-13:00:19.wav
+
+
+TIMESTAMP_FORMAT=24
+
 
 ################################################################################
 #-----------------  Mounting a remote directory with systemd  -----------------#

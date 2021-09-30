@@ -31,6 +31,17 @@ get_DO_EXTRACTIONS() {
   done
 }
 
+get_TIMESTAMP_FORMAT() {
+  read -n2 -p "Would you like recordings to be time stamped in 12-hour AM/PM
+or 24-hour format? " TIMESTAMP_FORMAT
+  echo
+  case $TIMESTAMP_FORMAT in
+    12 ) ;;
+    24 ) ;;
+    * ) TIMESTAMP_FORMAT=24;;
+  esac
+}
+
 get_DO_RECORDING() {
   while true; do
     read -n1 -p "Is this device also doing the recording? " DO_RECORDING
@@ -144,7 +155,7 @@ get_INSTALL_NOMACHINE() {
 }
 
 get_CHANNELS() {
-  REC_CARD="\$(sudo -u pi aplay -L \
+  REC_CARD="$(sudo -u pi aplay -L \
     | grep dsnoop \
     | cut -d, -f1  \
     | grep -ve 'vc4' -e 'Head' -e 'PCH' \
@@ -158,8 +169,8 @@ get_CHANNELS() {
     | uniq)"
   script -c "arecord -D ${SOUND_CARD} --dump-hw-params" -a "${SOUND_PARAMS}" &> /dev/null
   CHANNELS=$(awk '/CHANN/ { print $2 }' "${SOUND_PARAMS}" | sed 's/\r$//')
-  [ ! -z REC_CARD ] || REC_CARD=default
-  [ ! -z CHANNELS ] || CHANNELS=2
+  [ -z REC_CARD ] || REC_CARD=default
+  [ -z CHANNELS ] || CHANNELS=2
   echo "REC_CARD variable set to ${REC_CARD}"  
   echo "Number of channels available: ${CHANNELS}"
 }
@@ -171,6 +182,7 @@ configure() {
   get_LONGITUDE
   get_DO_EXTRACTIONS
   get_DO_RECORDING
+  get_TIMESTAMP_FORMAT
   get_REMOTE
   get_EXTRACTIONS_URL
   get_PUSHED
@@ -220,13 +232,31 @@ DO_EXTRACTIONS=${DO_EXTRACTIONS}
 
 ################################################################################
 #-----------------------------  Recording Service  ----------------------------#
+#_______________The two variables below can be set to enable __________________#
+#________________________the birdnet_recording.service ________________________#
 
 #   Keep this EMPTY if you do not want this device to perform the recording.   #
 
-## DO_RECORDING is simply a setting for enabling the 24/7 birdnet_recording.service.
+## DO_RECORDING is simply a setting for enabling the 24/7
+## birdnet_recording.service.
 ## Set this to Y or y to enable recording.
 
 DO_RECORDING=${DO_RECORDING}
+
+## TIMESTAMP_FORMAT is the format the recording service will use to name its
+## files. Setting this variable to "12" will name the recorded (and extracted)
+## files using the 12-hour AM/PM time format. Setting this variable to "24"
+## will name the files using the 24-hour time format. See examples below:
+#
+## TIMESTAMP_FORMAT=12
+## example filename: 236-Northern_Cardinal-86%2021-09-30-birdnet-01:00:19pm.wav
+#
+## TIMESTAMP_FORMAT=24
+## example filename: 236-Northern_Cardinal-86%2021-09-30-birdnet-13:00:19.wav
+
+
+TIMESTAMP_FORMAT=${TIMESTAMP_FORMAT}
+
 
 ################################################################################
 #-----------------  Mounting a remote directory with systemd  -----------------#
