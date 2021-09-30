@@ -49,19 +49,19 @@ install_birdnet() {
   set -e
   cd ~/BirdNET-Lite || exit 1
   echo "Upgrading pip, wheel, and setuptools"
-  sudo pip3 install --upgrade pip wheel setuptools
+  sudo pip3 install --upgrade pip wheel setuptools &> /dev/null
   echo "Fetching the TFLite pre-built binaries"
   TFLITE_URL="https://drive.google.com/uc?export=download&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
-  curl -sc /tmp/cookie ${TFLITE_URL} > /dev/null
+  curl -sc /tmp/cookie ${TFLITE_URL} &> /dev/null
   CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"
   TF_COOKIE="https://drive.google.com/uc?export=download&confirm=${CODE}&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
-  curl -Lb /tmp/cookie ${TF_COOKIE} -o tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
+  curl -Lb /tmp/cookie ${TF_COOKIE} -o tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl &> /dev/null
   echo "Installing the new TFLite bin wheel"
-  sudo pip3 install --upgrade tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
+  sudo pip3 install --upgrade tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl &> /dev/null
   echo "Installing colorama==0.4.4"
-  sudo pip3 install colorama==0.4.4
+  sudo pip3 install colorama==0.4.4 &> /dev/null
   echo "Installing librosa"
-  sudo pip3 install librosa
+  sudo pip3 install librosa &> /dev/null
 }
 
 echo "
