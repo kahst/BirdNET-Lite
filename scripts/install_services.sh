@@ -23,7 +23,7 @@ Description=BirdNET Analysis
 Restart=always
 RuntimeMaxSec=10800
 Type=simple
-RestartSec=3
+RestartSec=1
 User=${USER}
 ExecStart=/usr/local/bin/birdnet_analysis.sh
 [Install]

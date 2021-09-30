@@ -115,11 +115,11 @@ for h in "${SCAN_DIRS[@]}";do
 
     # If there are already 20 extracted entries for a given species
     # for today, remove the oldest file and create the new one.
-    if [[ "$(find ${NEWSPECIES_BYDATE} | wc -l)" -ge 21 ]];then
-      echo "20 ${SPECIES}s, already! Removing the oldest by-date and making a new one"
-      cd ${NEWSPECIES_BYDATE} || exit 1
-      ls -1t . | tail -n +21 | xargs -r rm -vv
-    fi   
+   # if [[ "$(find ${NEWSPECIES_BYDATE} | wc -l)" -ge 21 ]];then
+   #   echo "20 ${SPECIES}s, already! Removing the oldest by-date and making a new one"
+   #   cd ${NEWSPECIES_BYDATE} || exit 1
+   #   ls -1t . | tail -n +21 | xargs -r rm -vv
+   # fi   
 
     echo "Extracting audio . . . "
     # If the above tests have passed, then the extraction happens.
