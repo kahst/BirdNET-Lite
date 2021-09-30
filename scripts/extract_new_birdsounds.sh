@@ -34,7 +34,6 @@ fi
 echo "Starting numbering at ${a}"
 
 for h in "${SCAN_DIRS[@]}";do
-  echo "Creating the TMPFILE"
   # The TMPFILE is created from each .csv file BirdNET creates
   # within each "Analyzed" directory
   #  Field 1: Start (s)
@@ -42,6 +41,14 @@ for h in "${SCAN_DIRS[@]}";do
   #  Field 3: Scientific name
   #  Field 4: Common name
   #  Field 5: Confidence
+
+  # Removes old directories
+  if echo "${h}" | grep $(date --date="yesterday" "+%A") &> /dev/null;then
+    echo "Removing old directories"
+    rm -df "${h}"
+    rm -df "$(echo ${h} | cut -d'-' -f1-3)"
+    continue
+  fi
   # Iterates over each "Analyzed" directory
   for i in $(find ${h} -name '*csv' | sort );do 
     # Iterates over each '.csv' file found in each "Analyzed" directory
@@ -87,24 +94,20 @@ for h in "${SCAN_DIRS[@]}";do
     fi
 
 
-    echo "Checking for ${h}/${OLDFILE}"
     # Before extracting the "Selection," the script checks to be sure the
     # original WAVE file still exists.
     [[ -f "${h}/${OLDFILE}" ]] || continue
 
 
-    echo "Checking for ${NEWSPECIES_BYDATE}"
     # If a directory does not already exist for the species (by date),
     # it is created
     [[ -d "${NEWSPECIES_BYDATE}" ]] || mkdir -p "${NEWSPECIES_BYDATE}"
 
 
-    echo "Checking for ${NEWSPECIES_BY_COMMON}"
     # If a directory does not already exist for the species (by-species),
     # it is created.
     [[ -d "${NEWSPECIES_BY_COMMON}" ]] || mkdir -p "${NEWSPECIES_BY_COMMON}"
 
-    echo "Checking for ${NEWSPECIES_BY_SCIENCE}"
     # If a directory does not already exist for the species (by-species),
     # it is created.
     [[ -d "${NEWSPECIES_BY_SCIENCE}" ]] || mkdir -p "${NEWSPECIES_BY_SCIENCE}"
@@ -124,7 +127,7 @@ for h in "${SCAN_DIRS[@]}";do
     # structured by-species, symbolic links are made to populate the new 
     # directory.
 
-    ffmpeg -hide_banner -loglevel 52 -nostdin -i "${h}/${OLDFILE}" \
+    ffmpeg -hide_banner -loglevel error -nostdin -i "${h}/${OLDFILE}" \
       -acodec copy -ss "${START}" -to "${END}"\
         "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"
     if [[ "$(find ${NEWSPECIES_BY_COMMON} | wc -l)" -ge 21 ]];then
@@ -158,7 +161,7 @@ for h in "${SCAN_DIRS[@]}";do
 
   done < "${TMPFILE}"
   
-  echo -e "\n\n\nFINISHED!!! Processed extractions for ${h}"
+  echo -e "\n\n\nFINISHED!!! Processed extractions for ${h:19}"
   # Once each line of the TMPFILE has been processed, the TMPFILE is emptied
   # for the next iteration of the for loop.
   >"${TMPFILE}"
@@ -167,7 +170,7 @@ for h in "${SCAN_DIRS[@]}";do
   # next extraction.
   [[ -d "${PROCESSED}" ]] || mkdir "${PROCESSED}"
   echo "Moving processed files to ${PROCESSED}"
-  mv -v ${h}/* ${PROCESSED} || continue
+  mv ${h}/* ${PROCESSED} &> /dev/null || continue
 done
 
 echo "Linking Processed files to "${EXTRACTED}/Processed" web directory"
@@ -180,5 +183,4 @@ fi
 
 
 # That's all!
-echo "Finished -- the extracted sections are in:
-$(find -L ${EXTRACTED} -maxdepth 1)"
+echo "Finished -- the extracted sections are in ${EXTRACTED}"

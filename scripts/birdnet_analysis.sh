@@ -4,8 +4,6 @@
 source /etc/birdnet/birdnet.conf
 CUSTOM_LIST="/home/pi/BirdNET-Lite/custom_species_list.txt"
 DAYS=(
-"2 days ago"
-"yesterday"
 "today"
 ) 
 
@@ -33,8 +31,8 @@ move_analyzed() {
       mkdir -vvvvvvvp "${1}-Analyzed" && echo "'Analyzed' directory created"
     fi
     echo "Moving analyzed files to new directory"
-    mv -vv "${1}/${i}" "${1}-Analyzed/"
-    mv -vv "${1}/${j}" "${1}-Analyzed/"
+    mv "${1}/${i}" "${1}-Analyzed/"
+    mv "${1}/${j}" "${1}-Analyzed/"
   fi
 done
 }
