@@ -1,7 +1,7 @@
 # BirdNET-Lite for arm64/aarch64 (Raspberry Pi 4)
 ### Built on https://github.com/kahst/BirdNET -- checkout the Wiki at [BirdNETWiki.pmcgui.xyz](https://birdnetwiki.pmcgui.xyz)
 
-This project offers an installation script for BirdNET as a systemd service on arm64 (aarch64) Debian-based operating systems, namely RaspiOS. The installation script offers to walk the user through setting up the '*birdnet.conf*' main configuration file interactively, or can read from an existing '*birdnet.conf*'. A variety of configurations can be attained through this installation script.
+This project offers an installation script for BirdNET-Lite as a systemd service on arm64 (aarch64) Debian-based operating systems, namely RaspiOS. The installation script offers to walk the user through setting up the '*birdnet.conf*' main configuration file interactively, or can read from an existing '*birdnet.conf*'. A variety of configurations can be attained through this installation script.
 
 BirdNET-Lite can be configured with the following optional services:
 - A 24/7 recording script that can be easily configured to use any available sound card
