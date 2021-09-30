@@ -19,10 +19,7 @@ if ! diff "${IDFILE}" "${TMPFILE}" &> /dev/null; then
     | awk '{for(i=4;i<=NF;++i)printf $i""FS ; print ""}')")
   
   NOTIFICATION="New Species Detection: "${SPECIES[@]}""
-  echo "${NOTIFICATION}" && exit
   
-  sudo systemctl restart birdnet_analysis && sleep 30
-  sudo systemctl start extraction
   if [ ! -z ${PUSHED_APP_KEY} ];then
     curl -X POST -s \
       --form-string "app_key=${PUSHED_APP_KEY}" \
