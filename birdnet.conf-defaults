@@ -208,6 +208,10 @@ OVERLAP="0.0"
 
 CONFIDENCE="0.7"
 
+## SENSITIVITY is the detection sensitivity from 0.5-1.5.
+
+SENSITIVITY="1.25"
+
 ################################################################################
 #------------------------------  Auto-Generated  ------------------------------#
 #_____________________The variables below are auto-generated___________________#

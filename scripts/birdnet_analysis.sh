@@ -51,6 +51,7 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
+	--sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}"
       set +x
     elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ];then
@@ -62,6 +63,7 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
+	--sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
 	--custom_list "${CUSTOM_LIST}"
       set +x

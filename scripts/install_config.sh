@@ -354,7 +354,7 @@ INSTALL_NOMACHINE=${INSTALL_NOMACHINE}
 
 ################################################################################
 #--------------------------------  Defaults  ----------------------------------#
-#________The six variables below are default settings that you (probably)______#
+#________The seven variables below are default settings that you (probably)____#
 #__________________don't need to change at all, but can._______________________# 
 
 ## REC_CARD is the sound card you would want the birdnet_recording.service to 
@@ -400,6 +400,10 @@ OVERLAP="0.0"
 ## Don't set this to 1.0 or you won't have any results.
 
 CONFIDENCE="0.7"
+
+## SENSITIVITY is the detection sensitivity from 0.5-1.5.
+
+SENSITIVITY="1.25"
 
 ################################################################################
 #------------------------------  Auto-Generated  ------------------------------#
