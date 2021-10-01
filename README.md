@@ -10,7 +10,7 @@ BirdNET-Lite can be configured with the following optional services:
 - A species list updating and notification script supporting mobile notifications via Pushed.co (sorry, Android users, Pushed.co doesn't seem to work for you)
 - NoMachine remote desktop software (for personal use only)
 
-An installation one-liner is available [HERE](https://birdnetwiki.pmcgui.xyz/wiki/Birder%27s_Guide_to_BirdNET-Lite#Install_BirdNET-Lite) for RaspiOS-ARM64 meeting the prequisites below. It installs all services listed above.
+An installation one-liner is available below for RaspiOS-ARM64 meeting the prequisites below. It installs all services listed above.
 - Prerequisites:
   - An updated RaspiOS for AArch64 that has locale, WiFi, time-zone, and pi user password set. A guide is available [here](https://birdnetwiki.pmcgui.xyz/wiki/Birder%27s_Guide_to_BirdNET-Lite#Install_the_base_operating_system_.28OS.29). 64GB SD card for best performance.
   - A USB microphone (dsnoop capable to enable live audio stream).
