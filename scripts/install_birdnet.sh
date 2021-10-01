@@ -65,22 +65,6 @@ install_birdnet() {
   set +x
 }
 
-echo "
-This script will do the following:
-#1: Install the following BirdNET system dependencies:
-- ffmpeg
-- swig
-- libjpeg-dev
-- zlib1g-dev
-- python3-dev
-- curl
-- cmake
-- make
-- wget
-#2: Copies the systemd .service and .mount files and enables those chosen
-#3: Adds cron environments and jobs chosen"
-
-echo
 read -sp "\
 Be sure you have read the software license before installing. This is
 available in the BirdNET-Lite directory as "LICENSE"
