@@ -8,6 +8,8 @@ else
   STAMP="%H:%M:%S"
 fi
 
+[ -z RECORDING_LENGTH ] || RECORDING_LENGTH=9
+
 if pgrep arecord &> /dev/null ;then
   echo "Recording"
 else

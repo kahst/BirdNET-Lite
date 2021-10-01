@@ -169,8 +169,8 @@ get_CHANNELS() {
     | uniq)"
   script -c "arecord -D ${SOUND_CARD} --dump-hw-params" -a "${SOUND_PARAMS}" &> /dev/null
   CHANNELS=$(awk '/CHANN/ { print $2 }' "${SOUND_PARAMS}" | sed 's/\r$//')
-  [ -z REC_CARD ] || REC_CARD=default
-  [ -z CHANNELS ] || CHANNELS=2
+  [ -z REC_CARD ] && REC_CARD=default
+  [ -z CHANNELS ] && CHANNELS=2
   echo "REC_CARD variable set to ${REC_CARD}"  
   echo "Number of channels available: ${CHANNELS}"
 }

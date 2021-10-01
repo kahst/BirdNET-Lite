@@ -42,13 +42,16 @@ run_analysis() {
   WEEK=$(date +"%U")
   cd ${HOME}/BirdNET-Lite || exit 1
   for i in "${files[@]}";do
+
+    set -x
+    FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 \
+      | awk -F. '/Duration/ {print $1}' \
+      | cut -d':' -f3-4)"
+    [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=9
+    [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
+    [ "${FILE_LENGTH}" == "00:${RECORDING_LENGTH}" ] || continue
+
     if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
-      FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 \
-        | awk -F. '/Duration/ {print $1}' \
-	| cut -d':' -f3-4)"
-      set -x
-      [ ${RECORDING_LENGTH} == 60 ] && RECORDING_LENGTH=01:00
-      [ "${FILE_LENGTH}" == "${RECORDING_LENGTH}" ] || continue
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
