@@ -6,7 +6,7 @@ This project offers an installation script for BirdNET-Lite as a systemd service
 BirdNET-Lite can be configured with the following optional services:
 - A 24/7 recording script that can be easily configured to use any available sound card
 - An extraction service that extracts the audio selections identified by BirdNET by date and species
-- A Caddy instance that serves the extracted files and live audio stream (icecast2) (requires dsnoop capable mic)
+- A Caddy instance that serves the extracted files and live audio stream (icecast2)
 - A species list updating and notification script supporting mobile notifications via Pushed.co (sorry, Android users, Pushed.co doesn't seem to work for you)
 - NoMachine remote desktop software (for personal use only)
 
