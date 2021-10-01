@@ -426,6 +426,17 @@ SYSTEMD_MOUNT=$(echo ${RECS_DIR#/} | tr / -).mount
 ## i.e, VENV is the virtual environment miniforge built for BirdNET.
 
 VENV=$(dirname ${my_dir})/miniforge/envs/birdnet
+
+################################################################################
+#---------------------------------- Testing -----------------------------------#
+#_____________These variables are for testing. Please don't touch______________#
+#_______________them if you are not testing these features.____________________#
+
+
+RECORDING_LENGTH=
+
+EXTRACTION_LENGTH=
+
 EOF
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf
