@@ -47,7 +47,7 @@ run_analysis() {
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 \
       | awk -F. '/Duration/ {print $1}' \
       | cut -d':' -f3-4)"
-    [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=9
+    [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=12
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
     [ "${FILE_LENGTH}" == "00:${RECORDING_LENGTH}" ] || continue
 
