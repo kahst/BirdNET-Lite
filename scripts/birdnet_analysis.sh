@@ -10,7 +10,7 @@ CUSTOM_LIST="/home/pi/BirdNET-Lite/custom_species_list.txt"
 get_files() {
   echo "get_files() for ${1:19}"
   files=($( find ${1} -maxdepth 1 -name '*wav' \
-  | sort \
+  | sort -r \
   | awk -F "/" '{print $NF}' ))
   [ -n "${files[1]}" ] && echo "Files loaded"
 }
@@ -39,11 +39,16 @@ move_analyzed() {
 #   - {DIRECTORY}
 run_analysis() {
   echo "Starting run_analysis() for ${1:19}"
-  WEEK=$(date --date="${2}" +"%U")
+  WEEK=$(date +"%U")
   cd ${HOME}/BirdNET-Lite || exit 1
   for i in "${files[@]}";do
     if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
+      FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 \
+        | awk -F. '/Duration/ {print $1}' \
+	| cut -d':' -f3-4)"
       set -x
+      [ ${RECORDING_LENGTH} == 60 ] && RECORDING_LENGTH=01:00
+      [ "${FILE_LENGTH}" == "${RECORDING_LENGTH}" ] || continue
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -72,9 +77,8 @@ run_analysis() {
 }
 
 # The three main functions
-# Requires 2 arguments:
+# Takes one argument:
 #   - {DIRECTORY}
-#   - {"today", "yesterday", "2 days ago",...}
 run_birdnet() {
   echo "Starting run_birdnet() for \"${1:19}\""
   get_files "${1}"
