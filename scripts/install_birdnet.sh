@@ -52,7 +52,7 @@ install_birdnet() {
   sudo pip3 install --upgrade pip wheel setuptools
   echo "Fetching the TFLite pre-built binaries"
   TFLITE_URL="https://drive.google.com/uc?export=download&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
-  curl -sc /tmp/cookie ${TFLITE_URL}
+  curl -c /tmp/cookie ${TFLITE_URL}
   CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"
   TF_COOKIE="https://drive.google.com/uc?export=download&confirm=${CODE}&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
   curl -Lb /tmp/cookie ${TF_COOKIE} -o tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
