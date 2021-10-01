@@ -99,7 +99,7 @@ stage_2() {
   echo "Beginning stage 2"
   echo
   echo "Checking for an internet connection to continue . . ."
-  until ping -c 1 google.com &> /dev/null; do
+  until ping -c 1 8.8.8.8 &> /dev/null; do
     sleep 1
   done
   echo "Connected!"
