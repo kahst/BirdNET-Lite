@@ -7,6 +7,7 @@ SCRIPTS=(/usr/local/bin/birdnet_analysis.sh
 /usr/local/bin/birdnet_recording.sh
 /usr/local/bin/birdnet_stats.sh
 /usr/local/bin/cleanup.sh
+/usr/local/bin/clear_all_data.sh
 /usr/local/bin/disk_usage.sh
 /usr/local/bin/dump_logs.sh
 /usr/local/bin/extract_new_birdsounds.sh
