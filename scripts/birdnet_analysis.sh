@@ -42,7 +42,7 @@ run_analysis() {
 
 
   ### TESTING NEW WEEK CALCULATION
-  WEEK_OF_YEAR="$(echo "$(date +%m) * 4" | bc -l)"
+  WEEK_OF_YEAR="$(echo "($(date +%m)-1) * 4" | bc -l)"
   DAY_OF_MONTH="$(date +%d)"
   if [ ${DAY_OF_MONTH} -le 7 ];then
     WEEK="$(echo "${WEEK_OF_YEAR} + 1" |bc -l)"
@@ -50,7 +50,7 @@ run_analysis() {
     WEEK="$(echo "${WEEK_OF_YEAR} + 2" |bc -l)"
   elif [ ${DAY_OF_MONTH} -le 21 ];then
     WEEK="$(echo "${WEEK_OF_YEAR} + 3" |bc -l)"
-  elif [ ${DAY_OF_MONTH} -ge 23 ];then
+  elif [ ${DAY_OF_MONTH} -ge 22 ];then
     WEEK="$(echo "${WEEK_OF_YEAR} + 4" |bc -l)"
   fi
 
