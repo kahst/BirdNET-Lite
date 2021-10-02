@@ -8,7 +8,6 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 trap 'echo "\"${last_command}\" command exited with code $?."' EXIT
 # Remove temporary file
 trap 'rm -f $TMPFILE' EXIT
-
 source /etc/birdnet/birdnet.conf
 
 # Set Variables

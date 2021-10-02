@@ -415,6 +415,8 @@ RECORDING_LENGTH=
 
 EXTRACTION_LENGTH=
 
+LAST_RUN=
+THIS_RUN=
 EOF
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf ${my_dir}/birdnet.conf /etc/birdnet/birdnet.conf

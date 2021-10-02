@@ -368,7 +368,7 @@ INSTALL_NOMACHINE=${INSTALL_NOMACHINE}
 ## devices from the output of running 'aplay -L'
 
 REC_CARD=${REC_CARD}
-    
+
 ## PROCESSED is the directory where the formerly 'Analyzed' files are moved 
 ## after extractions have been made from them. This includes both WAVE and 
 ## BirdNET.selection.txt files.
@@ -437,6 +437,8 @@ RECORDING_LENGTH=
 
 EXTRACTION_LENGTH=
 
+LAST_RUN=$(dirname ${my_dir})/lastrun.txt
+THIS_RUN=$(dirname ${my_dir})/thisrun.txt
 EOF
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf

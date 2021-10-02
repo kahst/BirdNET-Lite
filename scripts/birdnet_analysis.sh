@@ -2,6 +2,25 @@
 # Runs BirdNET-Lite
 #set -x
 source /etc/birdnet/birdnet.conf
+# Document this run's birdnet.conf settings
+# Make a temporary file to compare the current birdnet.conf with
+# the birdnet.conf as it was the last time this script was called
+make_thisrun() {
+  sleep .4
+  awk '!/#/ && !/^$/ {print}' /etc/birdnet/birdnet.conf \
+    > >(tee "${THIS_RUN}")
+  sleep .5
+}
+make_thisrun &> /dev/null
+if ! diff ${LAST_RUN} ${THIS_RUN};then
+  echo "The birdnet.conf file has changed"
+  echo "Reloading services"
+  cat ${THIS_RUN} > ${LAST_RUN}
+  until restart_birdnet.sh;do
+    sleep 1
+  done
+fi
+
 CUSTOM_LIST="/home/pi/BirdNET-Lite/custom_species_list.txt"
 
 # Create an array of the audio files
@@ -38,6 +57,7 @@ move_analyzed() {
 # Uses one argument:
 #   - {DIRECTORY}
 run_analysis() {
+  sleep .5
   echo "Starting run_analysis() for ${1:19}"
 
 
@@ -58,7 +78,6 @@ run_analysis() {
   cd ${HOME}/BirdNET-Lite || exit 1
   for i in "${files[@]}";do
 
-      set -x
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 \
       | awk -F. '/Duration/ {print $1}' \
       | cut -d':' -f3-4)"
@@ -71,6 +90,7 @@ run_analysis() {
     fi
 
     if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
+      set -x
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \

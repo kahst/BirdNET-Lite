@@ -251,3 +251,5 @@ VENV=$(dirname ${my_dir})/miniforge/envs/birdnet
 RECORDING_LENGTH=
 
 EXTRACTION_LENGTH=
+
+LAST_RUN=
