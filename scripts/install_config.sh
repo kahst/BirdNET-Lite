@@ -432,6 +432,15 @@ VENV=$(dirname ${my_dir})/miniforge/envs/birdnet
 #_____________These variables are for testing. Please don't touch______________#
 #_______________them if you are not testing these features.____________________#
 
+# To test different values for RECORDING_LENGTH, first:
+# 1) stop the birdnet_recording.service:
+####  run: \`sudo systemctl stop birdnet_recording.service`
+# 2) remove any remaining audio files in the day's recording directory:
+####  Example: to remove recordings for Saturday, October 2nd, 2021, you would
+####  run: \`rm -rf /home/pi/BirdSongs/October-2021/02-Saturday/*`
+# 3) restart the birdnet_recording.service:
+####  run: \`sudo systemctl restart birdnet_recording.service`
+
 
 RECORDING_LENGTH=
 
