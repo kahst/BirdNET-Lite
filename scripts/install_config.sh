@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Creates and installs the /etc/birdnet/birdnet.conf file
-#set -x # Uncomment to enable debugging
+set -x # Uncomment to enable debugging
 set -e
 trap 'exit 1' SIGINT SIGHUP
 
