@@ -408,7 +408,7 @@ VENV=${my_dir}/miniforge/envs/birdnet
 
 ################################################################################
 #---------------------------------- Testing -----------------------------------#
-#_____________These variables are for testing. Please don't touch______________#
+#_____________These variables are for testing. Please do not touch_____________#
 #_______________them if you are not testing these features.____________________#
 
 RECORDING_LENGTH=
