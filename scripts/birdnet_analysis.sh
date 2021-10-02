@@ -39,7 +39,22 @@ move_analyzed() {
 #   - {DIRECTORY}
 run_analysis() {
   echo "Starting run_analysis() for ${1:19}"
-  WEEK=$(date +"%U")
+
+
+  ### TESTING NEW WEEK CALCULATION
+  WEEK_OF_YEAR="$(echo "$(date +%m) * 4" | bc -l)"
+  DAY_OF_MONTH="$(date +%d)"
+  if [ ${DAY_OF_MONTH} -le 7 ];then
+    WEEK="$(echo "${WEEK_OF_YEAR} + 1" |bc -l)"
+  elif [ ${DAY_OF_MONTH} -le 14 ];then
+    WEEK="$(echo "${WEEK_OF_YEAR} + 2" |bc -l)"
+  elif [ ${DAY_OF_MONTH} -le 21 ];then
+    WEEK="$(echo "${WEEK_OF_YEAR} + 3" |bc -l)"
+  elif [ ${DAY_OF_MONTH} -ge 23 ];then
+    WEEK="$(echo "${WEEK_OF_YEAR} + 4" |bc -l)"
+  fi
+
+  #WEEK=$(date +"%U")
   cd ${HOME}/BirdNET-Lite || exit 1
   for i in "${files[@]}";do
 
