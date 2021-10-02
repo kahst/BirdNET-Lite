@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -xe
+set -e
 my_dir=${HOME}/BirdNET-Lite
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
 
