@@ -43,7 +43,6 @@ run_analysis() {
   cd ${HOME}/BirdNET-Lite || exit 1
   for i in "${files[@]}";do
 
-    set -x
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 \
       | awk -F. '/Duration/ {print $1}' \
       | cut -d':' -f3-4)"
@@ -52,6 +51,7 @@ run_analysis() {
     [ "${FILE_LENGTH}" == "00:${RECORDING_LENGTH}" ] || continue
 
     if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
+      set -x
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
