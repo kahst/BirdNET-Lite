@@ -10,7 +10,7 @@ CUSTOM_LIST="/home/pi/BirdNET-Lite/custom_species_list.txt"
 get_files() {
   echo "get_files() for ${1:19}"
   files=($( find ${1} -maxdepth 1 -name '*wav' \
-  | sort -r \
+  | sort \
   | awk -F "/" '{print $NF}' ))
   [ -n "${files[1]}" ] && echo "Files loaded"
 }

@@ -130,7 +130,7 @@ for h in "${SCAN_DIRS[@]}";do
 
     ### TESTING longer extraction context
     set -x
-    [ -z ${EXTRACTION_LENGTH} ] || EXTRACTION_LENGTH=6
+    [ -z ${EXTRACTION_LENGTH} ] && EXTRACTION_LENGTH=6
     SPACER=$(echo "(${EXTRACTION_LENGTH} - 3 )/2" |bc -l) 
     START=$(echo "${START} - ${SPACER}"|bc -l)
     END=$(echo "${END} + ${SPACER}"|bc -l)

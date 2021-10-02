@@ -8,7 +8,7 @@ else
   STAMP="%H:%M:%S"
 fi
 
-[ -z RECORDING_LENGTH ] || RECORDING_LENGTH=12
+[ -z $RECORDING_LENGTH ] && RECORDING_LENGTH=12
 
 if pgrep arecord &> /dev/null ;then
   echo "Recording"

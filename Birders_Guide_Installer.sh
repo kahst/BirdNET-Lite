@@ -196,8 +196,8 @@ RECS_DIR=${HOME}/BirdSongs
 ##  LATITUDE=48.858
 ##  LONGITUDE=2.294
 
-LATITUDE="${LATITUDE}"
-LONGITUDE="${LONGITUDE}"
+LATITUDE=${LATITUDE}
+LONGITUDE=${LONGITUDE}
 
 ################################################################################
 #------------------------------ Extraction Service  ---------------------------#
@@ -372,17 +372,17 @@ IDFILE=${HOME}/BirdNET-Lite/IdentifiedSoFar.txt
 ## OVERLAP is the value in seconds which BirdNET should use when analyzing
 ## the data. The values must be between 0.0-2.9.
 
-OVERLAP="0.0"
+OVERLAP=0.0
 
 ## CONFIDENCE is the minimum confidence level from 0.0-1.0 BirdNET's analysis 
 ## should reach before creating an entry in the BirdNET.selection.txt file.
 ## Don't set this to 1.0 or you won't have any results.
 
-CONFIDENCE="0.7"
+CONFIDENCE=0.7
 
 ## SENSITIVITY is the detection sensitivity from 0.5-1.5.
 
-SENSITIVITY="1.25"
+SENSITIVITY=1.25
 
 ################################################################################
 #------------------------------  Auto-Generated  ------------------------------#
