@@ -19,6 +19,7 @@ SCRIPTS=(/usr/local/bin/birdnet_analysis.sh
 /usr/local/bin/livestream.sh
 /usr/local/bin/pretty_date.sh
 /usr/local/bin/reconfigure_birdnet.sh
+/usr/local/bin/restart_birdnet.sh
 /usr/local/bin/species_notifier.sh
 /usr/local/bin/uninstall.sh
 /usr/local/bin/update_species.sh
