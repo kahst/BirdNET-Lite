@@ -3,26 +3,37 @@
 # set -x # Uncomment to debug
 trap 'rm -f ${TMPFILE}' EXIT
 source /etc/birdnet/birdnet.conf &> /dev/null
-SCRIPTS=(/usr/local/bin/birdnet_analysis.sh
-/usr/local/bin/birdnet_recording.sh
-/usr/local/bin/birdnet_stats.sh
-/usr/local/bin/cleanup.sh
-/usr/local/bin/clear_all_data.sh
-/usr/local/bin/disk_usage.sh
-/usr/local/bin/dump_logs.sh
-/usr/local/bin/extract_new_birdsounds.sh
-/usr/local/bin/install_birdnet.sh
-/usr/local/bin/install_config.sh
-/usr/local/bin/install_services.sh
-/usr/local/bin/install_tmux_services.sh
-/usr/local/bin/install_zram_service.sh
-/usr/local/bin/livestream.sh
-/usr/local/bin/pretty_date.sh
-/usr/local/bin/reconfigure_birdnet.sh
-/usr/local/bin/restart_birdnet.sh
-/usr/local/bin/species_notifier.sh
-/usr/local/bin/uninstall.sh
-/usr/local/bin/update_species.sh
+SCRIPTS=(birdnet_analysis.sh
+birdnet_recording.sh
+birdnet_stats.sh
+cleanup.sh
+clear_all_data.sh
+disk_usage.sh
+dump_logs.sh
+extract_new_birdsounds.sh
+install_birdnet.sh
+install_config.sh
+install_services.sh
+install_tmux_services.sh
+install_zram_service.sh
+livestream.sh
+pretty_date.sh
+reboot_system.php
+reboot_system.sh
+reconfigure_birdnet.sh
+restart_birdnet_analysis.php
+restart_birdnet_analysis.sh
+restart_birdnet_recording.php
+restart_birdnet_recording.sh
+restart_birdnet.sh
+restart_caddy.php
+restart_caddy.sh
+restart_extraction.php
+restart_extraction.sh
+restart_services.php
+species_notifier.sh
+uninstall.sh
+update_species.sh
 ${HOME}/.gotty)
 
 

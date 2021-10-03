@@ -52,24 +52,9 @@ An installation one-liner is available below for RaspiOS-ARM64 meeting the prequ
    - *Note for Android users: it seems that the Pushed.co Mobile App does not work for Android devices, which is a huge bummer. If anyone knows of an Android alternative, or if anyone might be able to come up with a home-spun notification system, please let me know.*
 
 ## How to install
-#### Option 1 (Recommended) -- Install All Services
-1. In the terminal run: `curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Lite/rpi4/Birders_Guide_Installer.sh | bash`
+Install All Services
+1. In the terminal run: `curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Lite/rpialpha/Birders_Guide_Installer.sh | bash`
 
-##### Options 2 & 3 require you setup 4GB of swapping. That step is included in the directions below.
-#### Option 2 -- Pre-fill birdnet.conf
-1. In the terminal run `git clone https://github.com/mcguirepr89/BirdNET-Lite.git ~/BirdNET-Lite`
-1. You can copy the included *'birdnet.conf-defaults'* template to create and configure the BirdNET-Lite
-   to your needs before running the installer. Issue `cp ~/BirdNET-Lite/birdnet.conf-defaults ~/BirdNET-Lite/birdnet.conf`.
-   Edit the new *'birdnet.conf'* file to suit your needs and save it.
-   If you choose this method, the installation will be (nearly) non-interactive.
-1. Setup zRAM swapping. Run `~/BirdNET-Lite/scripts/install_zram_service.sh && sudo reboot`   
-1. After the reboot, run `~/BirdNET-Lite/scripts/install_birdnet.sh`
-#### Option 3 -- Interactive Installation
-1. In the terminal run `git clone https://github.com/mcguirepr89/BirdNET-Lite.git ~/BirdNET-Lite`
-1. Setup zRAM swapping. Run `~/BirdNET-Lite/scripts/install_zram_service.sh && sudo reboot`   
-1. After the reboot, run `~/BirdNET-Lite/scripts/install_birdnet.sh`
-1. Follow the installation prompts to configure the BirdNET-Lite to your needs.
-- Note: The installation should be run as a regular user. If run on an OS other than RaspiOS, be sure the regular user is in the sudoers file or the sudo group.
 
 ## Access your BirdNET-Lite
 If you configured BirdNET-Lite with the Caddy webserver, you can access the extractions locally at

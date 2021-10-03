@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
-# Restart services
+# Restarts ALL services and removes ALL unprocessed audio
 source /etc/birdnet/birdnet.conf
 
 sudo systemctl stop birdnet_recording.service
-rm -rf ${RECS_DIR}/$(date +%B-%Y/%d-%A)/*
+sudo rm -rf ${RECS_DIR}/$(date +%B-%Y/%d-%A)/*
 sudo systemctl start birdnet_recording.service
-sudo systemctl restart extraction.timer
-sudo systemctl restart birdnet_analysis.service
+
+SERVICES=(avahi-alias@birdlog.local.service
+avahi-alias@birdnetsystem.local.service
+avahi-alias@birdstats.local.service
+avahi-alias@extractionlog.local.service
+birdnet_analysis.service
+birdnet_log.service
+birdstats.service
+extraction.timer
+extractionlog.service
+livestream.service)
+
+for i in  "${SERVICES[@]}";do
+  sudo systemctl restart ${i}
+done
+

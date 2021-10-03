@@ -74,23 +74,38 @@ run_analysis() {
     WEEK="$(echo "${WEEK_OF_YEAR} + 4" |bc -l)"
   fi
 
-  #WEEK=$(date +"%U")
   cd ${HOME}/BirdNET-Lite || exit 1
   for i in "${files[@]}";do
-
-    FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 \
-      | awk -F. '/Duration/ {print $1}' \
-      | cut -d':' -f3-4)"
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=12
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
+    FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"
+    [ -z $FILE_LENGTH ] && sleep 3 && continue
+    echo "RECORDING_LENGTH set to ${RECORDING_LENGTH}"
+    a=1
     if [ ${RECORDING_LENGTH} == "01:00" ];then
-      [ "${FILE_LENGTH}" == "${RECORDING_LENGTH}" ] || continue
+      until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "${RECORDING_LENGTH}" ];do
+        sleep 1
+	[ $a -ge ${RECORDING_LENGTH} ] && sudo rm -f ${1}/${i} && break
+	a=$((a+1))
+      done	
     else 
-      [ "${FILE_LENGTH}" == "00:${RECORDING_LENGTH}" ] || continue
+      until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "00:${RECORDING_LENGTH}" ];do
+        sleep 1
+	[ $a -ge ${RECORDING_LENGTH} ] && sudo rm -f ${1}/${i} && break
+	a=$((a+1))
+      done
     fi
 
     if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
-      set -x
+      echo "python3 analyze.py \
+--i "${1}/${i}" \
+--o "${1}/${i}.csv" \
+--lat "${LATITUDE}" \
+--lon "${LONGITUDE}" \
+--week "${WEEK}" \
+--overlap "${OVERLAP}" \
+--sensitivity "${SENSITIVITY}" \
+--min_conf "${CONFIDENCE}""
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -100,9 +115,17 @@ run_analysis() {
         --overlap "${OVERLAP}" \
 	--sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}"
-      set +x
     elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ];then
-      set -x
+      echo "python3 analyze.py \
+--i "${1}/${i}" \
+--o "${1}/${i}.csv" \
+--lat "${LATITUDE}" \
+--lon "${LONGITUDE}" \
+--week "${WEEK}" \
+--overlap "${OVERLAP}" \
+--sensitivity "${SENSITIVITY}" \
+--min_conf "${CONFIDENCE}" \
+--custom_list "${CUSTOM_LIST}""
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -113,7 +136,6 @@ run_analysis() {
 	--sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
 	--custom_list "${CUSTOM_LIST}"
-      set +x
    fi
   done
 }
@@ -122,7 +144,7 @@ run_analysis() {
 # Takes one argument:
 #   - {DIRECTORY}
 run_birdnet() {
-  echo "Starting run_birdnet() for \"${1:19}\""
+  echo "Starting run_birdnet() for ${1:19}"
   get_files "${1}"
   move_analyzed "${1}"
   run_analysis "${1}"

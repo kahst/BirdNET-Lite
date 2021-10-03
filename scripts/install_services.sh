@@ -12,6 +12,7 @@ CONFIG_FILE="$(dirname ${my_dir})/birdnet.conf"
 install_scripts() {
   echo "Installing BirdNET-Lite scripts to /usr/local/bin"
   ln -sf ${my_dir}/* /usr/local/bin/
+  rm /usr/local/bin/index.html
 }
 
 install_birdnet_analysis() {
@@ -77,6 +78,7 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
   [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
+  [ -L ${EXTRACTED}/scripts ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts ${EXTRACTED}
 }
  
 install_alsa() {
@@ -198,6 +200,7 @@ ${EXTRACTIONS_URL} {
     birdnet ${HASHWORD}
   }
   reverse_proxy /stream localhost:8000
+  php_fastcgi unix//run/php/php7.3-fpm.sock
 }
 
 http://birdnetsystem.local {
@@ -210,6 +213,7 @@ http://birdnetsystem.local {
     birdnet ${HASHWORD}
   }
   reverse_proxy /stream localhost:8000
+  php_fastcgi unix//run/php/php7.3-fpm.sock
 }
 
 http://birdlog.local {
@@ -315,6 +319,23 @@ EOF
   systemctl enable --now birdstats.service
 }
 
+install_php() {
+  if ! which pip &> /dev/null || ! which php-fpm7.3;then
+    echo "Installing PHP and PHP-FPM"
+    apt -qq update
+    apt install -qqy php php-fpm
+  else
+    echo "PHP and PHP-FPM installed"
+  fi
+    echo "Configuring PHP for Caddy"
+    sed -i 's/www-data/caddy/g' /etc/php/7.3/fpm/pool.d/www.conf
+    systemctl restart php7.3-fpm.service
+    echo "Adding Caddy sudoers rule"
+    cat << EOF > /etc/sudoers.d/010_caddy-nopasswd
+caddy ALL=(ALL) NOPASSWD: ALL
+EOF
+    chmod 0440 /etc/sudoers.d/010_caddy-nopasswd
+}
 
 install_icecast() {
   if ! which icecast2;then
@@ -422,6 +443,7 @@ install_selected_services() {
     install_Caddyfile
     install_avahi_aliases
     install_gotty_logs
+    install_php
   fi
 
   if [ ! -z "${ICE_PWD}" ];then
