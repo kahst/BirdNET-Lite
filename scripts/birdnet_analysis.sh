@@ -74,20 +74,25 @@ run_analysis() {
     WEEK="$(echo "${WEEK_OF_YEAR} + 4" |bc -l)"
   fi
 
-  #WEEK=$(date +"%U")
   cd ${HOME}/BirdNET-Lite || exit 1
   for i in "${files[@]}";do
 
-    FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 \
-      | awk -F. '/Duration/ {print $1}' \
-      | cut -d':' -f3-4)"
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=12
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
+    FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"
+#################################################################### working on this
+set -x
+[ -z $FILE_LENGTH ] && sleep "$(echo "${RECORDING_LENGTH}/3"|bc -l)" && continue
     if [ ${RECORDING_LENGTH} == "01:00" ];then
-      [ "${FILE_LENGTH}" == "${RECORDING_LENGTH}" ] || continue
+      until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "${RECORDING_LENGTH}" ];do
+        sleep 1
+      done	
     else 
-      [ "${FILE_LENGTH}" == "00:${RECORDING_LENGTH}" ] || continue
+      until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "00:${RECORDING_LENGTH}" ];do
+        sleep 1
+      done
     fi
+#################################################################### working on this
 
     if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
       set -x
