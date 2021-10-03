@@ -12,6 +12,7 @@ CONFIG_FILE="$(dirname ${my_dir})/birdnet.conf"
 install_scripts() {
   echo "Installing BirdNET-Lite scripts to /usr/local/bin"
   ln -sf ${my_dir}/* /usr/local/bin/
+  rm /usr/local/bin/index.html
 }
 
 install_birdnet_analysis() {
