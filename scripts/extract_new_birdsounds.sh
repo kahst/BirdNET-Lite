@@ -128,16 +128,14 @@ for h in "${SCAN_DIRS[@]}";do
     # directory.
 
     ### TESTING longer extraction context
-    set -x
     [ -z ${EXTRACTION_LENGTH} ] && EXTRACTION_LENGTH=6
-    SPACER=$(echo "(${EXTRACTION_LENGTH} - 3 )/2" |bc -l) 
-    START=$(echo "${START} - ${SPACER}"|bc -l)
-    END=$(echo "${END} + ${SPACER}"|bc -l)
+    SPACER=$(echo "scale=1;(${EXTRACTION_LENGTH} - 3 )/2" |bc -l) 
+    START=$(echo "scale=1;${START} - ${SPACER}"|bc -l)
+    END=$(echo "scale=1;${END} + ${SPACER}"|bc -l)
     
-    if (( $(echo "${START} < 0" | bc -l) ));then START=0;fi
-    if (( $(echo "${END} > ${RECORDING_LENGTH}" | bc -l) ));then END=${RECORDING_LENGTH};fi
+    if (( $(echo "scale=1;${START} < 1" | bc -l) ));then START=0;fi
+    if (( $(echo "scale=1;${END} > ${RECORDING_LENGTH}" | bc -l) ));then END=${RECORDING_LENGTH};fi
 
-    set +x
     ffmpeg -hide_banner -loglevel error -nostdin -i "${h}/${OLDFILE}" \
       -acodec copy -ss "${START}" -to "${END}"\
         "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"
