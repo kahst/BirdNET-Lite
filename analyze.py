@@ -1,4 +1,3 @@
-
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
@@ -218,6 +217,9 @@ def main():
     # Write detections to output file
     min_conf = max(0.01, min(args.min_conf, 0.99))
     writeResultsToFile(detections, min_conf, args.o)
+    for i in detections:
+        print("\n", detections[i][0],"\n")
+
 
 if __name__ == '__main__':
 
