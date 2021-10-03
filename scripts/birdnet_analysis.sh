@@ -80,7 +80,6 @@ run_analysis() {
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=12
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"
-#################################################################### working on this
     [ -z $FILE_LENGTH ] && sleep 2 && continue
     echo "RECORDING_LENGTH set to ${RECORDING_LENGTH}"
     if [ ${RECORDING_LENGTH} == "01:00" ];then
@@ -92,7 +91,6 @@ run_analysis() {
         sleep 1
       done
     fi
-#################################################################### working on this
 
     if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
       echo "python3 analyze.py \
