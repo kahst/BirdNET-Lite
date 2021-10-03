@@ -81,8 +81,8 @@ run_analysis() {
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"
 #################################################################### working on this
-set -x
-[ -z $FILE_LENGTH ] && sleep "$(echo "${RECORDING_LENGTH}/3"|bc -l)" && continue
+    [ -z $FILE_LENGTH ] && sleep 2 && continue
+    echo "RECORDING_LENGTH set to ${RECORDING_LENGTH}"
     if [ ${RECORDING_LENGTH} == "01:00" ];then
       until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "${RECORDING_LENGTH}" ];do
         sleep 1
@@ -95,7 +95,15 @@ set -x
 #################################################################### working on this
 
     if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
-      set -x
+      echo "python3 analyze.py \
+--i "${1}/${i}" \
+--o "${1}/${i}.csv" \
+--lat "${LATITUDE}" \
+--lon "${LONGITUDE}" \
+--week "${WEEK}" \
+--overlap "${OVERLAP}" \
+--sensitivity "${SENSITIVITY}" \
+--min_conf "${CONFIDENCE}""
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -105,9 +113,17 @@ set -x
         --overlap "${OVERLAP}" \
 	--sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}"
-      set +x
     elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ];then
-      set -x
+      echo "python3 analyze.py \
+--i "${1}/${i}" \
+--o "${1}/${i}.csv" \
+--lat "${LATITUDE}" \
+--lon "${LONGITUDE}" \
+--week "${WEEK}" \
+--overlap "${OVERLAP}" \
+--sensitivity "${SENSITIVITY}" \
+--min_conf "${CONFIDENCE}" \
+--custom_list "${CUSTOM_LIST}""
       python3 analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -118,7 +134,6 @@ set -x
 	--sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
 	--custom_list "${CUSTOM_LIST}"
-      set +x
    fi
   done
 }
@@ -127,7 +142,7 @@ set -x
 # Takes one argument:
 #   - {DIRECTORY}
 run_birdnet() {
-  echo "Starting run_birdnet() for \"${1:19}\""
+  echo "Starting run_birdnet() for ${1:19}"
   get_files "${1}"
   move_analyzed "${1}"
   run_analysis "${1}"
