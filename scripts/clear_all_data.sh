@@ -20,6 +20,9 @@ while true; do
     *) echo "Exiting since you didn't answer with Y or y." && exit;;
   esac
 done
+
+echo "Stopping services"
+sudo systemctl stop birdnet_recording.service
 echo "Removing all data . . . "
 sudo rm -drf "${RECS_DIR}"
 rm "${IDFILE}"
@@ -31,5 +34,8 @@ echo "Recreating necessary directories"
 [ -d ${EXTRACTED}/By_Common_Name ] || mkdir -p ${EXTRACTED}/By_Common_Name
 [ -d ${EXTRACTED}/By_Scientific_Name ] || mkdir -p ${EXTRACTED}/By_Scientific_Name
 [ -d ${PROCESSED} ] || mkdir -p ${PROCESSED}
-
 cp ~/BirdNET-Lite/templates/index.html ${EXTRACTED}/
+
+
+echo "Restarting services"
+sudo systemctl restart birdnet_recording.service
