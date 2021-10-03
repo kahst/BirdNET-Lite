@@ -45,8 +45,8 @@ for h in "${SCAN_DIRS[@]}";do
   # Removes old directories
   if echo "${h}" | grep $(date --date="yesterday" "+%A") &> /dev/null;then
     echo "Removing old directories"
-    rm -df "${h}"
-    rm -df "$(echo ${h} | cut -d'-' -f1-3)"
+    rm -drf "${h}"
+    rm -drf "$(echo ${h} | cut -d'-' -f1-3)"
     continue
   fi
   # Iterates over each "Analyzed" directory
