@@ -34,11 +34,16 @@ echo "  -$SOFAR species identified so far"
 echo
 if [ ${a} -ge 1 ];then
 while read -r line;do
-  echo "    | $line"
-done < <(awk -v n=2 '1; NR % n == 0 {print ""}' ${IDFILE})
+  SPECIES="$(echo "${line}" | awk -F: '/Common Name/ {print $2}')"
+  SPECIES=${SPECIES// /_}
+  SPECIES=${SPECIES/_}
+  [ -z ${SPECIES} ] && continue
+  DETECTIONS="$(ls -1 ${EXTRACTED}/By_Date/*/${SPECIES}| wc -l)"
+  echo -e "    | $line  # of detections so far: ${DETECTIONS}\n"
+done < ${IDFILE}
 fi
 echo
 echo -n "Listening since "${INSTALL_DATE}""
-sleep 180
+sleep 20
 clear
 done
