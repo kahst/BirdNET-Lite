@@ -25,12 +25,12 @@ restart_birdnet_analysis.php
 restart_birdnet_analysis.sh
 restart_birdnet_recording.php
 restart_birdnet_recording.sh
-restart_birdnet.sh
 restart_caddy.php
 restart_caddy.sh
 restart_extraction.php
 restart_extraction.sh
 restart_services.php
+restart_services.sh
 species_notifier.sh
 uninstall.sh
 update_species.sh

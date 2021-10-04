@@ -16,7 +16,7 @@ if ! diff ${LAST_RUN} ${THIS_RUN};then
   echo "The birdnet.conf file has changed"
   echo "Reloading services"
   cat ${THIS_RUN} > ${LAST_RUN}
-  until restart_birdnet.sh;do
+  until restart_services.sh;do
     sleep 1
   done
 fi
