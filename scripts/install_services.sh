@@ -277,7 +277,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Lite Log" journalctl -fu birdnet_analysis.service
+ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Lite Log" tmux new -A -s birdlog journalctl -fu birdnet_analysis.service
 
 [Install]
 WantedBy=multi-user.target
@@ -294,7 +294,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8888 --title-format "Extractions Log" journalctl -fu extraction.service
+ExecStart=/usr/local/bin/gotty -p 8888 --title-format "Extractions Log" tmux new -A -s extractionlog journalctl -fu extraction.service
 
 [Install]
 WantedBy=multi-user.target
@@ -311,7 +311,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 9090 --title-format "BirdNET-Lite Statistics" /usr/local/bin/birdnet_stats.sh
+ExecStart=/usr/local/bin/gotty -p 9090 --title-format "BirdNET-Lite Statistics" tmux new -A -s birdstats /usr/local/bin/birdnet_stats.sh
 
 [Install]
 WantedBy=multi-user.target
