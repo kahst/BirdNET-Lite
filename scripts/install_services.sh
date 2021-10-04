@@ -319,6 +319,11 @@ EOF
   systemctl enable --now birdstats.service
 }
 
+install_tmux_depends() {
+  echo "Installing tmux dependencies"
+  apt -qqy install libevent-2*
+}
+
 install_php() {
   if ! which pip &> /dev/null || ! which php-fpm7.3;then
     echo "Installing PHP and PHP-FPM"
@@ -443,6 +448,7 @@ install_selected_services() {
     install_Caddyfile
     install_avahi_aliases
     install_gotty_logs
+    install_tmux_depends
     install_php
   fi
 
