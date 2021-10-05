@@ -196,6 +196,9 @@ ${EXTRACTIONS_URL} {
   basicauth /Processed* {
     birdnet ${HASHWORD}
   }
+  basicauth /scripts* {
+    birdnet ${HASHWORD}
+  }
   basicauth /stream {
     birdnet ${HASHWORD}
   }
@@ -207,6 +210,9 @@ http://birdnetsystem.local {
   root * ${EXTRACTED}
   file_server browse
   basicauth /Processed* {
+    birdnet ${HASHWORD}
+  }
+  basicauth /scripts* {
     birdnet ${HASHWORD}
   }
   basicauth /stream {

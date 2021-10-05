@@ -28,7 +28,12 @@ if [ "${a}" -ge "1" ];then
 else
   SOFAR=0
 fi
-echo "  -$a detections so far"
+if [ $SOFAR = 1 ];then
+  verbage=detection
+else
+  verbage=detections
+fi
+echo "  -$a $verbage so far"
 echo
 echo "  -$SOFAR species identified so far"
 echo
@@ -39,7 +44,12 @@ while read -r line;do
   SPECIES=${SPECIES/_}
   [ -z ${SPECIES} ] && continue
   DETECTIONS="$(ls -1 ${EXTRACTED}/By_Date/*/${SPECIES}| wc -l)"
-  echo -e "    | $line  # of detections so far: ${DETECTIONS}\n"
+  if [ ${DETECTIONS} = 1 ];then
+    verbage=detection
+  else
+    verbage=detections
+  fi
+  echo -e "${DETECTIONS} $verbage for ${SPECIES//_/ }" | sort
 done < ${IDFILE}
 fi
 echo
