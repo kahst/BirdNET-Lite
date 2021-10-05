@@ -15,6 +15,7 @@ echo "Recreating necessary directories"
 [ -d ${EXTRACTED}/By_Date ] || sudo -u ${BIRDNET_USER} mkdir -p ${EXTRACTED}/By_Date
 [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${BIRDNET_USER} mkdir -p ${EXTRACTED}/By_Common_Name
 [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${BIRDNET_USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
+sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Lite/templates/index.html ${EXTRACTED}
 [ -d ${PROCESSED} ] || sudo -u ${BIRDNET_USER} mkdir -p ${PROCESSED}
 [ -L ${EXTRACTED}/scripts ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Lite/scripts ${EXTRACTED}/
 sudo -u ${BIRDNET_USER} cp ~/BirdNET-Lite/templates/index.html ${EXTRACTED}/
