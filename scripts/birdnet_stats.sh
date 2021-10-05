@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # BirdNET Stats Page
-trap 'setterm --cursor on' EXIT
+trap 'setterm --cursor on && exit' EXIT
+trap 'rm -f "${TMP_FILE}" && exit' EXIT
 source /etc/birdnet/birdnet.conf
 setterm --cursor off
+TMP_FILE="$(mktemp)"
 
 while true;do
 cat << "EOF"
@@ -55,8 +57,9 @@ while read -r line;do
   else
     verbage=detections
   fi
-  echo -e "${DETECTIONS} $verbage for ${SPECIES//_/ } | max conf ${MAX_SCORE}%" | sort
-done < ${IDFILE}
+  echo "${DETECTIONS} $verbage for ${SPECIES//_/ } | max conf ${MAX_SCORE}%"
+done < "${IDFILE}" > ${TMP_FILE}
+sort -rk1 -h "${TMP_FILE}"
 fi
 echo
 echo -n "Listening since "${INSTALL_DATE}""
