@@ -40,16 +40,22 @@ echo
 if [ ${a} -ge 1 ];then
 while read -r line;do
   SPECIES="$(echo "${line}" | awk -F: '/Common Name/ {print $2}')"
-  SPECIES=${SPECIES// /_}
-  SPECIES=${SPECIES/_}
+  SPECIES="${SPECIES// /_}"
+  SPECIES="$(echo ${SPECIES/_} | tr -d "'")"
   [ -z ${SPECIES} ] && continue
-  DETECTIONS="$(ls -1 ${EXTRACTED}/By_Date/*/${SPECIES}| wc -l)"
+
+  ALL_DETECTION_FILES="$(ls -1 ${EXTRACTED}/By_Date/*/${SPECIES})"
+  ALL_DETECTION_FILES="$(echo ${ALL_DETECTION_FILES[@]} | tr ' ' '\n')"
+  MAX_SCORE="$(echo "${ALL_DETECTION_FILES}"| awk -F% '{print $1}')"
+  MAX_SCORE="$(echo "${MAX_SCORE[@]}" | rev |cut -d"-" -f1|rev | sort -r | head -n1)"
+  
+  DETECTIONS="$(ls -1 ${EXTRACTED}/By_Date/*/${SPECIES} | wc -l)"
   if [ ${DETECTIONS} = 1 ];then
     verbage=detection
   else
     verbage=detections
   fi
-  echo -e "${DETECTIONS} $verbage for ${SPECIES//_/ }" | sort
+  echo -e "${DETECTIONS} $verbage for ${SPECIES//_/ } | max conf ${MAX_SCORE}%" | sort
 done < ${IDFILE}
 fi
 echo

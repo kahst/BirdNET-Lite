@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 # Exit when any command fails
-#set -x
+set -x
 set -e
 # Keep track of the last executed command
-trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-# Echo an error message before exiting
-trap 'echo "\"${last_command}\" command exited with code $?."' EXIT
+#trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+## Echo an error message before exiting
+#trap 'echo "\"${last_command}\" command exited with code $?."' EXIT
 # Remove temporary file
 trap 'rm -f $TMPFILE' EXIT
 source /etc/birdnet/birdnet.conf
+[ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=12
 
 # Set Variables
 TMPFILE=$(mktemp)
@@ -73,7 +74,7 @@ for h in "${SCAN_DIRS[@]}";do
     START="$(echo "${line}" | awk -F\; '!/birdnet/{print $1}')" 
     END="$(echo "${line}" | awk -F\; '!/birdnet/{print $2}')" 
     COMMON_NAME=""$(echo ${line} \
-            | awk -F\; '!/birdnet/{print $4}')""
+            | awk -F\; '!/birdnet/{print $4}'|tr -d "'")""
     SCIENTIFIC_NAME=""$(echo ${line} \
             | awk -F\; '!/birdnet/{print $3}')""
     CONFIDENCE=""$(echo ${line} \
@@ -133,8 +134,8 @@ for h in "${SCAN_DIRS[@]}";do
     START=$(echo "scale=1;${START} - ${SPACER}"|bc -l)
     END=$(echo "scale=1;${END} + ${SPACER}"|bc -l)
     
-    if (( $(echo "scale=1;${START} < 1" | bc -l) ));then START=0;fi
-    if (( $(echo "scale=1;${END} > ${RECORDING_LENGTH}" | bc -l) ));then END=${RECORDING_LENGTH};fi
+    if (( $(echo "${START} < 1" | bc -l) ));then START=0;fi
+    if (( $(echo "${END} > ${RECORDING_LENGTH}" | bc -l) ));then END=${RECORDING_LENGTH};fi
 
     ffmpeg -hide_banner -loglevel error -nostdin -i "${h}/${OLDFILE}" \
       -acodec copy -ss "${START}" -to "${END}"\
