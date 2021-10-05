@@ -325,9 +325,10 @@ EOF
   systemctl enable --now birdstats.service
 }
 
-install_tmux_depends() {
+install_tmux() {
   echo "Installing tmux dependencies"
   apt -qqy install libevent-2*
+  cp $(dirname ${my_dir})/templates/tmux.conf /etc/tmux.conf
 }
 
 install_php() {
@@ -454,7 +455,7 @@ install_selected_services() {
     install_Caddyfile
     install_avahi_aliases
     install_gotty_logs
-    install_tmux_depends
+    install_tmux
     install_php
   fi
 
