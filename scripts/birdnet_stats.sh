@@ -39,6 +39,19 @@ EOF
   echo
   echo "  -$SOFAR species identified so far"
   echo
+  MOST_RECENT="$(find ${EXTRACTED}/By_Date/$(date +%Y-%m-%d) \
+    | sort -t"%" -rk2 \
+    | head -n1 \
+    | cut -d'/' -f8)"
+  AT_TIME="$(find ${EXTRACTED}/By_Date/$(date +%Y-%m-%d) \
+    | sort -t"%" -rk2 \
+    | head -n1 \
+    | rev \
+    | cut -d'-' -f1 \
+    | rev \
+    | cut -d'.' -f1)"
+  echo "  -Most recent species detection: ${MOST_RECENT//_/ } at ${AT_TIME}" 
+  echo
   if [ ${a} -ge 1 ];then
     while read -r line;do
       
