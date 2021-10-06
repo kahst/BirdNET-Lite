@@ -150,6 +150,8 @@ run_birdnet() {
   run_analysis "${1}"
 }
 
+date
+
 if [ $(find ${RECS_DIR} -maxdepth 1 -name '*wav' | wc -l) -gt 0 ];then
   run_birdnet "${RECS_DIR}"
 fi
