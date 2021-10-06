@@ -327,7 +327,13 @@ EOF
 
 install_tmux() {
   echo "Installing tmux dependencies"
-  apt -qqy install libevent-2*
+  apt -qqy install libevent-2* \
+    libevent-dev \
+    ncurses-bin \
+    ncurses-base \
+    ncurses-term \
+    libncurses-dev
+
   cp $(dirname ${my_dir})/templates/tmux.conf /etc/tmux.conf
 }
 
