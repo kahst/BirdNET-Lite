@@ -349,6 +349,25 @@ EOF
     chmod 0440 /etc/sudoers.d/010_caddy-nopasswd
 }
 
+install_edit_birdnet_conf() {
+  cat << EOF > /etc/systemd/system/edit_birdnet_conf.service
+[Unit]
+Description=Edit birdnet.conf
+
+[Service]
+Restart=on-failure
+RestartSec=3
+Type=simple
+User=pi
+Environment=TERM=xterm-256color
+ExecStart=/usr/local/bin/gotty -w -p 9898 --title-format "Edit birdnet.conf" tmux new -A -s editbirdnet nano /home/pi/BirdNET-Lite/birdnet.conf
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
+
+
 install_icecast() {
   if ! which icecast2;then
     echo "Installing IceCast2"
@@ -457,6 +476,7 @@ install_selected_services() {
     install_gotty_logs
     install_tmux
     install_php
+    install_edit_birdnet_conf.service
   fi
 
   if [ ! -z "${ICE_PWD}" ];then
