@@ -90,8 +90,8 @@ remove_icecast() {
 
 remove_scripts() {
   for i in "${SCRIPTS[@]}";do
-    if [ -L "${i}" ];then
-      sudo rm -v "${i}"
+    if [ -L "/usr/local/bin/${i}" ];then
+      sudo rm -v "/usr/local/bin/${i}"
     fi
   done
 }
