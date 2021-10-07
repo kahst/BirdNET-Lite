@@ -7,9 +7,12 @@ SCRIPTS=(birdnet_analysis.sh
 birdnet_recording.sh
 birdnet_stats.sh
 cleanup.sh
+clear_all_data.php 
 clear_all_data.sh
 disk_usage.sh
 dump_logs.sh
+edit_birdnet.conf.php
+edit_birdnet.conf.sh
 extract_new_birdsounds.sh
 install_birdnet.sh
 install_config.sh
@@ -31,6 +34,8 @@ restart_extraction.php
 restart_extraction.sh
 restart_services.php
 restart_services.sh
+shutdown_system.php
+shutdown_system.sh
 species_notifier.sh
 uninstall.sh
 update_species.sh
