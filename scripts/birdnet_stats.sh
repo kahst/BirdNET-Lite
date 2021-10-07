@@ -15,7 +15,7 @@ while true;do
  )                      /                     |           (
  "+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"
 EOF
-  if [ "$(find ${EXTRACTED} -name '*.wav' | wc -l)" -ge 1 ];then
+  if [ "$(find ${EXTRACTED} -name '*.wav' | wc -l &> /dev/null)" -ge 1 ];then
     a=$( find "${EXTRACTED}" -name '*.wav' \
       | awk -F "/" '{print $NF}' \
       | cut -d'-' -f1 \
