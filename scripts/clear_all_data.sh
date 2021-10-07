@@ -18,7 +18,9 @@ echo "Recreating necessary directories"
 sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Lite/templates/index.html ${EXTRACTED}
 [ -d ${PROCESSED} ] || sudo -u ${BIRDNET_USER} mkdir -p ${PROCESSED}
 [ -L ${EXTRACTED}/scripts ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Lite/scripts ${EXTRACTED}/
-[ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/spectrogram.* ${EXTRACTED}
+[ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Lite/scripts/spectrogram.php ${EXTRACTED}
+[ -L ${EXTRACTED}/spectrogram.sh ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Lite/scripts/spectrogram.sh ${EXTRACTED}
+
 sudo -u ${BIRDNET_USER} cp ~/BirdNET-Lite/templates/index.html ${EXTRACTED}/
 echo "Restarting services"
 sudo systemctl restart birdnet_recording.service
