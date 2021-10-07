@@ -482,7 +482,7 @@ install_selected_services() {
     install_gotty_logs
     install_tmux
     install_php
-    install_edit_birdnet_conf.service
+    install_edit_birdnet_conf
   fi
 
   if [ ! -z "${ICE_PWD}" ];then
