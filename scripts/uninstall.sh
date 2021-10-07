@@ -37,6 +37,7 @@ restart_services.sh
 shutdown_system.php
 shutdown_system.sh
 species_notifier.sh
+tmux
 uninstall.sh
 update_species.sh
 ${HOME}/.gotty)
