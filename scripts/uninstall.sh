@@ -51,6 +51,7 @@ birdstats.service
 birdterminal.service
 caddy.d
 caddy.service
+edit_birdnet_conf.service
 extraction_log.service
 extraction.d
 extraction.service
