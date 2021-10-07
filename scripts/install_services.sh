@@ -337,6 +337,17 @@ install_tmux() {
   cp $(dirname ${my_dir})/templates/tmux.conf /etc/tmux.conf
 }
 
+install_sox() {
+  if which sox &> /dev/null;then
+    echo "Sox is installed"
+  else
+    echo "Installing sox"
+    apt -qq update
+    apt install -y sox
+    echo "Sox installed"
+  fi
+}
+
 install_php() {
   if ! which pip &> /dev/null || ! which php-fpm7.3;then
     echo "Installing PHP and PHP-FPM"
@@ -481,6 +492,7 @@ install_selected_services() {
     install_avahi_aliases
     install_gotty_logs
     install_tmux
+    install_sox
     install_php
     install_edit_birdnet_conf
   fi

@@ -5,6 +5,7 @@ source /etc/birdnet/birdnet.conf
 # Document this run's birdnet.conf settings
 # Make a temporary file to compare the current birdnet.conf with
 # the birdnet.conf as it was the last time this script was called
+my_dir=$(realpath $(dirname $0))
 make_thisrun() {
   sleep .4
   awk '!/#/ && !/^$/ {print}' /etc/birdnet/birdnet.conf \
@@ -76,6 +77,7 @@ run_analysis() {
 
   cd ${HOME}/BirdNET-Lite || exit 1
   for i in "${files[@]}";do
+    echo "${1}/${i}" > ./analyzing_now.txt
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=12
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"
