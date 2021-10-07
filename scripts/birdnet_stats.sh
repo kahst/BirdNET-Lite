@@ -15,7 +15,7 @@ while true;do
  )                      /                     |           (
  "+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"
 EOF
-  if [ "$(find ${EXTRACTED} -name '*.wav' | wc -l &> /dev/null)" -ge 1 ];then
+  if [ "$(find ${EXTRACTED} -name '*.wav' | wc -l)" -ge 1 ] &> /dev/null;then
     a=$( find "${EXTRACTED}" -name '*.wav' \
       | awk -F "/" '{print $NF}' \
       | cut -d'-' -f1 \
@@ -39,19 +39,21 @@ EOF
   echo
   echo "  -$SOFAR species identified so far"
   echo
-  MOST_RECENT="$(find ${EXTRACTED}/By_Date/$(date +%Y-%m-%d) \
-    | sort -t"%" -rk2 \
-    | head -n1 \
-    | cut -d'/' -f8)"
-  AT_TIME="$(find ${EXTRACTED}/By_Date/$(date +%Y-%m-%d) \
-    | sort -t"%" -rk2 \
-    | head -n1 \
-    | rev \
-    | cut -d'-' -f1 \
-    | rev \
-    | cut -d'.' -f1)"
-  echo "  -Most recent species detection: ${MOST_RECENT//_/ } at ${AT_TIME}" 
-  echo
+  if [ "${SOFAR}" -ge "1" ];then
+    MOST_RECENT="$(find ${EXTRACTED}/By_Date/$(date +%Y-%m-%d) \
+      | sort -t"%" -rk2 \
+      | head -n1 \
+      | cut -d'/' -f8)"
+    AT_TIME="$(find ${EXTRACTED}/By_Date/$(date +%Y-%m-%d) \
+      | sort -t"%" -rk2 \
+      | head -n1 \
+      | rev \
+      | cut -d'-' -f1 \
+      | rev \
+      | cut -d'.' -f1)"
+    echo "  -Most recent species detection: ${MOST_RECENT//_/ } at ${AT_TIME}" 
+    echo
+  fi
   if [ ${a} -ge 1 ];then
     while read -r line;do
       
