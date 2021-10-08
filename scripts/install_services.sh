@@ -265,6 +265,22 @@ EOF
   systemctl enable --now avahi-alias@birdstats.local.service
 }
 
+install_spectrogram_service() {
+  cat << EOF > /etc/systemd/system/spectrogram_viewer.service
+[Unit]
+Description=BirdNET BirdSound Extraction
+[Service]
+Restart=always
+RestartSec=10
+Type=simple
+User=pi
+ExecStart=/usr/local/bin/extract_new_birdsounds.sh
+[Install]
+WantedBy=multi-user.target
+EOF
+   systemctl enable --now spectrogram_viewer.service
+}
+
 install_gotty_logs() {
   echo "Installing GoTTY logging"
   if ! which gotty &> /dev/null;then
