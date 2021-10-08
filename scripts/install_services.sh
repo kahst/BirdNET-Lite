@@ -259,7 +259,7 @@ ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(avahi-resolve -4 -n %H
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now avahi-alias@birdnetsystem.local.service
+  systemctl enable --now avahi-alias@birdingpi.local.service
   systemctl enable --now avahi-alias@birdlog.local.service
   systemctl enable --now avahi-alias@extractionlog.local.service
   systemctl enable --now avahi-alias@birdstats.local.service
