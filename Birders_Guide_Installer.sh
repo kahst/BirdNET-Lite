@@ -107,7 +107,7 @@ stage_2() {
   if [ ! -d ${my_dir} ];then
     cd ~ || exit 1
     echo "Cloning the BirdNET-Lite repository in your home directory"
-    git clone -b rpi4 https://github.com/mcguirepr89/BirdNET-Lite.git ~/BirdNET-Lite
+    git clone https://github.com/mcguirepr89/BirdNET-Lite.git ~/BirdNET-Lite
   fi
 
   if [ -f ${my_dir}/Birders_Guide_Installer_Configuration.txt ];then
