@@ -79,6 +79,7 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
   [ -L ${EXTRACTED}/scripts ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts ${EXTRACTED}
+  [ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/spectrogram.* ${EXTRACTED}
 }
  
 install_alsa() {
@@ -196,6 +197,9 @@ ${EXTRACTIONS_URL} {
   basicauth /Processed* {
     birdnet ${HASHWORD}
   }
+  basicauth /scripts* {
+    birdnet ${HASHWORD}
+  }
   basicauth /stream {
     birdnet ${HASHWORD}
   }
@@ -207,6 +211,9 @@ http://birdnetsystem.local {
   root * ${EXTRACTED}
   file_server browse
   basicauth /Processed* {
+    birdnet ${HASHWORD}
+  }
+  basicauth /scripts* {
     birdnet ${HASHWORD}
   }
   basicauth /stream {
@@ -311,12 +318,35 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 9090 --title-format "BirdNET-Lite Statistics" /usr/local/bin/birdnet_stats.sh
+ExecStart=/usr/local/bin/gotty -p 9090 --title-format "BirdNET-Lite Statistics" tmux new -A -s birdstats /usr/local/bin/birdnet_stats.sh
 
 [Install]
 WantedBy=multi-user.target
 EOF
   systemctl enable --now birdstats.service
+}
+
+install_tmux() {
+  echo "Installing tmux dependencies"
+  apt -qqy install libevent-2* \
+    libevent-dev \
+    ncurses-bin \
+    ncurses-base \
+    ncurses-term \
+    libncurses-dev
+
+  cp $(dirname ${my_dir})/templates/tmux.conf /etc/tmux.conf
+}
+
+install_sox() {
+  if which sox &> /dev/null;then
+    echo "Sox is installed"
+  else
+    echo "Installing sox"
+    apt -qq update
+    apt install -y sox
+    echo "Sox installed"
+  fi
 }
 
 install_php() {
@@ -336,6 +366,25 @@ caddy ALL=(ALL) NOPASSWD: ALL
 EOF
     chmod 0440 /etc/sudoers.d/010_caddy-nopasswd
 }
+
+install_edit_birdnet_conf() {
+  cat << EOF > /etc/systemd/system/edit_birdnet_conf.service
+[Unit]
+Description=Edit birdnet.conf
+
+[Service]
+Restart=on-failure
+RestartSec=3
+Type=simple
+User=pi
+Environment=TERM=xterm-256color
+ExecStart=/usr/local/bin/gotty -w -p 9898 --title-format "Edit birdnet.conf" tmux new -A -s editbirdnet nano /home/pi/BirdNET-Lite/birdnet.conf
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
+
 
 install_icecast() {
   if ! which icecast2;then
@@ -443,7 +492,10 @@ install_selected_services() {
     install_Caddyfile
     install_avahi_aliases
     install_gotty_logs
+    install_tmux
+    install_sox
     install_php
+    install_edit_birdnet_conf
   fi
 
   if [ ! -z "${ICE_PWD}" ];then

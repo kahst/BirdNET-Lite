@@ -7,9 +7,12 @@ SCRIPTS=(birdnet_analysis.sh
 birdnet_recording.sh
 birdnet_stats.sh
 cleanup.sh
+clear_all_data.php 
 clear_all_data.sh
 disk_usage.sh
 dump_logs.sh
+edit_birdnet.conf.php
+edit_birdnet.conf.sh
 extract_new_birdsounds.sh
 install_birdnet.sh
 install_config.sh
@@ -31,7 +34,10 @@ restart_extraction.php
 restart_extraction.sh
 restart_services.php
 restart_services.sh
+shutdown_system.php
+shutdown_system.sh
 species_notifier.sh
+tmux
 uninstall.sh
 update_species.sh
 ${HOME}/.gotty)
@@ -51,6 +57,7 @@ birdstats.service
 birdterminal.service
 caddy.d
 caddy.service
+edit_birdnet_conf.service
 extraction_log.service
 extraction.d
 extraction.service
@@ -89,8 +96,8 @@ remove_icecast() {
 
 remove_scripts() {
   for i in "${SCRIPTS[@]}";do
-    if [ -L "${i}" ];then
-      sudo rm -v "${i}"
+    if [ -L "/usr/local/bin/${i}" ];then
+      sudo rm -v "/usr/local/bin/${i}"
     fi
   done
 }
