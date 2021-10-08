@@ -46,7 +46,6 @@ install_deps() {
 }
 
 install_birdnet() {
-  set -xe
   cd ~/BirdNET-Lite || exit 1
   echo "Upgrading pip, wheel, and setuptools"
   sudo pip3 install --upgrade pip wheel setuptools
@@ -62,7 +61,6 @@ install_birdnet() {
   sudo pip3 install colorama==0.4.4
   echo "Installing librosa"
   sudo pip3 install librosa
-  set +x
 }
 
 read -sp "\
