@@ -185,7 +185,7 @@ install_caddy() {
 install_Caddyfile() {
   echo "Installing the Caddyfile"
   [ -d /etc/caddy ] || mkdir /etc/caddy
-  cp $(dirname ${my_dir})/templates/index.html ${EXTRACTED}/
+  sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/index.html ${EXTRACTED}/
   if [ -f /etc/caddy/Caddyfile ];then
     cp /etc/caddy/Caddyfile{,.original}
   fi
