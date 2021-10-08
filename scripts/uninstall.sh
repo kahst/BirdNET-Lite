@@ -105,5 +105,5 @@ remove_scripts() {
 remove_services
 remove_scripts
 if [ -d /etc/birdnet ];then sudo rm -drf /etc/birdnet;fi
-if [ -f ${HOME}/BirdNET-Lite/birdnet.conf ];then sudo rm -f ${HOME}/BirdNET-Lite/birdnet.conf;fi
+if [ -f ${HOME}/Birding-Pi/birdnet.conf ];then sudo rm -f ${HOME}/Birding-Pi/birdnet.conf;fi
 echo "Uninstall finished. Remove this directory with 'rm -drfv' to finish."

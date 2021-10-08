@@ -298,7 +298,7 @@ REMOTE_RECS_DIR=${REMOTE_RECS_DIR}
 
 ## EXTRACTIONS_URL is the URL where the extractions, data-set, and live-stream
 ## will be web-hosted. If you do not own a domain, or would just prefer to keep 
-## BirdNET-Lite on your local network, you can set this to http://localhost.
+## Birding-Pi on your local network, you can set this to http://localhost.
 ## Setting this (even to http://localhost) will also allow you to enable the   
 ## GoTTY web logging features below.
 
@@ -345,10 +345,10 @@ PUSHED_APP_SECRET=${PUSHED_APP_SECRET}
 #            Keep this EMPTY if you do not want to install NoMachine.          #
 
 ## INSTALL_NOMACHINE is simply a setting that can be enabled to install
-## NoMachine alongside the BirdNET-Lite for remote desktop access. This in-
+## NoMachine alongside the Birding-Pi for remote desktop access. This in-
 ## staller assumes personal use. Please reference the LICENSE file included
 ## in this repository for more information.
-## Set this to Y or y to install NoMachine alongside the BirdNET-Lite
+## Set this to Y or y to install NoMachine alongside the Birding-Pi
 
 INSTALL_NOMACHINE=${INSTALL_NOMACHINE}
 
@@ -388,7 +388,7 @@ EXTRACTED=${RECS_DIR}/Extracted
 ## change this variable between data-sets to preserve records of disparate
 ## data-sets according to name.
 
-IDFILE=${HOME}/BirdNET-Lite/IdentifiedSoFar.txt
+IDFILE=${HOME}/Birding-Pi/IdentifiedSoFar.txt
 
 ## OVERLAP is the value in seconds which BirdNET should use when analyzing
 ## the data. The values must be between 0.0-2.9.
@@ -444,7 +444,7 @@ EOF
   sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf
 }
 
-# Checks for a birdnet.conf file in the BirdNET-Lite directory for a 
+# Checks for a birdnet.conf file in the Birding-Pi directory for a 
 # non-interactive installation. Otherwise,the installation is interactive.
 if [ -f ${BIRDNET_CONF} ];then
   source ${BIRDNET_CONF}

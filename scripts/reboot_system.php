@@ -1,4 +1,4 @@
 <?php
-shell_exec("/home/pi/BirdNET-Lite/scripts/reboot_system.sh");
-header('Location: http://birdnetsystem.local/scripts/index.html?success=true');
+shell_exec("/home/pi/Birding-Pi/scripts/reboot_system.sh");
+header('Location: http://birdingpi.local/scripts/index.html?success=true');
 ?>

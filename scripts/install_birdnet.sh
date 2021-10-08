@@ -7,7 +7,7 @@ trap '${my_dir}/dump_logs.sh && echo -e "\n\nExiting the installation. Goodbye!"
 cd $my_dir || exit 1
 
 if [ "$(uname -m)" != "aarch64" ];then
-  echo "BirdNET-Lite requires a 64-bit OS.
+  echo "Birding-Pi requires a 64-bit OS.
 It looks like your operating system is using $(uname -m), 
 but would need to be aarch64.
 Please take a look at https://birdnetwiki.pmcgui.xyz for more
@@ -46,7 +46,7 @@ install_deps() {
 }
 
 install_birdnet() {
-  cd ~/BirdNET-Lite || exit 1
+  cd ~/Birding-Pi || exit 1
   echo "Upgrading pip, wheel, and setuptools"
   sudo pip3 install --upgrade pip wheel setuptools
   echo "Fetching the TFLite pre-built binaries"
@@ -65,7 +65,7 @@ install_birdnet() {
 
 read -sp "\
 Be sure you have read the software license before installing. This is
-available in the BirdNET-Lite directory as "LICENSE"
+available in the Birding-Pi directory as "LICENSE"
 If you DO NOT want to install BirdNET and the birdnet_analysis.service, 
 press Ctrl+C to cancel. If you DO wish to install BirdNET and the 
 birdnet_analysis.service, press ENTER to continue with the installation."
@@ -94,13 +94,13 @@ echo "	BirdNet is installed!!
   http://birdnetsystem.local to see your extractions,
   http://birdlog.local to see the log output of the birdnet_analysis.service,
   http://extractionlog.local to see the log output of the extraction.service, and
-  http://birdstats.local to see the BirdNET-Lite Report"
+  http://birdstats.local to see the Birding-Pi Report"
 echo
 read -n1 -p "  Would you like to run the birdnet_analysis.service now?" YN
 echo
 case $YN in
   [Yy] ) sudo systemctl start birdnet_analysis.service \
     && journalctl -fu birdnet_analysis;;
-* ) echo "  Thanks for installing BirdNET-Lite!!
+* ) echo "  Thanks for installing Birding-Pi!!
   I hope it was helpful!";;
 esac
