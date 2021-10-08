@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>BirdNET-Lite System</title>
+		<title>Birding Pi</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -46,7 +46,19 @@ header {
 }
 
 h1 {
-	font-size: 20px;
+	font-size: 24px;
+	font-weight: normal;
+	white-space: nowrap;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	color: #999;
+}
+
+h2 {
+	padding-left: 5%;
+	font-size: 18px;
+    margin-bottom: 10px;
+    margin-top: 10px;
 	font-weight: normal;
 	white-space: nowrap;
 	overflow-x: hidden;
@@ -128,12 +140,13 @@ td {
 }
 
 td:nth-child(2) {
-	width: 80%;
+	width: 100%;
 }
 
 td:nth-child(3),
 th:nth-child(3) {
-	padding: 0 20px 0 20px;
+	#padding: 0 20px 0 20px;
+	width: 0px;
 }
 
 th:nth-child(4),
@@ -269,9 +282,9 @@ footer {
 					<path d="M285.22 37.55h-142.6L110.9 0H31.7C14.25 0 0 16.9 0 37.55v75.1h316.92V75.1c0-20.65-14.26-37.55-31.7-37.55z" fill="#FFA000"/>
 					<path d="M285.22 36H31.7C14.25 36 0 50.28 0 67.74v158.7c0 17.47 14.26 31.75 31.7 31.75H285.2c17.44 0 31.7-14.3 31.7-31.75V67.75c0-17.47-14.26-31.75-31.7-31.75z" fill="#FFCA28"/>
 				</g>
-				<g id="folder-shortcut" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-					<g id="folder-shortcut-group" fill-rule="nonzero">
-						<g id="folder-shortcut-shape">
+				<g id="folder" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+					<g id="folder-group" fill-rule="nonzero">
+						<g id="folder-shape">
 							<path d="M285.224876,37.5486902 L142.612438,37.5486902 L110.920785,0 L31.6916529,0 C14.2612438,0 0,16.8969106 0,37.5486902 L0,112.646071 L316.916529,112.646071 L316.916529,75.0973805 C316.916529,54.4456008 302.655285,37.5486902 285.224876,37.5486902 Z" id="Shape" fill="#FFA000"></path>
 							<path d="M285.224876,36 L31.6916529,36 C14.2612438,36 0,50.2838568 0,67.7419039 L0,226.451424 C0,243.909471 14.2612438,258.193328 31.6916529,258.193328 L285.224876,258.193328 C302.655285,258.193328 316.916529,243.909471 316.916529,226.451424 L316.916529,67.7419039 C316.916529,50.2838568 302.655285,36 285.224876,36 Z" id="Shape" fill="#FFCA28"></path>
 						</g>
@@ -308,33 +321,31 @@ footer {
 
 		<header>
 			<h1>
-				<a href="">BirdNET-Lite System</a>
+				<a href="">Birding Pi (BirdNET-Lite)</a>
 			</h1>
 		</header>
+      <hr>
+			<h2>
+				<a href="./stream">
+					<span class="name">🔊 Live Audio Stream</span>
+				</a>
+			</h2>
+      <hr>
+			<h2>
+				<a href="http://birdnetsystem.local:9090">
+					<span class="name">🐦 BirdNET-system Report</span>
+				</a>
+			</h2>
+      <hr>
 		<main>
-			<div class="meta">
-				<div id="summary">
-					<span class="meta-item"><b>5</b> directories</span>
-					<span class="meta-item"><b>1</b> file</span>
-					<span class="meta-item"><input type="text" placeholder="filter" id="filter" onkeyup='filter()'></span>
-				</div>
-			</div>
 			<div class="listing">
 				<table aria-describedby="summary">
 					<thead>
 					<tr>
 						<th></th>
 						<th>
-							<a href="?sort=namedirfirst&order=desc" class="icon"><svg width="1em" height=".5em" version="1.1" viewBox="0 0 12.922194 6.0358899"><use xlink:href="#up-arrow"></use></svg></a>
-							<a href="?sort=name&order=asc">Name</a>
+							<a href="?sort=name&order=asc">Extractions</a>
 						</th>
-						<th>
-							<a href="?sort=size&order=asc">Size</a>
-						</th>
-						<th class="hideable">
-							<a href="?sort=time&order=asc">Modified</a>
-						</th>
-						<th class="hideable"></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -346,9 +357,6 @@ footer {
 								<span class="name">By_Common_Name</span>
 							</a>
 						</td>
-						<td data-order="-1">&mdash;</td>
-						<td class="hideable"><time datetime="2021-10-03T23:13:48Z">10/03/2021 11:13:48 PM +00:00</time></td>
-						<td class="hideable"></td>
 					</tr>
 					<tr class="file">
 						<td></td>
@@ -358,9 +366,6 @@ footer {
 								<span class="name">By_Date</span>
 							</a>
 						</td>
-						<td data-order="-1">&mdash;</td>
-						<td class="hideable"><time datetime="2021-10-03T23:13:48Z">10/03/2021 11:13:48 PM +00:00</time></td>
-						<td class="hideable"></td>
 					</tr>
 					<tr class="file">
 						<td></td>
@@ -370,45 +375,61 @@ footer {
 								<span class="name">By_Scientific_Name</span>
 							</a>
 						</td>
-						<td data-order="-1">&mdash;</td>
-						<td class="hideable"><time datetime="2021-10-03T23:13:48Z">10/03/2021 11:13:48 PM +00:00</time></td>
-						<td class="hideable"></td>
 					</tr>
 					<tr class="file">
 						<td></td>
 						<td>
 							<a href="./Processed/">
-								<svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder-shortcut"></use></svg>
+								<svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder"></use></svg>
 								<span class="name">Processed</span>
 							</a>
 						</td>
-						<td data-order="-1">&mdash;</td>
-						<td class="hideable"><time datetime="2021-10-03T23:23:16Z">10/03/2021 11:23:16 PM +00:00</time></td>
-						<td class="hideable"></td>
 					</tr>
+					</tbody>
+					<thead>
+					<tr>
+						<th></th>
+						<th>
+							<a href="?sort=name&order=asc">Tools</a>
+						</th>
+					</tr>
+					</thead>
+
 					<tr class="file">
 						<td></td>
 						<td>
 							<a href="./scripts/">
-								<svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder-shortcut"></use></svg>
-								<span class="name">scripts</span>
+								<svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder"></use></svg>
+								<span class="name">🗎 scripts</span>
 							</a>
 						</td>
-						<td data-order="-1">&mdash;</td>
-						<td class="hideable"><time datetime="2021-10-03T23:13:48Z">10/03/2021 11:13:48 PM +00:00</time></td>
-						<td class="hideable"></td>
 					</tr>
 					<tr class="file">
 						<td></td>
 						<td>
-							<a href="./stream">
-								<svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323"><use xlink:href="#file"></use></svg>
-								<span class="name">stream</span>
+							<a href="http://birdnetsystem.local:8080">
+								<svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder"></use></svg>
+								<span class="name">⚙ birdlog</span>
 							</a>
 						</td>
-						<td data-order="0">0 B</td>
-						<td class="hideable"><time datetime="2021-10-03T23:29:52Z">10/03/2021 11:29:52 PM +00:00</time></td>
-						<td class="hideable"></td>
+					</tr>
+					<tr class="file">
+						<td></td>
+						<td>
+							<a href="http://birdnetsystem.local:8888">
+								<svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder"></use></svg>
+								<span class="name">⚝ extractionlog</span>
+							</a>
+						</td>
+					</tr>
+					<tr class="file">
+						<td></td>
+						<td>
+							<form action="/spectrogram.php">
+                                                    	    <input type="submit" value="Spectrogram View">
+							</form>
+
+						</td>
 					</tr>
 					</tbody>
 				</table>
