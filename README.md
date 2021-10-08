@@ -14,7 +14,7 @@ The Birding Pi project is based on the BirdNet-Lite project and is able to recog
 ## Installation
 The system can be installed with:
 ```
-curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Lite/rpi4/Birders_Guide_Installer.sh | bash
+curl -s https://raw.githubusercontent.com/mcguirepr89/Birding-Pi/rpi4/Birders_Guide_Installer.sh | bash
 ```
 
 The script first enables and configures the zRAM kernel module for swapping, and reboots. 
