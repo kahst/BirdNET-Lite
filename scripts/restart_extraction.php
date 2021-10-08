@@ -1,4 +1,4 @@
 <?php
-shell_exec("/home/pi/BirdNET-Lite/scripts/restart_extraction.sh");
-header('Location: http://birdnetsystem.local/scripts/index.html?success=true');
+shell_exec("/home/pi/Birding-Pi/scripts/restart_extraction.sh");
+header('Location: http://birdingpi.local/scripts/index.html?success=true');
 ?>

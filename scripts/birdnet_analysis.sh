@@ -22,7 +22,7 @@ if ! diff ${LAST_RUN} ${THIS_RUN};then
   done
 fi
 
-CUSTOM_LIST="/home/pi/BirdNET-Lite/custom_species_list.txt"
+CUSTOM_LIST="/home/pi/Birding-Pi/custom_species_list.txt"
 
 # Create an array of the audio files
 # Takes one argument:
@@ -75,7 +75,7 @@ run_analysis() {
     WEEK="$(echo "${WEEK_OF_YEAR} + 4" |bc -l)"
   fi
 
-  cd ${HOME}/BirdNET-Lite || exit 1
+  cd ${HOME}/Birding-Pi || exit 1
   for i in "${files[@]}";do
     echo "${1}/${i}" > ./analyzing_now.txt
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=12

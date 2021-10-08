@@ -10,7 +10,7 @@ gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_a
 CONFIG_FILE="$(dirname ${my_dir})/birdnet.conf"
 
 install_scripts() {
-  echo "Installing BirdNET-Lite scripts to /usr/local/bin"
+  echo "Installing Birding-Pi scripts to /usr/local/bin"
   ln -sf ${my_dir}/* /usr/local/bin/
   rm /usr/local/bin/index.html
 }
@@ -207,7 +207,7 @@ ${EXTRACTIONS_URL} {
   php_fastcgi unix//run/php/php7.3-fpm.sock
 }
 
-http://birdnetsystem.local {
+http://birdingpi.local {
   root * ${EXTRACTED}
   file_server browse
   basicauth /Processed* {
@@ -284,7 +284,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Lite Log" journalctl -fu birdnet_analysis.service
+ExecStart=/usr/local/bin/gotty -p 8080 --title-format "Birding-Pi Log" journalctl -fu birdnet_analysis.service
 
 [Install]
 WantedBy=multi-user.target
@@ -318,7 +318,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 9090 --title-format "BirdNET-Lite Statistics" tmux new -A -s birdstats /usr/local/bin/birdnet_stats.sh
+ExecStart=/usr/local/bin/gotty -p 9090 --title-format "Birding-Pi Statistics" tmux new -A -s birdstats /usr/local/bin/birdnet_stats.sh
 
 [Install]
 WantedBy=multi-user.target
@@ -378,7 +378,7 @@ RestartSec=3
 Type=simple
 User=pi
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -w -p 9898 --title-format "Edit birdnet.conf" tmux new -A -s editbirdnet nano /home/pi/BirdNET-Lite/birdnet.conf
+ExecStart=/usr/local/bin/gotty -w -p 9898 --title-format "Edit birdnet.conf" tmux new -A -s editbirdnet nano /home/pi/Birding-Pi/birdnet.conf
 
 [Install]
 WantedBy=multi-user.target
@@ -418,7 +418,7 @@ install_livestream_service() {
   echo "Installing Live Stream service"
   cat << EOF > /etc/systemd/system/livestream.service
 [Unit]
-Description=BirdNET-Lite Live Stream
+Description=Birding-Pi Live Stream
 
 [Service]
 Environment=XDG_RUNTIME_DIR=/run/user/1000

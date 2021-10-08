@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>BirdNET-Lite System</title>
+		<title>Birding Pi</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -46,7 +46,19 @@ header {
 }
 
 h1 {
-	font-size: 20px;
+	font-size: 24px;
+	font-weight: normal;
+	white-space: nowrap;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	color: #999;
+}
+
+h2 {
+	padding-left: 5%;
+	font-size: 18px;
+    margin-bottom: 10px;
+    margin-top: 10px;
 	font-weight: normal;
 	white-space: nowrap;
 	overflow-x: hidden;
@@ -319,19 +331,22 @@ footer {
 
 		<header>
 			<h1>
-				<a href="">BirdNET-Lite System</a>
+				<a href="">Birding Pi (BirdNET-Lite)</a>
 			</h1>
 		</header>
+      <hr>
 			<h2>
 				<a href="./stream">
-					<span class="name">Live Audio Stream</span>
+					<span class="name">🔊 Live Audio Stream</span>
 				</a>
 			</h2>
+      <hr>
 			<h2>
 				<a href="http://birdnetsystem.local:9090">
-					<span class="name">BirdNET-system Report</span>
+					<span class="name">🐦 BirdNET-system Report</span>
 				</a>
 			</h2>
+      <hr>
 		<main>
 			<div class="listing">
 				<table aria-describedby="summary">
@@ -395,7 +410,7 @@ footer {
 						<td>
 							<a href="./scripts/">
 								<svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder"></use></svg>
-								<span class="name">scripts</span>
+								<span class="name">🗎 scripts</span>
 							</a>
 						</td>
 					</tr>
@@ -404,7 +419,7 @@ footer {
 						<td>
 							<a href="http://birdnetsystem.local:8080">
 								<svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder"></use></svg>
-								<span class="name">birdlog</span>
+								<span class="name">⚙ birdlog</span>
 							</a>
 						</td>
 					</tr>
@@ -413,7 +428,7 @@ footer {
 						<td>
 							<a href="http://birdnetsystem.local:8888">
 								<svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder"></use></svg>
-								<span class="name">extractionlog</span>
+								<span class="name">⚝ extractionlog</span>
 							</a>
 						</td>
 					</tr>
