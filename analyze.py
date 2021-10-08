@@ -201,7 +201,7 @@ def main():
 
     # Parse passed arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--i', help='Path to input folder. All the nested folders will also be processed.')
+    parser.add_argument('--i', help='Path to input folder/input file. All the nested folders will also be processed.')
     parser.add_argument('--o', default='result.csv', help='Path to output folder. By default results are written into the input folder.')
     parser.add_argument('--lat', type=float, default=-1, help='Recording location latitude. Set -1 to ignore.')
     parser.add_argument('--lon', type=float, default=-1, help='Recording location longitude. Set -1 to ignore.')
@@ -219,20 +219,35 @@ def main():
     
     dataset = parseTestSet(args.i, args.filetype)
 
-    if len(dataset) > 0:
-        # Load custom species list
-        if not args.custom_list == '':
-            WHITE_LIST = loadCustomSpeciesList(args.custom_list)
-        else:
-            WHITE_LIST = []
+    # Load custom species list
+    if not args.custom_list == '':
+        WHITE_LIST = loadCustomSpeciesList(args.custom_list)
+    else:
+        WHITE_LIST = []
 
-        # Write detections to output file
-        min_conf = max(0.01, min(args.min_conf, 0.99))
-        
-        # Process audio data and get detections
-        week = max(1, min(args.week, 48))
-        sensitivity = max(0.5, min(1.0 - (args.sensitivity - 1.0), 1.5))
+    # Write detections to output file
+    min_conf = max(0.01, min(args.min_conf, 0.99))
 
+    # Process audio data and get detections
+    week = max(1, min(args.week, 48))
+    sensitivity = max(0.5, min(1.0 - (args.sensitivity - 1.0), 1.5))
+
+    if len(dataset) == 1:
+        try:
+            datafile = dataset
+            audioData = readAudioData(datafile, args.overlap)
+            detections = analyzeAudioData(audioData, args.lat, args.lon, week, sensitivity, args.overlap, interpreter)
+            directory, filename = datafile.rsplit('/', 1)
+            if args.o == 'result.csv':
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                output_file = '.'.join((datafile.rsplit('.', 1)[0], 'csv'))
+            else:
+                output_file = '{}/{}.csv'.format(args.o.strip('/', 1), filename.rsplit('.', 1)[0])
+            writeResultsToFile(detections, min_conf, output_file)
+        except:
+            print("Error processing file: {}".format(datafile)) 	
+    elif len(dataset) > 0:
         for datafile in dataset:
             try:
                 # Read audio data
