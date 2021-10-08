@@ -268,13 +268,13 @@ EOF
 install_spectrogram_service() {
   cat << EOF > /etc/systemd/system/spectrogram_viewer.service
 [Unit]
-Description=BirdNET BirdSound Extraction
+Description=Birding-Pi Spectrogram Viewer
 [Service]
 Restart=always
 RestartSec=10
 Type=simple
 User=pi
-ExecStart=/usr/local/bin/extract_new_birdsounds.sh
+ExecStart=/usr/local/bin/spectrogram.sh
 [Install]
 WantedBy=multi-user.target
 EOF
