@@ -7,7 +7,7 @@ sudo rm -rf ${RECS_DIR}/$(date +%B-%Y/%d-%A)/*
 sudo systemctl start birdnet_recording.service
 
 SERVICES=(avahi-alias@birdlog.local.service
-avahi-alias@birdnetsystem.local.service
+avahi-alias@birdingpi.local.service
 avahi-alias@birdstats.local.service
 avahi-alias@extractionlog.local.service
 birdnet_analysis.service
