@@ -53,8 +53,8 @@ You can run BirdNET via the command line. You can add a few parameters that affe
 The input parameters include:
 
 ```
---i, Path to input file.
---o, Path to output file. Defaults to result.csv.
+--i, Path to input folder. All the nested folders will also be processed.
+--o, Path to output folder. By default results are written into the input folder.
 --lat, Recording location latitude. Set -1 to ignore.
 --lon, Recording location longitude. Set -1 to ignore.
 --week, Week of the year when the recording was made. Values in [1, 48] (4 weeks per month). Set -1 to ignore.
@@ -62,6 +62,7 @@ The input parameters include:
 --sensitivity, Detection sensitivity; Higher values result in higher sensitivity. Values in [0.5, 1.5]. Defaults to 1.0.
 --min_conf, Minimum confidence threshold. Values in [0.01, 0.99]. Defaults to 0.1.
 --custom_list, Path to text file containing a list of species. Not used if not provided.
+--filetype, Filetype of soundscape recordings. Defaults to 'wav'.
 ```
 
 Note: A custom species list needs to contain one species label per line. Take a look at the `model/label.txt` for the correct species label. Only labels from this text file are valid. You can find an example of a valid custom list in the 'example' folder.

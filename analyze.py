@@ -201,8 +201,8 @@ def main():
 
     # Parse passed arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--i', help='Path to input file.')
-    parser.add_argument('--o', default='result.csv', help='Path to output file. Defaults to result.csv.')
+    parser.add_argument('--i', help='Path to input folder. All the nested folders will also be processed.')
+    parser.add_argument('--o', default='result.csv', help='Path to output folder. By default results are written into the input folder.')
     parser.add_argument('--lat', type=float, default=-1, help='Recording location latitude. Set -1 to ignore.')
     parser.add_argument('--lon', type=float, default=-1, help='Recording location longitude. Set -1 to ignore.')
     parser.add_argument('--week', type=int, default=-1, help='Week of the year when the recording was made. Values in [1, 48] (4 weeks per month). Set -1 to ignore.')
