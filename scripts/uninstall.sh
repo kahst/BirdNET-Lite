@@ -37,6 +37,8 @@ restart_services.sh
 shutdown_system.php
 shutdown_system.sh
 species_notifier.sh
+spectrogram.php
+spectrogram.sh
 tmux
 uninstall.sh
 update_species.sh
@@ -63,6 +65,7 @@ extraction.d
 extraction.service
 extraction.timer
 livestream.service
+spectrogram_viewer.service
 ${SYSTEMD_MOUNT})
 
 remove_services() {
