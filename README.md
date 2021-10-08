@@ -4,38 +4,50 @@
 A realtime acoustic bird classification system for the Reaspberry Pi 4B
 
 ## Inroduction
-The birding pi project is based on the BirdNet-Lite project and is able to recognize bird sounds from the microphne and the sound card in realtime. The system installs all needed services on the rasperi pi. 
+The Birding Pi project is based on the BirdNet-Lite project and is able to recognize bird sounds from the microphone and the sound card in realtime. The system installs all needed services on the Raspberry Pi. 
 
 ## Requirements
 * A Raspberry Pi 4B
-* A SD Card with the 64-bit version of Raspberi OS installed (download link)
+* A SD Card with the 64-bit version of RaspiOS installed [(download the latest here)](https://downloads.raspberrypi.org/raspios_arm64/images/)
 * A USB Microphone or Sound Card
 
 ## Installation
 The system can be installed with:
+```
+curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Lite/rpi4/Birders_Guide_Installer.sh | bash
+```
 
-`curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Lite/rpi4/Birders_Guide_Installer.sh | bash`
+The script first enables and configures the zRAM kernel module for swapping, and reboots. 
+After the reboot, the configuration file is opened for editing. Here, you will input your latitude and longitude and will set two passwords to protect your Pi. When in installation has finished, the Birding Pi is ready to start collecting and analyzing data on the next boot. 
 
-The script installs the `Birding-Pi` system in the Home folder and restartes the system. Also the geo coordinates are required to fullfil the configuration file including some passowrds. Restart the rasperry pi anter the installer script has finished. If you have trouble with the installation script you can restart the installation at any time while running the script again `~/Birding-Pi/Birders_Guide_installer.sh`.
+If you have trouble with the installation script, you can cancel and rerun the installer:
+```
+~/Birding-Pi/Birders_Guide_installer.sh
+```
 
 ## Access
-The Birding Pi system can be accessed with the webbrowser:
+The Birding Pi system can be accessed from any the web browser on the same network:
+- http://birdnetsystem.local
 
-```http://birdnetsystem.local```
+#### Access Credentials:
+- Username:`birdnet`
+- Password: The "CADDY_PWD" password you set during installation 
 
 ## Uninstallation
-`/usr/local/bin/uninstall.sh && cd ~ && rm -drf Birding-Pi`
+```
+/usr/local/bin/uninstall.sh && cd ~ && rm -drf Birding-Pi
+```
 
 ## ToDo, Notes, and Comming Soon 
 
 ### Internationalisation:
-The bird names are by default in english, but there are also localozed versions availabe. Please download the labels_l18n.zip file and replace the `model/labels.txt` with the corresponding language.
+The bird names are in English by default, but other localized versions are available. Please download the labels_l18n.zip file and replace the `model/labels.txt` with the corresponding language.
 
 ### Tips:
-You try to overclock your raspery with:
+You can try to overclock your Pi by placing the following in your `/boot/config.txt` file:
 
 ```
 over_voltage=6
 arm_freq=1750
 ```
-But be aware of the stabillity and the power consumption.
+Be sure the Pi is adequately cooled and powered. Check http://birdnetsystem.local:9090 for CPU temperature and over-volatage warnings (anything other than "throttled:0x0" is bad).
