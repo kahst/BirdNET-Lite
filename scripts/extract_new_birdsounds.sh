@@ -3,12 +3,13 @@
 #set -x
 set -e
 # Keep track of the last executed command
-trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-# Echo an error message before exiting
-trap 'echo "\"${last_command}\" command exited with code $?."' EXIT
+#trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+## Echo an error message before exiting
+#trap 'echo "\"${last_command}\" command exited with code $?."' EXIT
 # Remove temporary file
 trap 'rm -f $TMPFILE' EXIT
 source /etc/birdnet/birdnet.conf
+[ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=12
 
 # Set Variables
 TMPFILE=$(mktemp)
@@ -73,7 +74,7 @@ for h in "${SCAN_DIRS[@]}";do
     START="$(echo "${line}" | awk -F\; '!/birdnet/{print $1}')" 
     END="$(echo "${line}" | awk -F\; '!/birdnet/{print $2}')" 
     COMMON_NAME=""$(echo ${line} \
-            | awk -F\; '!/birdnet/{print $4}')""
+            | awk -F\; '!/birdnet/{print $4}'|tr -d "'")""
     SCIENTIFIC_NAME=""$(echo ${line} \
             | awk -F\; '!/birdnet/{print $3}')""
     CONFIDENCE=""$(echo ${line} \
@@ -115,10 +116,10 @@ for h in "${SCAN_DIRS[@]}";do
 
     # If there are already 20 extracted entries for a given species
     # for today, remove the oldest file and create the new one.
-   # if [[ "$(find ${NEWSPECIES_BYDATE} | wc -l)" -ge 21 ]];then
+   # if [[ "$(find ${NEWSPECIES_BYDATE} | wc -l)" -ge 20 ]];then
    #   echo "20 ${SPECIES}s, already! Removing the oldest by-date and making a new one"
    #   cd ${NEWSPECIES_BYDATE} || exit 1
-   #   ls -1t . | tail -n +21 | xargs -r rm -vv
+   #   ls -1t . | tail -n +20 | xargs -r rm -vv
    # fi   
 
     echo "Extracting audio . . . "
@@ -127,34 +128,48 @@ for h in "${SCAN_DIRS[@]}";do
     # structured by-species, symbolic links are made to populate the new 
     # directory.
 
-    ### TESTING longer extraction context
+    # This section sets the SPACER that will be used to pad the audio clip with
+    # context. If EXTRACTION_LENGTH is 10, for instance, 3 seconds are removed
+    # from that value and divided by 2, so that the 3 seconds of the call are
+    # within 3.5 seconds of audio context before and after.
     [ -z ${EXTRACTION_LENGTH} ] && EXTRACTION_LENGTH=6
     SPACER=$(echo "scale=1;(${EXTRACTION_LENGTH} - 3 )/2" |bc -l) 
     START=$(echo "scale=1;${START} - ${SPACER}"|bc -l)
     END=$(echo "scale=1;${END} + ${SPACER}"|bc -l)
     
-    if (( $(echo "scale=1;${START} < 1" | bc -l) ));then START=0;fi
-    if (( $(echo "scale=1;${END} > ${RECORDING_LENGTH}" | bc -l) ));then END=${RECORDING_LENGTH};fi
+    # If the SPACER would have the START value less that 0, start at the
+    # beginning of the audio file. If the SPACER would make the END value
+    # exceed the end of the audio file, end the extraction at the end of the
+    # audio file.
+    if (( $(echo "${START} < 1" | bc -l) ));then START=0;fi
+    if (( $(echo "${END} > ${RECORDING_LENGTH}" | bc -l) ));then END=${RECORDING_LENGTH};fi
 
     ffmpeg -hide_banner -loglevel error -nostdin -i "${h}/${OLDFILE}" \
       -acodec copy -ss "${START}" -to "${END}"\
         "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"
-    if [[ "$(find ${NEWSPECIES_BY_COMMON} | wc -l)" -ge 21 ]];then
+
+
+    # Remove the oldest symbolic links that would made the directory have more
+    # than 20 entries.
+    if [[ "$(find ${NEWSPECIES_BY_COMMON} | wc -l)" -ge 20 ]];then
       echo "20 ${SPECIES}s, already! Removing the oldest by-species and making a new one"
       cd ${NEWSPECIES_BY_COMMON} || exit 1
-      ls -1t . | tail -n +21 | xargs -r rm -vv
+      ls -1t . | tail -n +20 | xargs -r rm -vv
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
         "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}"
       echo "Success! New extraction for ${COMMON_NAME}"
     else
+    # Make symbolic link of the extraction to add to By_Common_Name
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
         "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}"
     fi   
 
-    if [[ "$(find ${NEWSPECIES_BY_SCIENCE} | wc -l)" -ge 21 ]];then
+    # Remove the oldest symbolic links that would made the directory have more
+    # than 20 entries.
+    if [[ "$(find ${NEWSPECIES_BY_SCIENCE} | wc -l)" -ge 20 ]];then
       echo "20 ${SPECIES}s, already! Removing the oldest by-species and making a new one"
       cd ${NEWSPECIES_BY_SCIENCE} || exit 1
-      ls -1t . | tail -n +21 | xargs -r rm -vv
+      ls -1t . | tail -n +20 | xargs -r rm -vv
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
         "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}"
       echo "Success! New extraction for ${COMMON_NAME}"

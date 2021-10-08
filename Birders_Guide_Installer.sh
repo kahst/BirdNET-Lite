@@ -107,7 +107,7 @@ stage_2() {
   if [ ! -d ${my_dir} ];then
     cd ~ || exit 1
     echo "Cloning the BirdNET-Lite repository in your home directory"
-    git clone -b rpi4 https://github.com/mcguirepr89/BirdNET-Lite.git ~/BirdNET-Lite
+    git clone https://github.com/mcguirepr89/BirdNET-Lite.git ~/BirdNET-Lite
   fi
 
   if [ -f ${my_dir}/Birders_Guide_Installer_Configuration.txt ];then
@@ -116,8 +116,13 @@ stage_2() {
     echo "Follow the instructions to fill out the LATITUDE and LONGITUDE variables
 and set the passwords for the live audio stream. Save the file after editing
 and then close the Mouse Pad editing window to continue."
-    mousepad ${my_dir}/Birders_Guide_Installer_Configuration.txt &> /dev/null
-    while pgrep mouse &> /dev/null;do
+    if ( env | grep SSH_CONNECTION &> /dev/null );then
+      editor=nano
+    else
+      editor=mousepad
+    fi
+    $editor ${my_dir}/Birders_Guide_Installer_Configuration.txt &> /dev/null
+    while pgrep $editor &> /dev/null;do
       sleep 1
     done
     source ${my_dir}/Birders_Guide_Installer_Configuration.txt || exit 1
