@@ -273,7 +273,7 @@ Description=Birding-Pi Spectrogram Viewer
 Restart=always
 RestartSec=10
 Type=simple
-User=pi
+User=${USER}
 ExecStart=/usr/local/bin/spectrogram.sh
 [Install]
 WantedBy=multi-user.target
@@ -511,6 +511,7 @@ install_selected_services() {
     install_tmux
     install_sox
     install_php
+    install_spectrogram_service
     install_edit_birdnet_conf
   fi
 
