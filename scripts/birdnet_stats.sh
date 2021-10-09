@@ -74,7 +74,7 @@ EOF
       MAX_SCORE="$(echo "${MAX_SCORE[@]}" | rev |cut -d"-" -f1|rev | sort -r | head -n1)"
     
       # Set noun-plurality agreement for grammar
-      DETECTIONS="$(ls -1 ${EXTRACTED}/By_Date/*/${SPECIES} | wc -l)"
+      DETECTIONS="$(($(ls -1 ${EXTRACTED}/By_Date/*/${SPECIES} | wc -l)/2))"
       if [ ${DETECTIONS} = 1 ];then
         verbage=detection
       else
