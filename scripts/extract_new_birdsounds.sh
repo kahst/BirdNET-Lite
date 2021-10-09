@@ -148,34 +148,49 @@ for h in "${SCAN_DIRS[@]}";do
       -acodec copy -ss "${START}" -to "${END}"\
         "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"
 
-
-    # Remove the oldest symbolic links that would made the directory have more
+    # Create spectrogram for extraction
+    set -x
+    sox "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}" -n spectrogram \
+      -t "${COMMON_NAME}" \
+      -c "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}" \
+      -o "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"
+    set +x
+    
+    # Remove the oldest symbolic links that would make the directory have more
     # than 20 entries.
-    if [[ "$(find ${NEWSPECIES_BY_COMMON} | wc -l)" -ge 20 ]];then
+    if [[ "$(find ${NEWSPECIES_BY_COMMON} | wc -l)" -ge 40 ]];then
       echo "20 ${SPECIES}s, already! Removing the oldest by-species and making a new one"
       cd ${NEWSPECIES_BY_COMMON} || exit 1
-      ls -1t . | tail -n +20 | xargs -r rm -vv
+      ls -1t . | tail -n +40 | xargs -r rm -vv
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
         "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}"
+      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"\
+        "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}.png"
       echo "Success! New extraction for ${COMMON_NAME}"
     else
     # Make symbolic link of the extraction to add to By_Common_Name
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
         "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}"
+      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"\
+        "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}.png"
     fi   
 
     # Remove the oldest symbolic links that would made the directory have more
     # than 20 entries.
-    if [[ "$(find ${NEWSPECIES_BY_SCIENCE} | wc -l)" -ge 20 ]];then
+    if [[ "$(find ${NEWSPECIES_BY_SCIENCE} | wc -l)" -ge 40 ]];then
       echo "20 ${SPECIES}s, already! Removing the oldest by-species and making a new one"
       cd ${NEWSPECIES_BY_SCIENCE} || exit 1
-      ls -1t . | tail -n +20 | xargs -r rm -vv
+      ls -1t . | tail -n +40 | xargs -r rm -vv
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
         "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}"
+      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"\
+        "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}.png"
       echo "Success! New extraction for ${COMMON_NAME}"
     else
       ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
         "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}"
+      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"\
+        "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}.png"
     fi   
 
 
