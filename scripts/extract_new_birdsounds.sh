@@ -149,12 +149,10 @@ for h in "${SCAN_DIRS[@]}";do
         "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"
 
     # Create spectrogram for extraction
-    set -x
     sox "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}" -n spectrogram \
       -t "${COMMON_NAME}" \
       -c "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}" \
       -o "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"
-    set +x
     
     # Remove the oldest symbolic links that would make the directory have more
     # than 20 entries.
