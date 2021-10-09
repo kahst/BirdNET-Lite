@@ -22,17 +22,17 @@ SCAN_DIRS=($(find ${ANALYZED} -type d | sort ))
 # start the 'a' value where the most recent instance left off.
 # Ex: If the last extraction file is 189-%date%species.wav, 'a' will be 190.
 # Else, 'a' starts at 1
-if [ "$(find ${EXTRACTED} -name '*.wav' | wc -l)" -ge 1 ];then
-  a=$(( $( find "${EXTRACTED}" -name '*.wav' \
-    | awk -F "/" '{print $NF}' \
-    | cut -d'-' -f1 \
-    | sort -n \
-    | tail -n1 ) + 1 ))
-else
-  a=1
-fi
+#if [ "$(find ${EXTRACTED} -name '*.wav' | wc -l)" -ge 1 ];then
+#  a=$(( $( find "${EXTRACTED}" -name '*.wav' \
+#    | awk -F "/" '{print $NF}' \
+#    | cut -d'-' -f1 \
+#    | sort -n \
+#    | tail -n1 ) + 1 ))
+#else
+#  a=1
+#fi
 
-echo "Starting numbering at ${a}"
+#echo "Starting numbering at ${a}"
 
 for h in "${SCAN_DIRS[@]}";do
   # The TMPFILE is created from each .csv file BirdNET creates
@@ -61,7 +61,6 @@ for h in "${SCAN_DIRS[@]}";do
   # The extraction reads each line of the TMPFILE and sets the variables ffmpeg
   # will use.
   while read -r line;do
-    a=$a
     DATE="$(echo "${line}" \
       | awk -F- '/birdnet/{print $1"-"$2"-"$3}')"
     if [ ! -z ${DATE} ];then
@@ -88,9 +87,8 @@ for h in "${SCAN_DIRS[@]}";do
 
     # If the extracted file already exists, increment the 'a' variable once
     # but move onto the next line of the TMPFILE for extraction.
-    if [[ -f "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}" ]];then
+    if [[ -f "${NEWSPECIES_BYDATE}/${NEWFILE}" ]];then
       echo "Extraction exists. Moving on"
-      a=$((a+1))
       continue
     fi
 
@@ -146,13 +144,13 @@ for h in "${SCAN_DIRS[@]}";do
 
     ffmpeg -hide_banner -loglevel error -nostdin -i "${h}/${OLDFILE}" \
       -acodec copy -ss "${START}" -to "${END}"\
-        "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"
+        "${NEWSPECIES_BYDATE}/${NEWFILE}"
 
     # Create spectrogram for extraction
-    sox "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}" -n spectrogram \
+    sox "${NEWSPECIES_BYDATE}/${NEWFILE}" -n spectrogram \
       -t "${COMMON_NAME}" \
-      -c "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}" \
-      -o "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"
+      -c "${NEWSPECIES_BYDATE}/${NEWFILE}" \
+      -o "${NEWSPECIES_BYDATE}/${NEWFILE}.png"
     
     # Remove the oldest symbolic links that would make the directory have more
     # than 20 entries.
@@ -160,17 +158,17 @@ for h in "${SCAN_DIRS[@]}";do
       echo "20 ${SPECIES}s, already! Removing the oldest by-species and making a new one"
       cd ${NEWSPECIES_BY_COMMON} || exit 1
       ls -1t . | tail -n +40 | xargs -r rm -vv
-      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
-        "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}"
-      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"\
-        "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}.png"
+      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}"\
+        "${NEWSPECIES_BY_COMMON}/${NEWFILE}"
+      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}.png"\
+        "${NEWSPECIES_BY_COMMON}/${NEWFILE}.png"
       echo "Success! New extraction for ${COMMON_NAME}"
     else
     # Make symbolic link of the extraction to add to By_Common_Name
-      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
-        "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}"
-      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"\
-        "${NEWSPECIES_BY_COMMON}/${a}-${NEWFILE}.png"
+      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}"\
+        "${NEWSPECIES_BY_COMMON}/${NEWFILE}"
+      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}.png"\
+        "${NEWSPECIES_BY_COMMON}/${NEWFILE}.png"
     fi   
 
     # Remove the oldest symbolic links that would made the directory have more
@@ -179,22 +177,22 @@ for h in "${SCAN_DIRS[@]}";do
       echo "20 ${SPECIES}s, already! Removing the oldest by-species and making a new one"
       cd ${NEWSPECIES_BY_SCIENCE} || exit 1
       ls -1t . | tail -n +40 | xargs -r rm -vv
-      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
-        "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}"
-      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"\
-        "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}.png"
+      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}"\
+        "${NEWSPECIES_BY_SCIENCE}/${NEWFILE}"
+      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}.png"\
+        "${NEWSPECIES_BY_SCIENCE}/${NEWFILE}.png"
       echo "Success! New extraction for ${COMMON_NAME}"
     else
-      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}"\
-        "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}"
-      ln -fs "${NEWSPECIES_BYDATE}/${a}-${NEWFILE}.png"\
-        "${NEWSPECIES_BY_SCIENCE}/${a}-${NEWFILE}.png"
+      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}"\
+        "${NEWSPECIES_BY_SCIENCE}/${NEWFILE}"
+      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}.png"\
+        "${NEWSPECIES_BY_SCIENCE}/${NEWFILE}.png"
     fi   
 
 
     # Finally, 'a' is incremented by one to allow multiple extractions per
     # species per minute.
-    a=$((a + 1))
+    #a=$((a + 1))
 
   done < "${TMPFILE}"
   

@@ -18,11 +18,7 @@ while true;do
                                  \___/'                     
 EOF
   if [ "$(find ${EXTRACTED} -name '*.wav' | wc -l)" -ge 1 ] &> /dev/null;then
-    a=$( find "${EXTRACTED}" -name '*.wav' \
-      | awk -F "/" '{print $NF}' \
-      | cut -d'-' -f1 \
-      | sort -n \
-      | tail -n1 )
+    a=$(find "${EXTRACTED}/By_Date" -type f -name '*.wav' | wc -l)
   else
     a=0
   fi
