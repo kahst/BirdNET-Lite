@@ -13,7 +13,7 @@ import librosa
 import numpy as np
 import math
 import time
-
+from datetime import date, datetime
 def loadModel():
 
     global INPUT_LAYER_INDEX
@@ -217,9 +217,23 @@ def main():
     # Write detections to output file
     min_conf = max(0.01, min(args.min_conf, 0.99))
     writeResultsToFile(detections, min_conf, args.o)
+    now = datetime.now()
+    
+    # Write detections to Database
     for i in detections:
         print("\n", detections[i][0],"\n")
-
+    with open('BirdDB.txt', 'a') as rfile:
+            for d in detections:
+                for entry in detections[d]:
+                    if entry[1] >= min_conf and (entry[0] in WHITE_LIST or len(WHITE_LIST) == 0):
+                        current_date = now.strftime("%Y/%m/%d")
+                        current_time = now.strftime("%H:%M:%S")
+                        rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' \
+                        + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' \
+                        + str(sensitivity) +';' + str(args.overlap) + '\n')
+                        print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(sensitivity) +';' + str(args.overlap) + '\n')
+                        time.sleep(3)
+                        now = datetime.now()
 
 if __name__ == '__main__':
 
