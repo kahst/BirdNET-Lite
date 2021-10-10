@@ -16,9 +16,11 @@ install_scripts() {
 }
 
 install_birdnet_analysis() {
-  echo "Installing MariaDB Server"
-  apt -qqy update
-  apt -qqy install mariadb-server
+  if ! which mysql &> /dev/null;then
+    echo "Installing MariaDB Server"
+    apt -qqy update
+    apt -qqy install mariadb-server
+  fi
   echo "Installing the birdnet_analysis.service"
   cat << EOF > /etc/systemd/system/birdnet_analysis.service
 [Unit]
