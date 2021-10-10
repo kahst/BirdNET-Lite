@@ -18,7 +18,7 @@ curl -s https://raw.githubusercontent.com/mcguirepr89/Birding-Pi/rpialpha/Birder
 ```
 
 The script first enables and configures the zRAM kernel module for swapping, and reboots. 
-After the reboot, the configuration file is opened for editing. Here, you will input your latitude and longitude and will set two passwords to protect your Pi. When the installation has finished, the Birding Pi is ready to start collecting and analyzing data on the next boot. 
+After the reboot, the configuration file is opened for editing. Here, you will input your latitude and longitude and will set a few passwords to protect your Pi. When the installation has finished, the Birding Pi is ready to start collecting and analyzing data on the next boot. 
 
 If you have trouble with the installation script, you can cancel and rerun the installer:
 ```
