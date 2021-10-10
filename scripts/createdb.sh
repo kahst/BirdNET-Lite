@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # test to create a database from bash
 mysql << 'EOF'
-drop birds;
+drop DATABASE birds;
 CREATE DATABASE IF NOT EXISTS birds;
 
 USE birds;
