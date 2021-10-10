@@ -23,7 +23,7 @@ install_mariadb() {
     echo "MariaDB Installed"
   fi
   echo "Initializing the database"
-  $(dirname ${my_dir})/createdb.sh
+  ${my_dir}/createdb.sh
 }
 
 install_birdnet_analysis() {
