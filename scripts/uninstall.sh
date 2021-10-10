@@ -9,6 +9,7 @@ birdnet_stats.sh
 cleanup.sh
 clear_all_data.php 
 clear_all_data.sh
+createdb.sh
 disk_usage.sh
 dump_logs.sh
 edit_birdnet.conf.php
