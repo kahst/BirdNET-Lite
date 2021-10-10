@@ -22,7 +22,7 @@ After the reboot, the configuration file is opened for editing. Here, you will i
 
 If you have trouble with the installation script, you can cancel and rerun the installer:
 ```
-~/Birding-Pi/Birders_Guide_installer.sh
+~/Birding-Pi/Birders_Guide_Installer.sh
 ```
 
 ## Access
