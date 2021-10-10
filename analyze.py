@@ -133,7 +133,7 @@ def predict(sample, interpreter, sensitivity):
 
     # Remove species that are on blacklist
     for i in range(min(10, len(p_sorted))):
-        if p_sorted[i][0] in ['Human_Human', 'Non-bird_Non-bird', 'Noise_Noise','Eastern_Screech-Owl', 'Boat-tailed_Grackle', 'American_Woodcock', 'Turkey_Vulture', 'Evening_Grosbeak']:
+        if p_sorted[i][0] in ['Human_Human', 'Non-bird_Non-bird', 'Noise_Noise']:
             p_sorted[i] = (p_sorted[i][0], 0.0)
 
     # Only return first the top ten results
