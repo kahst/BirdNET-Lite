@@ -78,7 +78,7 @@ run_analysis() {
   cd ${HOME}/Birding-Pi || exit 1
   for i in "${files[@]}";do
     echo "${1}/${i}" > ./analyzing_now.txt
-    [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=12
+    [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=15
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"
     [ -z $FILE_LENGTH ] && sleep 3 && continue
