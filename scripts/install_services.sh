@@ -15,6 +15,17 @@ install_scripts() {
   rm /usr/local/bin/index.html
 }
 
+install_mariadb() {
+  if ! which mysql &> /dev/null;then
+    echo "Installing MariaDB Server"
+    apt -qqy update
+    apt -qqy install mariadb-server
+    echo "MariaDB Installed"
+  fi
+  echo "Initializing the database"
+  $(dirname ${my_dir})/createdb.sh
+}
+
 install_birdnet_analysis() {
   if ! which mysql &> /dev/null;then
     echo "Installing MariaDB Server"
@@ -305,7 +316,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8080 --title-format "Birding-Pi Log" journalctl -fu birdnet_analysis.service
+ExecStart=/usr/local/bin/gotty -p 8080 --title-format "Birding-Pi Log" journalctl -o cat -fu birdnet_analysis.service
 
 [Install]
 WantedBy=multi-user.target
@@ -322,7 +333,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8888 --title-format "Extractions Log" journalctl -fu extraction.service
+ExecStart=/usr/local/bin/gotty -p 8888 --title-format "Extractions Log" journalctl -o cat -fu extraction.service
 
 [Install]
 WantedBy=multi-user.target
@@ -372,9 +383,9 @@ install_sox() {
 
 install_php() {
   if ! which pip &> /dev/null || ! which php-fpm7.3;then
-    echo "Installing PHP and PHP-FPM"
+    echo "Installing PHP modules"
     apt -qq update
-    apt install -qqy php php-fpm
+    apt install -qqy php php-fpm php7.3-mysql
   else
     echo "PHP and PHP-FPM installed"
   fi
@@ -515,6 +526,7 @@ install_selected_services() {
     install_gotty_logs
     install_tmux
     install_sox
+    install_mariadb
     install_php
     install_spectrogram_service
     install_edit_birdnet_conf

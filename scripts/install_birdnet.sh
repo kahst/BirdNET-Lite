@@ -61,6 +61,8 @@ install_birdnet() {
   sudo pip3 install colorama==0.4.4
   echo "Installing librosa"
   sudo pip3 install librosa
+  echo "Installing mysql-connector-python"
+  sudo pip3 install mysql-connector-python
 }
 
 read -sp "\

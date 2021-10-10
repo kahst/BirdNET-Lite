@@ -13,6 +13,9 @@ import librosa
 import numpy as np
 import math
 import time
+###############################################################################    
+import mysql.connector
+###############################################################################    
 from datetime import date, datetime
 def loadModel():
 
@@ -130,7 +133,7 @@ def predict(sample, interpreter, sensitivity):
 
     # Remove species that are on blacklist
     for i in range(min(10, len(p_sorted))):
-        if p_sorted[i][0] in ['Human_Human', 'Non-bird_Non-bird', 'Noise_Noise']:
+        if p_sorted[i][0] in ['Human_Human', 'Non-bird_Non-bird', 'Noise_Noise','Eastern_Screech-Owl', 'Boat-tailed_Grackle', 'American_Woodcock', 'Turkey_Vulture', 'Evening_Grosbeak']:
             p_sorted[i] = (p_sorted[i][0], 0.0)
 
     # Only return first the top ten results
@@ -219,11 +222,17 @@ def main():
     writeResultsToFile(detections, min_conf, args.o)
     now = datetime.now()
     
+###############################################################################    
+###############################################################################    
+
+
+
     # Write detections to Database
     for i in detections:
         print("\n", detections[i][0],"\n")
     with open('BirdDB.txt', 'a') as rfile:
             for d in detections:
+                print("\n", "Database Entry", "\n")
                 for entry in detections[d]:
                     if entry[1] >= min_conf and (entry[0] in WHITE_LIST or len(WHITE_LIST) == 0):
                         current_date = now.strftime("%Y/%m/%d")
@@ -231,9 +240,46 @@ def main():
                         rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' \
                         + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' \
                         + str(sensitivity) +';' + str(args.overlap) + '\n')
+
+                        def insert_variables_into_table(Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap):
+                            try:
+                                connection = mysql.connector.connect(host='localhost',
+                                                                     database='birds',
+                                                                     user='birder',
+                                                                     password='maddypaddy')
+                                cursor = connection.cursor()
+                                mySql_insert_query = """INSERT INTO detections (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
+                                                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
+                        
+                                record = (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
+
+                                cursor.execute(mySql_insert_query, record)
+                                connection.commit()
+                                print("Record inserted successfully into detections table")
+
+                        
+                            except mysql.connector.Error as error:
+                                print("Failed to insert record into detections table {}".format(error))
+                            
+                            finally:
+                                if connection.is_connected():
+                                    connection.close()
+                                    print("MySQL connection is closed")
+
+                        species = entry[0]
+                        sci_name,com_name = species.split('_')
+                        insert_variables_into_table(str(current_date), str(current_time), sci_name, com_name, \
+                        str(entry[1]), str(args.lat), str(args.lon), str(min_conf), str(week), \
+                        str(sensitivity), str(args.overlap))
+
                         print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(sensitivity) +';' + str(args.overlap) + '\n')
+
                         time.sleep(3)
+
                         now = datetime.now()
+
+###############################################################################    
+###############################################################################    
 
 if __name__ == '__main__':
 

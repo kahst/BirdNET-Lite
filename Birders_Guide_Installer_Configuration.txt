@@ -1,33 +1,43 @@
 # Birders Guide Installer Configuration File
-#####NOTE: the '#' sign needs to precede the lines where they are currently
-#####      DO NOT DELETE ANY OF THEM!!!
 
 ###########################################################################
-#          Fill this out in order to install BirdNET-Lite
-#
-# 1. To find this information, you can go to https://maps.google.com
+#              Fill this out in order to install BirdNET-Lite
+#                Follow the instructions for each section.
+###########################################################################
+
+
+# 1. To find your latitude and longitude, you can go to https://maps.google.com
 # 1a. Find the location on the map where you will be putting the BirdNET-Lite
 # 1b. Right-click the location to view the latitude and longitude and click them to
 #     copy them to your clip-board.
 # 2. Enter the latitude and longitude here. Be certain not to mix them up and
 #    only go to the thousandth's decimal place. The first number is the latitude,
 #    and the second is longitude. See the example below.
-# 3. Set a password that you will use to access your live audio stream. This is the
-#    "CADDY_PWD" field. You can set this to anything, but keep it alpha-numeric.
-#     You will probably also want to write this one down if you ever plan to listen
-#     to the live stream.
-# 4. Set a password that that IceCast2 will use to authenticate the stream source.
-#    You can set this to anything also, but keep it alpha-numeric. You will never use
-#    this again, so just set it to your favorite word.
-# 5. FILE SAVE!!! Don't forget to save this file after editing.
-# 6. Close this window to continue the installation.
 # Example: these coordinates would indicate the Eiffel Tower in Paris, France.
-#LATITUDE=48.858
-#LONGITUDE=2.294
+# LATITUDE=48.858
+# LONGITUDE=2.294
+
 LATITUDE=
 LONGITUDE=
+
+# 1. CADDY_PWD is the password you will use to access your live audio stream and
+#    maintenance tools. You can set this to anything, but keep it alpha-numeric.
+#    You will probably also want to write this one down if you ever plan to listen
+#    to the live stream.
+# 2. ICE_PWD is the password that IceCast2 will use to authenticate the stream source.
+#    You can set this to anything also, but keep it alpha-numeric. You will never use
+#    this again, so just set it to your favorite word.
+
 CADDY_PWD=
 ICE_PWD=
+
+# 1. DB_PWD is the password that the system will use to access the database. Set this to
+#    anything you want.
+# 2. DB_ROOT_PWD is the password that the system will use to secure the database's root
+#    account. Set this to anything you want.
+
+DB_PWD=
+DB_ROOT_PWD=
 
 # This section can be left alone. If you setup a Pushed.co
 # mobile application, you can enter the App secret and secret

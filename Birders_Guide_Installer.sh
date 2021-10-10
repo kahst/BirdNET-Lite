@@ -132,7 +132,7 @@ and then close the Mouse Pad editing window to continue."
     exit 1
   fi
 
-  if [ -z ${LATITUDE} ] || [ -z ${LONGITUDE} ] || [ -z ${CADDY_PWD} ] || [ -z ${ICE_PWD} ];then
+  if [ -z ${LATITUDE} ] || [ -z ${LONGITUDE} ] || [ -z ${CADDY_PWD} ] || [ -z ${ICE_PWD} ] || [ -z ${DB_PWD} ] || [ -z ${DB_ROOT_PWD} ];then
     echo
     echo
     echo "It looks like you haven't filled out the Birders_Guide_Installer_Configuration.txt file
@@ -423,6 +423,9 @@ EXTRACTION_LENGTH=
 
 LAST_RUN=
 THIS_RUN=
+
+DB_PWD=${DB_PWD}
+DB_ROOT_PWD=${DB_ROOT_PWD}
 EOF
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf ${my_dir}/birdnet.conf /etc/birdnet/birdnet.conf

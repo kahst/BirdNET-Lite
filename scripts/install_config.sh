@@ -126,6 +126,15 @@ get_ICE_PWD() {
   fi
 }
 
+get_DB_PWDS() {
+  if [ ! -z ${DB_PWD} ];then
+    read -p "Please set a password for your database: " DB_PWD
+    echo
+    read -p "Please set a root password for the database: " DB_ROOT_PWD
+    echo
+  fi
+}
+
 get_PUSHED() {
   while true; do
     read -n1 -p "Do you have a free App key to receive mobile notifications via Pushed.co?" YN
@@ -180,6 +189,7 @@ configure() {
   get_RECS_DIR
   get_LATITUDE
   get_LONGITUDE
+  get_DB_PWDS
   get_DO_EXTRACTIONS
   get_DO_RECORDING
   get_TIMESTAMP_FORMAT
@@ -436,6 +446,9 @@ VENV=$(dirname ${my_dir})/miniforge/envs/birdnet
 RECORDING_LENGTH=
 
 EXTRACTION_LENGTH=
+
+DB_PWD=${DB_PWD}
+DB_ROOT_PWD=${DB_ROOT_PWD}
 
 LAST_RUN=$(dirname ${my_dir})/lastrun.txt
 THIS_RUN=$(dirname ${my_dir})/thisrun.txt
