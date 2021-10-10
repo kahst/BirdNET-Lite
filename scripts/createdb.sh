@@ -39,4 +39,4 @@ GRANT ALL ON birds.* TO 'birder'@'localhost' IDENTIFIED BY '${DB_PWD}' WITH GRAN
 
 exit
 EOF
-
+sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/Birding-Pi/analyze.py
