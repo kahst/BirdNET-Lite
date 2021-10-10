@@ -1,3 +1,4 @@
 #birdnet
 0 1 * * * /usr/local/bin/cleanup.sh &> /dev/null
+#birdnet
 @reboot /usr/local/bin/cleanup.sh &> /dev/null
