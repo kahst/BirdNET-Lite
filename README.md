@@ -2,7 +2,7 @@
 ![version](https://img.shields.io/badge/version-0.1-blue)
 
 A realtime acoustic bird classification system for the Reaspberry Pi 4B
-
+![alt-text](https://github.com/mcguirepr89/Birding-Pi/blob/rpialpha/BirdingPi.gif)
 ## Inroduction
 The Birding Pi project is based on the BirdNet-Lite project and is able to recognize bird sounds from the microphone and the sound card in realtime. The system installs all needed services on the Raspberry Pi. 
 
@@ -26,12 +26,12 @@ If you have trouble with the installation script, you can cancel and rerun the i
 ```
 
 ## Access
-The Birding Pi system can be accessed from any the web browser on the same network:
+The Birding Pi system can be accessed from any web browser on the same network:
 - http://birdingpi.local
 
 #### Access Credentials:
 - Username:`birdnet`
-- Password: The "CADDY_PWD" password you set during installation 
+- Password: The "CADDY_PWD" password set during installation 
 
 ## Uninstallation
 ```
