@@ -18,7 +18,7 @@ y
 EOF
 
 mysql << EOF
-drop database birds;
+DROP DATABASE IF EXISTS birds;
 CREATE DATABASE IF NOT EXISTS birds;
 
 USE birds;
