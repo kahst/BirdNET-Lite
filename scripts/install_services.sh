@@ -91,6 +91,7 @@ create_necessary_dirs() {
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
   [ -L ${EXTRACTED}/scripts ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts ${EXTRACTED}
   [ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/spectrogram.* ${EXTRACTED}
+  [ -L ${EXTRACTED}/viewdb.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
 }
  
 install_alsa() {

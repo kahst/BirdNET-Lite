@@ -20,6 +20,7 @@ sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/templates/index.html ${EXTRACT
 [ -L ${EXTRACTED}/scripts ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/scripts ${EXTRACTED}/
 [ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/scripts/spectrogram.php ${EXTRACTED}
 [ -L ${EXTRACTED}/spectrogram.sh ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/scripts/spectrogram.sh ${EXTRACTED}
+[ -L ${EXTRACTED}/viewdb.php ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/scripts/viewdb.php ${EXTRACTED}
 
 sudo -u ${BIRDNET_USER} cp ~/Birding-Pi/templates/index.html ${EXTRACTED}/
 echo "Dropping and re-creating database"
