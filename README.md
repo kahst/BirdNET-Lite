@@ -40,7 +40,7 @@ The Birding Pi system can be accessed from any web browser on the same network:
 
 ## ToDo, Notes, and Comming Soon 
 
-### Internationalisation:
+### Internationalization:
 The bird names are in English by default, but other localized versions are available. Please download the labels_l18n.zip file and replace the `model/labels.txt` with the corresponding language.
 
 ### Tips:
