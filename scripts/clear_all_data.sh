@@ -22,5 +22,7 @@ sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/templates/index.html ${EXTRACT
 [ -L ${EXTRACTED}/spectrogram.sh ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/scripts/spectrogram.sh ${EXTRACTED}
 
 sudo -u ${BIRDNET_USER} cp ~/Birding-Pi/templates/index.html ${EXTRACTED}/
+echo "Dropping and re-creating database"
+sudo /home/pi/Birding-Pi/scripts/createdb.sh
 echo "Restarting services"
 sudo systemctl restart birdnet_recording.service

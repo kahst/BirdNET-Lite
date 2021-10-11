@@ -22,7 +22,9 @@
     <input type="submit" value="Restart Caddy">
 </form>
 
-<form action="/scripts/clear_all_data.php">
+
+<form action="/scripts/clear_all_data.php" onclick="return confirm('Are you sure?')">
+    
     <input type="submit" value="Clear ALL data">
 </form>
 
