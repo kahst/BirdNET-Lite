@@ -54,7 +54,6 @@ EOF
   fi
   if [ ${a} -ge 1 ];then
     while read -r line;do
-      
       # Get species name
       SPECIES="$(echo "${line}" | awk -F: '/Common Name/ {print $2}')"
       SPECIES="${SPECIES// /_}"
