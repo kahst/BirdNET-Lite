@@ -1,5 +1,5 @@
 [Unit]
-Description=Birding-Pi Live Stream
+Description=BirdNET-Pi Live Stream
 [Service]
 Environment=XDG_RUNTIME_DIR=/run/user/1000
 Restart=always

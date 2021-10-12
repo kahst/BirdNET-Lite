@@ -15,15 +15,15 @@ echo "Recreating necessary directories"
 [ -d ${EXTRACTED}/By_Date ] || sudo -u ${BIRDNET_USER} mkdir -p ${EXTRACTED}/By_Date
 [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${BIRDNET_USER} mkdir -p ${EXTRACTED}/By_Common_Name
 [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${BIRDNET_USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
-sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/templates/index.html ${EXTRACTED}
+sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Pi/templates/index.html ${EXTRACTED}
 [ -d ${PROCESSED} ] || sudo -u ${BIRDNET_USER} mkdir -p ${PROCESSED}
-[ -L ${EXTRACTED}/scripts ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/scripts ${EXTRACTED}/
-[ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/scripts/spectrogram.php ${EXTRACTED}
-[ -L ${EXTRACTED}/spectrogram.sh ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/scripts/spectrogram.sh ${EXTRACTED}
-[ -L ${EXTRACTED}/viewdb.php ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/Birding-Pi/scripts/viewdb.php ${EXTRACTED}
+[ -L ${EXTRACTED}/scripts ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Pi/scripts ${EXTRACTED}/
+[ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Pi/scripts/spectrogram.php ${EXTRACTED}
+[ -L ${EXTRACTED}/spectrogram.sh ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Pi/scripts/spectrogram.sh ${EXTRACTED}
+[ -L ${EXTRACTED}/viewdb.php ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Pi/scripts/viewdb.php ${EXTRACTED}
 
-sudo -u ${BIRDNET_USER} cp ~/Birding-Pi/templates/index.html ${EXTRACTED}/
+sudo -u ${BIRDNET_USER} cp ~/BirdNET-Pi/templates/index.html ${EXTRACTED}/
 echo "Dropping and re-creating database"
-sudo /home/pi/Birding-Pi/scripts/createdb.sh
+sudo /home/pi/BirdNET-Pi/scripts/createdb.sh
 echo "Restarting services"
 sudo systemctl restart birdnet_recording.service

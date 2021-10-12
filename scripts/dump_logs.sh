@@ -2,7 +2,7 @@
 # A comprehensive log dumper
 # set -x # Uncomment to debug
 source /etc/birdnet/birdnet.conf &> /dev/null
-LOG_DIR="${HOME}/Birding-Pi/logs"
+LOG_DIR="${HOME}/BirdNET-Pi/logs"
 SERVICES=(avahi-alias@.service
 birdnet_analysis.service
 birdnet_log.service
@@ -29,7 +29,7 @@ for i in "${SERVICES[@]}";do
 done
 
 # Create password-removed birdnet.conf
-sed -e '/PWD=/d' ${HOME}/Birding-Pi/birdnet.conf > ${LOG_DIR}/birdnet.conf 
+sed -e '/PWD=/d' ${HOME}/BirdNET-Pi/birdnet.conf > ${LOG_DIR}/birdnet.conf 
 
 # Create password-removed Caddyfile
 if [ -f /etc/caddy/Caddyfile ];then
@@ -57,6 +57,6 @@ for i in "${CALLS[@]}";do
 done
 
 # TAR the logs into a ball
-tar --remove-files -cvpzf ${HOME}/Birding-Pi/logs.tar.gz ${LOG_DIR} &> /dev/null
+tar --remove-files -cvpzf ${HOME}/BirdNET-Pi/logs.tar.gz ${LOG_DIR} &> /dev/null
 # Finished
-echo "Your compressed logs are located at ${HOME}/Birding-Pi/logs.tar.gz"
+echo "Your compressed logs are located at ${HOME}/BirdNET-Pi/logs.tar.gz"

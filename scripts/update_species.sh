@@ -9,7 +9,7 @@ TMPFILE=$(mktemp) || exit 1
 
 [ -f ${IDFILE} ] || touch ${IDFILE}
 
-if [ $(find ${PROCESSED} -name '*csv' | wc -l) -ge 1 ];then
+if [ $(find ${PROCESSED} -name '*csv' | wc -l) -ge 1 ] &> /dev/null;then
   sort $(find ${PROCESSED} ${ANALYZED} ${EXTRACTED} -name '*csv') \
     | awk -F\; '!/Scientific/ {print"Common Name: " $4 "\nScientific Name: " $3""}' \
     | uniq > "$TMPFILE"

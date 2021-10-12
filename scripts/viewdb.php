@@ -6,7 +6,7 @@
       <?php
          $dbhost = 'localhost';
          $dbuser = 'birder';
-         $dbpass = 'databasepassword';
+         $dbpass = 'maddypaddy';
          $dbname = 'birds';
          $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
          

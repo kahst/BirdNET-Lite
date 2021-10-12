@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -e
-my_dir=${HOME}/Birding-Pi
+my_dir=${HOME}/BirdNET-Pi
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
 
 
 if [ "$(uname -m)" != "aarch64" ];then
-  echo "Birding-Pi requires a 64-bit OS.
+  echo "BirdNET-Pi requires a 64-bit OS.
 It looks like your operating system is using $(uname -m), 
 but would need to be aarch64.
 Please take a look at https://birdnetwiki.pmcgui.xyz for more
@@ -44,11 +44,11 @@ EOF
   echo
   echo "Installing stage 2 installation script now."
   cd ~
-  curl -s -O "https://raw.githubusercontent.com/mcguirepr89/Birding-Pi/rpialpha/Birders_Guide_Installer.sh"
+  curl -s -O "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/rpialpha/Birders_Guide_Installer.sh"
   chmod +x Birders_Guide_Installer.sh
   cat << EOF | sudo tee /etc/systemd/user/birdnet-system-installer.service &> /dev/null
 [Unit]
-Description=A Birding-Pi Installation Script Service
+Description=A BirdNET-Pi Installation Script Service
 After=graphical.target network-online.target
 
 [Service]
@@ -106,9 +106,9 @@ stage_2() {
   echo
   if [ ! -d ${my_dir} ];then
     cd ~ || exit 1
-    echo "Cloning the Birding-Pi repository in your home directory"
-    git clone https://github.com/mcguirepr89/Birding-Pi.git ~/Birding-Pi
-    cd Birding-Pi && git checkout rpialpha
+    echo "Cloning the BirdNET-Pi repository in your home directory"
+    git clone https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
+    cd BirdNET-Pi && git checkout rpialpha
   fi
 
   if [ -f ${my_dir}/Birders_Guide_Installer_Configuration.txt ];then
@@ -138,9 +138,9 @@ and then close the Mouse Pad editing window to continue."
     echo "It looks like you haven't filled out the Birders_Guide_Installer_Configuration.txt file
 completely.
 
-Open that file to edit it. (Go to the folder icon in the top left and look for the \"Birding-Pi\"
+Open that file to edit it. (Go to the folder icon in the top left and look for the \"BirdNET-Pi\"
 folder and double-click the file called \"Birders_Guide_Installer_Configuration.txt\"
-Enter the latitude and longitude of where the Birding-Pi will be. 
+Enter the latitude and longitude of where the BirdNET-Pi will be. 
 You can find this information at https://maps.google.com
 
 Find your location on the map and right click to find your coordinates.
@@ -151,9 +151,9 @@ Good luck!"
     read
     exit 1
   fi
-  echo "Installing the Birding-Pi configuration file."
+  echo "Installing the BirdNET-Pi configuration file."
   [ -f ${my_dir}/soundcard_params.txt ] || touch ${my_dir}/soundcard_params.txt
-  SOUND_PARAMS="${HOME}/Birding-Pi/soundcard_params.txt"
+  SOUND_PARAMS="${HOME}/BirdNET-Pi/soundcard_params.txt"
   SOUND_CARD="$(sudo -u pi aplay -L \
    | grep -e '^hw' \
    | cut -d, -f1  \
@@ -178,7 +178,7 @@ The installation has finished. Press Enter to close this window."
 install_birdnet_config() {
   cat << EOF > ${my_dir}/birdnet.conf
 ################################################################################
-#                 Configuration settings for the Birding-Pi                    #
+#                 Configuration settings for the BirdNET-Pi                    #
 ################################################################################
 
 #___________The four variables below are the only that are required.___________#
@@ -283,7 +283,7 @@ REMOTE_RECS_DIR=
 
 ## EXTRACTIONS_URL is the URL where the extractions, data-set, and live-stream
 ## will be web-hosted. If you do not own a domain, or would just prefer to keep 
-## the Birding-Pi on your local network, you can set this to http://localhost.
+## the BirdNET-Pi on your local network, you can set this to http://localhost.
 ## Setting this (even to http://localhost) will also allow you to enable the   
 ## GoTTY web logging features below.
 
@@ -330,7 +330,7 @@ PUSHED_APP_SECRET=${PUSHED_APP_SECRET}
 #            Keep this EMPTY if you do not want to install NoMachine.          #
 
 ## INSTALL_NOMACHINE is simply a setting that can be enabled to install
-## NoMachine alongside the Birding-Pi for remote desktop access. This in-
+## NoMachine alongside the BirdNET-Pi for remote desktop access. This in-
 ## staller assumes personal use. Please reference the LICENSE file included
 ## in this repository for more information.
 ## Set this to Y or y to install NoMachine alongside the BirdNET-Lite
@@ -373,7 +373,7 @@ EXTRACTED=${RECS_DIR}/Extracted
 ## change this variable between data-sets to preserve records of disparate
 ## data-sets according to name.
 
-IDFILE=${HOME}/Birding-Pi/IdentifiedSoFar.txt
+IDFILE=${HOME}/BirdNET-Pi/IdentifiedSoFar.txt
 
 ## OVERLAP is the value in seconds which BirdNET should use when analyzing
 ## the data. The values must be between 0.0-2.9.
@@ -437,7 +437,7 @@ The installer runs in two stages:
 Stage 1 configures and enables the zRAM kernel module and allocates 4G
         to its swapping size if needed. This will trigger a reboot.
 Stage 1 also ensures the system is up to date.
-Stage 2 guides you through configuring the essentials and installs the full Birding-Pi system."
+Stage 2 guides you through configuring the essentials and installs the full BirdNET-Pi system."
 
 
 if [ ! -f ${HOME}/stage_1_complete ] ;then

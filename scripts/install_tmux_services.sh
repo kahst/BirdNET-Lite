@@ -3,7 +3,7 @@
 # ONLY run this additional script if you trust everyone on your 
 # local network completely as the credentials are sent WITHOUT 
 # any SSL/TLS encryption. For a secure remote connection to your 
-# Birding-Pi command line, consider enabling SSH on the 
+# BirdNET-Pi command line, consider enabling SSH on the 
 # Raspberry Pi and using another Linux machine or an SSH 
 # client software, or you can alternately add the 'tls internal'
 # directive to the Caddyfile to add a self-signed certificate for TLS/SSL
@@ -46,7 +46,7 @@ install_tmux() {
 install_web_terminal() {
   cat << EOF | sudo tee /etc/systemd/system/birdterminal.service
 [Unit]
-Description=A Birding-Pi Web Terminal
+Description=A BirdNET-Pi Web Terminal
 
 [Service]
 Restart=on-failure

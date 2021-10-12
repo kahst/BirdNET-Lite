@@ -8,7 +8,7 @@ ${EXTRACTIONS_URL} {
     birdnet ${HASHWORD}
   }
 }
-http://birdingpi.local {
+http://birdnetpi.local {
   root * ${EXTRACTED}
   file_server browse
   basicauth ${PROCESSED}* {

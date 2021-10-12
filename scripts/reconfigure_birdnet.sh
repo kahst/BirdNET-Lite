@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Reconfigure the Birding-Pi
+# Reconfigure the BirdNET-Pi
 source /etc/birdnet/birdnet.conf
 uninstall.sh
-${HOME}/Birding-Pi/scripts/install_config.sh
-sudo ${HOME}/Birding-Pi/scripts/install_services.sh
-echo "Birding-Pi has now been reconfigured."
+${HOME}/BirdNET-Pi/scripts/install_config.sh
+sudo ${HOME}/BirdNET-Pi/scripts/install_services.sh
+echo "BirdNET-Pi has now been reconfigured."

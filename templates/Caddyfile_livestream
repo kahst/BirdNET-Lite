@@ -9,7 +9,7 @@ ${EXTRACTIONS_URL} {
   }
   reverse_proxy /stream localhost:8000
 }
-http://birdingpi.local {
+http://birdnetpi.local {
   root * ${EXTRACTED}
   file_server browse
   basicauth ${PROCESSED}* {

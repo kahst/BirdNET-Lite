@@ -133,7 +133,7 @@ def predict(sample, interpreter, sensitivity):
 
     # Remove species that are on blacklist
     for i in range(min(10, len(p_sorted))):
-        if p_sorted[i][0] in ['Human_Human', 'Non-bird_Non-bird', 'Noise_Noise']:
+        if p_sorted[i][0] in ['Human_Human', 'Non-bird_Non-bird', 'Noise_Noise', 'Quiscalus major_Boat-tailed Grackle', 'Megascops asio_Eastern Screech-Owl', 'Cygnus columbianus_Tundra Swan', 'Cathartes aura_Turkey Vulture', 'Cygnus buccinator_Trumpeter Swan', 'Scolopax minor_American Woodcock', 'Bubo virginianus_Great Horned Owl', 'Strix varia_Barred Owl', 'Quiscalus quiscula_Common Grackle']:
             p_sorted[i] = (p_sorted[i][0], 0.0)
 
     # Only return first the top ten results
@@ -246,7 +246,7 @@ def main():
                                 connection = mysql.connector.connect(host='localhost',
                                                                      database='birds',
                                                                      user='birder',
-                                                                     password='databasepassword')
+                                                                     password='maddypaddy')
                                 cursor = connection.cursor()
                                 mySql_insert_query = """INSERT INTO detections (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
                                                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """

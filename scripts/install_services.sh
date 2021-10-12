@@ -10,7 +10,7 @@ gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_a
 CONFIG_FILE="$(dirname ${my_dir})/birdnet.conf"
 
 install_scripts() {
-  echo "Installing Birding-Pi scripts to /usr/local/bin"
+  echo "Installing BirdNET-Pi scripts to /usr/local/bin"
   ln -sf ${my_dir}/* /usr/local/bin/
   rm /usr/local/bin/index.html
 }
@@ -219,7 +219,7 @@ ${EXTRACTIONS_URL} {
   php_fastcgi unix//run/php/php7.3-fpm.sock
 }
 
-http://birdingpi.local {
+http://birdnetpi.local {
   root * ${EXTRACTED}
   file_server browse
   basicauth /Processed* {
@@ -271,7 +271,7 @@ ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(avahi-resolve -4 -n %H
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now avahi-alias@birdingpi.local.service
+  systemctl enable --now avahi-alias@birdnetpi.local.service
   systemctl enable --now avahi-alias@birdlog.local.service
   systemctl enable --now avahi-alias@extractionlog.local.service
   systemctl enable --now avahi-alias@birdstats.local.service
@@ -280,7 +280,7 @@ EOF
 install_spectrogram_service() {
   cat << EOF > /etc/systemd/system/spectrogram_viewer.service
 [Unit]
-Description=Birding-Pi Spectrogram Viewer
+Description=BirdNET-Pi Spectrogram Viewer
 [Service]
 Restart=always
 RestartSec=10
@@ -312,7 +312,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8080 --title-format "Birding-Pi Log" journalctl -o cat -fu birdnet_analysis.service
+ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalctl -o cat -fu birdnet_analysis.service
 
 [Install]
 WantedBy=multi-user.target
@@ -346,7 +346,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 9090 --title-format "Birding-Pi Statistics" tmux new -A -s birdstats /usr/local/bin/birdnet_stats.sh
+ExecStart=/usr/local/bin/gotty -p 9090 --title-format "BirdNET-Pi Statistics" tmux new -A -s birdstats /usr/local/bin/birdnet_stats.sh
 
 [Install]
 WantedBy=multi-user.target
@@ -406,7 +406,7 @@ RestartSec=3
 Type=simple
 User=pi
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -w -p 9898 --title-format "Edit birdnet.conf" tmux new -A -s editbirdnet nano /home/pi/Birding-Pi/birdnet.conf
+ExecStart=/usr/local/bin/gotty -w -p 9898 --title-format "Edit birdnet.conf" tmux new -A -s editbirdnet nano /home/pi/BirdNET-Pi/birdnet.conf
 
 [Install]
 WantedBy=multi-user.target
@@ -433,7 +433,7 @@ install_icecast() {
 
 config_icecast() {
   if [ -f /etc/icecast2/icecast.xml ];then 
-    cp /etc/icecast2/icecast.xml{,.prebirdnetsystem}
+    cp /etc/icecast2/icecast.xml{,.prebirdnetpi}
   fi
   sed -i 's/>admin</>birdnet</g' /etc/icecast2/icecast.xml
   passwords=("source-" "relay-" "admin-" "master-" "")
@@ -446,7 +446,7 @@ install_livestream_service() {
   echo "Installing Live Stream service"
   cat << EOF > /etc/systemd/system/livestream.service
 [Unit]
-Description=Birding-Pi Live Stream
+Description=BirdNET-Pi Live Stream
 
 [Service]
 Environment=XDG_RUNTIME_DIR=/run/user/1000
