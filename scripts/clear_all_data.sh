@@ -8,7 +8,7 @@ echo "Stopping services"
 sudo systemctl stop birdnet_recording.service
 echo "Removing all data . . . "
 sudo rm -drf "${RECS_DIR}"
-rm "${IDFILE}"
+sudo rm -f "${IDFILE}"
 echo "Recreating necessary directories"
 [ -d ${RECS_DIR} ] || sudo -u ${BIRDNET_USER} mkdir -p ${RECS_DIR}
 [ -d ${EXTRACTED} ] || sudo -u ${BIRDNET_USER} mkdir -p ${EXTRACTED}
