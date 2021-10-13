@@ -435,7 +435,7 @@ SYSTEMD_MOUNT=$(echo ${RECS_DIR#/} | tr / -).mount
 ## VENV is the virtual environment where the the BirdNET python build is found,
 ## i.e, VENV is the virtual environment miniforge built for BirdNET.
 
-VENV=$(dirname ${my_dir})/miniforge/envs/birdnet
+VENV=$(dirname ${my_dir})/birdnet
 
 ################################################################################
 #---------------------------------- Testing -----------------------------------#
