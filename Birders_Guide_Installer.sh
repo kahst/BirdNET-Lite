@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 my_dir=${HOME}/BirdNET-Pi
-branch=testing
+branch=main
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
 
 

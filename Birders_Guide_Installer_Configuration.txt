@@ -17,8 +17,8 @@
 # LATITUDE=48.858
 # LONGITUDE=2.294
 
-LATITUDE=
-LONGITUDE=
+LATITUDE=35.311
+LONGITUDE=-80.749
 
 # 1. CADDY_PWD is the password you will use to access your live audio stream and
 #    maintenance tools. You can set this to anything, but keep it alpha-numeric.
@@ -28,20 +28,20 @@ LONGITUDE=
 #    You can set this to anything also, but keep it alpha-numeric. You will never use
 #    this again, so just set it to your favorite word.
 
-CADDY_PWD=
-ICE_PWD=
+CADDY_PWD=caddypaddy
+ICE_PWD=icepaddy
 
 # 1. DB_PWD is the password that the system will use to access the database. Set this to
 #    anything you want.
 # 2. DB_ROOT_PWD is the password that the system will use to secure the database's root
 #    account. Set this to anything you want.
 
-DB_PWD=
-DB_ROOT_PWD=
+DB_PWD=databasepassword
+DB_ROOT_PWD=complicatedpassword
 
 # This section can be left alone. If you setup a Pushed.co
 # mobile application, you can enter the App secret and secret
 # key in order to enable phone notifications for new species
 # detections.
-PUSHED_APP_SECRET=
-PUSHED_APP_KEY=
+PUSHED_APP_SECRET=ncvs9K04LP6k4sujaffi
+PUSHED_APP_KEY=8JUcVQJ0rRejYwlICoKO4jy8bwH7CzFjR4E7hRdDE4XtHHi4PCQM5RUl9C1O8QLB
