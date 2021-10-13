@@ -7,3 +7,8 @@ for i in "${empties[@]}";do
   rm -f "${i}"
   rm -f "${i/.csv/}"
 done
+
+if [[ "$(find ${PROCESSED} | wc -l)" -ge 100 ]];then
+  ls -1t . | tail -n +100 | xargs -r rm -vv
+else
+
