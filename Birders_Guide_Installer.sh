@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 my_dir=${HOME}/BirdNET-Pi
+branch=testing
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
 
 
@@ -44,7 +45,7 @@ EOF
   echo
   echo "Installing stage 2 installation script now."
   cd ~
-  curl -s -O "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/main/Birders_Guide_Installer.sh"
+  curl -s -O "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh"
   chmod +x Birders_Guide_Installer.sh
   cat << EOF | sudo tee /etc/systemd/user/birdnet-system-installer.service &> /dev/null
 [Unit]
@@ -106,9 +107,10 @@ stage_2() {
   echo
   if [ ! -d ${my_dir} ];then
     cd ~ || exit 1
-    echo "Cloning the BirdNET-Pi repository in your home directory"
-    git clone https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
-    cd BirdNET-Pi && git checkout main
+    echo "Cloning the BirdNET-Pi repository $branch branch into your home directory"
+    git clone -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
+  else
+    cd ${my_dir} && git checkout ${branch}
   fi
 
   if [ -f ${my_dir}/Birders_Guide_Installer_Configuration.txt ];then
@@ -122,7 +124,7 @@ and then close the Mouse Pad editing window to continue."
     else
       editor=mousepad
     fi
-    $editor ${my_dir}/Birders_Guide_Installer_Configuration.txt &> /dev/null
+    $editor ${my_dir}/Birders_Guide_Installer_Configuration.txt
     while pgrep $editor &> /dev/null;do
       sleep 1
     done
