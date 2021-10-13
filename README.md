@@ -4,7 +4,7 @@
 A realtime acoustic bird classification system for the Raspberry Pi 4B
 
 ## Introduction
-The BirdNET-Pi project is based on the BirdNet-Lite project and is able to recognize bird sounds from the microphone and the sound card in realtime. The system installs all needed services on the Raspberry Pi. 
+The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite). It is able to recognize bird sounds from a USB sound card in realtime. 
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
@@ -54,7 +54,7 @@ The BirdNET-Pi system can be accessed from any web browser on the same network:
 The bird names are in English by default, but other localized versions are available. Please download the labels_l18n.zip file and replace the `model/labels.txt` with the corresponding language.
 
 ### Realtime Analysis Predictions View
-The pre-built TFLite binaries for this project also support [the BirdNET-Demo](https://github.com/kahst/BirdNET-Demo), which I am currently testing for integration into the BirdNET-Pi.
+The pre-built TFLite binaries for this project also support [the BirdNET-Demo](https://github.com/kahst/BirdNET-Demo), which I am currently testing for integration into the BirdNET-Pi. If you know anything about JavaScript and are willing to help, please let me know in the [Live Analysis discussion](https://github.com/mcguirepr89/BirdNET-Pi/discussions/24).
 
 ### Tips:
 You can try to overclock your Pi by placing the following in your `/boot/config.txt` file:
