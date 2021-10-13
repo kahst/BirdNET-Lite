@@ -17,23 +17,6 @@ ANALYZED=${RECS_DIR}/*/*Analyzed
 # SCAN_DIRS are all directories marked "Analyzed"
 SCAN_DIRS=($(find ${ANALYZED} -type d | sort ))
 
-# This sets our while loop integer iterator 'a' -- it first checks whether
-# there are any extractions, and if so, this instance of the extraction will
-# start the 'a' value where the most recent instance left off.
-# Ex: If the last extraction file is 189-%date%species.wav, 'a' will be 190.
-# Else, 'a' starts at 1
-#if [ "$(find ${EXTRACTED} -name '*.wav' | wc -l)" -ge 1 ];then
-#  a=$(( $( find "${EXTRACTED}" -name '*.wav' \
-#    | awk -F "/" '{print $NF}' \
-#    | cut -d'-' -f1 \
-#    | sort -n \
-#    | tail -n1 ) + 1 ))
-#else
-#  a=1
-#fi
-
-#echo "Starting numbering at ${a}"
-
 for h in "${SCAN_DIRS[@]}";do
   # The TMPFILE is created from each .csv file BirdNET creates
   # within each "Analyzed" directory
@@ -50,6 +33,7 @@ for h in "${SCAN_DIRS[@]}";do
     rm -drf "$(echo ${h} | cut -d'-' -f1-3)"
     continue
   fi
+
   # Iterates over each "Analyzed" directory
   for i in $(find ${h} -name '*csv' | sort );do 
     # Iterates over each '.csv' file found in each "Analyzed" directory
@@ -85,8 +69,7 @@ for h in "${SCAN_DIRS[@]}";do
     NEWSPECIES_BY_COMMON="${EXTRACTED}/By_Common_Name/${COMMON_NAME// /_}"
     NEWSPECIES_BY_SCIENCE="${EXTRACTED}/By_Scientific_Name/${SCIENTIFIC_NAME// /_}"
 
-    # If the extracted file already exists, increment the 'a' variable once
-    # but move onto the next line of the TMPFILE for extraction.
+    # If the extracted file already exists, move on
     if [[ -f "${NEWSPECIES_BYDATE}/${NEWFILE}" ]];then
       echo "Extraction exists. Moving on"
       continue
@@ -96,7 +79,6 @@ for h in "${SCAN_DIRS[@]}";do
     # Before extracting the "Selection," the script checks to be sure the
     # original WAVE file still exists.
     [[ -f "${h}/${OLDFILE}" ]] || continue
-
 
     # If a directory does not already exist for the species (by date),
     # it is created

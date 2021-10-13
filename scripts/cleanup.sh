@@ -2,5 +2,13 @@
 source /etc/birdnet/birdnet.conf
 
 cd "${PROCESSED}" || exit 1
-FIND_DATE=*$(date --date="2 days ago" "+%F")*
-find . -name "${FIND_DATE}" -exec rm -rfv {} +
+empties=($(find ${PROCESSED} -size 57c))
+for i in "${empties[@]}";do
+  rm -f "${i}"
+  rm -f "${i/.csv/}"
+done
+
+if [[ "$(find ${PROCESSED} | wc -l)" -ge 100 ]];then
+  ls -1t . | tail -n +100 | xargs -r rm -vv
+else
+
