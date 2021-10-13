@@ -37,7 +37,7 @@ EOF
   echo
   echo "  -$SOFAR species identified so far"
   echo
-  if [ "${SOFAR}" -ge "1" ];then
+  if [ "${SOFAR}" -ge "1" ] && ( find ${EXTRACTED}/By_Date/$(date +%Y-%m-%d) -name '*wav' &> /dev/null );then
     MOST_RECENT="$(find ${EXTRACTED}/By_Date/$(date +%Y-%m-%d) \
       | sort -t"%" -rk2 \
       | head -n1 \
