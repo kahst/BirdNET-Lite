@@ -49,13 +49,15 @@ install_birdnet() {
   cd ~/BirdNET-Pi || exit 1
   echo "Upgrading pip, wheel, and setuptools"
   sudo pip3 install --upgrade pip wheel setuptools
-  echo "Fetching the TFLite pre-built binaries"
-  TFLITE_URL="https://drive.google.com/uc?export=download&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
-  curl -c /tmp/cookie ${TFLITE_URL}
-  CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"
-  TF_COOKIE="https://drive.google.com/uc?export=download&confirm=${CODE}&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
-  curl -Lb /tmp/cookie ${TF_COOKIE} -o tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
-  echo "Installing the new TFLite bin wheel"
+  if [ ! -f $(dirname ${my_dir})/tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl ];then
+    echo "Fetching the TFLite pre-built binaries"
+    TFLITE_URL="https://drive.google.com/uc?export=download&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
+    curl -c /tmp/cookie ${TFLITE_URL}
+    CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"
+    TF_COOKIE="https://drive.google.com/uc?export=download&confirm=${CODE}&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
+    curl -Lb /tmp/cookie ${TF_COOKIE} -o tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
+  fi
+  echo "Installing the TFLite bin wheel"
   sudo pip3 install --upgrade tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
   echo "Installing colorama==0.4.4"
   sudo pip3 install colorama==0.4.4
