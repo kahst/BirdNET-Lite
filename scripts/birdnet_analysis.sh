@@ -108,7 +108,7 @@ run_analysis() {
 --overlap "${OVERLAP}" \
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}""
-      python3 analyze.py \
+      "${VENV}"/bin/python analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
         --lat "${LATITUDE}" \
@@ -128,7 +128,7 @@ run_analysis() {
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
 --custom_list "${CUSTOM_LIST}""
-      python3 analyze.py \
+      "${VENV}"/bin/python analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
         --lat "${LATITUDE}" \
