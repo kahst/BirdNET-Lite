@@ -38,6 +38,13 @@ $sql4 = "SELECT Com_Name, Date, Time, MAX(Confidence)
 $specieslist = $mysqli->query($sql4);
 $speciescount=mysqli_num_rows($specieslist);
 
+$sql5 = "SELECT Com_Name,COUNT(*) 
+	AS Total 
+	FROM detections 
+	GROUP BY Com_Name
+	ORDER BY MAX(Confidence) DESC";
+$speciestally = $mysqli->query($sql5);
+
 $mysqli->close();
 ?>
 
@@ -130,6 +137,8 @@ $mysqli->close();
 				<td><?php echo $speciescount;?></td>
 			</tr>
 		</table>
+<div class="row">
+  <div class="column">
 		<h2>Detected Species</h2>
 		<table>
 			<tr>
@@ -142,16 +151,39 @@ $mysqli->close();
 while($rows=$specieslist ->fetch_assoc())
 {
 ?>
+			<tr>
 				<td><?php echo $rows['Com_Name'];?></td>
 				<td><?php echo $rows['Date'];?></td>
 				<td><?php echo $rows['Time'];?></td>
 				<td><?php echo $rows['MAX(Confidence)'];?></td>
+
 			</tr>
 <?php
 }
 ?>
 		</table>
-
+  </div>
+  <div class="column">
+		<h2>Species stats</h2>
+		<table>
+			<tr>
+				<th>Species</th>
+				<th>Number of Detections</th>
+			</tr>
+<?php // LOOP TILL END OF DATA
+while($rows=$speciestally ->fetch_assoc())
+{
+?>
+			<tr>
+				<td><?php echo $rows['Com_Name'];?></td>
+				<td><?php echo $rows['Total'];?></td>
+			</tr>
+<?php
+}
+?>
+		</table>
+  </div>
+</div>
 		<h1>BirdsDB Detections Table</h1>
 		<!-- TABLE CONSTRUCTION-->
 		<table>
