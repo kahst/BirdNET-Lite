@@ -42,7 +42,7 @@ $sql5 = "SELECT Com_Name,COUNT(*)
 	AS Total 
 	FROM detections 
 	GROUP BY Com_Name
-	ORDER BY MAX(Confidence) DESC";
+	ORDER BY Total DESC";
 $speciestally = $mysqli->query($sql5);
 
 $mysqli->close();
