@@ -3,5 +3,5 @@
 source /etc/birdnet/birdnet.conf
 uninstall.sh
 ${HOME}/BirdNET-Pi/scripts/install_config.sh
-sudo ${HOME}/BirdNET-Pi/scripts/install_services.sh
+USER=${USER} HOME=${HOME} sudo ${HOME}/BirdNET-Pi/scripts/install_services.sh
 echo "BirdNET-Pi has now been reconfigured."

@@ -23,7 +23,7 @@ install_mariadb() {
     echo "MariaDB Installed"
   fi
   echo "Initializing the database"
-  ${my_dir}/createdb.sh
+#  ${my_dir}/createdb.sh
 }
 
 install_birdnet_analysis() {
@@ -94,7 +94,6 @@ create_necessary_dirs() {
   [ -L ${EXTRACTED}/viewdb.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
   [ -L ${EXTRACTED}/phpsysinfo.ini ] || sudo -u ${USER} cp ${HOME}/phpsysinfo/phpsysinfo.ini.new ${HOME}/phpsysinfo/phpsysinfo.ini
-
 }
  
 install_alsa() {
@@ -360,7 +359,7 @@ install_php() {
 caddy ALL=(ALL) NOPASSWD: ALL
 EOF
     chmod 0440 /etc/sudoers.d/010_caddy-nopasswd
-  if [ -d ${HOME}/phpsysinfo ];then
+  if [ ! -d ${HOME}/phpsysinfo ];then
     echo "Fetching phpSysInfo"
     sudo -u ${USER} git clone https://github.com/phpsysinfo/phpsysinfo.git \
       ${HOME}/phpsysinfo
