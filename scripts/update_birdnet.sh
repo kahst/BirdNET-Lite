@@ -110,7 +110,7 @@ echo "Updating BirdNET"
 remove_services | tee -a /tmp/birdnetupdate.log
 remove_scripts | tee -a /tmp/birdnetupdate.log
 cd ${HOME}/BirdNET-Pi || exit 1
-#git pull || exit 1
+git pull || exit 1
 USER=${USER} sudo ./scripts/update_services.sh | tee -a /tmp/birdnetupdate.log
 
 echo "Restarting services"
