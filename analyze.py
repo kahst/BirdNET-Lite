@@ -270,9 +270,9 @@ def main():
                         sci_name,com_name = species.split('_')
                         insert_variables_into_table(str(current_date), str(current_time), sci_name, com_name, \
                         str(entry[1]), str(args.lat), str(args.lon), str(min_conf), str(week), \
-                        str(sensitivity), str(args.overlap))
+                        str(args.sensitivity), str(args.overlap))
 
-                        print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(sensitivity) +';' + str(args.overlap) + '\n')
+                        print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + '\n')
 
                         time.sleep(3)
 

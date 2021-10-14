@@ -1,18 +1,13 @@
 <?php
 
-// Username is root
 $user = 'birder';
 $password = 'databasepassword';
 
-// Database name is gfg
 $database = 'birds';
 
-// Server is localhost with
-// port number 3308
 $servername='localhost';
 $mysqli = new mysqli($servername, $user, $password, $database);
 
-// Checking for connections
 if ($mysqli->connect_error) {
 	die('Connect Error (' .
 		$mysqli->connect_errno . ') '.
@@ -20,8 +15,29 @@ if ($mysqli->connect_error) {
 }
 
 // SQL query to select data from database
-$sql = "SELECT * FROM detections";
-$result = $mysqli->query($sql);
+$sql = "SELECT * FROM detections 
+	ORDER BY Date DESC, Time DESC";
+$fulltable = $mysqli->query($sql);
+$totalcount=mysqli_num_rows($fulltable);
+
+$sql2 = "SELECT * FROM detections 
+	WHERE Date = CURDATE()";
+$todaystable = $mysqli->query($sql2);
+$todayscount=mysqli_num_rows($todaystable);
+
+$sql3 = "SELECT * FROM detections 
+	WHERE Date = CURDATE() 
+	AND Time >= DATE_SUB(NOW(),INTERVAL 1 HOUR)";
+$lasthourtable = $mysqli->query($sql3);
+$lasthourcount=mysqli_num_rows($lasthourtable);
+
+$sql4 = "SELECT Com_Name, Date, Time, MAX(Confidence) 
+	FROM detections 
+	GROUP BY Com_Name 
+	ORDER BY MAX(Confidence) DESC";
+$specieslist = $mysqli->query($sql4);
+$speciescount=mysqli_num_rows($specieslist);
+
 $mysqli->close();
 ?>
 
@@ -30,25 +46,56 @@ $mysqli->close();
 
 <head>
 	<meta charset="UTF-8">
-	<title>Birds Database, Detections Table</title>
+	<title>BirdNET-Pi DB</title>
 	<!-- CSS FOR STYLING THE PAGE -->
 	<style>
+		@media screen and (max-width: 600px) {
+		  .column {
+		    width: 100%;
+		  }
+		}
+		* {
+		  box-sizing: border-box;
+		}
+
+		.row {
+		  display: flex;
+		  margin-left:-5px;
+		  margin-right:-5px;
+		}
+
+		.column {
+		  flex: 50%;
+		  padding: 5px;
+		}
+
 		table {
-			margin: 0 auto;
-			font-size: large;
-			border: 1px solid black;
+                  margin: 0 auto;
+		  font-size: large;
+		  border-collapse: collapse;
+		  border-spacing: 0;
+		  width: 100%;
+		  border: 1px solid black;
 		}
 
 		h1 {
 			text-align: center;
-			color: #006600;
+			color: black;
 			font-size: xx-large;
 			font-family: 'Gill Sans', 'Gill Sans MT',
 			' Calibri', 'Trebuchet MS', 'sans-serif';
 		}
 
+		h2 {
+			text-align: center;
+			color: black;
+			font-size: large;
+			font-family: 'Gill Sans', 'Gill Sans MT',
+			' Calibri', 'Trebuchet MS', 'sans-serif';
+		}
+
 		td {
-			background-color: #E4F5D4;
+			background-color: rgb(119, 196, 135);
 			border: 1px solid black;
 		}
 
@@ -68,6 +115,43 @@ $mysqli->close();
 
 <body>
 	<section>
+		<h2>Number of Detections</h2>
+		<table>
+			<tr>
+				<th>Total</th>
+				<th>Today</th>
+				<th>Last Hour</th>
+				<th>Number of Unique Species</th>
+			</tr>
+			<tr>
+				<td><?php echo $totalcount;?></td>
+				<td><?php echo $todayscount;?></td>
+				<td><?php echo $lasthourcount;?></td>
+				<td><?php echo $speciescount;?></td>
+			</tr>
+		</table>
+		<h2>Detected Species</h2>
+		<table>
+			<tr>
+				<th>Species</th>
+				<th>Date</th>
+				<th>Time</th>
+				<th>Max Confidence Score</th>
+			</tr>
+<?php // LOOP TILL END OF DATA
+while($rows=$specieslist ->fetch_assoc())
+{
+?>
+				<td><?php echo $rows['Com_Name'];?></td>
+				<td><?php echo $rows['Date'];?></td>
+				<td><?php echo $rows['Time'];?></td>
+				<td><?php echo $rows['MAX(Confidence)'];?></td>
+			</tr>
+<?php
+}
+?>
+		</table>
+
 		<h1>BirdsDB Detections Table</h1>
 		<!-- TABLE CONSTRUCTION-->
 		<table>
@@ -86,7 +170,7 @@ $mysqli->close();
 			</tr>
 			<!-- PHP CODE TO FETCH DATA FROM ROWS-->
 <?php // LOOP TILL END OF DATA
-while($rows=$result->fetch_assoc())
+while($rows=$fulltable ->fetch_assoc())
 {
 ?>
 			<tr>
