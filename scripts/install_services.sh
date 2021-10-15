@@ -89,6 +89,7 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
   [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
+  [ -L ${EXTRACTED}/index.html ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/templates/index.html ${EXTRACTED}  
   [ -L ${EXTRACTED}/scripts ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts ${EXTRACTED}
   [ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/spectrogram.* ${EXTRACTED}
   [ -L ${EXTRACTED}/viewdb.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
