@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 # Sends a notification if a new species is detected
 #set -x
-trap 'rm -f $TMPFILE' EXIT
+trap 'rm -f $tmpids' EXIT
 
 source /etc/birdnet/birdnet.conf
 
-TMPFILE=$(mktemp)
+tmpids=$(mktemp)
 
 [ -f ${IDFILE} ] || touch ${IDFILE}
-cat "${IDFILE}" > "${TMPFILE}"
+cat "${IDFILE}" > "${tmpids}"
 
 /usr/local/bin/update_species.sh > /dev/null
 
-if ! diff "${IDFILE}" "${TMPFILE}" &> /dev/null; then 
-  SPECIES=("$(diff "${IDFILE}" "${TMPFILE}" \
+if ! diff "${IDFILE}" "${tmpids}" &> /dev/null; then 
+  SPECIES=("$(diff "${IDFILE}" "${tmpids}" \
     | grep "Common Name" \
     | sort \
     | awk '{for(i=4;i<=NF;++i)printf $i""FS ; print ""}')")
