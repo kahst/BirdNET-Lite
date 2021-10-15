@@ -2,6 +2,10 @@
     <input type="submit" value="Edit the birdnet.conf file">
 </form>
 
+<form action="/scripts/stop_core_services.php" onclick="return confirm('Stop core services?')">
+    <input type="submit" value="Stop Core BirdNET-Pi Services">
+</form>
+
 <form action="/scripts/restart_services.php" onclick="return confirm('Restart ALL services?')">
     <input type="submit" value="Restart ALL BirdNET-Pi Services">
 </form>
