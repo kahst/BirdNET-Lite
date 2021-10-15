@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 # Update BirdNET-Pi
 source /etc/birdnet/birdnet.conf
-trap 'rm -f ${TMPFILE}' EXIT
-SCRIPTS=(birdnet_analysis.sh
+trap 'rm -f ${tmpfile}' EXIT
+trap 'exit 1' SIGINT SIGHUP
+USER=pi
+HOME=/home/pi
+my_dir=${HOME}/BirdNET-Pi/scripts
+tmpfile=$(mktemp)
+
+scripts=(birdnet_analysis.sh
 birdnet_recording.sh
 birdnet_stats.sh
 cleanup.sh
@@ -45,34 +51,31 @@ update_species.sh
 ${HOME}/.gotty)
 
 
-SERVICES=(avahi-alias@.service
-avahi-alias@birdlog.local.service
+# Change this to sourcing from current uninstall.sh
+# Create a pre-update services array for disabling
+# Create a post-update services array for restarting
+services=(avahi-alias@birdlog.local.service
 avahi-alias@birdnetpi.local.service
 avahi-alias@birdstats.local.service
 avahi-alias@extractionlog.local.service
 avahi-alias@birdterminal.local.service
-birdnet_analysis.d
 birdnet_analysis.service
 birdnet_log.service
-birdnet_recording.d
 birdnet_recording.service
 birdstats.service
 birdterminal.service
-caddy.d
-caddy.service
 edit_birdnet_conf.service
 extraction_log.service
-extraction.d
 extraction.service
 extraction.timer
 livestream.service
-spectrogram_viewer.service
-${SYSTEMD_MOUNT})
+spectrogram_viewer.service)
 
 remove_services() {
-  for i in "${SERVICES[@]}"; do
+  for i in "${services[@]}"; do
     if [ -L /etc/systemd/system/multi-user.target.wants/"${i}" ];then
       sudo systemctl kill "${i}"
+      sudo systemctl disable "${i}"
     fi
     if [ -f /etc/systemd/system/"${i}" ];then
       sudo rm /etc/systemd/system/"${i}"
@@ -86,9 +89,8 @@ remove_services() {
 }
 
 remove_crons() {
-  TMPFILE=$(mktemp)
-  crontab -l | sed -e '/birdnet/,+1d' > "${TMPFILE}"
-  crontab "${TMPFILE}"
+  crontab -u${USER} -l | sed -e '/birdnet/,+1d' > "${tmpfile}"
+  crontab -u${USER} "${tmpfile}"
 }
 
 remove_icecast() {
@@ -99,24 +101,40 @@ remove_icecast() {
 }
 
 remove_scripts() {
-  for i in "${SCRIPTS[@]}";do
+  for i in "${scripts[@]}";do
     if [ -L "/usr/local/bin/${i}" ];then
       sudo rm -v "/usr/local/bin/${i}"
     fi
   done
 }
 
-echo "Updating BirdNET"
-remove_services | tee -a /tmp/birdnetupdate.log
-remove_scripts | tee -a /tmp/birdnetupdate.log
-cd ${HOME}/BirdNET-Pi || exit 1
-git pull || exit 1
-USER=${USER} sudo ./scripts/update_services.sh | tee -a /tmp/birdnetupdate.log
+restart_services() {
+  for i in ${services[@]};do
+    sudo systemctl restart ${i}
+  done
+}
 
-echo "Restarting services"
-for i in "${SERVICES[@]}";do
-  if [ -f /etc/systemd/system/"${i}" ];then
-    sudo systemctl restart ${i} | tee -a /tmp/birdnetupdate.log
-  fi
-done
-echo "Update Complete"
+# Stage 1 removes old stuff
+remove_services
+remove_scripts
+
+# Stage 2 does a git pull to fetch new things
+sudo -u${USER} git -C ${HOME}/BirdNET-Pi pull || exit 1
+
+# Stage 3 updates the services
+sudo ${my_dir}/update_services.sh
+
+# Stage 4 restarts the services
+services=(avahi-alias@birdnetpi.local.service
+birdnet_analysis.service
+birdnet_log.service
+birdnet_recording.service
+edit_birdnet_conf.service
+extraction_log.service
+extraction.service
+extraction.timer
+livestream.service
+spectrogram_viewer.service)
+
+restart_services
+

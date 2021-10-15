@@ -218,6 +218,9 @@ ${EXTRACTIONS_URL} {
   basicauth /stream {
     birdnet ${HASHWORD}
   }
+  basicauth /phpsysinfo {
+    birdnet ${HASHWORD}
+  }  
   reverse_proxy /stream localhost:8000
   php_fastcgi unix//run/php/php7.3-fpm.sock
 }
@@ -234,16 +237,11 @@ http://birdnetpi.local {
   basicauth /stream {
     birdnet ${HASHWORD}
   }
+  basicauth /phpsysinfo {
+    birdnet ${HASHWORD}
+  } 
   reverse_proxy /stream localhost:8000
   php_fastcgi unix//run/php/php7.3-fpm.sock
-}
-
-http://birdlog.local {
-  reverse_proxy localhost:8080
-}
-
-http://extractionlog.local {
-  reverse_proxy localhost:8888
 }
 EOF
   systemctl reload caddy
@@ -345,7 +343,7 @@ install_sox() {
 }
 
 install_php() {
-  if ! which pip &> /dev/null || ! which php-fpm7.3;then
+  if ! which php &> /dev/null || ! which php-fpm7.3 || ! apt list --installed | grep php-xml;then
     echo "Installing PHP modules"
     apt -qq update
     apt install -qqy php php-fpm php7.3-mysql php-xml
@@ -360,7 +358,7 @@ install_php() {
 caddy ALL=(ALL) NOPASSWD: ALL
 EOF
     chmod 0440 /etc/sudoers.d/010_caddy-nopasswd
-  if [ -d ${HOME}/phpsysinfo ];then
+  if [ ! -d ${HOME}/phpsysinfo ];then
     echo "Fetching phpSysInfo"
     sudo -u ${USER} git clone https://github.com/phpsysinfo/phpsysinfo.git \
       ${HOME}/phpsysinfo

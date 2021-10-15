@@ -2,7 +2,7 @@
     <input type="submit" value="Edit the birdnet.conf file">
 </form>
 
-<form action="/scripts/restart_services.php">
+<form action="/scripts/restart_services.php" onclick="return confirm('Restart ALL services?')">
     <input type="submit" value="Restart ALL BirdNET-Pi Services">
 </form>
 
@@ -18,20 +18,23 @@
     <input type="submit" value="Restart Extraction Service">
 </form>
 
-<form action="/scripts/restart_caddy.php">
+<form action="/scripts/restart_caddy.php" onclick="return confirm('Restart Caddy? You will be disconnected for about 20 seconds.')">
     <input type="submit" value="Restart Caddy">
 </form>
 
 
-<form action="/scripts/clear_all_data.php" onclick="return confirm('Are you sure?')">
-    
+<form action="/scripts/clear_all_data.php" onclick="return confirm('Clear ALL Data? This cannot be undone.')">
     <input type="submit" value="Clear ALL data">
 </form>
 
-<form action="/scripts/reboot_system.php">
+<form action="/scripts/update_birdnet.php" onclick="return confirm('Are you sure you want to update?')">
+    <input type="submit" value="Update BirdNET-Pi">
+</form>
+
+<form action="/scripts/reboot_system.php" onclick="return confirm('Are you sure you want to reboot?')">
     <input type="submit" value="Reboot BirdNET-Pi">
 </form>
 
-<form action="/scripts/shutdown_system.php">
+<form action="/scripts/shutdown_system.php" onclick="return confirm('Are you sure you want to shutdown?')">
     <input type="submit" value="Shutdown BirdNET-Pi">
 </form>
