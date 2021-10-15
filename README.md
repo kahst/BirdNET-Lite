@@ -14,6 +14,7 @@ The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://githu
 * MariaDB integration
 * NoMachine remote desktop (for personal use only)
 * Live audio stream
+* Integrated phpSysInfo
 * Localisation supported
 
 ## Requirements
