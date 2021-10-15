@@ -218,7 +218,7 @@ ${EXTRACTIONS_URL} {
   basicauth /stream {
     birdnet ${HASHWORD}
   }
-  basicauth /phpsysinfo {
+  basicauth /phpsysinfo* {
     birdnet ${HASHWORD}
   }  
   reverse_proxy /stream localhost:8000
@@ -237,7 +237,7 @@ http://birdnetpi.local {
   basicauth /stream {
     birdnet ${HASHWORD}
   }
-  basicauth /phpsysinfo {
+  basicauth /phpsysinfo* {
     birdnet ${HASHWORD}
   } 
   reverse_proxy /stream localhost:8000
