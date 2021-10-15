@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Update the species list
 #set -x
-trap 'rm -f "$TMPFILE"' SIGINT SIGTERM EXIT
+trap 'rm -f "$TMPFILE"' EXIT
 
 source /etc/birdnet/birdnet.conf
 
