@@ -63,4 +63,4 @@ You can try to overclock your Pi by placing the following in your `/boot/config.
 over_voltage=6
 arm_freq=1750
 ```
-Be sure the Pi is adequately cooled and powered. Check http://birdnetpi.local:9090 for CPU temperature and over-volatage warnings (anything other than "throttled:0x0" is bad).
+Be sure the Pi is adequately cooled and powered.
