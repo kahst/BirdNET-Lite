@@ -15,6 +15,7 @@ The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://githu
 * NoMachine remote desktop (for personal use only)
 * Live audio stream
 * Integrated phpSysInfo
+* New species mobile notifications from Pushed.co (for iOS users only)
 * Localisation supported
 
 ## Requirements
