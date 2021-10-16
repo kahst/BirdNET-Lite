@@ -6,6 +6,8 @@ source /etc/birdnet/birdnet.conf
 
 lastcheck="$(mktemp)"
 
+[ -f ${IDFILE} ] || touch ${IDFILE}
+
 cp ${IDFILE} ${lastcheck}
 
 /home/pi/BirdNET-Pi/scripts/new_update_species.sh
