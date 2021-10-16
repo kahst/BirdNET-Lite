@@ -2,19 +2,13 @@
 # Update the species list
 #set -x
 trap 'rm -f "$TMPFILE"' EXIT
-
 source /etc/birdnet/birdnet.conf
+db=birds
+dbuser=birder
+dbpassword=${DB_PWD}
 
-TMPFILE=$(mktemp) || exit 1
-
-[ -f ${IDFILE} ] || touch ${IDFILE}
-
-if [ $(find ${PROCESSED} -name '*csv' | wc -l) -ge 1 ] &> /dev/null;then
-  sort $(find ${PROCESSED} ${ANALYZED} ${EXTRACTED} -name '*csv') \
-    | awk -F\; '!/Scientific/ {print"Common Name: " $4 "\nScientific Name: " $3""}' \
-    | uniq > "$TMPFILE"
-  cat "$TMPFILE" | awk '!visited[$0]++' > "$IDFILE"
-  cat "$IDFILE"
-else
-  cat "$IDFILE"
-fi
+mysql -u${dbuser} -p${dbpassword} ${db} \
+  -e 'SELECT Com_Name 
+      FROM detections 
+      GROUP BY Com_Name' |\
+  tail -n+2 > ${IDFILE}

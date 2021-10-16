@@ -1,25 +1,24 @@
 #!/usr/bin/env bash
 # Sends a notification if a new species is detected
-set -x
-trap 'rm -f $tmpids' EXIT
-
+#set -x
+trap 'rm -f $lastcheck' EXIT
 source /etc/birdnet/birdnet.conf
-lastcheck="${IDFILE}.lastime"
 
-[ -f ${IDFILE} ] || touch ${IDFILE}
-cat "${IDFILE}" > "${lastcheck}"
+lastcheck="$(mktemp)"
 
-/usr/local/bin/update_species.sh > /dev/null
+cp ${IDFILE} ${lastcheck}
 
-if ! diff "${IDFILE}" "${lastcheck}" &> /dev/null; then 
-  SPECIES=("$(diff "${IDFILE}" "${lastcheck}" \
-    | grep "Common Name" \
-    | sort \
-    | awk '{for(i=4;i<=NF;++i)printf $i""FS ; print ""}')")
-  
+/home/pi/BirdNET-Pi/scripts/new_update_species.sh
+
+if ! diff ${IDFILE} ${lastcheck} &> /dev/null;then
+  SPECIES=$(diff ${IDFILE} ${lastcheck} \
+    | tail -n+2 |\
+    awk '{for(i=2;i<=NF;++i)printf $i""FS ; print ""}' )
+
   NOTIFICATION="New Species Detection: "${SPECIES[@]}""
   echo "Sending the following notification:
 ${NOTIFICATION}"
+
   if [ ! -z ${PUSHED_APP_KEY} ];then
     curl -X POST \
       --form-string "app_key=${PUSHED_APP_KEY}" \
@@ -29,3 +28,4 @@ ${NOTIFICATION}"
       https://api.pushed.co/1/push
   fi
 fi
+
