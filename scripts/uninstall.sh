@@ -51,21 +51,19 @@ avahi-alias@birdnetpi.local.service
 avahi-alias@birdstats.local.service
 avahi-alias@extractionlog.local.service
 avahi-alias@birdterminal.local.service
-birdnet_analysis.d
 birdnet_analysis.service
 birdnet_log.service
 birdnet_recording.d
 birdnet_recording.service
 birdstats.service
 birdterminal.service
-caddy.d
 caddy.service
 edit_birdnet_conf.service
 extraction_log.service
-extraction.d
 extraction.service
 extraction.timer
 livestream.service
+pushed_notifications.service
 spectrogram_viewer.service
 ${SYSTEMD_MOUNT})
 

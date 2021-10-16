@@ -69,6 +69,7 @@ extraction_log.service
 extraction.service
 extraction.timer
 livestream.service
+pushed_notifications.service
 spectrogram_viewer.service)
 
 remove_services() {
@@ -134,6 +135,7 @@ extraction_log.service
 extraction.service
 extraction.timer
 livestream.service
+pushed_notifications.service
 spectrogram_viewer.service)
 
 restart_services

@@ -72,14 +72,23 @@ WantedBy=multi-user.target
 EOF
   systemctl enable extraction.timer
   systemctl enable extraction.service
-  echo "Adding the species_updater.cron"
-  if ! crontab -u ${USER} -l &> /dev/null;then
-    crontab -u ${USER} $(dirname ${my_dir})/templates/species_updater.cron &> /dev/null
-  else
-    crontab -u ${USER} -l > ${tmpfile}
-    cat $(dirname ${my_dir})/templates/species_updater.cron >> ${tmpfile}
-    crontab -u ${USER} "${tmpfile}" &> /dev/null
-  fi
+}
+
+install_pushed_notifications() {
+  echo "Installing Pushed.co mobile notifications"
+  cat << EOF > /etc/systemd/system/pushed_notifications.service
+[Unit]
+Description=BirdNET-Pi Pushed.co Notifications
+[Service]
+Restart=on-success
+RestartSec=3
+Type=simple
+User=pi
+ExecStart=/usr/local/bin/species_notifier.sh
+[Install]
+WantedBy=multi-user.target
+EOF
+  systemctl enable --now pushed_notifications
 }
 
 create_necessary_dirs() {
@@ -138,16 +147,6 @@ EOF
   systemctl enable birdnet_recording.service
 }
 
-
-install_sshfs() {
-  echo "Checking for SSHFS to mount remote filesystem"
-  if ! which sshfs &> /dev/null ;then
-    echo "Installing SSHFS"
-    apt -qqq update 
-    apt install -qqqy sshfs
-  fi
-}
-
 install_caddy() {
   if ! which caddy &> /dev/null ;then
     echo "Installing Caddy"
@@ -183,7 +182,7 @@ ${EXTRACTIONS_URL} {
   basicauth /stream {
     birdnet ${HASHWORD}
   }
-  basicauth /phpsysinfo {
+  basicauth /phpsysinfo* {
     birdnet ${HASHWORD}
   }
   reverse_proxy /stream localhost:8000
@@ -202,7 +201,7 @@ http://birdnetpi.local {
   basicauth /stream {
     birdnet ${HASHWORD}
   }
-  basicauth /phpsysinfo {
+  basicauth /phpsysinfo* {
     birdnet ${HASHWORD}
   }
   reverse_proxy /stream localhost:8000
@@ -398,25 +397,11 @@ EOF
 
 install_nomachine() {
   if [ ! -d /usr/share/NX ];then
-  echo "Installing NoMachine"
-  curl -s -O "${nomachine_url}"
-  apt install -y ${HOME}/nomachine_7.6.2_3_arm64.deb
-  rm -f ${HOME}/nomachine_7.6.2_3_arm64.deb
+    echo "Installing NoMachine"
+    curl -s -O "${nomachine_url}"
+    apt install -y ${HOME}/nomachine_7.6.2_3_arm64.deb
+    rm -f ${HOME}/nomachine_7.6.2_3_arm64.deb
   fi
-}
-
-install_systemd_overrides() {
-  for i in caddy birdnet_analysis extraction birdnet_recording;do
-    if [ -f /etc/systemd/system/${i}.service ];then
-      [ -d /etc/systemd/system/${i}.d ] || mkdir /etc/systemd/system/${i}.d
-      echo "Installing the systemd overrides.conf for the ${i}.service"
-      cat << EOF > /etc/systemd/system/${i}.d/overrides.conf
-[Unit]
-After=network.target network-online.target ${SYSTEMD_MOUNT}
-Requires=network-online.target ${SYSTEMD_MOUNT}
-EOF
-    fi
-  done
 }
 
 install_cleanup_cron() {
@@ -453,6 +438,7 @@ install_selected_services() {
     install_php
     install_spectrogram_service
     install_edit_birdnet_conf
+    install_pushed_notifications
   fi
 
   if [ ! -z "${ICE_PWD}" ];then
@@ -462,10 +448,6 @@ install_selected_services() {
 
   if [[ "${INSTALL_NOMACHINE}" =~ [Yy] ]];then
     install_nomachine
-  fi
-
-  if [[ "${REMOTE}" =~ [Yy] ]];then
-    install_systemd_overrides
   fi
 
   create_necessary_dirs

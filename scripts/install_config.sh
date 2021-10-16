@@ -31,17 +31,6 @@ get_DO_EXTRACTIONS() {
   done
 }
 
-get_TIMESTAMP_FORMAT() {
-  read -n2 -p "Would you like recordings to be time stamped in 12-hour AM/PM
-or 24-hour format? " TIMESTAMP_FORMAT
-  echo
-  case $TIMESTAMP_FORMAT in
-    12 ) ;;
-    24 ) ;;
-    * ) TIMESTAMP_FORMAT=24;;
-  esac
-}
-
 get_DO_RECORDING() {
   while true; do
     read -n1 -p "Is this device also doing the recording? " DO_RECORDING
@@ -50,22 +39,6 @@ get_DO_RECORDING() {
       [Yy] ) break;;
       [Nn] ) break;;
       * ) echo "You must answer with Yes or No (y or n)";;
-    esac
-  done
-}
-
-get_REMOTE() {
-  while true; do
-    read -n1 -p "Are the recordings mounted on a remote file system?" REMOTE
-    echo
-    case $REMOTE in
-      [Yy] ) 
-        read -p "What is the remote hostname or IP address for the recorder? " REMOTE_HOST
-        read -p "Who is the remote user? " REMOTE_USER
-        read -p "What is the absolute path of the recordings directory on the remote host? " REMOTE_RECS_DIR
-        break;;
-      [Nn] ) break;;
-      * ) echo "Please answer Yes or No (y or n)";;
     esac
   done
 }
@@ -192,8 +165,6 @@ configure() {
   get_DB_PWDS
   get_DO_EXTRACTIONS
   get_DO_RECORDING
-  get_TIMESTAMP_FORMAT
-  get_REMOTE
   get_EXTRACTIONS_URL
   get_PUSHED
   get_INSTALL_NOMACHINE
@@ -242,7 +213,7 @@ DO_EXTRACTIONS=${DO_EXTRACTIONS}
 
 ################################################################################
 #-----------------------------  Recording Service  ----------------------------#
-#_______________The two variables below can be set to enable __________________#
+#____________________The variable below can be set to enable __________________#
 #________________________the birdnet_recording.service ________________________#
 
 #   Keep this EMPTY if you do not want this device to perform the recording.   #
@@ -252,51 +223,6 @@ DO_EXTRACTIONS=${DO_EXTRACTIONS}
 ## Set this to Y or y to enable recording.
 
 DO_RECORDING=${DO_RECORDING}
-
-## TIMESTAMP_FORMAT is the format the recording service will use to name its
-## files. Setting this variable to "12" will name the recorded (and extracted)
-## files using the 12-hour AM/PM time format. Setting this variable to "24"
-## will name the files using the 24-hour time format. See examples below:
-#
-## TIMESTAMP_FORMAT=12
-## example filename: 236-Northern_Cardinal-86%2021-09-30-birdnet-01:00:19pm.wav
-#
-## TIMESTAMP_FORMAT=24
-## example filename: 236-Northern_Cardinal-86%2021-09-30-birdnet-13:00:19.wav
-
-
-TIMESTAMP_FORMAT=${TIMESTAMP_FORMAT}
-
-
-################################################################################
-#-----------------  Mounting a remote directory with systemd  -----------------#
-#_______________The four variables below can be set to enable a_______________#
-#___________________systemd.mount for analysis, extraction,____________________#
-#______________________________or file-serving_________________________________#
-
-#            Leave these settings EMPTY if your data-set is local.             #
-
-## REMOTE is simply a setting for enabling the systemd.mount to use a remote 
-## filesystem for the data storage and service.
-## Set this to Y or y to enable the systemd.mount. 
-
-REMOTE=${REMOTE}
-
-## REMOTE_HOST is the IP address, hostname, or domain name SSH should use to 
-## connect for FUSE to mount its remote directories locally.
-
-REMOTE_HOST=${REMOTE_HOST}
-
-## REMOTE_USER is the user SSH will use to connect to the REMOTE_HOST.
-
-REMOTE_USER=${REMOTE_USER}
-
-## REMOTE_RECS_DIR is the directory on the REMOTE_HOST which contains the
-## data-set SSHFS should mount to this system for local access. This is NOT the
-## directory where you will access the data on this machine. See RECS_DIR for
-## that.
-
-REMOTE_RECS_DIR=${REMOTE_RECS_DIR}
 
 ################################################################################
 #-----------------------  Web-hosting/Caddy File-server -----------------------#

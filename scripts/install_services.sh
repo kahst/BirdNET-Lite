@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 # This installs the services that have been selected
 #set -x # Uncomment to enable debugging
-trap 'rm -f ${TMPFILE}' EXIT
+trap 'rm -f ${tmpfile}' EXIT
 trap 'exit 1' SIGINT SIGHUP
-my_dir=$(realpath $(dirname $0))
-TMPFILE=$(mktemp)
+USER=pi
+HOME=/home/pi
+my_dir=${HOME}/BirdNET-Pi/scripts
+tmpfile=$(mktemp)
 nomachine_url="https://download.nomachine.com/download/7.6/Arm/nomachine_7.6.2_3_arm64.deb"
 gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_arm.tar.gz"
-CONFIG_FILE="$(dirname ${my_dir})/birdnet.conf"
+config_file="$(dirname ${my_dir})/birdnet.conf"
 
 install_scripts() {
   echo "Installing BirdNET-Pi scripts to /usr/local/bin"
@@ -72,14 +74,23 @@ WantedBy=multi-user.target
 EOF
   systemctl enable extraction.timer
   systemctl enable extraction.service
-  echo "Adding the species_updater.cron"
-  if ! crontab -u ${USER} -l &> /dev/null;then
-    crontab -u ${USER} $(dirname ${my_dir})/templates/species_updater.cron &> /dev/null
-  else
-    crontab -u ${USER} -l > ${TMPFILE}
-    cat $(dirname ${my_dir})/templates/species_updater.cron >> ${TMPFILE}
-    crontab -u ${USER} "${TMPFILE}" &> /dev/null
-  fi
+}
+
+install_pushed_notifications() {
+  echo "Installing Pushed.co mobile notifications"
+  cat << EOF > /etc/systemd/system/pushed_notifications.service
+[Unit]
+Description=BirdNET-Pi Pushed.co Notifications
+[Service]
+Restart=on-success
+RestartSec=3
+Type=simple
+User=pi
+ExecStart=/usr/local/bin/species_notifier.sh
+[Install]
+WantedBy=multi-user.target
+EOF
+  systemctl enable --now pushed_notifications
 }
 
 create_necessary_dirs() {
@@ -138,51 +149,6 @@ EOF
   systemctl enable birdnet_recording.service
 }
 
-
-install_sshfs() {
-  echo "Checking for SSHFS to mount remote filesystem"
-  if ! which sshfs &> /dev/null ;then
-    echo "Installing SSHFS"
-    apt -qqq update 
-    apt install -qqqy sshfs
-  fi
-}
-
-setup_sshkeys() {
-  echo "Setting up SSH keys for SSHFS"
-  echo "Adding remote host key to ${HOME}/.ssh/known_hosts"
-  ssh-keyscan -H ${REMOTE_HOST} >> ${HOME}/.ssh/known_hosts
-  chown ${USER}:${USER} ${HOME}/.ssh/known_hosts &> /dev/null
-  if [ ! -f ${HOME}/.ssh/id_ed25519.pub ];then
-    echo "Creating a new key"
-    ssh-keygen -t ed25519 -f ${HOME}/.ssh/id_ed25519 -P ""
-  fi
-  chown -R ${USER}:${USER} ${HOME}/.ssh/ &> /dev/null
-  echo "Copying public key to ${REMOTE_HOST}"
-  ssh-copy-id ${REMOTE_USER}@${REMOTE_HOST}
-}
- 
-install_systemd_mount() {
-  echo "Installing systemd.mount"
-  cat << EOF > /etc/systemd/system/${SYSTEMD_MOUNT}
-[Unit]
-Description=Mount remote fs with sshfs
-DefaultDependencies=no
-Conflicts=umount.target
-After=network-online.target
-Before=umount.target
-Wants=network-online.target
-[Install]
-WantedBy=multi-user.target
-[Mount]
-What=${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_RECS_DIR}
-Where=${RECS_DIR}
-Type=fuse.sshfs
-Options=delay_connect,_netdev,allow_other,IdentityFile=${HOME}/.ssh/id_ed25519,reconnect,ServerAliveInterval=30,ServerAliveCountMax=5,x-systemd.automount,uid=1000,gid=1000
-TimeoutSec=60
-EOF
-}
-
 install_caddy() {
   if ! which caddy &> /dev/null ;then
     echo "Installing Caddy"
@@ -220,7 +186,7 @@ ${EXTRACTIONS_URL} {
   }
   basicauth /phpsysinfo* {
     birdnet ${HASHWORD}
-  }  
+  }
   reverse_proxy /stream localhost:8000
   php_fastcgi unix//run/php/php7.3-fpm.sock
 }
@@ -239,7 +205,7 @@ http://birdnetpi.local {
   }
   basicauth /phpsysinfo* {
     birdnet ${HASHWORD}
-  } 
+  }
   reverse_proxy /stream localhost:8000
   php_fastcgi unix//run/php/php7.3-fpm.sock
 }
@@ -433,25 +399,12 @@ EOF
 }
 
 install_nomachine() {
-  echo "Installing NoMachine"
-  cd ~
-  curl -s -O "${nomachine_url}"
-  apt install -y ${HOME}/nomachine_7.6.2_3_arm64.deb
-  rm -f ${HOME}/nomachine_7.6.2_3_arm64.deb
-}
-
-install_systemd_overrides() {
-  for i in caddy birdnet_analysis extraction birdnet_recording;do
-    if [ -f /etc/systemd/system/${i}.service ];then
-      [ -d /etc/systemd/system/${i}.d ] || mkdir /etc/systemd/system/${i}.d
-      echo "Installing the systemd overrides.conf for the ${i}.service"
-      cat << EOF > /etc/systemd/system/${i}.d/overrides.conf
-[Unit]
-After=network.target network-online.target ${SYSTEMD_MOUNT}
-Requires=network-online.target ${SYSTEMD_MOUNT}
-EOF
-    fi
-  done
+  if [ ! -d /usr/share/NX ];then
+    echo "Installing NoMachine"
+    curl -s -O "${nomachine_url}"
+    apt install -y ${HOME}/nomachine_7.6.2_3_arm64.deb
+    rm -f ${HOME}/nomachine_7.6.2_3_arm64.deb
+  fi
 }
 
 install_cleanup_cron() {
@@ -459,9 +412,9 @@ install_cleanup_cron() {
   if ! crontab -u ${USER} -l &> /dev/null;then
     crontab -u ${USER} $(dirname ${my_dir})/templates/cleanup.cron &> /dev/null
   else
-    crontab -u ${USER} -l > ${TMPFILE}
-    cat $(dirname ${my_dir})/templates/cleanup.cron >> ${TMPFILE}
-    crontab -u ${USER} "${TMPFILE}" &> /dev/null
+    crontab -u ${USER} -l > ${tmpfile}
+    cat $(dirname ${my_dir})/templates/cleanup.cron >> ${tmpfile}
+    crontab -u ${USER} "${tmpfile}" &> /dev/null
   fi
 }
 
@@ -478,12 +431,6 @@ install_selected_services() {
     install_recording_service
   fi
 
-  if [[ "${REMOTE}" =~ [Yy] ]];then
-    install_sshfs
-    setup_sshkeys
-    install_systemd_mount
-  fi
-
   if [ ! -z "${EXTRACTIONS_URL}" ];then
     install_caddy
     install_Caddyfile
@@ -494,6 +441,7 @@ install_selected_services() {
     install_php
     install_spectrogram_service
     install_edit_birdnet_conf
+    install_pushed_notifications
   fi
 
   if [ ! -z "${ICE_PWD}" ];then
@@ -505,19 +453,13 @@ install_selected_services() {
     install_nomachine
   fi
 
-  if [[ "${REMOTE}" =~ [Yy] ]];then
-    install_systemd_overrides
-  fi
-
   create_necessary_dirs
   install_cleanup_cron
 }
 
-if [ -f ${CONFIG_FILE} ];then 
-  source ${CONFIG_FILE}
-  USER=${BIRDNET_USER}
-  HOME="$(getent passwd ${BIRDNET_USER} | cut -d: -f6)"
+if [ -f ${config_file} ];then 
+  source ${config_file}
   install_selected_services
 else
-  echo "Unable to find a configuration file. Please make sure that $CONFIG_FILE exists."
+  echo "Unable to find a configuration file. Please make sure that $config_file exists."
 fi
