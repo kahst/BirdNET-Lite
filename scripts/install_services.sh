@@ -401,9 +401,9 @@ EOF
 install_nomachine() {
   if [ ! -d /usr/share/NX ];then
     echo "Installing NoMachine"
-    curl -s -O "${nomachine_url}"
-    apt install -y ${HOME}/nomachine_7.6.2_3_arm64.deb
-    rm -f ${HOME}/nomachine_7.6.2_3_arm64.deb
+    curl -s -o ${HOME}/nomachine.deb -O "${nomachine_url}"
+    apt install -y ${HOME}/nomachine.deb
+    rm -f ${HOME}/nomachine.deb
   fi
 }
 
