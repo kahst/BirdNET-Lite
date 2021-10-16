@@ -21,6 +21,9 @@ sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Pi/templates/index.html ${EXTRACT
 [ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Pi/scripts/spectrogram.php ${EXTRACTED}
 [ -L ${EXTRACTED}/spectrogram.sh ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Pi/scripts/spectrogram.sh ${EXTRACTED}
 [ -L ${EXTRACTED}/viewdb.php ] || sudo -u ${BIRDNET_USER} ln -s /home/pi/BirdNET-Pi/scripts/viewdb.php ${EXTRACTED}
+sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
+[ -L ${EXTRACTED}/phpsysinfo.ini ] || sudo -u ${USER} cp ${HOME}/phpsysinfo/phpsysinfo.ini.new ${HOME}/phpsysinfo/phpsysinfo.ini
+
 
 sudo -u ${BIRDNET_USER} cp ~/BirdNET-Pi/templates/index.html ${EXTRACTED}/
 echo "Dropping and re-creating database"
