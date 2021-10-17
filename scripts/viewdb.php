@@ -1,4 +1,5 @@
 <?php
+header("refresh: 30;");
 
 $user = 'birder';
 $password = 'databasepassword';
