@@ -1,5 +1,5 @@
 # BirdNET-Pi
-![version](https://img.shields.io/badge/version-0.1-blue)
+![version](https://img.shields.io/badge/version-0.2-orange)
 
 A realtime acoustic bird classification system for the Raspberry Pi 4B
 
@@ -14,6 +14,8 @@ The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://githu
 * MariaDB integration
 * NoMachine remote desktop (for personal use only)
 * Live audio stream
+* Integrated phpSysInfo
+* New species mobile notifications from Pushed.co (for iOS users only)
 * Localisation supported
 
 ## Requirements

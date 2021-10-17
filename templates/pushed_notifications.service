@@ -1,0 +1,10 @@
+[Unit]
+Description=BirdNET-Pi Pushed.co Notifications
+[Service]
+Restart=on-success
+RestartSec=3
+Type=simple
+User=pi
+ExecStart=/usr/local/bin/species_notifier.sh
+[Install]
+WantedBy=multi-user.target

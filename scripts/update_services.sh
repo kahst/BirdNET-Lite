@@ -24,8 +24,6 @@ install_mariadb() {
     apt -qqy install mariadb-server
     echo "MariaDB Installed"
   fi
-  echo "Initializing the database"
-  ${my_dir}/createdb.sh
 }
 
 install_birdnet_analysis() {
@@ -318,7 +316,6 @@ install_php() {
   fi
     echo "Configuring PHP for Caddy"
     sed -i 's/www-data/caddy/g' /etc/php/7.3/fpm/pool.d/www.conf
-    systemctl restart php7.3-fpm.service
     echo "Adding Caddy sudoers rule"
     cat << EOF > /etc/sudoers.d/010_caddy-nopasswd
 caddy ALL=(ALL) NOPASSWD: ALL

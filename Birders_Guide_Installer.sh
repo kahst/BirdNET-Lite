@@ -194,7 +194,7 @@ BIRDNET_USER=pi
 ## it needs to analyze. Be sure this directory is readable and writable for
 ## the BIRDNET_USER. If you are going to be accessing a remote data-set, you
 ## still need to set this, as this will be where the remote directory gets
-## mounted locally. See REMOTE_RECS_DIR below for mounting remote data-sets.
+## mounted locally. 
 
 RECS_DIR=${HOME}/BirdSongs
 
@@ -219,7 +219,7 @@ DO_EXTRACTIONS=y
 
 ################################################################################
 #-----------------------------  Recording Service  ----------------------------#
-#_______________The two variables below can be set to enable __________________#
+#____________________The variable below can be set to enable __________________#
 #________________________the birdnet_recording.service ________________________#
 
 #   Keep this EMPTY if you do not want this device to perform the recording.   #
@@ -229,51 +229,6 @@ DO_EXTRACTIONS=y
 ## Set this to Y or y to enable recording.
 
 DO_RECORDING=y
-
-## TIMESTAMP_FORMAT is the format the recording service will use to name its
-## files. Setting this variable to "12" will name the recorded (and extracted)
-## files using the 12-hour AM/PM time format. Setting this variable to "24"
-## will name the files using the 24-hour time format. See examples below:
-#
-## TIMESTAMP_FORMAT=12
-## example filename: 236-Northern_Cardinal-86%2021-09-30-birdnet-01:00:19pm.wav
-#
-## TIMESTAMP_FORMAT=24
-## example filename: 236-Northern_Cardinal-86%2021-09-30-birdnet-13:00:19.wav
-
-
-TIMESTAMP_FORMAT=24
-
-
-################################################################################
-#-----------------  Mounting a remote directory with systemd  -----------------#
-#_______________The four variables below can be set to enable a_______________#
-#___________________systemd.mount for analysis, extraction,____________________#
-#______________________________or file-serving_________________________________#
-
-#            Leave these settings EMPTY if your data-set is local.             #
-
-## REMOTE is simply a setting for enabling the systemd.mount to use a remote 
-## filesystem for the data storage and service.
-## Set this to Y or y to enable the systemd.mount. 
-
-REMOTE=
-
-## REMOTE_HOST is the IP address, hostname, or domain name SSH should use to 
-## connect for FUSE to mount its remote directories locally.
-
-REMOTE_HOST=
-
-## REMOTE_USER is the user SSH will use to connect to the REMOTE_HOST.
-
-REMOTE_USER=
-
-## REMOTE_RECS_DIR is the directory on the REMOTE_HOST which contains the
-## data-set SSHFS should mount to this system for local access. This is NOT the
-## directory where you will access the data on this machine. See RECS_DIR for
-## that.
-
-REMOTE_RECS_DIR=
 
 ################################################################################
 #-----------------------  Web-hosting/Caddy File-server -----------------------#

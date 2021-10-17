@@ -1,2 +1,0 @@
-#birdnet
-*/2 * * * * /usr/local/bin/species_notifier.sh &> /dev/null
