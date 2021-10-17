@@ -8,69 +8,7 @@ HOME=/home/pi
 my_dir=${HOME}/BirdNET-Pi/scripts
 tmpfile=$(mktemp)
 
-scripts=(birdnet_analysis.sh
-birdnet_recording.sh
-birdnet_stats.sh
-cleanup.sh
-clear_all_data.php 
-clear_all_data.sh
-createdb.sh
-disk_usage.sh
-dump_logs.sh
-edit_birdnet.conf.php
-edit_birdnet.conf.sh
-extract_new_birdsounds.sh
-install_birdnet.sh
-install_config.sh
-install_services.sh
-install_tmux_services.sh
-install_zram_service.sh
-livestream.sh
-pretty_date.sh
-reboot_system.php
-reboot_system.sh
-reconfigure_birdnet.sh
-restart_birdnet_analysis.php
-restart_birdnet_analysis.sh
-restart_birdnet_recording.php
-restart_birdnet_recording.sh
-restart_caddy.php
-restart_caddy.sh
-restart_extraction.php
-restart_extraction.sh
-restart_services.php
-restart_services.sh
-shutdown_system.php
-shutdown_system.sh
-species_notifier.sh
-spectrogram.php
-spectrogram.sh
-tmux
-uninstall.sh
-update_species.sh
-${HOME}/.gotty)
-
-
-# Change this to sourcing from current uninstall.sh
-# Create a pre-update services array for disabling
-# Create a post-update services array for restarting
-services=(avahi-alias@birdlog.local.service
-avahi-alias@birdnetpi.local.service
-avahi-alias@birdstats.local.service
-avahi-alias@extractionlog.local.service
-avahi-alias@birdterminal.local.service
-birdnet_analysis.service
-birdnet_log.service
-birdnet_recording.service
-birdstats.service
-birdterminal.service
-edit_birdnet_conf.service
-extraction_log.service
-extraction.service
-extraction.timer
-livestream.service
-pushed_notifications.service
-spectrogram_viewer.service)
+services=$(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort)
 
 remove_services() {
   for i in "${services[@]}"; do
@@ -109,34 +47,12 @@ remove_scripts() {
   done
 }
 
-restart_services() {
-  for i in ${services[@]};do
-    sudo systemctl restart ${i}
-  done
-}
-
 # Stage 1 removes old stuff
 remove_services
 remove_scripts
 
 # Stage 2 does a git pull to fetch new things
-sudo -u${USER} git -C ${HOME}/BirdNET-Pi pull || exit 1
+sudo -u${USER} git -C ${HOME}/BirdNET-Pi pull -f || exit 1
 
-# Stage 3 updates the services
-sudo ${my_dir}/update_services.sh
-
-# Stage 4 restarts the services
-services=(avahi-alias@birdnetpi.local.service
-birdnet_analysis.service
-birdnet_log.service
-birdnet_recording.service
-edit_birdnet_conf.service
-extraction_log.service
-extraction.service
-extraction.timer
-livestream.service
-pushed_notifications.service
-spectrogram_viewer.service)
-
-restart_services
-
+# Trigger the new update_birdnet2.sh
+sudo -u${USER} ${my_dir}/update_birdnet2.sh

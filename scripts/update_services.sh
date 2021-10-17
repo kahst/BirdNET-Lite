@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# This installs the services that have been selected
+# This reinstalls the services
 #set -x # Uncomment to enable debugging
 trap 'rm -f ${tmpfile}' EXIT
 trap 'exit 1' SIGINT SIGHUP
@@ -24,6 +24,8 @@ install_mariadb() {
     apt -qqy install mariadb-server
     echo "MariaDB Installed"
   fi
+  sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/analyze.py
+  sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/viewdb.php
 }
 
 install_birdnet_analysis() {
@@ -88,7 +90,7 @@ ExecStart=/usr/local/bin/species_notifier.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now pushed_notifications
+  systemctl enable pushed_notifications.service
 }
 
 create_necessary_dirs() {
@@ -104,7 +106,6 @@ create_necessary_dirs() {
   [ -L ${EXTRACTED}/viewdb.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
   [ -L ${EXTRACTED}/phpsysinfo.ini ] || sudo -u ${USER} cp ${HOME}/phpsysinfo/phpsysinfo.ini.new ${HOME}/phpsysinfo/phpsysinfo.ini
-
 }
  
 install_alsa() {
@@ -232,7 +233,7 @@ ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(avahi-resolve -4 -n %H
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now avahi-alias@birdnetpi.local.service
+  systemctl enable avahi-alias@birdnetpi.local.service
 }
 
 install_spectrogram_service() {
@@ -248,7 +249,7 @@ ExecStart=/usr/local/bin/spectrogram.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-   systemctl enable --now spectrogram_viewer.service
+   systemctl enable spectrogram_viewer.service
 }
 
 install_gotty_logs() {
@@ -275,7 +276,7 @@ ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalct
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now birdnet_log.service
+  systemctl enable birdnet_log.service
   echo "Installing the extraction_log.service"
   cat << EOF > /etc/systemd/system/extraction_log.service
 [Unit]
@@ -292,7 +293,7 @@ ExecStart=/usr/local/bin/gotty -p 8888 --title-format "Extractions Log" journalc
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now extraction_log.service
+  systemctl enable extraction_log.service
 }
 
 install_sox() {
@@ -354,12 +355,12 @@ install_icecast() {
     echo "icecast2 icecast2/icecast-setup boolean false" | debconf-set-selections
     apt install -qqy icecast2 
     config_icecast
-    systemctl enable --now icecast2
+    systemctl enable icecast2.service
     /etc/init.d/icecast2 start
   else
     echo "Icecast2 is installed"
     config_icecast
-    systemctl enable --now icecast2
+    systemctl enable icecast2.service
     /etc/init.d/icecast2 start
   fi
 }
@@ -392,7 +393,7 @@ ExecStart=/usr/local/bin/livestream.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now livestream.service
+  systemctl enable livestream.service
 }
 
 install_nomachine() {
