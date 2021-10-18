@@ -21,6 +21,11 @@ $sql = "SELECT * FROM detections
 $fulltable = $mysqli->query($sql);
 $totalcount=mysqli_num_rows($fulltable);
 
+$sql1 = "SELECT * FROM detections 
+	ORDER BY Date DESC, Time DESC
+	LIMIT 500";
+$mosttable = $mysqli->query($sql1);
+
 $sql2 = "SELECT * FROM detections 
 	WHERE Date = CURDATE()";
 $todaystable = $mysqli->query($sql2);
@@ -243,7 +248,7 @@ while($rows=$speciestally ->fetch_assoc())
 			</tr>
 			<!-- PHP CODE TO FETCH DATA FROM ROWS-->
 <?php // LOOP TILL END OF DATA
-while($rows=$fulltable ->fetch_assoc())
+while($rows=$mosttable ->fetch_assoc())
 {
 ?>
 			<tr>
