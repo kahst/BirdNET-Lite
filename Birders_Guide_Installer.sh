@@ -244,7 +244,7 @@ DO_RECORDING=y
 ## Setting this (even to http://localhost) will also allow you to enable the   
 ## GoTTY web logging features below.
 
-EXTRACTIONS_URL=http://raspberrypi.local
+EXTRACTIONS_URL=http://birdnetpi.local
 
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## the "Processed" directory and live audio stream. This MUST be set if you
