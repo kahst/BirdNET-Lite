@@ -11,6 +11,14 @@ nomachine_url="https://download.nomachine.com/download/7.6/Arm/nomachine_7.6.2_3
 gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_arm.tar.gz"
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
+set_hostname() {
+  if [ "$(hostname)" != "birdnetpi" ];then
+    echo "Setting hostname to 'birdnetpi'"
+    hostnamectl set-hostname birdnetpi
+    sed -i 's/raspberrypi/birdnetpi/g' /etc/hosts
+  fi
+}
+
 install_scripts() {
   echo "Installing BirdNET-Pi scripts to /usr/local/bin"
   ln -sf ${my_dir}/* /usr/local/bin/
@@ -419,6 +427,7 @@ install_cleanup_cron() {
 }
 
 install_selected_services() {
+  set_hostname
   install_scripts
   install_birdnet_analysis
 
