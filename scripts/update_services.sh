@@ -197,25 +197,6 @@ ${EXTRACTIONS_URL} {
   reverse_proxy /stream localhost:8000
   php_fastcgi unix//run/php/php7.3-fpm.sock
 }
-
-http://birdnetpi.local {
-  root * ${EXTRACTED}
-  file_server browse
-  basicauth /Processed* {
-    birdnet ${HASHWORD}
-  }
-  basicauth /scripts* {
-    birdnet ${HASHWORD}
-  }
-  basicauth /stream {
-    birdnet ${HASHWORD}
-  }
-  basicauth /phpsysinfo* {
-    birdnet ${HASHWORD}
-  }
-  reverse_proxy /stream localhost:8000
-  php_fastcgi unix//run/php/php7.3-fpm.sock
-}
 EOF
   systemctl reload caddy
 }
