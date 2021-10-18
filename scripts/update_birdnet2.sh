@@ -7,22 +7,12 @@ my_dir=${HOME}/BirdNET-Pi/scripts
 sudo ${my_dir}/update_services.sh
 
 # Stage 2 restarts the services
-services=(avahi-alias@birdnetpi.local.service
-birdnet_analysis.service
-birdnet_log.service
-birdnet_recording.service
-edit_birdnet_conf.service
-extraction_log.service
-extraction.service
-extraction.timer
-livestream.service
-pushed_notifications.service
-spectrogram_viewer.service)
+newservices=$(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort)
 
-restart_services() {
-  for i in ${services[@]};do
+restart_newservices() {
+  for i in ${newservices[@]};do
     sudo systemctl restart ${i}
   done
 }
 
-restart_services
+restart_newservices
