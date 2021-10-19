@@ -198,6 +198,24 @@ ${EXTRACTIONS_URL} {
   php_fastcgi unix//run/php/php7.3-fpm.sock
 }
 EOF
+  if [ ! -z ${EXTRACTIONLOG_URL} ];then
+    cat << EOF >> /etc/caddy/Caddyfile
+
+${EXTRACTIONLOG_URL} {
+  reverse_proxy localhost:8888
+}
+  systemctl reload caddy
+}
+EOF
+  fi
+  if [ ! -z ${BIRDNETLOG_URL} ];then
+    cat << EOF >> /etc/caddy/Caddyfile
+
+${BIRDNETLOG_URL} {
+  reverse_proxy localhost:8080
+}
+EOF
+  fi
   systemctl reload caddy
 }
 
