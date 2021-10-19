@@ -2,7 +2,7 @@
 header("refresh: 30;");
 
 $user = 'birder';
-$password = 'databasepassword';
+$password = 'changearoo';
 
 $database = 'birds';
 
