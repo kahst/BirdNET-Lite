@@ -205,8 +205,6 @@ EOF
 ${EXTRACTIONLOG_URL} {
   reverse_proxy localhost:8888
 }
-  systemctl reload caddy
-}
 EOF
   fi
   if [ ! -z ${BIRDNETLOG_URL} ];then
