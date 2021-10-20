@@ -191,6 +191,7 @@ install_caddy() {
 }
 
 install_Caddyfile() {
+	set -x
   echo "Installing the Caddyfile"
   [ -d /etc/caddy ] || mkdir /etc/caddy
   if [ -f /etc/caddy/Caddyfile ];then
@@ -234,6 +235,7 @@ ${BIRDNETLOG_URL} {
 EOF
   fi
   systemctl reload caddy
+  set +x
 }
 
 install_avahi_aliases() {
