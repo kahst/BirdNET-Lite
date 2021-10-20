@@ -43,7 +43,7 @@ get_DO_RECORDING() {
   done
 }
 
-get_EXTRACTIONS_URL() {
+get_BIRDNETPI_URL() {
   while true;do
     read -n1 -p "Would you like to access the extractions via a web browser?
 
@@ -56,11 +56,11 @@ get_EXTRACTIONS_URL() {
     case $CADDY_SERVICE in
       [Yy] ) read -p "What URL would you like to publish the extractions to?
         *Note: Set this to http://localhost if you do not want to make the
-        extractions publically available: " EXTRACTIONS_URL
+        extractions publically available: " BIRDNETPI_URL
         get_CADDY_PWD
         get_ICE_PWD
         break;;
-      [Nn] ) EXTRACTIONS_URL= CADDY_PWD= ICE_PWD=;break;;
+      [Nn] ) BIRDNETPI_URL= CADDY_PWD= ICE_PWD=;break;;
       * ) echo "Please answer Yes or No";;
     esac
   done
@@ -165,7 +165,7 @@ configure() {
   get_DB_PWDS
   get_DO_EXTRACTIONS
   get_DO_RECORDING
-  get_EXTRACTIONS_URL
+  get_BIRDNETPI_URL
   get_PUSHED
   get_INSTALL_NOMACHINE
   get_CHANNELS
@@ -226,19 +226,21 @@ DO_RECORDING=${DO_RECORDING}
 
 ################################################################################
 #-----------------------  Web-hosting/Caddy File-server -----------------------#
-#__________The two variables below can be set to enable web access_____________#
+#________The four variables below can be set to enable internet access_________#
 #____________to your data,(e.g., extractions, raw data, live___________________#
 #______________audio stream, BirdNET.selection.txt files)______________________#
 
 #         Leave these EMPTY if you do not want to enable web access            #
 
-## EXTRACTIONS_URL is the URL where the extractions, data-set, and live-stream
+## BIRDNETPI_URL is the URL where the extractions, data-set, and live-stream
 ## will be web-hosted. If you do not own a domain, or would just prefer to keep 
 ## BirdNET-Pi on your local network, you can set this to http://localhost.
 ## Setting this (even to http://localhost) will also allow you to enable the   
 ## GoTTY web logging features below.
 
-EXTRACTIONS_URL=${EXTRACTIONS_URL}
+BIRDNETPI_URL=${BIRDNETPI_URL}
+EXTRACTIONLOG_URL=${EXTRACTIONLOG_URL}
+BIRDNETLOG_URL=${BIRDNETLOG_URL}}
 
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## the "Processed" directory and live audio stream. This MUST be set if you

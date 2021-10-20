@@ -232,7 +232,7 @@ DO_RECORDING=y
 
 ################################################################################
 #-----------------------  Web-hosting/Caddy File-server -----------------------#
-#__________The two variables below can be set to enable web access_____________#
+#________The four variables below can be set to enable internet access_________#
 #____________to your data,(e.g., extractions, raw data, live___________________#
 #______________audio stream, BirdNET.selection.txt files)______________________#
 
@@ -240,11 +240,11 @@ DO_RECORDING=y
 
 ## BIRDNETPI_URL is the URL where the extractions, data-set, and live-stream
 ## will be web-hosted. If you do not own a domain, or would just prefer to keep 
-## the BirdNET-Pi on your local network, you can set this to
-## http://birdnetpi.local. Setting this will also allow you to enable the   
-## GoTTY web logging features below.
+## the BirdNET-Pi on your local network, keep this EMPTY.
 
-BIRDNETPI_URL=http://birdnetpi.local
+BIRDNETPI_URL=
+EXTRACTIONLOG_URL=
+BIRDNETLOG_URL=
 
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## the "Processed" directory and live audio stream. This MUST be set if you
