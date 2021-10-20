@@ -109,7 +109,7 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
-  [ -L ${EXTRACTED}/index.html ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/templates/index.html ${EXTRACTED}  
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/index.html ${EXTRACTED}  
   if [ ! -z ${BIRDNETLOG_URL} ];then
     BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/templates/index.html
@@ -119,7 +119,7 @@ create_necessary_dirs() {
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" $(dirname ${my_dir})/templates/index.html
   fi
 
-  [ -L ${EXTRACTED}/scripts ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts ${EXTRACTED}
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
   if [ ! -z ${BIRDNETPI_URL} ];then
     BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
     phpfiles="$(grep -l birdnetpi.local ${my_dir}/*.php)"
@@ -129,10 +129,10 @@ create_necessary_dirs() {
   fi
 
 
-  [ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/spectrogram.* ${EXTRACTED}
-  [ -L ${EXTRACTED}/viewdb.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.* ${EXTRACTED}
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
-  [ -L ${EXTRACTED}/phpsysinfo.ini ] || sudo -u ${USER} cp ${HOME}/phpsysinfo/phpsysinfo.ini.new ${HOME}/phpsysinfo/phpsysinfo.ini
+  [ -L ${EXTRACTED}/phpsysinfo/phpsysinfo.ini ] || sudo -u ${USER} cp ${HOME}/phpsysinfo/phpsysinfo.ini.new ${HOME}/phpsysinfo/phpsysinfo.ini
 }
  
 install_alsa() {
