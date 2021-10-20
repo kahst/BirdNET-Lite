@@ -455,7 +455,6 @@ install_selected_services() {
     install_recording_service
   fi
 
-  if [ ! -z "${BIRDNETPI_URL}" ];then
     install_caddy
     install_Caddyfile
     install_avahi_aliases
@@ -466,7 +465,6 @@ install_selected_services() {
     install_spectrogram_service
     install_edit_birdnet_conf
     install_pushed_notifications
-  fi
 
   if [ ! -z "${ICE_PWD}" ];then
     install_icecast
