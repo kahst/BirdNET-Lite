@@ -8,6 +8,8 @@ if ! grep EXTRACTIONLOG ${birdnet_conf} &> /dev/null;then
   echo "EXTRACTIONLOG_URL=" >> ${birdnet_conf}
   echo "BIRDNETLOG_URL=" >> ${birdnet_conf}
 fi
+sudo -upi sed -i 's/=http:\/\/birdnetpi.local/=/g' ${birdnet_conf}
+
 # Stage 2 updates the services
 my_dir=${HOME}/BirdNET-Pi/scripts
 sudo ${my_dir}/update_services.sh
