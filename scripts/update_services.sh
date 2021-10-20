@@ -128,7 +128,7 @@ create_necessary_dirs() {
     done
   fi
 
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.* ${EXTRACTED}
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
   [ -L ${EXTRACTED}/phpsysinfo/phpsysinfo.ini ] || sudo -u ${USER} cp ${HOME}/phpsysinfo/phpsysinfo.ini.new ${HOME}/phpsysinfo/phpsysinfo.ini
