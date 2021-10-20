@@ -1,14 +1,4 @@
-${EXTRACTIONS_URL} {
-  root * ${EXTRACTED}
-  file_server browse
-  basicauth ${PROCESSED}* {
-    birdnet ${HASHWORD}
-  }
-  basicauth /stream {
-    birdnet ${HASHWORD}
-  }
-}
-http://birdnetpi.local {
+http://birdnetpi.local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   basicauth ${PROCESSED}* {
@@ -23,7 +13,4 @@ http://birdlog.local {
 }
 http://extractionlog.local {
   reverse_proxy localhost:8888
-}
-http://birdterminal.local {
-  reverse_proxy localhost:9111
 }

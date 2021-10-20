@@ -120,11 +120,11 @@ create_necessary_dirs() {
   fi
 
   [ -L ${EXTRACTED}/scripts ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts ${EXTRACTED}
-  if [ ! -z ${EXTRACTIONS_URL} ];then
-    EXTRACTIONS_URL="$(echo ${EXTRACTIONS_URL} | sed 's/\/\//\\\/\\\//g')"
+  if [ ! -z ${BIRDNETPI_URL} ];then
+    BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
     phpfiles="$(grep -l birdnetpi.local ${my_dir}/*.php)"
     for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${EXTRACTIONS_URL}"/g" ${i}
+      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" ${i}
     done
   fi
 
@@ -198,7 +198,7 @@ install_Caddyfile() {
   fi
   HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   cat << EOF > /etc/caddy/Caddyfile
-${EXTRACTIONS_URL} {
+http://birdnetpi.local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   basicauth /Processed* {
@@ -455,7 +455,7 @@ install_selected_services() {
     install_recording_service
   fi
 
-  if [ ! -z "${EXTRACTIONS_URL}" ];then
+  if [ ! -z "${BIRDNETPI_URL}" ];then
     install_caddy
     install_Caddyfile
     install_avahi_aliases

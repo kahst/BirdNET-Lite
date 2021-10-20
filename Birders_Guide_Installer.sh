@@ -238,13 +238,13 @@ DO_RECORDING=y
 
 #         Leave these EMPTY if you do not want to enable web access            #
 
-## EXTRACTIONS_URL is the URL where the extractions, data-set, and live-stream
+## BIRDNETPI_URL is the URL where the extractions, data-set, and live-stream
 ## will be web-hosted. If you do not own a domain, or would just prefer to keep 
-## the BirdNET-Pi on your local network, you can set this to http://localhost.
-## Setting this (even to http://localhost) will also allow you to enable the   
+## the BirdNET-Pi on your local network, you can set this to
+## http://birdnetpi.local. Setting this will also allow you to enable the   
 ## GoTTY web logging features below.
 
-EXTRACTIONS_URL=http://birdnetpi.local
+BIRDNETPI_URL=http://birdnetpi.local
 
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## the "Processed" directory and live audio stream. This MUST be set if you
