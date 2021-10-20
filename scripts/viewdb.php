@@ -59,18 +59,17 @@ $mysqli->close();
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
 	<title>BirdNET-Pi DB</title>
 	<!-- CSS FOR STYLING THE PAGE -->
 	<style>
 		* {
 		  box-sizing: border-box;
+                  padding: 5px;
 		}
 
 		.row {
 		  display: flex;
-		  margin-left:-5px;
-		  margin-right:-5px;
 		}
 
 		.column {
@@ -114,6 +113,7 @@ $mysqli->close();
 			border: 1px solid black;
 			padding: 10px;
 			text-align: center;
+		  	background-color: rgb(219, 296, 235);
 		}
 
 		@media screen and (max-width: 800px) {
@@ -166,7 +166,8 @@ $mysqli->close();
 	</style>
 </head>
 
-<body>
+<body style="background-color: rgb(119, 196, 135);background-image: linear-gradient(to top, rgb(119, 196, 135),black;">
+
 	<section>
 		<h2>Number of Detections</h2>
 		<table>

@@ -45,30 +45,10 @@ uninstall.sh
 update_species.sh
 ${HOME}/.gotty)
 
-
-SERVICES=(avahi-alias@birdlog.local.service
-avahi-alias@birdnetpi.local.service
-avahi-alias@birdstats.local.service
-avahi-alias@extractionlog.local.service
-avahi-alias@birdterminal.local.service
-birdnet_analysis.service
-birdnet_log.service
-birdnet_recording.d
-birdnet_recording.service
-birdstats.service
-birdterminal.service
-caddy.service
-edit_birdnet_conf.service
-extraction_log.service
-extraction.service
-extraction.timer
-livestream.service
-pushed_notifications.service
-spectrogram_viewer.service
-${SYSTEMD_MOUNT})
+services=$(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort)
 
 remove_services() {
-  for i in "${SERVICES[@]}"; do
+  for i in "${services[@]}"; do
     if [ -L /etc/systemd/system/multi-user.target.wants/"${i}" ];then
       sudo systemctl disable --now "${i}"
     fi

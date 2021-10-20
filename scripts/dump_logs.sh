@@ -3,25 +3,14 @@
 # set -x # Uncomment to debug
 source /etc/birdnet/birdnet.conf &> /dev/null
 LOG_DIR="${HOME}/BirdNET-Pi/logs"
-SERVICES=(avahi-alias@.service
-birdnet_analysis.service
-birdnet_log.service
-birdnet_recording.service
-birdstats.service
-birdterminal.service
-caddy.service
-extraction_log.service
-extraction.service
-extraction.timer
-icecast2.service
-livestream.service
-${SYSTEMD_MOUNT})
+
+services=$(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort)
 
 # Create logs directory
 [ -d ${LOG_DIR} ] || mkdir ${LOG_DIR}
 
 # Create services logs
-for i in "${SERVICES[@]}";do
+for i in "${services[@]}";do
   if [ -L /etc/systemd/system/multi-user.target.wants/${i} ];then
     journalctl -u ${i} -n 100 --no-pager > ${LOG_DIR}/${i}.log
     cp -L /etc/systemd/system/multi-user.target.wants/${i} ${LOG_DIR}/${i}
