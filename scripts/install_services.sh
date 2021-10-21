@@ -110,7 +110,6 @@ create_necessary_dirs() {
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
-  sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
   if [ ! -z ${BIRDNETLOG_URL} ];then
     BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
@@ -123,6 +122,7 @@ create_necessary_dirs() {
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
   if [ ! -z ${BIRDNETPI_URL} ];then
     BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
     phpfiles="$(grep -l birdnetpi.local ${my_dir}/*.php)"
     for i in "${phpfiles[@]}";do
       sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" ${i}
