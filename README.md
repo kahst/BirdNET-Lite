@@ -6,6 +6,9 @@ A realtime acoustic bird classification system for the Raspberry Pi 4B
 ## Introduction
 The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite). It is able to recognize bird sounds from a USB sound card in realtime. 
 
+[Check out my live system](https://birdnetpi.pmcgui.xyz)<br>
+[and NatureStation.net](https://birds.naturestation.net)
+
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
 * Web interface access to all data and logs
