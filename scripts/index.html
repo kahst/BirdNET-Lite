@@ -27,6 +27,10 @@
     <input type="submit" value="Restart Caddy">
 </form>
 
+<form action="/scripts/backup_data.php" onclick="return confirm('Backup ALL Data? Warning: This could take a long time.')">
+    <input type="submit" value="Backup ALL data">
+</form>
+
 <form action="/scripts/clear_all_data.php" onclick="return confirm('Clear ALL Data? This cannot be undone.')">
     <input type="submit" value="Clear ALL data">
 </form>
