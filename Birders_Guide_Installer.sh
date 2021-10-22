@@ -108,7 +108,7 @@ stage_2() {
   if [ ! -d ${my_dir} ];then
     cd ~ || exit 1
     echo "Cloning the BirdNET-Pi repository $branch branch into your home directory"
-    git clone -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
+    git clone --depth 1 -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
   else
     cd ${my_dir} && git checkout ${branch}
   fi
