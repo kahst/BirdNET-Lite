@@ -262,11 +262,11 @@ def main():
                     output_file = '.'.join((datafile.rsplit('.', 1)[0], 'csv'))
                 else:
                     root_folder = args.i.strip('/').rsplit('/', 1)[-1]
-                    output_directory = '{}/{}/{}'.format(args.o.strip('/'), root_folder, directory.split(root_folder)[-1].strip('/'))
+                    output_directory = '{}/{}/{}'.format(args.o.rstrip('/'), root_folder.strip('/'), directory.split(root_folder)[-1].strip('/'))
                     if not os.path.exists(output_directory): 
                         os.makedirs(output_directory)
-                    output_file = '{}/{}.{}'.format(output_directory, filename.split('.')[0], 'csv')
-    
+                    output_file = '{}/{}.{}'.format(output_directory.rstrip('/'), filename.split('.')[0], 'csv')
+		
                 writeResultsToFile(detections, min_conf, output_file)
             except:
                 print("Error in processing file: {}".format(datafile)) 
