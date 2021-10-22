@@ -10,7 +10,6 @@ sudo systemctl start birdnet_recording.service
 services=$(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort)
 
 for i in  "${services[@]}";do
-	echo $i
-#  sudo systemctl restart ${i}
+sudo systemctl restart ${i}
 done
 
