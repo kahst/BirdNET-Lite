@@ -16,14 +16,14 @@ if ($mysqli->connect_error) {
 }
 
 // SQL query to select data from database
-$sql = "SELECT * FROM detections 
-	ORDER BY Date DESC, Time DESC";
+$sql = "SELECT * FROM detections
+       ORDER BY Date DESC, Time DESC";
 $fulltable = $mysqli->query($sql);
 $totalcount=mysqli_num_rows($fulltable);
 
 $sql1 = "SELECT * FROM detections 
-	ORDER BY Date DESC, Time DESC
-	LIMIT 500";
+        WHERE Date = CURDATE()	
+	ORDER BY Date DESC, Time DESC";
 $mosttable = $mysqli->query($sql1);
 
 $sql2 = "SELECT * FROM detections 
