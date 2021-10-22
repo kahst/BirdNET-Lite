@@ -163,9 +163,11 @@ $mysqli->close();
 		td {
 			font-weight: lighter;
 		}
+body::-webkit-scrollbar {
+	display:none
+}
 	</style>
 </head>
-
 <body style="background-color: rgb(119, 196, 135);background-image: linear-gradient(to top, rgb(119, 196, 135),black;">
 
 	<section>
@@ -215,7 +217,7 @@ while($rows=$specieslist ->fetch_assoc())
 		<table>
 			<tr>
 				<th>Species</th>
-				<th>Number of Detections</th>
+				<th>Detections</th>
 			</tr>
 <?php // LOOP TILL END OF DATA
 while($rows=$speciestally ->fetch_assoc())
@@ -236,8 +238,8 @@ while($rows=$speciestally ->fetch_assoc())
 		<table>
 			<tr>
 				<th>Time</th>
-				<th>Sci_Name</th>
-				<th>Com_Name</th>
+				<th>Scientific Name</th>
+				<th>Common Name</th>
 				<th>Confidence</th>
 				<th>Lat</th>
 				<th>Lon</th>
@@ -270,7 +272,6 @@ while($rows=$mosttable ->fetch_assoc())
 ?>
 		</table>
 	</section>
-</body>
-
+</div>
 </html>
 
