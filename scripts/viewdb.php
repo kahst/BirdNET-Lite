@@ -231,11 +231,10 @@ while($rows=$speciestally ->fetch_assoc())
 		</table>
   </div>
 </div>
-		<h1>BirdsDB Detections Table</h1>
+		<h2>Today's Detections</h2>
 		<!-- TABLE CONSTRUCTION-->
 		<table>
 			<tr>
-				<th>Date</th>
 				<th>Time</th>
 				<th>Sci_Name</th>
 				<th>Com_Name</th>
@@ -255,7 +254,6 @@ while($rows=$mosttable ->fetch_assoc())
 			<tr>
 				<!--FETCHING DATA FROM EACH
 					ROW OF EVERY COLUMN-->
-				<td><?php echo $rows['Date'];?></td>
 				<td><?php echo $rows['Time'];?></td>
 				<td><?php echo $rows['Sci_Name'];?></td>
 				<td><?php echo $rows['Com_Name'];?></td>
