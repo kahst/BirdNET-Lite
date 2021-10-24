@@ -27,6 +27,8 @@ The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://githu
 * A USB Microphone or Sound Card
 
 ## Installation
+[Headless installation guide available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/%22Headless%22-installation-using-VNC)
+
 The system can be installed with:
 ```
 curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/main/Birders_Guide_Installer.sh | bash
