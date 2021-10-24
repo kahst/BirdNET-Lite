@@ -200,7 +200,7 @@ install_Caddyfile() {
   fi
   HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   cat << EOF > /etc/caddy/Caddyfile
-http://birdnetpi.local ${BIRDNETPI_URL} {
+http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   basicauth /Processed* {
