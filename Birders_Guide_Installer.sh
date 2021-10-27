@@ -97,13 +97,12 @@ stage_2() {
     echo "Follow the instructions to fill out the LATITUDE and LONGITUDE variables
 and set the passwords for the live audio stream. Save the file after editing
 and then close the Mouse Pad editing window to continue."
-    set -x
     if [ -z "$SSH_CONNECTION" ];then
       EDITOR=mousepad
     else
       EDITOR=nano
     fi
-    env && exit
+    sex -x
     $EDITOR ${my_dir}/Birders_Guide_Installer_Configuration.txt
     while pgrep $EDITOR &> /dev/null;do
       sleep 1
