@@ -4,7 +4,7 @@
 #
 # See LICENSE file for copyright and license details
 # Copyright (c) 2012 Alex Bradbury <asb@asbradbury.org>
-
+birdnetpi_dir=/home/pi/BirdNET-Pi
 branch=newinstaller
 INTERACTIVE=True
 ASK_TO_REBOOT=0
@@ -718,7 +718,11 @@ do_update() {
 }
 
 do_install_birdnet() {
-  curl -s "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh" | sudo -upi bash
+  if [ -f ${birdnetpi_dir}Birders_Guide_Installer.sh} ];then
+    sudo -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh
+  else
+    curl -s "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh" | sudo -upi bash
+  fi
   ASK_TO_REBOOT=1
 }
 
