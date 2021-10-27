@@ -599,7 +599,7 @@ do_update() {
 }
 
 do_install_birdnet() {
-  if [ -f ${birdnetpi_dir}/Birders_Guide_Installer.sh} ];then
+  if [ -f ${birdnetpi_dir}/Birders_Guide_Installer.sh ];then
     sudo -E -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh
   else
     curl -s "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh" | sudo -E -upi bash
