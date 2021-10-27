@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -e
+USER=pi
+HOME=/home/pi
 my_dir=${HOME}/BirdNET-Pi
 branch=newinstaller
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
@@ -82,9 +84,9 @@ stage_2() {
   echo "Connected!"
   echo
   if [ ! -d ${my_dir} ];then
-    cd ~ || exit 1
+    cd ${HOME} || exit 1
     echo "Cloning the BirdNET-Pi repository $branch branch into your home directory"
-    git clone --depth 1 -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
+    git clone --depth 1 -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ${HOME}/BirdNET-Pi
   else
     cd ${my_dir} && git checkout ${branch}
   fi
@@ -101,6 +103,7 @@ and then close the Mouse Pad editing window to continue."
     else
       editor=nano
     fi
+    
     echo $editor && exit
     $editor ${my_dir}/Birders_Guide_Installer_Configuration.txt
     while pgrep $editor &> /dev/null;do
