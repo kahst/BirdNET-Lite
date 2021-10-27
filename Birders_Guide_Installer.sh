@@ -5,7 +5,6 @@ HOME=/home/pi
 my_dir=${HOME}/BirdNET-Pi
 branch=newinstaller
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
-env && exit
 
 if [ "$(uname -m)" != "aarch64" ];then
   echo "BirdNET-Pi requires a 64-bit OS.
