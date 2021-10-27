@@ -440,14 +440,6 @@ get_autologin() {
   fi
 }
 
-do_update() {
-  apt-get update &&
-  apt-get install birdnetpi-config &&
-  printf "Sleeping 5 seconds before reloading birdnetpi-config\n" &&
-  sleep 5 &&
-  exec birdnetpi-config
-}
-
 do_audio() {
   if is_pulseaudio ; then
     oIFS="$IFS"
@@ -719,9 +711,9 @@ do_update() {
 
 do_install_birdnet() {
   if [ -f ${birdnetpi_dir}Birders_Guide_Installer.sh} ];then
-    sudo -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh
+    sudo -E -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh
   else
-    curl -s "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh" | sudo -upi bash
+    curl -s "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh" | sudo -E -upi bash
   fi
   ASK_TO_REBOOT=1
 }
