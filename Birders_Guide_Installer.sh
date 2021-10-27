@@ -66,6 +66,7 @@ stage_1() {
   if [ ${ZRAM} -lt 4 ];then
     install_zram_swap
   else
+    touch ${HOME}/stage_1_complete
     echo "Stage 1 complete"
     stage_2
     exit
