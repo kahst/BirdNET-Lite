@@ -102,8 +102,6 @@ and then close the Mouse Pad editing window to continue."
     else
       editor=nano
     fi
-    
-    echo $editor && exit
     $editor ${my_dir}/Birders_Guide_Installer_Configuration.txt
     while pgrep $editor &> /dev/null;do
       sleep 1
