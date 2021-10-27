@@ -212,7 +212,7 @@ while($rows=$specieslist ->fetch_assoc())
 		</table>
   </div>
   <div class="column">
-		<h2>Species stats</h2>
+		<h2>Species Statistics</h2>
 		<table>
 			<tr>
 				<th>Species</th>
