@@ -718,6 +718,7 @@ do_update() {
 }
 
 do_install_birdnet() {
+  env && exit
   curl -s "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh" | sudo -upi bash
   ASK_TO_REBOOT=1
 }
