@@ -398,48 +398,6 @@ do_vnc() {
   fi
 }
 
-disable_raspi_config_at_boot() {
-  if [ -e /etc/profile.d/birdnetpi-config.sh ]; then
-    rm -f /etc/profile.d/birdnetpi-config.sh
-    if [ -e /etc/systemd/system/getty@tty1.service.d/birdnetpi-config-override.conf ]; then
-      rm /etc/systemd/system/getty@tty1.service.d/birdnetpi-config-override.conf
-    fi
-    telinit q
-  fi
-}
-
-get_boot_cli() {
-  if systemctl get-default | grep -q multi-user ; then
-    echo 0
-  else
-    echo 1
-  fi
-}
-
-get_autologin() {
-  if [ $(get_boot_cli) -eq 0 ]; then
-    # booting to CLI
-    # stretch or buster - is there an autologin conf file?
-    if [ -e /etc/systemd/system/getty@tty1.service.d/autologin.conf ] ; then
-      echo 0
-    else
-      # stretch or earlier - check the getty service symlink for autologin
-      if [ $(deb_ver) -le 9 ] && grep -q autologin /etc/systemd/system/getty.target.wants/getty@tty1.service ; then
-        echo 0
-      else
-        echo 1
-      fi
-    fi
-  else
-    # booting to desktop - check the autologin for lightdm
-    if grep -q "^autologin-user=" /etc/lightdm/lightdm.conf ; then
-      echo 0
-    else
-      echo 1
-    fi
-  fi
-}
-
 do_audio() {
   if is_pulseaudio ; then
     oIFS="$IFS"
@@ -527,75 +485,6 @@ ctl.!default {
 }
 EOF
       fi
-    fi
-  fi
-}
-
-do_resolution() {
-  if [ "$INTERACTIVE" = True ]; then
-    CMODE=$(get_config_var hdmi_mode $CONFIG)
-    CGROUP=$(get_config_var hdmi_group $CONFIG)
-    if [ $CMODE -eq 0 ] ; then
-      CSET="Default"
-    elif [ $CGROUP -eq 2 ] ; then
-      CSET="DMT Mode "$CMODE
-    else
-      CSET="CEA Mode "$CMODE
-    fi
-    oIFS="$IFS"
-    IFS="/"
-    if tvservice -d /dev/null | grep -q Nothing ; then
-      value="Default/720x480/DMT Mode 4/640x480 60Hz 4:3/DMT Mode 9/800x600 60Hz 4:3/DMT Mode 16/1024x768 60Hz 4:3/DMT Mode 85/1280x720 60Hz 16:9/DMT Mode 35/1280x1024 60Hz 5:4/DMT Mode 51/1600x1200 60Hz 4:3/DMT Mode 82/1920x1080 60Hz 16:9/"
-    else
-      value="Default/Monitor preferred resolution/"
-      value=$value$(tvservice -m CEA | grep progressive | cut -b 12- | sed 's/mode \([0-9]\+\): \([0-9]\+\)x\([0-9]\+\) @ \([0-9]\+\)Hz \([0-9]\+\):\([0-9]\+\), clock:[0-9]\+MHz progressive/CEA Mode \1\/\2x\3 \4Hz \5:\6/' | tr '\n' '/')
-      value=$value$(tvservice -m DMT | grep progressive | cut -b 12- | sed 's/mode \([0-9]\+\): \([0-9]\+\)x\([0-9]\+\) @ \([0-9]\+\)Hz \([0-9]\+\):\([0-9]\+\), clock:[0-9]\+MHz progressive/DMT Mode \1\/\2x\3 \4Hz \5:\6/' | tr '\n' '/')
-    fi
-    RES=$(whiptail --default-item $CSET --menu "Choose screen resolution" 20 60 10 ${value} 3>&1 1>&2 2>&3)
-    STATUS=$?
-    IFS=$oIFS
-    if [ $STATUS -eq 0 ] ; then
-      GRS=$(echo "$RES" | cut -d ' ' -f 1)
-      MODE=$(echo "$RES" | cut -d ' ' -f 3)
-      if [ $GRS = "Default" ] ; then
-        MODE=0
-      elif [ $GRS = "DMT" ] ; then
-        GROUP=2
-      else
-        GROUP=1
-      fi
-    fi
-  else
-    GROUP=$1
-    MODE=$2
-    STATUS=0
-  fi
-  if [ $STATUS -eq 0 ]; then
-    if [ $MODE -eq 0 ]; then
-      clear_config_var hdmi_force_hotplug $CONFIG
-      clear_config_var hdmi_group $CONFIG
-      clear_config_var hdmi_mode $CONFIG
-    else
-      set_config_var hdmi_force_hotplug 1 $CONFIG
-      set_config_var hdmi_group $GROUP $CONFIG
-      set_config_var hdmi_mode $MODE $CONFIG
-    fi
-    if [ "$INTERACTIVE" = True ]; then
-      if [ $MODE -eq 0 ] ; then
-        whiptail --msgbox "The resolution is set to default" 20 60 1
-      else
-        whiptail --msgbox "The resolution is set to $GRS mode $MODE" 20 60 1
-      fi
-    fi
-    if [ $MODE -eq 0 ] ; then
-      TSET="Default"
-    elif [ $GROUP -eq 2 ] ; then
-      TSET="DMT Mode "$MODE
-    else
-      TSET="CEA Mode "$MODE
-    fi
-    if [ "$TSET" != "$CSET" ] ; then
-      ASK_TO_REBOOT=1
     fi
   fi
 }
@@ -710,7 +599,7 @@ do_update() {
 }
 
 do_install_birdnet() {
-  if [ -f ${birdnetpi_dir}Birders_Guide_Installer.sh} ];then
+  if [ -f ${birdnetpi_dir}/Birders_Guide_Installer.sh} ];then
     sudo -E -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh
   else
     curl -s "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh" | sudo -E -upi bash
@@ -759,25 +648,6 @@ do_system_menu() {
       Password*) do_change_pass ;;
       Audio*) do_audio ;;
       Wireless*) do_wifi_ssid_passphrase ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-do_display_menu() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --menu "Display Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "Resolution" "Set a specific screen resolution" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      Resolution*) do_resolution ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -839,7 +709,6 @@ if [ "$INTERACTIVE" = True ]; then
     if is_pi ; then
       FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --backtitle "$(cat /proc/device-tree/model)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
         "System Options" "Configure system settings" \
-        "Display Options" "Configure display settings" \
         "Interface Options" "Configure connections to peripherals" \
         "Localisation Options" "Configure language and regional settings" \
         "Update the OS" "Update the underlying operating system" \
@@ -854,7 +723,6 @@ if [ "$INTERACTIVE" = True ]; then
     elif [ $RET -eq 0 ]; then
       case "$FUN" in
         System*) do_system_menu ;;
-        Display*) do_display_menu ;;
         Interface*) do_interface_menu ;;
         Localisation*) do_internationalisation_menu ;;
         Update*) do_update;;
