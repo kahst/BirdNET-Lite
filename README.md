@@ -31,7 +31,7 @@ The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://githu
 
 The system can be installed with:
 ```
-curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/newinstaller/scripts/birdnet-pi-config | sudo -E bash
+curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/newinstaller/newinstaller.sh | bash
 ```
 
 The script first enables and configures the zRAM kernel module for swapping, and reboots. 
