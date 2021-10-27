@@ -65,7 +65,6 @@ $mysqli->close();
 	<style>
 		* {
 		  box-sizing: border-box;
-                  padding: 5px;
 		}
 
 		.row {
@@ -74,7 +73,7 @@ $mysqli->close();
 
 		.column {
 		  flex: 50%;
-		  padding: 5px;
+		  padding-right: 5px;
 		}
 
 		table {
