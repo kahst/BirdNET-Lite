@@ -42,15 +42,6 @@ ExecStop=/sbin/swapoff /dev/zram0
 WantedBy=multi-user.target
 EOF
   sudo systemctl enable zram
-  echo
-  echo "Installing stage 2 installation script now."
-  cd ~
-  curl -s -O "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh"
-  chmod +x Birders_Guide_Installer.sh
-  echo
-  echo "Stage 1 complete"
-  touch ${HOME}/stage_1_complete
-  echo
   echo "Rebooting the system in 5 seconds"
   sleep 5
   sudo reboot
@@ -104,11 +95,13 @@ stage_2() {
     echo "Follow the instructions to fill out the LATITUDE and LONGITUDE variables
 and set the passwords for the live audio stream. Save the file after editing
 and then close the Mouse Pad editing window to continue."
+    set -x
     if [ -z $SSH_CONNECTION ];then
       editor=mousepad
     else
       editor=nano
     fi
+    echo $editor && exit
     $editor ${my_dir}/Birders_Guide_Installer_Configuration.txt
     while pgrep $editor &> /dev/null;do
       sleep 1
