@@ -97,7 +97,7 @@ stage_2() {
 and set the passwords for the live audio stream. Save the file after editing
 and then close the Mouse Pad editing window to continue."
     set -x
-    if [ -z $SSH_CONNECTION ];then
+    if [ -z "$SSH_CONNECTION" ];then
       editor=mousepad
     else
       editor=nano
