@@ -5,7 +5,7 @@
 # See LICENSE file for copyright and license details
 # Copyright (c) 2012 Alex Bradbury <asb@asbradbury.org>
 
-my_dir=$(realpath $(dirname $0))
+branch=newinstaller
 INTERACTIVE=True
 ASK_TO_REBOOT=0
 BLACKLIST=/etc/modprobe.d/raspi-blacklist.conf
@@ -718,7 +718,7 @@ do_update() {
 }
 
 do_install_birdnet() {
-  ${my_dir}/Birders_Guide_Installer.sh
+  curl -s "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh" | bash
   ASK_TO_REBOOT=1
 }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 my_dir=${HOME}/BirdNET-Pi
-branch=testing
+branch=newinstaller
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
 
 
@@ -47,21 +47,6 @@ EOF
   cd ~
   curl -s -O "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh"
   chmod +x Birders_Guide_Installer.sh
-  cat << EOF | sudo tee /etc/systemd/user/birdnet-system-installer.service &> /dev/null
-[Unit]
-Description=A BirdNET-Pi Installation Script Service
-After=graphical.target network-online.target
-
-[Service]
-Type=simple
-Restart=on-failure
-RestartSec=3s
-ExecStart=lxterminal -e /home/pi/Birders_Guide_Installer.sh
-
-[Install]
-WantedBy=default.target
-EOF
-  systemctl --user enable birdnet-system-installer.service
   echo
   echo "Stage 1 complete"
   touch ${HOME}/stage_1_complete
@@ -119,10 +104,10 @@ stage_2() {
     echo "Follow the instructions to fill out the LATITUDE and LONGITUDE variables
 and set the passwords for the live audio stream. Save the file after editing
 and then close the Mouse Pad editing window to continue."
-    if ( env | grep SSH_CONNECTION &> /dev/null );then
-      editor=nano
-    else
+    if [ -z $SSH_CONNECTION ];then
       editor=mousepad
+    else
+      editor=nano
     fi
     $editor ${my_dir}/Birders_Guide_Installer_Configuration.txt
     while pgrep $editor &> /dev/null;do
