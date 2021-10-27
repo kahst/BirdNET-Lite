@@ -99,13 +99,13 @@ and set the passwords for the live audio stream. Save the file after editing
 and then close the Mouse Pad editing window to continue."
     set -x
     if [ -z "$SSH_CONNECTION" ];then
-      editor=mousepad
+      EDITOR=mousepad
     else
-      editor=nano
+      EDITOR=nano
     fi
     env && exit
-    $editor ${my_dir}/Birders_Guide_Installer_Configuration.txt
-    while pgrep $editor &> /dev/null;do
+    $EDITOR ${my_dir}/Birders_Guide_Installer_Configuration.txt
+    while pgrep $EDITOR &> /dev/null;do
       sleep 1
     done
     source ${my_dir}/Birders_Guide_Installer_Configuration.txt || exit 1
