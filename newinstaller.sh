@@ -8,4 +8,4 @@ if ! which git &> /dev/null;then
   sudo apt -y install git
 fi
 git clone --depth 1 -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ${HOME}/BirdNET-Pi
-${HOME}/BirdNET-Pi/birdnet-pi-config
+sudo -E ${HOME}/BirdNET-Pi/scripts/birdnet-pi-config
