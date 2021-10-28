@@ -24,3 +24,4 @@ restart_newservices() {
 }
 
 restart_newservices
+sudo systemctl restart extraction.timer
