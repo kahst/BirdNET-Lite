@@ -1,9 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Altered from raspi-config tool below
 # https://github.com/RPi-Distro/birdnetpi-config
 #
 # See LICENSE file for copyright and license details
 # Copyright (c) 2012 Alex Bradbury <asb@asbradbury.org>
+set -x
 birdnetpi_dir=/home/pi/BirdNET-Pi
 branch=newinstaller
 INTERACTIVE=True
@@ -365,6 +366,65 @@ get_vnc() {
   fi
 }
 
+do_config_zram() {
+  if [ -e /etc/udev/rules.d/99-zram.rules ]; then
+    ## get current swap allocation from /etc/udev/rules.d/99-zram.rules
+    size="$(awk -F\" '{print $4}' /etc/udev/rules.d/99-zram.rules)"
+  else
+    size="4G"
+  fi
+  new_size=$(whiptail --inputbox "How much memory (G) should the zRAM swap partition have? Choose 1G, 2G, or 4G - 4G recommended" \
+  19 70 -- "$size" 3>&1 1>&2 2>&3)
+  ASK_TO_REBOOT=1
+}
+
+do_install_zram() {
+  echo "Configuring zram.service"
+  touch /etc/modules-load.d/zram.conf
+  echo 'zram' > /etc/modules-load.d/zram.conf
+  touch /etc/modprobe.d/zram.conf
+  echo 'options zram num_devices=1' > /etc/modprobe.d/zram.conf
+  touch /etc/udev/rules.d/99-zram.rules
+  echo "KERNEL==\"zram0\", ATTR{disksize}=\"${new_size}\",TAG+=\"systemd\"" \
+    > /etc/udev/rules.d/99-zram.rules
+  touch /etc/systemd/system/zram.service
+  echo "Installing zram.service"
+  cat << EOF > /etc/systemd/system/zram.service
+[Unit]
+Description=Swap with zram
+After=multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStartPre=/sbin/mkswap /dev/zram0
+ExecStart=/sbin/swapon /dev/zram0
+ExecStop=/sbin/swapoff /dev/zram0
+
+[Install]
+WantedBy=multi-user.target
+EOF
+  systemctl enable zram
+}
+
+do_zram_menu() {
+  whiptail --yesno "Would like to enable the zram swapping kernel module?" --defaultno 20 60 2
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    do_config_zram
+    do_install_zram
+    STATUS=enabled
+  elif [ $RET -eq 1 ]; then
+    if [ -e /etc/udev/rules.d/99-zram.rules ];then
+      systemctl disable --now zram
+    fi
+    STATUS=disabled
+  else
+    return $RET
+  fi
+  whiptail --msgbox "ZRAM swapping is $STATUS" 20 60 1
+}
+
 do_vnc() {
   DEFAULT=--defaultno
   if [ $(get_vnc) -eq 0 ]; then
@@ -593,7 +653,7 @@ do_wifi_ssid_passphrase() {
   return $RET
 }
 
-do_update() {
+do_update_os() {
   apt update && apt -y full-upgrade
   ASK_TO_REBOOT=1
 }
@@ -631,6 +691,9 @@ do_system_menu() {
       "Password" "Change password for the '$USER' user" \
       "Audio" "Select audio device you'd like BirdNET-Pi to use" \
       "Wireless LAN" "Enter SSID and passphrase" \
+      "Update the OS" "Update the underlying operating system" \
+      "Interface Options" "Enable/Disable SSH and VNC" \
+      "Configure zRAM" "Enable/Disable zRAM" \
       3>&1 1>&2 2>&3)
   else
       exit
@@ -643,6 +706,9 @@ do_system_menu() {
       Password*) do_change_pass ;;
       Audio*) do_audio ;;
       Wireless*) do_wifi_ssid_passphrase ;;
+      Update*) do_update_os ;;
+      Interface*) do_interface_menu ;;
+      Configure*) do_zram_menu ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -703,11 +769,9 @@ if [ "$INTERACTIVE" = True ]; then
   while true; do
     if is_pi ; then
       FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --backtitle "$(cat /proc/device-tree/model)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
-        "System Options" "Configure system settings" \
-        "Interface Options" "Configure connections to peripherals" \
         "Localisation Options" "Configure language and regional settings" \
-        "Update the OS" "Update the underlying operating system" \
         "Install BirdNET-PI" "Install BirdNET-Pi" \
+        "System Options" "Configure system settings" \
         3>&1 1>&2 2>&3)
     else
         exit
@@ -717,11 +781,9 @@ if [ "$INTERACTIVE" = True ]; then
       do_finish
     elif [ $RET -eq 0 ]; then
       case "$FUN" in
-        System*) do_system_menu ;;
-        Interface*) do_interface_menu ;;
         Localisation*) do_internationalisation_menu ;;
-        Update*) do_update;;
         Install*) do_install_birdnet;;
+        System*) do_system_menu ;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
     else

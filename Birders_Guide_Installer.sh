@@ -15,39 +15,6 @@ information"
   exit 1
 fi
 
-install_zram_swap() {
-  echo
-  echo "Configuring zram.service"
-  sudo touch /etc/modules-load.d/zram.conf
-  echo 'zram' | sudo tee /etc/modules-load.d/zram.conf
-  sudo touch /etc/modprobe.d/zram.conf
-  echo 'options zram num_devices=1' | sudo tee /etc/modprobe.d/zram.conf
-  sudo touch /etc/udev/rules.d/99-zram.rules
-  echo 'KERNEL=="zram0", ATTR{disksize}="4G",TAG+="systemd"' \
-    | sudo tee /etc/udev/rules.d/99-zram.rules
-  sudo touch /etc/systemd/system/zram.service
-  echo "Installing zram.service"
-  cat << EOF | sudo tee /etc/systemd/system/zram.service &> /dev/null
-[Unit]
-Description=Swap with zram
-After=multi-user.target
-
-[Service]
-Type=oneshot 
-RemainAfterExit=true
-ExecStartPre=/sbin/mkswap /dev/zram0
-ExecStart=/sbin/swapon /dev/zram0
-ExecStop=/sbin/swapoff /dev/zram0
-
-[Install]
-WantedBy=multi-user.target
-EOF
-  sudo systemctl enable zram
-  echo "Rebooting the system in 5 seconds"
-  sleep 5
-  sudo reboot
-}
-
 stage_1() {
   echo
   echo "Beginning Stage 1"
@@ -61,16 +28,8 @@ stage_1() {
     echo "Installing git"
     sudo apt install -qqy git
   fi
-  ZRAM="$(swapon --show=SIZE,NAME | awk -FG '!/SIZE/ && /zram/ {print $1}')"
-  [ ! -z ${ZRAM} ] || ZRAM=0
-  if [ ${ZRAM} -lt 4 ];then
-    install_zram_swap
-  else
-    touch ${HOME}/stage_1_complete
-    echo "Stage 1 complete"
-    stage_2
-    exit
-  fi
+  touch ${HOME}/stage_1_complete
+  echo "Stage 1 complete"
 }
 
 stage_2() {
@@ -102,7 +61,6 @@ and then close the Mouse Pad editing window to continue."
     else
       EDITOR=nano
     fi
-    set -x
     $EDITOR ${my_dir}/Birders_Guide_Installer_Configuration.txt
     while pgrep $EDITOR &> /dev/null;do
       sleep 1
@@ -133,14 +91,6 @@ Good luck!"
     exit 1
   fi
   echo "Installing the BirdNET-Pi configuration file."
-  [ -f ${my_dir}/soundcard_params.txt ] || touch ${my_dir}/soundcard_params.txt
-  SOUND_PARAMS="${HOME}/BirdNET-Pi/soundcard_params.txt"
-  SOUND_CARD="$(sudo -u pi aplay -L \
-   | grep -e '^hw' \
-   | cut -d, -f1  \
-   | grep -ve 'vc4' -e 'Head' -e 'PCH' \
-   | uniq)"
-  script -c "arecord -D ${SOUND_CARD} --dump-hw-params" -a ${SOUND_PARAMS} &> /dev/null
   install_birdnet_config || exit 1
   echo "Installing BirdNET-Lite"
   if ${my_dir}/scripts/install_birdnet.sh << EOF ; then
