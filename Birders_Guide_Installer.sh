@@ -328,14 +328,8 @@ Stage 2 guides you through configuring the essentials and installs the full Bird
 
 if [ ! -f ${HOME}/stage_1_complete ] ;then
   stage_1
+  stage_2
 else
   stage_2
-  if [ -f ${HOME}/Birders_Guide_Installer.sh ];then
-  rm ${HOME}/Birders_Guide_Installer.sh
-  fi
-  rm ${HOME}/stage_1_complete
-  ${my_dir}/scripts/dump_logs.sh
-  systemctl --user disable --now birdnet-system-installer.service
-  sudo rm -f /etc/systemd/user/birdnet-system-installer.service
 fi  
 
