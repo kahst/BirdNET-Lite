@@ -216,18 +216,8 @@ do_configure_keyboard() {
 }
 
 do_change_locale() {
-  if [ "$INTERACTIVE" = True ]; then
-    dpkg-reconfigure locales
-  else
-    local LOCALE="$1"
-    if ! LOCALE_LINE="$(grep "^$LOCALE " /usr/share/i18n/SUPPORTED)"; then
-      return 1
-    fi
-    local ENCODING="$(echo $LOCALE_LINE | cut -f2 -d " ")"
-    echo "$LOCALE $ENCODING" > /etc/locale.gen
-    sed -i "s/^\s*LANG=\S*/LANG=$LOCALE/" /etc/default/locale
-    dpkg-reconfigure -f noninteractive locales
-  fi
+  dpkg-reconfigure locales
+  ASK_TO_REBOOT=2
 }
 
 do_change_timezone() {
@@ -670,6 +660,8 @@ do_finish() {
       sync
       reboot
     fi
+  elif [ $ASK_TO_REBOOT -eq 2 ]; then
+    whiptail --yesno "You must reboot. Do that now?" 20 60 2
   fi
   exit 0
 }
