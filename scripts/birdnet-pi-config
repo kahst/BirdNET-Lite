@@ -478,6 +478,7 @@ do_audio() {
     fi
     IFS=$oIFS
     fi
+    sudo -u $SUDO_USER pulseaudio -k
 }
 
 list_wlan_interfaces() {
