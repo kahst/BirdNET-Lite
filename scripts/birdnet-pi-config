@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Altered from raspi-config tool below
-# https://github.com/RPi-Distro/birdnetpi-config
+# https://github.com/RPi-Distro/birdnet-pi-config
 #
 # See LICENSE file for copyright and license details
 # Copyright (c) 2012 Alex Bradbury <asb@asbradbury.org>
@@ -217,7 +217,10 @@ do_configure_keyboard() {
 
 do_change_locale() {
   dpkg-reconfigure locales
+  if [ $? -eq 0 ];then
+	  return 0
   ASK_TO_REBOOT=2
+  fi
 }
 
 do_change_timezone() {
@@ -365,7 +368,12 @@ do_config_zram() {
   fi
   new_size=$(whiptail --inputbox "How much memory (G) should the zRAM swap partition have? Choose 1G, 2G, or 4G - 4G recommended" \
   19 70 -- "$size" 3>&1 1>&2 2>&3)
-  ASK_TO_REBOOT=1
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
 }
 
 do_install_zram() {
@@ -395,6 +403,12 @@ ExecStop=/sbin/swapoff /dev/zram0
 WantedBy=multi-user.target
 EOF
   systemctl enable zram
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
 }
 
 do_zram_menu() {
@@ -409,10 +423,9 @@ do_zram_menu() {
       systemctl disable --now zram
     fi
     STATUS=disabled
-  else
-    return $RET
   fi
   whiptail --msgbox "ZRAM swapping is $STATUS" 20 60 1
+  return $RET
 }
 
 do_vnc() {
@@ -451,92 +464,20 @@ do_vnc() {
 do_audio() {
   if is_pulseaudio ; then
     oIFS="$IFS"
-    if [ "$INTERACTIVE" = True ]; then
-      list=$(sudo -u $SUDO_USER XDG_RUNTIME_DIR=/run/user/$SUDO_UID pacmd list-sinks | grep -e index -e alsa.name | sed s/*//g | sed s/^[' '\\t]*//g | sed s/'index: '//g | sed s/'alsa.name = '//g | sed s/'bcm2835 '//g | sed s/\"//g | tr '\n' '/')
-      if ! [ -z "$list" ] ; then
-        IFS="/"
-        AUDIO_OUT=$(whiptail --menu "Choose the audio output" 20 60 10 ${list} 3>&1 1>&2 2>&3)
-      else
-        whiptail --msgbox "No internal audio devices found" 20 60 1
-        return 1
-      fi
+    list=$(sudo -u $SUDO_USER XDG_RUNTIME_DIR=/run/user/$SUDO_UID pacmd list-sources | grep -B1 -e 'alsa.card_name' -e 'name.*input' | grep -A4 index | sed -e s/*//g | sed s/^[' '\\t]*//g | grep -e index -e card_name | sed s/'index: '//g | sed s/'alsa.card_name = '//g | sed s/\"//g | tr '\n' '\/')
+    if ! [ -z "$list" ] ; then
+      IFS="/"
+      AUDIO_IN=$(whiptail --menu "Choose the audio input" 20 60 10 ${list} 3>&1 1>&2 2>&3)
+      return 0
     else
-      AUDIO_OUT=$1
-      true
+      whiptail --msgbox "No internal audio devices found" 20 60 1
+      return 1
     fi
     if [ $? -eq 0 ]; then
-      sudo -u $SUDO_USER XDG_RUNTIME_DIR=/run/user/$SUDO_UID pactl set-default-sink $AUDIO_OUT
+      sudo -u $SUDO_USER XDG_RUNTIME_DIR=/run/user/$SUDO_UID pactl set-default-source "$AUDIO_IN"
     fi
     IFS=$oIFS
-  else
-    if aplay -l | grep -q "bcm2835 ALSA"; then
-      if [ "$INTERACTIVE" = True ]; then
-        AUDIO_OUT=$(whiptail --menu "Choose the audio output" 20 60 10 \
-          "0" "Auto" \
-          "1" "Force 3.5mm ('headphone') jack" \
-          "2" "Force HDMI" \
-          3>&1 1>&2 2>&3)
-      else
-        AUDIO_OUT=$1
-      fi
-      if [ $? -eq 0 ]; then
-        amixer cset numid=3 "$AUDIO_OUT"
-      fi
-    else
-      ASPATH=$(getent passwd $USER | cut -d : -f 6)/.asoundrc
-      if [ "$INTERACTIVE" = True ]; then
-        CARD0=$(LC_ALL=C aplay -l | grep bcm2835 | grep "card 0" | cut -d [ -f 3 | cut -d ] -f 1 | cut -d ' ' -f 2-)
-        CARD1=$(LC_ALL=C aplay -l | grep bcm2835 | grep "card 1" | cut -d [ -f 3 | cut -d ] -f 1 | cut -d ' ' -f 2-)
-        CARD2=$(LC_ALL=C aplay -l | grep bcm2835 | grep "card 2" | cut -d [ -f 3 | cut -d ] -f 1 | cut -d ' ' -f 2-)
-        if ! [ -z "$CARD2" ]; then
-          AUDIO_OUT=$(whiptail --menu "Choose the audio output" 20 60 10 \
-            "0" "$CARD0" \
-            "1" "$CARD1" \
-            "2" "$CARD2" \
-            3>&1 1>&2 2>&3)
-        elif ! [ -z "$CARD1" ]; then
-          AUDIO_OUT=$(whiptail --menu "Choose the audio output" 20 60 10 \
-            "0" "$CARD0" \
-            "1" "$CARD1" \
-            3>&1 1>&2 2>&3)
-        elif ! [ -z "$CARD0" ]; then
-          AUDIO_OUT=$(whiptail --menu "Choose the audio output" 20 60 10 \
-            "0" "$CARD0" \
-            3>&1 1>&2 2>&3)
-        else
-          whiptail --msgbox "No internal audio devices found" 20 60 1
-          false
-        fi
-      else
-        AUDIO_OUT=$1
-      fi
-      if [ $? -eq 0 ]; then
-        cat << EOF > $ASPATH
-pcm.!default {
-  type asym
-  playback.pcm {
-    type plug
-    slave.pcm "output"
-  }
-  capture.pcm {
-    type plug
-    slave.pcm "input"
-  }
-}
-
-pcm.output {
-  type hw
-  card $AUDIO_OUT
-}
-
-ctl.!default {
-  type hw
-  card $AUDIO_OUT
-}
-EOF
-      fi
     fi
-  fi
 }
 
 list_wlan_interfaces() {
@@ -653,6 +594,16 @@ do_install_birdnet() {
   ASK_TO_REBOOT=1
 }
 
+insist_on_reboot() {
+  if [ $ASK_TO_REBOOT -eq 2 ]; then
+    whiptail --yesno "You really should reboot. Do that now?" 20 60 2
+    if [ $? -eq 0 ]; then # yes
+      sync
+      reboot
+    fi
+  fi
+}
+
 do_finish() {
   if [ $ASK_TO_REBOOT -eq 1 ]; then
     whiptail --yesno "Would you like to reboot now?" 20 60 2
@@ -661,13 +612,18 @@ do_finish() {
       reboot
     fi
   elif [ $ASK_TO_REBOOT -eq 2 ]; then
-    whiptail --yesno "You must reboot. Do that now?" 20 60 2
+    whiptail --yesno "You really should reboot. Do that now?" 20 60 2
+    if [ $? -eq 0 ]; then # yes
+      sync
+      reboot
+    fi
   fi
   exit 0
 }
+
 # Everything else needs to be run as root
 if [ $(id -u) -ne 0 ]; then
-  printf "Script must be run as root. Try 'sudo birdnetpi-config'\n"
+  printf "Script must be run as root. Try 'sudo birdnet-pi-config'\n"
   exit 1
 fi
 
@@ -679,7 +635,7 @@ fi
 
 do_system_menu() {
   if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --menu "System Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "System Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
       "Password" "Change password for the '$USER' user" \
       "Audio" "Select audio device you'd like BirdNET-Pi to use" \
       "Wireless LAN" "Enter SSID and passphrase" \
@@ -708,7 +664,7 @@ do_system_menu() {
 
 do_interface_menu() {
   if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --menu "Interfacing Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Interfacing Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
       "SSH" "Enable/disable remote command line access using SSH" \
       "VNC" "Enable/disable graphical remote access using RealVNC" \
       3>&1 1>&2 2>&3)
@@ -728,7 +684,7 @@ do_interface_menu() {
 }
 
 do_internationalisation_menu() {
-  FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --menu "Localisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+  FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Localisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "Locale" "Configure language and regional settings" \
     "Timezone" "Configure time zone" \
     "Keyboard" "Set keyboard layout to match your keyboard" \
@@ -739,8 +695,8 @@ do_internationalisation_menu() {
     return 0
   elif [ $RET -eq 0 ]; then
     case "$FUN" in
-      Locale*) do_change_locale; do_finish ;;
-      Time*) do_change_timezone; do_finish ;;
+      Locale*) do_change_locale; insist_on_reboot;;
+      Time*) do_change_timezone; insist_on_reboot ;;
       Key*) do_configure_keyboard ;;
       WLAN*) do_wifi_country ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
@@ -754,15 +710,15 @@ if [ "$INTERACTIVE" = True ]; then
   [ -e $CONFIG ] || touch $CONFIG
   calc_wt_size
   while [ "$USER" = "root" ] || [ -z "$USER" ]; do
-    if ! USER=$(whiptail --inputbox "birdnetpi-config could not determine the default user.\\n\\nWhat user should these settings apply to?" 20 60 pi 3>&1 1>&2 2>&3); then
+    if ! USER=$(whiptail --inputbox "birdnet-pi-config could not determine the default user.\\n\\nWhat user should these settings apply to?" 20 60 pi 3>&1 1>&2 2>&3); then
       return 0
     fi
   done
   while true; do
     if is_pi ; then
-      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --backtitle "$(cat /proc/device-tree/model)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
-        "Localisation Options" "Configure language and regional settings" \
-        "Install BirdNET-PI" "Install BirdNET-Pi" \
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --backtitle "$(cat /proc/device-tree/model)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
+        "Step 1" "Configure language and regional settings" \
+        "Step 2" "Install BirdNET-Pi" \
         "System Options" "Configure system settings" \
         3>&1 1>&2 2>&3)
     else
@@ -773,9 +729,9 @@ if [ "$INTERACTIVE" = True ]; then
       do_finish
     elif [ $RET -eq 0 ]; then
       case "$FUN" in
-        Localisation*) do_internationalisation_menu ;;
-        Install*) do_install_birdnet;;
-        System*) do_system_menu ;;
+        *1) do_internationalisation_menu ;;
+        *2) do_install_birdnet;;
+        Sys*) do_system_menu ;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
     else
