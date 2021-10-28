@@ -747,8 +747,8 @@ do_internationalisation_menu() {
     return 0
   elif [ $RET -eq 0 ]; then
     case "$FUN" in
-      Locale*) do_change_locale ;;
-      Time*) do_change_timezone ;;
+      Locale*) do_change_locale; do_finish ;;
+      Time*) do_change_timezone; do_finish ;;
       Key*) do_configure_keyboard ;;
       WLAN*) do_wifi_country ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
