@@ -4,8 +4,9 @@
 #
 # See LICENSE file for copyright and license details
 # Copyright (c) 2012 Alex Bradbury <asb@asbradbury.org>
-#set -x
+set -x
 birdnetpi_dir=/home/pi/BirdNET-Pi
+birders_config=${birdnetpi_dir}/Birders_Guide_Installer_Configuration.txt
 branch=newinstaller
 INTERACTIVE=True
 ASK_TO_REBOOT=0
@@ -130,70 +131,6 @@ calc_wt_size() {
   WT_MENU_HEIGHT=$(($WT_HEIGHT-7))
 }
 
-set_config_var() {
-  lua - "$1" "$2" "$3" <<EOF > "$3.bak"
-local key=assert(arg[1])
-local value=assert(arg[2])
-local fn=assert(arg[3])
-local file=assert(io.open(fn))
-local made_change=false
-for line in file:lines() do
-  if line:match("^#?%s*"..key.."=.*$") then
-    line=key.."="..value
-    made_change=true
-  end
-  print(line)
-end
-
-if not made_change then
-  print(key.."="..value)
-end
-EOF
-mv "$3.bak" "$3"
-}
-
-clear_config_var() {
-  lua - "$1" "$2" <<EOF > "$2.bak"
-local key=assert(arg[1])
-local fn=assert(arg[2])
-local file=assert(io.open(fn))
-for line in file:lines() do
-  if line:match("^%s*"..key.."=.*$") then
-    line="#"..line
-  end
-  print(line)
-end
-EOF
-mv "$2.bak" "$2"
-}
-
-get_config_var() {
-  lua - "$1" "$2" <<EOF
-local key=assert(arg[1])
-local fn=assert(arg[2])
-local file=assert(io.open(fn))
-local found=false
-for line in file:lines() do
-  local val = line:match("^%s*"..key.."=(.*)$")
-  if (val ~= nil) then
-    print(val)
-    found=true
-    break
-  end
-end
-if not found then
-   print(0)
-end
-EOF
-}
-
-is_number() {
-  case $1 in
-    ''|*[!0-9]*) return 0 ;;
-    *) return 1 ;;
-  esac
-}
-
 do_change_pass() {
   whiptail --msgbox "You will now be asked to enter a new password for the $USER user" 20 60 1
   passwd $USER &&
@@ -216,40 +153,24 @@ do_configure_keyboard() {
 }
 
 do_change_locale() {
-  dpkg-reconfigure locales
-  if [ $? -eq 0 ];then
-	  return 0
-  ASK_TO_REBOOT=2
-  fi
+  dpkg-reconfigure locales && \
+    ASK_TO_REBOOT=2 && return 0
 }
 
 do_change_timezone() {
-  if [ "$INTERACTIVE" = True ]; then
-    dpkg-reconfigure tzdata
-  else
-    local TIMEZONE="$1"
-    if [ ! -f "/usr/share/zoneinfo/$TIMEZONE" ]; then
-      return 1;
-    fi
-    rm /etc/localtime
-    echo "$TIMEZONE" > /etc/timezone
-    dpkg-reconfigure -f noninteractive tzdata
-  fi
+  dpkg-reconfigure tzdata && \
+    return 0
 }
 
 get_wifi_country() {
   CODE=${1:-0}
   IFACE="$(list_wlan_interfaces | head -n 1)"
   if [ -z "$IFACE" ]; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "No wireless interface found" 20 60
-    fi
+    whiptail --msgbox "No wireless interface found" 20 60
     return 1
   fi
   if ! wpa_cli -i "$IFACE" status > /dev/null 2>&1; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
-    fi
+    whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
     return 1
   fi
   wpa_cli -i "$IFACE" save_config > /dev/null 2>&1
@@ -266,28 +187,19 @@ get_wifi_country() {
 do_wifi_country() {
   IFACE="$(list_wlan_interfaces | head -n 1)"
   if [ -z "$IFACE" ]; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "No wireless interface found" 20 60
-    fi
+    whiptail --msgbox "No wireless interface found" 20 60
     return 1
   fi
 
   if ! wpa_cli -i "$IFACE" status > /dev/null 2>&1; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
-    fi
+    whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
     return 1
   fi
 
   oIFS="$IFS"
-  if [ "$INTERACTIVE" = True ]; then
-    value=$(cat /usr/share/zoneinfo/iso3166.tab | tail -n +26 | tr '\t' '/' | tr '\n' '/')
-    IFS="/"
-    COUNTRY=$(whiptail --menu "Select the country in which the Pi is to be used" 20 60 10 ${value} 3>&1 1>&2 2>&3)
-  else
-    COUNTRY=$1
-    true
-  fi
+  value=$(cat /usr/share/zoneinfo/iso3166.tab | tail -n +26 | tr '\t' '/' | tr '\n' '/')
+  IFS="/"
+  COUNTRY=$(whiptail --menu "Select the country in which the Pi is to be used" 20 60 10 ${value} 3>&1 1>&2 2>&3)
   if [ $? -eq 0 ];then
     wpa_cli -i "$IFACE" set country "$COUNTRY"
     wpa_cli -i "$IFACE" save_config > /dev/null 2>&1
@@ -302,9 +214,7 @@ do_wifi_country() {
         done
       fi
     fi
-    if [ "$INTERACTIVE" = True ]; then
-        whiptail --msgbox "Wireless LAN country set to $COUNTRY" 20 60 1
-    fi
+    whiptail --msgbox "Wireless LAN country set to $COUNTRY" 20 60 1
   fi
   IFS=$oIFS
 }
@@ -326,14 +236,9 @@ do_ssh() {
   if [ $(get_ssh) -eq 0 ]; then
     DEFAULT=
   fi
-  if [ "$INTERACTIVE" = True ]; then
-    whiptail --yesno \
-      "Would you like the SSH server to be enabled?\n\nCaution: Default and weak passwords are a security risk when SSH is enabled!" \
-      $DEFAULT 20 60 2
-    RET=$?
-  else
-    RET=$1
-  fi
+  whiptail --yesno \
+    "Would you like the SSH server to be enabled?\n\nCaution: Default and weak passwords are a security risk when SSH is enabled!" $DEFAULT 20 60 2
+  RET=$?
   if [ $RET -eq 0 ]; then
     ssh-keygen -A &&
     update-rc.d ssh enable &&
@@ -346,9 +251,7 @@ do_ssh() {
   else
     return $RET
   fi
-  if [ "$INTERACTIVE" = True ]; then
-    whiptail --msgbox "The SSH server is $STATUS" 20 60 1
-  fi
+  whiptail --msgbox "The SSH server is $STATUS" 20 60 1
 }
 
 get_vnc() {
@@ -433,12 +336,7 @@ do_vnc() {
   if [ $(get_vnc) -eq 0 ]; then
     DEFAULT=
   fi
-  if [ "$INTERACTIVE" = True ]; then
-    whiptail --yesno "Would you like the VNC Server to be enabled?" $DEFAULT 20 60 2
-    RET=$?
-  else
-    RET=$1
-  fi
+  whiptail --yesno "Would you like the VNC Server to be enabled?" $DEFAULT 20 60 2
   if [ $RET -eq 0 ]; then
     if is_installed realvnc-vnc-server || apt-get install realvnc-vnc-server; then
       systemctl enable vncserver-x11-serviced.service &&
@@ -456,9 +354,7 @@ do_vnc() {
   else
     return $RET
   fi
-  if [ "$INTERACTIVE" = True ]; then
-    whiptail --msgbox "The VNC Server is $STATUS" 20 60 1
-  fi
+  whiptail --msgbox "The VNC Server is $STATUS" 20 60 1
 }
 
 do_audio() {
@@ -495,25 +391,21 @@ do_wifi_ssid_passphrase() {
   IFACE="$(echo "$IFACE_LIST" | head -n 1)"
 
   if [ -z "$IFACE" ]; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "No wireless interface found" 20 60
-    fi
+    whiptail --msgbox "No wireless interface found" 20 60
     return 1
   fi
 
   if ! wpa_cli -i "$IFACE" status > /dev/null 2>&1; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
-    fi
+    whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
     return 1
   fi
 
-  if [ "$INTERACTIVE" = True ] && [ -z "$(get_wifi_country)" ]; then
+  if [ -z "$(get_wifi_country)" ]; then
     do_wifi_country
   fi
 
   SSID="$1"
-  while [ -z "$SSID" ] && [ "$INTERACTIVE" = True ]; do
+  while [ -z "$SSID" ] ; do
     SSID=$(whiptail --inputbox "Please enter SSID" 20 60 3>&1 1>&2 2>&3)
     if [ $? -ne 0 ]; then
       return 0
@@ -523,14 +415,12 @@ do_wifi_ssid_passphrase() {
   done
 
   PASSPHRASE="$2"
-  while [ "$INTERACTIVE" = True ]; do
-    PASSPHRASE=$(whiptail --passwordbox "Please enter passphrase. Leave it empty if none." 20 60 3>&1 1>&2 2>&3)
-    if [ $? -ne 0 ]; then
-      return 0
-    else
-      break
-    fi
-  done
+  PASSPHRASE=$(whiptail --passwordbox "Please enter passphrase. Leave it empty if none." 20 60 3>&1 1>&2 2>&3)
+  if [ $? -ne 0 ]; then
+    return 0
+  else
+    return 1
+  fi
 
   # Escape special characters for embedding in regex below
   local ssid="$(echo "$SSID" \
@@ -572,9 +462,7 @@ do_wifi_ssid_passphrase() {
     wpa_cli -i "$IFACE" enable_network "$ID" > /dev/null 2>&1
   else
     wpa_cli -i "$IFACE" remove_network "$ID" > /dev/null 2>&1
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "Failed to set SSID or passphrase" 20 60
-    fi
+    whiptail --msgbox "Failed to set SSID or passphrase" 20 60
   fi
   wpa_cli -i "$IFACE" save_config > /dev/null 2>&1
 
@@ -585,13 +473,82 @@ do_wifi_ssid_passphrase() {
   return $RET
 }
 
+do_get_db_root_pwd() {
+  db_root_pwd=$(whiptail --inputbox "Please set the password the 'root' user will use to access the database." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_db_pwd() {
+  db_pwd=$(whiptail --inputbox "Please set the password the 'birder' user will use to access the database." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_ice_pwd() {
+  ice_pwd=$(whiptail --inputbox "Please set the password for the live stream." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_caddy_pwd() {
+  caddy_pwd=$(whiptail --inputbox "Please set the password for the web interface." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+
+do_get_lon() {
+  lon="$(curl -s4 ifconfig.co/json | awk '/lon/ {print $2}' | tr -d ',')"
+  new_lon=$(whiptail --inputbox "Please set the longitude where recordings will take place." \
+  19 70 -- "$lon" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_lat() {
+  lat="$(curl -s4 ifconfig.co/json | awk '/lat/ {print $2}' | tr -d ',')"
+  new_lat=$(whiptail --inputbox "Please set the latitude where recordings will take place." \
+  19 70 -- "$lat" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
 do_update_os() {
   apt update && apt -y full-upgrade
   ASK_TO_REBOOT=1
 }
 
 do_install_birdnet() {
-    sudo -E -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh
+  sudo -E -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh
   ASK_TO_REBOOT=1
 }
 
@@ -628,12 +585,6 @@ if [ $(id -u) -ne 0 ]; then
   exit 1
 fi
 
-if [ -n "${OPT_MEMORY_SPLIT:-}" ]; then
-  set -e # Fail when a command errors
-  set_memory_split "${OPT_MEMORY_SPLIT}"
-  exit 0
-fi
-
 do_system_menu() {
   if is_pi ; then
     FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "System Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
@@ -643,6 +594,9 @@ do_system_menu() {
       "Update the OS" "Update the underlying operating system" \
       "Interface Options" "Enable/Disable SSH and VNC" \
       "Configure zRAM" "Enable/Disable zRAM" \
+      "Timezone" "Configure time zone" \
+      "Keyboard" "Set keyboard layout to match your keyboard" \
+      "WLAN Country" "Set legal wireless channels for your country" \
       3>&1 1>&2 2>&3)
   else
       exit
@@ -658,6 +612,84 @@ do_system_menu() {
       Update*) do_update_os ;;
       Interface*) do_interface_menu ;;
       Configure*) do_zram_menu ;;
+      Time*) do_change_timezone; insist_on_reboot ;;
+      Key*) do_configure_keyboard ;;
+      WLAN*) do_wifi_country ;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
+
+do_advanced_config() {
+  if is_pi ; then
+    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+      "Sensitivity" "Set the sigmoid sensitivity" \
+      "Confidence" "Set the minimum confidence score required for a detection" \
+      "Overlap" "Set the analysis overlap in seconds" \
+      "BirdNET-Pi URLs" "Set the URLs your installation should use" \
+      3>&1 1>&2 2>&3)
+  else
+      exit
+  fi
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      Sens*) do_get_sensitivity;;
+      Confi*) do_get_confidence;;
+      Overlap*) do_get_overlap;;
+      Bird*) do_get_birdnetpi_urls;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
+
+do_get_db_pwds() {
+  if is_pi ; then
+    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Set Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+      "'birder'   " "Set the database password for the 'birder' user" \
+      "'root'     " "Set the database password for the 'root' user" \
+      3>&1 1>&2 2>&3)
+  else
+      exit
+  fi
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      *bird*) do_get_db_pwd;;
+      *root*) do_get_db_root_pwd;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
+
+do_config_birdnet_menu() {
+  if is_pi ; then
+    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+      "Latitude " "Set the latitude your system should use" \
+      "Longitude" "Set the longitude your system should use" \
+      "Caddy Password" "Set the web interface password" \
+      "IceCast2 Password" "Set the IceCast2 password" \
+      "Database Passwords" "Set the passwords the MariaDB will use" \
+      "Advanced Settings" "Sensitivity, Overlap, Confidence, URLs" \
+      3>&1 1>&2 2>&3)
+  else
+      exit
+  fi
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      Lat*) do_get_lat;;
+      Lon*) do_get_lon;;
+      Cad*) do_get_caddy_pwd;;
+      Ice*) do_get_ice_pwd;;
+      Data*) do_get_db_pwds;;
+      Advanced*) do_advanced_config;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -687,9 +719,6 @@ do_interface_menu() {
 do_internationalisation_menu() {
   FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Localisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "Locale" "Configure language and regional settings" \
-    "Timezone" "Configure time zone" \
-    "Keyboard" "Set keyboard layout to match your keyboard" \
-    "WLAN Country" "Set legal wireless channels for your country" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -697,9 +726,6 @@ do_internationalisation_menu() {
   elif [ $RET -eq 0 ]; then
     case "$FUN" in
       Locale*) do_change_locale; insist_on_reboot;;
-      Time*) do_change_timezone; insist_on_reboot ;;
-      Key*) do_configure_keyboard ;;
-      WLAN*) do_wifi_country ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -718,8 +744,9 @@ if [ "$INTERACTIVE" = True ]; then
   while true; do
     if is_pi ; then
       FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --backtitle "$(cat /proc/device-tree/model)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
-        "Step 1" "Configure language and regional settings" \
-        "Step 2" "Install BirdNET-Pi" \
+        "Step 1" "Configure language" \
+        "Step 2" "Configure BirdNET-Pi before installation" \
+        "Step 3" "Install BirdNET-Pi" \
         "System Options" "Configure system settings" \
         3>&1 1>&2 2>&3)
     else
@@ -731,7 +758,8 @@ if [ "$INTERACTIVE" = True ]; then
     elif [ $RET -eq 0 ]; then
       case "$FUN" in
         *1) do_internationalisation_menu ;;
-        *2) do_install_birdnet;;
+        *2) do_config_birdnet_menu ;;
+        *3) do_install_birdnet;;
         Sys*) do_system_menu ;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
