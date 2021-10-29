@@ -543,13 +543,13 @@ do_get_lat() {
 }
 
 do_update_os() {
-  apt update && apt -y full-upgrade
-  ASK_TO_REBOOT=1
+  apt update && apt -y full-upgrade && \
+    ASK_TO_REBOOT=1
 }
 
 do_install_birdnet() {
-  sudo -E -upi ${birdnetpi_dir}/scripts/install_birdnet.sh
-  ASK_TO_REBOOT=1
+  sudo -E -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh && \
+    ASK_TO_REBOOT=1
 }
 
 insist_on_reboot() {

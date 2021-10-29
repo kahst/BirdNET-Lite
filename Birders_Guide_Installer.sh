@@ -50,7 +50,8 @@ stage_2() {
     cd ${my_dir} && git checkout ${branch}
   fi
 
-  if [ -f ${my_dir}/Birders_Guide_Installer_Configuration.txt ];then
+  source ${my_dir}/Birders_Guide_Installer_Configuration.txt
+  if [ -z ${LATITUDE} ] || [ -z ${LONGITUDE} ] || [ -z ${CADDY_PWD} ] || [ -z ${ICE_PWD} ] || [ -z ${DB_PWD} ] || [ -z ${DB_ROOT_PWD} ];then
     echo
     echo
     echo "Follow the instructions to fill out the LATITUDE and LONGITUDE variables
