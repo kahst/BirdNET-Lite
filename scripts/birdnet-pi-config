@@ -548,7 +548,7 @@ do_update_os() {
 }
 
 do_install_birdnet() {
-  sudo -E -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh
+  sudo -E -upi ${birdnetpi_dir}/scripts/install_birdnet.sh
   ASK_TO_REBOOT=1
 }
 
