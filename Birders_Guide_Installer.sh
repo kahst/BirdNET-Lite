@@ -149,9 +149,9 @@ DO_RECORDING=y
 ## will be web-hosted. If you do not own a domain, or would just prefer to keep 
 ## the BirdNET-Pi on your local network, keep this EMPTY.
 
-BIRDNETPI_URL=
-EXTRACTIONLOG_URL=
-BIRDNETLOG_URL=
+BIRDNETPI_URL=${BIRDNETPI_URL}
+EXTRACTIONLOG_URL=${EXTRACTIONLOG_URL}
+BIRDNETLOG_URL=${BIRDNETLOG_URL}
 
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## the "Processed" directory and live audio stream. This MUST be set if you

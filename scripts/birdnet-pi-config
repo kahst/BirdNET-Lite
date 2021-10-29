@@ -473,6 +473,39 @@ do_wifi_ssid_passphrase() {
   return $RET
 }
 
+do_get_birdnetlog_url() {
+  birdnetlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetlog.pmcgui.xyz\"." \
+  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_extractionlog_url() {
+  extractionlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://extractionlog.pmcgui.xyz\"." \
+  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_birdnetpi_url() {
+  birdnetpi_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetpi.pmcgui.xyz\"." \
+  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
 do_get_db_root_pwd() {
   db_root_pwd=$(whiptail --inputbox "Please set the password the 'root' user will use to access the database." \
   19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
@@ -585,6 +618,25 @@ if [ $(id -u) -ne 0 ]; then
   exit 1
 fi
 
+do_get_urls_menu() {
+  FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Interfacing Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+    "BirdNET-Pi URL" "Set the main web interface URL" \
+    "BirdNET Analysis Log URL" "Set the URL that will be used to view the BirdNET log" \
+    "Audio Extraction Log URL" "Set the URL that will be used to view the Audio Extraction log" \
+    3>&1 1>&2 2>&3)
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      *Pi*) do_get_birdnetpi_url;;
+      *Analysis*) do_get_extractionlog_url;;
+      Audio*) do_get_birdnetlog_url;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
+
 do_system_menu() {
   if is_pi ; then
     FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "System Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
@@ -620,7 +672,7 @@ do_system_menu() {
   fi
 }
 
-do_advanced_config() {
+do_advanced_config_menu() {
   if is_pi ; then
     FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
       "Sensitivity" "Set the sigmoid sensitivity" \
@@ -639,7 +691,7 @@ do_advanced_config() {
       Sens*) do_get_sensitivity;;
       Confi*) do_get_confidence;;
       Overlap*) do_get_overlap;;
-      Bird*) do_get_birdnetpi_urls;;
+      Bird*) do_get_birdnetpi_url; do_get_birdnetlog_url; do_get_extractionlog_url;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -689,7 +741,7 @@ do_config_birdnet_menu() {
       Cad*) do_get_caddy_pwd;;
       Ice*) do_get_ice_pwd;;
       Data*) do_get_db_pwds;;
-      Advanced*) do_advanced_config;;
+      Advanced*) do_advanced_config_menu;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   fi

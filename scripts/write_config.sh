@@ -8,3 +8,6 @@ sed -i s/'^CADDY_PWD=$'/"CADDY_PWD=${caddy_pwd}"/g ${birders_conf}
 sed -i s/'^ICE_PWD=$'/"ICE_PWD=${ice_pwd}"/g ${birders_conf}
 sed -i s/'^DB_PWD=$'/"DB_PWD=${db_pwd}"/g ${birders_conf}
 sed -i s/'^DB_ROOT_PWD=$'/"DB_ROOT_PWD=${db_root_pwd}"/g ${birders_conf}
+sed -i s/'^BIRDNETPI_URL=$'/"BIRDNETPI_URL=${birdnetpi_url/\/\//\\\/\\\/}"/g ${birders_conf}
+sed -i s/'^EXTRACTIONLOG_URL=$'/"EXTRACTIONLOG_URL=${extractionlog_url/\/\//\\\/\\\/}"/g ${birders_conf}
+sed -i s/'^BIRDNETLOG_URL=$'/"BIRDNETLOG_URL=${birdnetlog_url/\/\//\\\/\\\/}"/g ${birders_conf}

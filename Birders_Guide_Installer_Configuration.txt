@@ -45,3 +45,10 @@ DB_ROOT_PWD=
 # detections.
 PUSHED_APP_SECRET=
 PUSHED_APP_KEY=
+
+# If you own your own domain, you can input that here to have caddy register
+# TLS certificates for the web interface
+
+BIRDNETPI_URL=
+BIRDNETLOG_URL=
+EXTRACTIONLOG_URL=
