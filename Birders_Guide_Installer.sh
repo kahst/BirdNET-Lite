@@ -53,10 +53,10 @@ stage_2() {
   source ${my_dir}/Birders_Guide_Installer_Configuration.txt
   if [ -z ${LATITUDE} ] || [ -z ${LONGITUDE} ] || [ -z ${CADDY_PWD} ] || [ -z ${ICE_PWD} ] || [ -z ${DB_PWD} ] || [ -z ${DB_ROOT_PWD} ];then
     echo
-    echo
     echo "Follow the instructions to fill out the LATITUDE and LONGITUDE variables
 and set the passwords for the live audio stream. Save the file after editing
 and then close the Mouse Pad editing window to continue."
+    echo
     if [ -z "$SSH_CONNECTION" ];then
       EDITOR=mousepad
     else
@@ -68,12 +68,6 @@ and then close the Mouse Pad editing window to continue."
     done
     source ${my_dir}/Birders_Guide_Installer_Configuration.txt || exit 1
   else
-    echo "Something went wrong. I can't find the configuration file."
-    exit 1
-  fi
-
-  if [ -z ${LATITUDE} ] || [ -z ${LONGITUDE} ] || [ -z ${CADDY_PWD} ] || [ -z ${ICE_PWD} ] || [ -z ${DB_PWD} ] || [ -z ${DB_ROOT_PWD} ];then
-    echo
     echo
     echo "It looks like you haven't filled out the Birders_Guide_Installer_Configuration.txt file
 completely.
