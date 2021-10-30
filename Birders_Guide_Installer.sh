@@ -295,15 +295,6 @@ EOF
   sudo ln -sf ${my_dir}/birdnet.conf /etc/birdnet/birdnet.conf
 }
 echo "
-Welcome to the Birders Guide Installer script!
-
-The installer runs in two stages:
-Stage 1 configures and enables the zRAM kernel module and allocates 4G
-        to its swapping size if needed. This will trigger a reboot.
-Stage 1 also ensures the system is up to date.
-Stage 2 guides you through configuring the essentials and installs the full BirdNET-Pi system."
-
-
 if [ ! -f ${HOME}/stage_1_complete ] ;then
   stage_1
   stage_2
