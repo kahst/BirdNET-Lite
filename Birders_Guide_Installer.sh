@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 my_dir=${HOME}/BirdNET-Pi
-branch=testing
+branch=main
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
 
 
@@ -108,7 +108,7 @@ stage_2() {
   if [ ! -d ${my_dir} ];then
     cd ~ || exit 1
     echo "Cloning the BirdNET-Pi repository $branch branch into your home directory"
-    git clone --depth 1 -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
+    git clone -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
   else
     cd ${my_dir} && git checkout ${branch}
   fi
