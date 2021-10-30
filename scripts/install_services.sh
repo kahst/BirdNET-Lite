@@ -11,6 +11,14 @@ nomachine_url="https://download.nomachine.com/download/7.6/Arm/nomachine_7.6.2_3
 gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_arm.tar.gz"
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
+set_hostname() {
+  if [ "$(hostname)" != "birdnetpi" ];then
+    echo "Setting hostname to 'birdnetpi'"
+    hostnamectl set-hostname birdnetpi
+    sed -i 's/raspberrypi/birdnetpi/g' /etc/hosts
+  fi
+}
+
 install_scripts() {
   echo "Installing BirdNET-Pi scripts to /usr/local/bin"
   ln -sf ${my_dir}/* /usr/local/bin/
@@ -90,7 +98,7 @@ ExecStart=/usr/local/bin/species_notifier.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now pushed_notifications
+  systemctl enable pushed_notifications.service
 }
 
 create_necessary_dirs() {
@@ -100,15 +108,33 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
   [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
-  [ -L ${EXTRACTED}/index.html ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/templates/index.html ${EXTRACTED}  
-  [ -L ${EXTRACTED}/scripts ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts ${EXTRACTED}
-  [ -L ${EXTRACTED}/spectrogram.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/spectrogram.* ${EXTRACTED}
-  [ -L ${EXTRACTED}/viewdb.php ] || sudo -u ${USER} ln -s $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
-  [ -L ${EXTRACTED}/phpsysinfo.ini ] || sudo -u ${USER} cp ${HOME}/phpsysinfo/phpsysinfo.ini.new ${HOME}/phpsysinfo/phpsysinfo.ini
 
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
+  if [ ! -z ${BIRDNETLOG_URL} ];then
+    BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+  fi
+  if [ ! -z ${EXTRACTIONLOG_URL} ];then
+    EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+  fi
+
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
+  if [ ! -z ${BIRDNETPI_URL} ];then
+    BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+    phpfiles="$(grep -l birdnetpi.local ${my_dir}/*.php)"
+    for i in "${phpfiles[@]}";do
+      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" ${i}
+    done
+  fi
+
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
+  [ -L ${EXTRACTED}/phpsysinfo/phpsysinfo.ini ] || sudo -u ${USER} cp ${HOME}/phpsysinfo/phpsysinfo.ini.new ${HOME}/phpsysinfo/phpsysinfo.ini
 }
- 
+
 install_alsa() {
   echo "Checking for alsa-utils and pulseaudio"
   if which arecord &> /dev/null ;then
@@ -172,26 +198,7 @@ install_Caddyfile() {
   fi
   HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   cat << EOF > /etc/caddy/Caddyfile
-${EXTRACTIONS_URL} {
-  root * ${EXTRACTED}
-  file_server browse
-  basicauth /Processed* {
-    birdnet ${HASHWORD}
-  }
-  basicauth /scripts* {
-    birdnet ${HASHWORD}
-  }
-  basicauth /stream {
-    birdnet ${HASHWORD}
-  }
-  basicauth /phpsysinfo* {
-    birdnet ${HASHWORD}
-  }
-  reverse_proxy /stream localhost:8000
-  php_fastcgi unix//run/php/php7.3-fpm.sock
-}
-
-http://birdnetpi.local {
+http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   basicauth /Processed* {
@@ -210,6 +217,22 @@ http://birdnetpi.local {
   php_fastcgi unix//run/php/php7.3-fpm.sock
 }
 EOF
+  if [ ! -z ${EXTRACTIONLOG_URL} ];then
+    cat << EOF >> /etc/caddy/Caddyfile
+
+${EXTRACTIONLOG_URL} {
+  reverse_proxy localhost:8888
+}
+EOF
+  fi
+  if [ ! -z ${BIRDNETLOG_URL} ];then
+    cat << EOF >> /etc/caddy/Caddyfile
+
+${BIRDNETLOG_URL} {
+  reverse_proxy localhost:8080
+}
+EOF
+  fi
   systemctl reload caddy
 }
 
@@ -234,7 +257,7 @@ ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(avahi-resolve -4 -n %H
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now avahi-alias@birdnetpi.local.service
+  systemctl enable avahi-alias@birdnetpi.local.service
 }
 
 install_spectrogram_service() {
@@ -250,7 +273,7 @@ ExecStart=/usr/local/bin/spectrogram.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-   systemctl enable --now spectrogram_viewer.service
+   systemctl enable spectrogram_viewer.service
 }
 
 install_gotty_logs() {
@@ -277,7 +300,7 @@ ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalct
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now birdnet_log.service
+  systemctl enable birdnet_log.service
   echo "Installing the extraction_log.service"
   cat << EOF > /etc/systemd/system/extraction_log.service
 [Unit]
@@ -294,7 +317,7 @@ ExecStart=/usr/local/bin/gotty -p 8888 --title-format "Extractions Log" journalc
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now extraction_log.service
+  systemctl enable extraction_log.service
 }
 
 install_sox() {
@@ -357,12 +380,12 @@ install_icecast() {
     echo "icecast2 icecast2/icecast-setup boolean false" | debconf-set-selections
     apt install -qqy icecast2 
     config_icecast
-    systemctl enable --now icecast2
+    systemctl enable icecast2.service
     /etc/init.d/icecast2 start
   else
     echo "Icecast2 is installed"
     config_icecast
-    systemctl enable --now icecast2
+    systemctl enable icecast2.service
     /etc/init.d/icecast2 start
   fi
 }
@@ -395,7 +418,7 @@ ExecStart=/usr/local/bin/livestream.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable --now livestream.service
+  systemctl enable livestream.service
 }
 
 install_nomachine() {
@@ -419,6 +442,7 @@ install_cleanup_cron() {
 }
 
 install_selected_services() {
+  set_hostname
   install_scripts
   install_birdnet_analysis
 
@@ -431,7 +455,6 @@ install_selected_services() {
     install_recording_service
   fi
 
-  if [ ! -z "${EXTRACTIONS_URL}" ];then
     install_caddy
     install_Caddyfile
     install_avahi_aliases
@@ -442,7 +465,6 @@ install_selected_services() {
     install_spectrogram_service
     install_edit_birdnet_conf
     install_pushed_notifications
-  fi
 
   if [ ! -z "${ICE_PWD}" ];then
     install_icecast

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 my_dir=${HOME}/BirdNET-Pi
-branch=main
+branch=testing
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
 
 
@@ -108,7 +108,7 @@ stage_2() {
   if [ ! -d ${my_dir} ];then
     cd ~ || exit 1
     echo "Cloning the BirdNET-Pi repository $branch branch into your home directory"
-    git clone -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
+    git clone --depth 1 -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
   else
     cd ${my_dir} && git checkout ${branch}
   fi
@@ -232,19 +232,19 @@ DO_RECORDING=y
 
 ################################################################################
 #-----------------------  Web-hosting/Caddy File-server -----------------------#
-#__________The two variables below can be set to enable web access_____________#
+#________The four variables below can be set to enable internet access_________#
 #____________to your data,(e.g., extractions, raw data, live___________________#
 #______________audio stream, BirdNET.selection.txt files)______________________#
 
 #         Leave these EMPTY if you do not want to enable web access            #
 
-## EXTRACTIONS_URL is the URL where the extractions, data-set, and live-stream
+## BIRDNETPI_URL is the URL where the extractions, data-set, and live-stream
 ## will be web-hosted. If you do not own a domain, or would just prefer to keep 
-## the BirdNET-Pi on your local network, you can set this to http://localhost.
-## Setting this (even to http://localhost) will also allow you to enable the   
-## GoTTY web logging features below.
+## the BirdNET-Pi on your local network, keep this EMPTY.
 
-EXTRACTIONS_URL=http://raspberrypi.local
+BIRDNETPI_URL=
+EXTRACTIONLOG_URL=
+BIRDNETLOG_URL=
 
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## the "Processed" directory and live audio stream. This MUST be set if you

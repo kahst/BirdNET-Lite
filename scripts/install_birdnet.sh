@@ -98,10 +98,7 @@ echo "	BirdNet is installed!!
      'sudo systemctl disable --now birdnet_analysis.service'
 
   Visit
-  http://birdnetpi.local to see your extractions,
-  http://birdlog.local to see the log output of the birdnet_analysis.service,
-  http://extractionlog.local to see the log output of the extraction.service, and
-  http://birdstats.local to see the BirdNET-Pi Report"
+  the BirdNET-Pi homepage at http://birdnetpi.local"
 echo
 read -n1 -p "  Would you like to run the birdnet_analysis.service now?" YN
 echo

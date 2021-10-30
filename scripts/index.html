@@ -27,12 +27,15 @@
     <input type="submit" value="Restart Caddy">
 </form>
 
+<form action="/scripts/backup_data.php" onclick="return confirm('Backup ALL Data? Warning: This could take a long time.')">
+    <input type="submit" value="Backup ALL data">
+</form>
 
 <form action="/scripts/clear_all_data.php" onclick="return confirm('Clear ALL Data? This cannot be undone.')">
     <input type="submit" value="Clear ALL data">
 </form>
 
-<form action="/scripts/update_birdnet.php" onclick="return confirm('Are you sure you want to update?')">
+<form action="/scripts/update_birdnet.php" onclick="return confirm('BE SURE TO STASH ANY LOCAL CHANGES YOU HAVE MADE TO THE SYSTEM BEFORE UPDATING!!!')">
     <input type="submit" value="Update BirdNET-Pi">
 </form>
 

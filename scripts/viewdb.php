@@ -1,4 +1,5 @@
 <?php
+header("refresh: 30;");
 
 $user = 'birder';
 $password = 'databasepassword';
@@ -15,10 +16,15 @@ if ($mysqli->connect_error) {
 }
 
 // SQL query to select data from database
-$sql = "SELECT * FROM detections 
-	ORDER BY Date DESC, Time DESC";
+$sql = "SELECT * FROM detections
+       ORDER BY Date DESC, Time DESC";
 $fulltable = $mysqli->query($sql);
 $totalcount=mysqli_num_rows($fulltable);
+
+$sql1 = "SELECT * FROM detections 
+        WHERE Date = CURDATE()	
+	ORDER BY Date DESC, Time DESC";
+$mosttable = $mysqli->query($sql1);
 
 $sql2 = "SELECT * FROM detections 
 	WHERE Date = CURDATE()";
@@ -53,7 +59,7 @@ $mysqli->close();
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
 	<title>BirdNET-Pi DB</title>
 	<!-- CSS FOR STYLING THE PAGE -->
 	<style>
@@ -63,13 +69,11 @@ $mysqli->close();
 
 		.row {
 		  display: flex;
-		  margin-left:-5px;
-		  margin-right:-5px;
 		}
 
 		.column {
 		  flex: 50%;
-		  padding: 5px;
+		  padding-right: 5px;
 		}
 
 		table {
@@ -108,6 +112,7 @@ $mysqli->close();
 			border: 1px solid black;
 			padding: 10px;
 			text-align: center;
+		  	background-color: rgb(219, 296, 235);
 		}
 
 		@media screen and (max-width: 800px) {
@@ -157,10 +162,13 @@ $mysqli->close();
 		td {
 			font-weight: lighter;
 		}
+body::-webkit-scrollbar {
+	display:none
+}
 	</style>
 </head>
+<body style="background-color: rgb(119, 196, 135);background-image: linear-gradient(to top, rgb(119, 196, 135),black;">
 
-<body>
 	<section>
 		<h2>Number of Detections</h2>
 		<table>
@@ -204,11 +212,11 @@ while($rows=$specieslist ->fetch_assoc())
 		</table>
   </div>
   <div class="column">
-		<h2>Species stats</h2>
+		<h2>Species Statistics</h2>
 		<table>
 			<tr>
 				<th>Species</th>
-				<th>Number of Detections</th>
+				<th>Detections</th>
 			</tr>
 <?php // LOOP TILL END OF DATA
 while($rows=$speciestally ->fetch_assoc())
@@ -224,14 +232,13 @@ while($rows=$speciestally ->fetch_assoc())
 		</table>
   </div>
 </div>
-		<h1>BirdsDB Detections Table</h1>
+		<h2>Today's Detections</h2>
 		<!-- TABLE CONSTRUCTION-->
 		<table>
 			<tr>
-				<th>Date</th>
 				<th>Time</th>
-				<th>Sci_Name</th>
-				<th>Com_Name</th>
+				<th>Scientific Name</th>
+				<th>Common Name</th>
 				<th>Confidence</th>
 				<th>Lat</th>
 				<th>Lon</th>
@@ -242,13 +249,12 @@ while($rows=$speciestally ->fetch_assoc())
 			</tr>
 			<!-- PHP CODE TO FETCH DATA FROM ROWS-->
 <?php // LOOP TILL END OF DATA
-while($rows=$fulltable ->fetch_assoc())
+while($rows=$mosttable ->fetch_assoc())
 {
 ?>
 			<tr>
 				<!--FETCHING DATA FROM EACH
 					ROW OF EVERY COLUMN-->
-				<td><?php echo $rows['Date'];?></td>
 				<td><?php echo $rows['Time'];?></td>
 				<td><?php echo $rows['Sci_Name'];?></td>
 				<td><?php echo $rows['Com_Name'];?></td>
@@ -265,7 +271,6 @@ while($rows=$fulltable ->fetch_assoc())
 ?>
 		</table>
 	</section>
-</body>
-
+</div>
 </html>
 

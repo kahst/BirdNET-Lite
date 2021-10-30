@@ -1,4 +1,5 @@
 <?php
-shell_exec("/home/pi/BirdSongs/Extracted/spectrogram.sh");
-header('Location: http://birdnetpi.local/spectrogram.png');
+header("refresh: 15;");
+echo "<body style='background-color:rgb(119, 196, 135)'>";
+echo "<img src='/spectrogram.png' >"; 
 ?>
