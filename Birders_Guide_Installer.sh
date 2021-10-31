@@ -294,7 +294,6 @@ EOF
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf ${my_dir}/birdnet.conf /etc/birdnet/birdnet.conf
 }
-echo "
 if [ ! -f ${HOME}/stage_1_complete ] ;then
   stage_1
   stage_2
