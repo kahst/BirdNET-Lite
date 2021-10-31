@@ -473,6 +473,135 @@ do_wifi_ssid_passphrase() {
   return $RET
 }
 
+do_reget_birdnetlog_url() {
+  birdnetlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetlog.pmcgui.xyz\"." \
+  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_reget_extractionlog_url() {
+  extractionlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://extractionlog.pmcgui.xyz\"." \
+  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_reget_birdnetpi_url() {
+  birdnetpi_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetpi.pmcgui.xyz\"." \
+  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_reget_db_root_pwd() {
+  db_root_pwd=$(whiptail --inputbox "Please set the password the 'root' user will use to access the database." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_reget_db_pwd() {
+  db_pwd=$(whiptail --inputbox "Please set the password the 'birder' user will use to access the database." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_reget_caddy_pwd() {
+  caddy_pwd=$(whiptail --inputbox "Please set the password for the web interface." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+
+do_reget_lon() {
+  lon="$(curl -s4 ifconfig.co/json | awk '/lon/ {print $2}' | tr -d ',')"
+  new_lon=$(whiptail --inputbox "Please set the longitude where recordings will take place." \
+  19 70 -- "$lon" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_reget_lat() {
+  lat="$(curl -s4 ifconfig.co/json | awk '/lat/ {print $2}' | tr -d ',')"
+  new_lat=$(whiptail --inputbox "Please set the latitude where recordings will take place." \
+  19 70 -- "$lat" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_confidence() {
+  confidence="$(awk -F= '/CONFIDENCE=/ {print $2}' ${birdnetpi_dir}/birdnet.conf)"
+  new_confidence=$(whiptail --inputbox "Please set the minimum confidence score BirdNET-Lite should use." \
+  19 70 -- "$confidence" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+
+do_get_overlap() {
+  overlap="$(awk -F= '/OVERLAP=/ {print $2}' ${birdnetpi_dir}/birdnet.conf)"
+  new_overlap=$(whiptail --inputbox "Please set the overlap BirdNET-Lite should use." \
+  19 70 -- "$overlap" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+
+do_get_sensitivity() {
+  sensitivity="$(awk -F= '/SENSITIVITY=/ {print $2}' ${birdnetpi_dir}/birdnet.conf)"
+  new_sensitivity=$(whiptail --inputbox "Please set the simoid sensitivty BirdNET-Lite should use." \
+  19 70 -- "$sensitivity" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
 do_get_birdnetlog_url() {
   birdnetlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetlog.pmcgui.xyz\"." \
   19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
@@ -672,6 +801,31 @@ do_system_menu() {
   fi
 }
 
+do_advanced_reconfig_menu() {
+  if is_pi ; then
+    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+      "Sensitivity" "Set the sigmoid sensitivity" \
+      "Confidence" "Set the minimum confidence score required for a detection" \
+      "Overlap" "Set the analysis overlap in seconds" \
+      "BirdNET-Pi URLs" "Set the URLs your installation should use" \
+      3>&1 1>&2 2>&3)
+  else
+      exit
+  fi
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      Sens*) do_get_sensitivity;;
+      Confi*) do_get_confidence;;
+      Overlap*) do_get_overlap;;
+      Bird*) do_reget_birdnetpi_url; do_reget_birdnetlog_url; do_reget_extractionlog_url;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
+
 do_advanced_config_menu() {
   if is_pi ; then
     FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
@@ -697,6 +851,28 @@ do_advanced_config_menu() {
   fi
 }
 
+do_reget_db_pwds() {
+  if is_pi ; then
+    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Reset Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+      "'birder'   " "Set the database password for the 'birder' user" \
+      "'root'     " "Set the database password for the 'root' user" \
+      3>&1 1>&2 2>&3)
+  else
+      exit
+  fi
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      *bird*) do_reget_db_pwd;;
+      *root*) do_reget_db_root_pwd;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
+
+
 do_get_db_pwds() {
   if is_pi ; then
     FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Set Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
@@ -718,6 +894,34 @@ do_get_db_pwds() {
   fi
 }
 
+do_reconfig_birdnet_menu() {
+  if is_pi ; then
+    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Re-configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+      "Latitude " "Set the latitude your system should use" \
+      "Longitude" "Set the longitude your system should use" \
+      "Caddy Password" "Set the web interface password" \
+      "Database Passwords" "Set the passwords the MariaDB will use" \
+      "Advanced Settings" "Sensitivity, Overlap, Confidence, URLs" \
+      3>&1 1>&2 2>&3)
+  else
+      exit
+  fi
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      Lat*) do_reget_lat;;
+      Lon*) do_reget_lon;;
+      Cad*) do_reget_caddy_pwd;;
+      Data*) do_reget_db_pwds;;
+      Advanced*) do_advanced_reconfig_menu;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
+
+
 do_config_birdnet_menu() {
   if is_pi ; then
     FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
@@ -726,7 +930,7 @@ do_config_birdnet_menu() {
       "Caddy Password" "Set the web interface password" \
       "IceCast2 Password" "Set the IceCast2 password" \
       "Database Passwords" "Set the passwords the MariaDB will use" \
-      "Advanced Settings" "Sensitivity, Overlap, Confidence, URLs" \
+      "Set Custom URLS" "Designate custom URLs for the web services if you've set that up" \
       3>&1 1>&2 2>&3)
   else
       exit
@@ -741,7 +945,7 @@ do_config_birdnet_menu() {
       Cad*) do_get_caddy_pwd;;
       Ice*) do_get_ice_pwd;;
       Data*) do_get_db_pwds;;
-      Advanced*) do_advanced_config_menu;;
+      Set*) do_get_birdnetpi_url; do_get_birdnetlog_url; do_get_extractionlog_url;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -799,6 +1003,7 @@ if [ "$INTERACTIVE" = True ]; then
         "Step 1" "Configure language" \
         "Step 2" "Configure BirdNET-Pi before installation" \
         "Step 3" "Install BirdNET-Pi" \
+        "Reconfigure BirdNET-Pi" "Reconfigure BirdNET-Pi AFTER installation" \
         "System Options" "Configure system settings" \
         3>&1 1>&2 2>&3)
     else
@@ -812,6 +1017,7 @@ if [ "$INTERACTIVE" = True ]; then
         *1) do_internationalisation_menu ;;
         *2) do_config_birdnet_menu ;;
         *3) do_install_birdnet;;
+        Reconf*) do_reconfig_birdnet_menu ;;
         Sys*) do_system_menu ;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
