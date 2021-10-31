@@ -1,6 +1,6 @@
 <?php
 $timer=60;
-header( "refresh:$timer;url=http://birdnetpi.local" );
+header( "refresh:$timer;url=/viewdb.php" );
 ?>
 <html lang="en">
 	<meta charset="UTF-8">
