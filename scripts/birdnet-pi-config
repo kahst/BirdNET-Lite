@@ -473,31 +473,9 @@ do_wifi_ssid_passphrase() {
   return $RET
 }
 
-do_reget_birdnetlog_url() {
-  birdnetlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetlog.pmcgui.xyz\"." \
-  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
-  if [ $? -eq 0 ];then
-    return 0
-    ASK_TO_REBOOT=2
-  else
-    return 1
-  fi
-}
-
-do_reget_extractionlog_url() {
-  extractionlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://extractionlog.pmcgui.xyz\"." \
-  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
-  if [ $? -eq 0 ];then
-    return 0
-    ASK_TO_REBOOT=2
-  else
-    return 1
-  fi
-}
-
-do_reget_birdnetpi_url() {
+do_reget_birdnetpi_urls() {
   birdnetpi_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetpi.pmcgui.xyz\"." \
-  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  19 70 -- "https://" 3>&1 1>&2 2>&3) extractionlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://extractionlog.pmcgui.xyz\"." 19 70 -- "https://" 3>&1 1>&2 2>&3) birdnetlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetlog.pmcgui.xyz\"." 19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
   if [ $? -eq 0 ];then
     return 0
     ASK_TO_REBOOT=2
@@ -820,7 +798,7 @@ do_advanced_reconfig_menu() {
       Sens*) do_get_sensitivity;;
       Confi*) do_get_confidence;;
       Overlap*) do_get_overlap;;
-      Bird*) do_reget_birdnetpi_url; do_reget_birdnetlog_url; do_reget_extractionlog_url;;
+      Bird*) do_reget_birdnetpi_urls;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   fi
