@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS detections (
   Sens FLOAT,
   Overlap FLOAT);
 GRANT ALL ON birds.* TO 'birder'@'localhost' IDENTIFIED BY '${DB_PWD}' WITH GRANT OPTION;
-
+FLUSH PRIVILEGES;
 exit
 EOF
 sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/analyze.py
