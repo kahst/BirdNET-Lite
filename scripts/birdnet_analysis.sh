@@ -6,6 +6,8 @@ source /etc/birdnet/birdnet.conf
 # Make a temporary file to compare the current birdnet.conf with
 # the birdnet.conf as it was the last time this script was called
 my_dir=$(realpath $(dirname $0))
+if [ -z ${THIS_RUN} ];then THIS_RUN=/home/pi/BirdNET-Pi/thisrun.txt;fi
+if [ -z ${LAST_RUN} ];then LAST_RUN=/home/pi/BirdNET-Pi/thisrun.txt;fi
 make_thisrun() {
   sleep .4
   awk '!/#/ && !/^$/ {print}' /etc/birdnet/birdnet.conf \
