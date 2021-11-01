@@ -3,6 +3,7 @@
 model/BirdNET_Soundscape_Model.pkl
 .vscode
 datasets/
+birdnet.conf
 IdentifiedSoFar.txt
 IdentifiedSoFar.txt.bak
 Birders_Guide_Installer_Configuration.txt
