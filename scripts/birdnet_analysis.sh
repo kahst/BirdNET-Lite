@@ -8,6 +8,8 @@ source /etc/birdnet/birdnet.conf
 my_dir=$(realpath $(dirname $0))
 if [ -z ${THIS_RUN} ];then THIS_RUN=/home/pi/BirdNET-Pi/thisrun.txt;fi
 if [ -z ${LAST_RUN} ];then LAST_RUN=/home/pi/BirdNET-Pi/thisrun.txt;fi
+if [ -z ${LATITUDE} ];then LATITUDE=-1;fi
+if [ -z ${LONGITUDE} ];then LONGITUDE=-1;fi
 make_thisrun() {
   sleep .4
   awk '!/#/ && !/^$/ {print}' /etc/birdnet/birdnet.conf \
