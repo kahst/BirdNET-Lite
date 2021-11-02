@@ -1,11 +1,19 @@
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+
 # BirdNET-Lite
 TFLite version of BirdNET. Bird sound recognition for more than 6,000 species worldwide.
 
-Center for Conservation Bioacoustics, Cornell Lab of Ornithology, Cornell University
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
+
+K. Lisa Yang Center for Conservation Bioacoustics, Cornell Lab of Ornithology, Cornell University
 
 Go to https://birdnet.cornell.edu to learn more about the project.
 
 Want to use BirdNET to analyze a large dataset? Don't hesitate to contact us: ccb-birdnet@cornell.edu
+
+[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
 
 # Setup (Ubuntu 18.04)
 
