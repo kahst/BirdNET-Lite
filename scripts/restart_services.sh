@@ -12,4 +12,4 @@ services=($(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/instal
 for i in  "${services[@]}";do
 sudo systemctl restart "${i}"
 done
-
+sudo systemctl restart extraction.timer
