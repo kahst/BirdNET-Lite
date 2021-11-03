@@ -687,6 +687,10 @@ do_update_os() {
     ASK_TO_REBOOT=1
 }
 
+do_update_birdnet() {
+  sudo -E -upi ${birdnetpi_dir}/scripts/update_birdnet.sh
+}
+
 do_install_birdnet() {
   sudo -E -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh && \
     ASK_TO_REBOOT=1
@@ -725,282 +729,297 @@ if [ $(id -u) -ne 0 ]; then
   exit 1
 fi
 
-do_get_urls_menu() {
-  FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Interfacing Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "BirdNET-Pi URL" "Set the main web interface URL" \
-    "BirdNET Analysis Log URL" "Set the URL that will be used to view the BirdNET log" \
-    "Audio Extraction Log URL" "Set the URL that will be used to view the Audio Extraction log" \
-    3>&1 1>&2 2>&3)
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      *Pi*) do_get_birdnetpi_url;;
-      *Analysis*) do_get_extractionlog_url;;
-      Audio*) do_get_birdnetlog_url;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-do_system_menu() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "System Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "Password" "Change password for the '$USER' user" \
-      "Audio" "Select audio device you'd like BirdNET-Pi to use" \
-      "Wireless LAN" "Enter SSID and passphrase" \
-      "Update the OS" "Update the underlying operating system" \
-      "Interface Options" "Enable/Disable SSH and VNC" \
-      "Configure zRAM" "Enable/Disable zRAM" \
-      "Timezone" "Configure time zone" \
-      "Keyboard" "Set keyboard layout to match your keyboard" \
-      "WLAN Country" "Set legal wireless channels for your country" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      Password*) do_change_pass ;;
-      Audio*) do_audio ;;
-      Wireless*) do_wifi_ssid_passphrase ;;
-      Update*) do_update_os ;;
-      Interface*) do_interface_menu ;;
-      Configure*) do_zram_menu ;;
-      Time*) do_change_timezone; insist_on_reboot ;;
-      Key*) do_configure_keyboard ;;
-      WLAN*) do_wifi_country ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
 do_advanced_reconfig_menu() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "Sensitivity" "Set the sigmoid sensitivity" \
-      "Confidence" "Set the minimum confidence score required for a detection" \
-      "Overlap" "Set the analysis overlap in seconds" \
-      "BirdNET-Pi URLs" "Set the URLs your installation should use" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      Sens*) do_get_sensitivity;;
-      Confi*) do_get_confidence;;
-      Overlap*) do_get_overlap;;
-      Bird*) do_reget_birdnetpi_urls;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-do_advanced_config_menu() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "Sensitivity" "Set the sigmoid sensitivity" \
-      "Confidence" "Set the minimum confidence score required for a detection" \
-      "Overlap" "Set the analysis overlap in seconds" \
-      "BirdNET-Pi URLs" "Set the URLs your installation should use" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      Sens*) do_get_sensitivity;;
-      Confi*) do_get_confidence;;
-      Overlap*) do_get_overlap;;
-      Bird*) do_get_birdnetpi_url; do_get_birdnetlog_url; do_get_extractionlog_url;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-do_reget_db_pwds() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Reset Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "'birder'   " "Set the database password for the 'birder' user" \
-      "'root'     " "Set the database password for the 'root' user" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      *bird*) do_reget_db_pwd;;
-      *root*) do_reget_db_root_pwd;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-
-do_get_db_pwds() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Set Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "'birder'   " "Set the database password for the 'birder' user" \
-      "'root'     " "Set the database password for the 'root' user" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      *bird*) do_get_db_pwd;;
-      *root*) do_get_db_root_pwd;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-do_reconfig_birdnet_menu() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Re-configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "Latitude " "Set the latitude your system should use" \
-      "Longitude" "Set the longitude your system should use" \
-      "Caddy Password" "Set the web interface password" \
-      "Database Passwords" "Set the passwords the MariaDB will use" \
-      "Advanced Settings" "Sensitivity, Overlap, Confidence, URLs" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      Lat*) do_reget_lat;;
-      Lon*) do_reget_lon;;
-      Cad*) do_reget_caddy_pwd;;
-      Data*) do_reget_db_pwds;;
-      Advanced*) do_advanced_reconfig_menu;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-
-do_config_birdnet_menu() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "Latitude " "Set the latitude your system should use" \
-      "Longitude" "Set the longitude your system should use" \
-      "Caddy Password" "Set the web interface password" \
-      "IceCast2 Password" "Set the IceCast2 password" \
-      "Database Passwords" "Set the passwords the MariaDB will use" \
-      "Set Custom URLS" "Designate custom URLs for the web services if you've set that up" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      Lat*) do_get_lat;;
-      Lon*) do_get_lon;;
-      Cad*) do_get_caddy_pwd;;
-      Ice*) do_get_ice_pwd;;
-      Data*) do_get_db_pwds;;
-      Set*) do_get_birdnetpi_url; do_get_birdnetlog_url; do_get_extractionlog_url;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-do_interface_menu() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Interfacing Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "SSH" "Enable/disable remote command line access using SSH" \
-      "VNC" "Enable/disable graphical remote access using RealVNC" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      SSH*) do_ssh ;;
-      VNC*) do_vnc ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-do_internationalisation_menu() {
-  FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Localisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "Locale" "Configure language and regional settings" \
-    3>&1 1>&2 2>&3)
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      Locale*) do_change_locale; insist_on_reboot;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-#
-# Interactive use loop
-#
-if [ "$INTERACTIVE" = True ]; then
-  [ -e $CONFIG ] || touch $CONFIG
-  calc_wt_size
-  while [ "$USER" = "root" ] || [ -z "$USER" ]; do
-    if ! USER=$(whiptail --inputbox "birdnet-pi-config could not determine the default user.\\n\\nWhat user should these settings apply to?" 20 60 pi 3>&1 1>&2 2>&3); then
-      return 0
-    fi
-  done
-  while true; do
+  MENU=9
+  while [ $MENU -eq 9 ];do
     if is_pi ; then
-      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --backtitle "$(cat /proc/device-tree/model)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
-        "Step 1" "Configure language" \
-        "Step 2" "Configure BirdNET-Pi before installation" \
-        "Step 3" "Install BirdNET-Pi" \
-        "Reconfigure BirdNET-Pi" "Reconfigure BirdNET-Pi AFTER installation" \
-        "System Options" "Configure system settings" \
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "Sensitivity" "Set the sigmoid sensitivity" \
+        "Confidence" "Set the minimum confidence score required for a detection" \
+        "Overlap" "Set the analysis overlap in seconds" \
+        "BirdNET-Pi URLs" "Set the URLs your installation should use" \
         3>&1 1>&2 2>&3)
     else
         exit
     fi
     RET=$?
     if [ $RET -eq 1 ]; then
-      do_finish
+      return 0
+      MENU=0
     elif [ $RET -eq 0 ]; then
       case "$FUN" in
-        *1) do_internationalisation_menu ;;
-        *2) do_config_birdnet_menu ;;
-        *3) do_install_birdnet;;
-        Reconf*) do_reconfig_birdnet_menu ;;
-        Sys*) do_system_menu ;;
+        Sens*) do_get_sensitivity;;
+        Confi*) do_get_confidence;;
+        Overlap*) do_get_overlap;;
+        Bird*) do_reget_birdnetpi_urls;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-    else
-      exit 1
     fi
   done
-fi
+}
+
+do_reget_db_pwds() {
+  MENU=8
+  while [ $MENU -eq 8 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Reset Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "'birder'   " "Set the database password for the 'birder' user" \
+        "'root'     " "Set the database password for the 'root' user" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        *bird*) do_reget_db_pwd;;
+        *root*) do_reget_db_root_pwd;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_get_db_pwds() {
+  MENU=7
+  while [ $MENU -eq 7 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Set Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "'birder'   " "Set the database password for the 'birder' user" \
+        "'root'     " "Set the database password for the 'root' user" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        *bird*) do_get_db_pwd;;
+        *root*) do_get_db_root_pwd;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_interface_menu() {
+  MENU=6
+  while [ $MENU -eq 6 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Interfacing Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "SSH" "Enable/disable remote command line access using SSH" \
+        "VNC" "Enable/disable graphical remote access using RealVNC" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        SSH*) do_ssh ;;
+        VNC*) do_vnc ;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_advanced_config_menu() {
+  MENU=5
+  while [ $MENU -eq 5 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "Sensitivity" "Set the sigmoid sensitivity" \
+        "Confidence" "Set the minimum confidence score required for a detection" \
+        "Overlap" "Set the analysis overlap in seconds" \
+        "BirdNET-Pi URLs" "Set the URLs your installation should use" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        Sens*) do_get_sensitivity;;
+        Confi*) do_get_confidence;;
+        Overlap*) do_get_overlap;;
+        Bird*) do_get_birdnetpi_url; do_get_birdnetlog_url; do_get_extractionlog_url;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_system_menu() {
+  MENU=4
+  while [ $MENU -eq 4 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "System Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "Password" "Change password for the '$USER' user" \
+        "Audio" "Select audio device you'd like BirdNET-Pi to use" \
+        "Wireless LAN" "Enter SSID and passphrase" \
+        "Update the OS" "Update the underlying operating system" \
+        "Interface Options" "Enable/Disable SSH and VNC" \
+        "Configure zRAM" "Enable/Disable zRAM" \
+        "Timezone" "Configure time zone" \
+        "Keyboard" "Set keyboard layout to match your keyboard" \
+        "WLAN Country" "Set legal wireless channels for your country" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        Password*) do_change_pass ;;
+        Audio*) do_audio ;;
+        Wireless*) do_wifi_ssid_passphrase ;;
+        Update*) do_update_os ;;
+        Interface*) do_interface_menu ;;
+        Configure*) do_zram_menu ;;
+        Time*) do_change_timezone; insist_on_reboot ;;
+        Key*) do_configure_keyboard ;;
+        WLAN*) do_wifi_country ;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+
+do_reconfig_birdnet_menu() {
+  MENU=3
+  while [ $MENU -eq 3 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Re-configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "Latitude " "Set the latitude your system should use" \
+        "Longitude" "Set the longitude your system should use" \
+        "Caddy Password" "Set the web interface password" \
+        "Database Passwords" "Set the passwords the MariaDB will use" \
+        "Advanced Settings" "Sensitivity, Overlap, Confidence, URLs" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        Lat*) do_reget_lat;;
+        Lon*) do_reget_lon;;
+        Cad*) do_reget_caddy_pwd;;
+        Data*) do_reget_db_pwds;;
+        Advanced*) do_advanced_reconfig_menu;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_config_birdnet_menu() {
+  MENU=2
+  while [ $MENU -eq 2 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "Latitude " "Set the latitude your system should use" \
+        "Longitude" "Set the longitude your system should use" \
+        "Caddy Password" "Set the web interface password" \
+        "IceCast2 Password" "Set the IceCast2 password" \
+        "Database Passwords" "Set the passwords the MariaDB will use" \
+        "Set Custom URLS" "Designate custom URLs for the web services if you've set that up" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        Lat*) do_get_lat;;
+        Lon*) do_get_lon;;
+        Cad*) do_get_caddy_pwd;;
+        Ice*) do_get_ice_pwd;;
+        Data*) do_get_db_pwds;;
+        Set*) do_get_birdnetpi_url; do_get_birdnetlog_url; do_get_extractionlog_url;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_internationalisation_menu() {
+  MENU=1
+  while [ $MENU -eq 1 ];do
+    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Localisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+      "Locale" "Configure language and regional settings" \
+      "Time Zone" "Set the Time Zone" \
+      3>&1 1>&2 2>&3)
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        Locale*) do_change_locale;;
+        Time*) do_change_timezone;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+
+
+#
+# Interactive use loop
+#
+[ -e $CONFIG ] || touch $CONFIG
+calc_wt_size
+while [ "$USER" = "root" ] || [ -z "$USER" ]; do
+  if ! USER=$(whiptail --inputbox "birdnet-pi-config could not determine the default user.\\n\\nWhat user should these settings apply to?" 20 60 pi 3>&1 1>&2 2>&3); then
+    return 0
+  fi
+done
+while true; do
+  FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --backtitle "$(cat /proc/device-tree/model)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
+    "Step 1" "Configure language and timezone" \
+    "Step 2" "Configure BirdNET-Pi before installation" \
+    "Step 3" "Install BirdNET-Pi" \
+    "Step 4" "Reconfigure BirdNET-Pi AFTER installation" \
+    "Step 5" "Update BirdNET-Pi (run this if you changed anything in Step 4)" \
+    "System Options" "Configure system settings" \
+    3>&1 1>&2 2>&3)
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    do_finish
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      *1) do_internationalisation_menu ;;
+      *2) do_config_birdnet_menu ;;
+      *3) do_install_birdnet;;
+      *4) do_reconfig_birdnet_menu ;;
+      *5) do_update_birdnet;;
+      Sys*) do_system_menu ;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+done
