@@ -33,8 +33,7 @@ install_mariadb() {
     apt -qqy install mariadb-server
     echo "MariaDB Installed"
   fi
-  sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/analyze.py
-  sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/viewdb.php
+  ${my_dir}/update_db_pwd.sh
 }
 
 install_birdnet_analysis() {
