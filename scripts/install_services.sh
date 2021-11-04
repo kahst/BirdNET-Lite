@@ -7,7 +7,7 @@ USER=pi
 HOME=/home/pi
 my_dir=${HOME}/BirdNET-Pi/scripts
 tmpfile=$(mktemp)
-nomachine_url="https://download.nomachine.com/download/7.6/Arm/nomachine_7.6.2_3_arm64.deb"
+nomachine_url="https://download.nomachine.com/download/7.7/Arm/nomachine_7.7.4_1_arm64.deb"
 gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_arm.tar.gz"
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
