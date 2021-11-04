@@ -337,6 +337,7 @@ do_vnc() {
     DEFAULT=
   fi
   whiptail --yesno "Would you like the VNC Server to be enabled?" $DEFAULT 20 60 2
+  RET=$?
   if [ $RET -eq 0 ]; then
     if is_installed realvnc-vnc-server || apt-get install realvnc-vnc-server; then
       systemctl enable vncserver-x11-serviced.service &&
