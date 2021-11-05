@@ -426,6 +426,8 @@ install_livestream_service() {
   cat << EOF > /etc/systemd/system/livestream.service
 [Unit]
 Description=BirdNET-Pi Live Stream
+After=network-online.target
+Requires=network-online.target
 
 [Service]
 Environment=XDG_RUNTIME_DIR=/run/user/1000
