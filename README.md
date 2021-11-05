@@ -1,5 +1,5 @@
 # BirdNET-Pi
-![version](https://img.shields.io/badge/version-0.4-blue)
+![version](https://img.shields.io/badge/version-0.7-blue)
 
 A realtime acoustic bird classification system for the Raspberry Pi 4B
 
