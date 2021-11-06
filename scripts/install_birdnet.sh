@@ -99,9 +99,7 @@ echo "	BirdNet is installed!!
 
   Visit
   the BirdNET-Pi homepage at http://birdnetpi.local"
-echo
-read -n1 -p "  Would you like to run the birdnet_analysis.service now?" YN
-echo
+  echo
 case $YN in
   [Yy] ) sudo systemctl start birdnet_analysis.service \
     && journalctl -fu birdnet_analysis;;

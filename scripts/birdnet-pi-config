@@ -1,11 +1,13 @@
-#!/bin/sh
+#!/usr/bin/env -S sudo -E bash
 # Altered from raspi-config tool below
-# https://github.com/RPi-Distro/birdnetpi-config
+# https://github.com/RPi-Distro/birdnet-pi-config
 #
 # See LICENSE file for copyright and license details
 # Copyright (c) 2012 Alex Bradbury <asb@asbradbury.org>
-
-my_dir=$(realpath $(dirname $0))
+#set -x
+birdnetpi_dir=/home/pi/BirdNET-Pi
+birders_config=${birdnetpi_dir}/Birders_Guide_Installer_Configuration.txt
+branch=newinstaller
 INTERACTIVE=True
 ASK_TO_REBOOT=0
 BLACKLIST=/etc/modprobe.d/raspi-blacklist.conf
@@ -129,70 +131,6 @@ calc_wt_size() {
   WT_MENU_HEIGHT=$(($WT_HEIGHT-7))
 }
 
-set_config_var() {
-  lua - "$1" "$2" "$3" <<EOF > "$3.bak"
-local key=assert(arg[1])
-local value=assert(arg[2])
-local fn=assert(arg[3])
-local file=assert(io.open(fn))
-local made_change=false
-for line in file:lines() do
-  if line:match("^#?%s*"..key.."=.*$") then
-    line=key.."="..value
-    made_change=true
-  end
-  print(line)
-end
-
-if not made_change then
-  print(key.."="..value)
-end
-EOF
-mv "$3.bak" "$3"
-}
-
-clear_config_var() {
-  lua - "$1" "$2" <<EOF > "$2.bak"
-local key=assert(arg[1])
-local fn=assert(arg[2])
-local file=assert(io.open(fn))
-for line in file:lines() do
-  if line:match("^%s*"..key.."=.*$") then
-    line="#"..line
-  end
-  print(line)
-end
-EOF
-mv "$2.bak" "$2"
-}
-
-get_config_var() {
-  lua - "$1" "$2" <<EOF
-local key=assert(arg[1])
-local fn=assert(arg[2])
-local file=assert(io.open(fn))
-local found=false
-for line in file:lines() do
-  local val = line:match("^%s*"..key.."=(.*)$")
-  if (val ~= nil) then
-    print(val)
-    found=true
-    break
-  end
-end
-if not found then
-   print(0)
-end
-EOF
-}
-
-is_number() {
-  case $1 in
-    ''|*[!0-9]*) return 0 ;;
-    *) return 1 ;;
-  esac
-}
-
 do_change_pass() {
   whiptail --msgbox "You will now be asked to enter a new password for the $USER user" 20 60 1
   passwd $USER &&
@@ -215,47 +153,24 @@ do_configure_keyboard() {
 }
 
 do_change_locale() {
-  if [ "$INTERACTIVE" = True ]; then
-    dpkg-reconfigure locales
-  else
-    local LOCALE="$1"
-    if ! LOCALE_LINE="$(grep "^$LOCALE " /usr/share/i18n/SUPPORTED)"; then
-      return 1
-    fi
-    local ENCODING="$(echo $LOCALE_LINE | cut -f2 -d " ")"
-    echo "$LOCALE $ENCODING" > /etc/locale.gen
-    sed -i "s/^\s*LANG=\S*/LANG=$LOCALE/" /etc/default/locale
-    dpkg-reconfigure -f noninteractive locales
-  fi
+  dpkg-reconfigure locales && \
+    ASK_TO_REBOOT=2 && return 0
 }
 
 do_change_timezone() {
-  if [ "$INTERACTIVE" = True ]; then
-    dpkg-reconfigure tzdata
-  else
-    local TIMEZONE="$1"
-    if [ ! -f "/usr/share/zoneinfo/$TIMEZONE" ]; then
-      return 1;
-    fi
-    rm /etc/localtime
-    echo "$TIMEZONE" > /etc/timezone
-    dpkg-reconfigure -f noninteractive tzdata
-  fi
+  dpkg-reconfigure tzdata && \
+    return 0
 }
 
 get_wifi_country() {
   CODE=${1:-0}
   IFACE="$(list_wlan_interfaces | head -n 1)"
   if [ -z "$IFACE" ]; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "No wireless interface found" 20 60
-    fi
+    whiptail --msgbox "No wireless interface found" 20 60
     return 1
   fi
   if ! wpa_cli -i "$IFACE" status > /dev/null 2>&1; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
-    fi
+    whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
     return 1
   fi
   wpa_cli -i "$IFACE" save_config > /dev/null 2>&1
@@ -272,28 +187,19 @@ get_wifi_country() {
 do_wifi_country() {
   IFACE="$(list_wlan_interfaces | head -n 1)"
   if [ -z "$IFACE" ]; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "No wireless interface found" 20 60
-    fi
+    whiptail --msgbox "No wireless interface found" 20 60
     return 1
   fi
 
   if ! wpa_cli -i "$IFACE" status > /dev/null 2>&1; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
-    fi
+    whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
     return 1
   fi
 
   oIFS="$IFS"
-  if [ "$INTERACTIVE" = True ]; then
-    value=$(cat /usr/share/zoneinfo/iso3166.tab | tail -n +26 | tr '\t' '/' | tr '\n' '/')
-    IFS="/"
-    COUNTRY=$(whiptail --menu "Select the country in which the Pi is to be used" 20 60 10 ${value} 3>&1 1>&2 2>&3)
-  else
-    COUNTRY=$1
-    true
-  fi
+  value=$(cat /usr/share/zoneinfo/iso3166.tab | tail -n +26 | tr '\t' '/' | tr '\n' '/')
+  IFS="/"
+  COUNTRY=$(whiptail --menu "Select the country in which the Pi is to be used" 20 60 10 ${value} 3>&1 1>&2 2>&3)
   if [ $? -eq 0 ];then
     wpa_cli -i "$IFACE" set country "$COUNTRY"
     wpa_cli -i "$IFACE" save_config > /dev/null 2>&1
@@ -308,9 +214,7 @@ do_wifi_country() {
         done
       fi
     fi
-    if [ "$INTERACTIVE" = True ]; then
-        whiptail --msgbox "Wireless LAN country set to $COUNTRY" 20 60 1
-    fi
+    whiptail --msgbox "Wireless LAN country set to $COUNTRY" 20 60 1
   fi
   IFS=$oIFS
 }
@@ -332,14 +236,9 @@ do_ssh() {
   if [ $(get_ssh) -eq 0 ]; then
     DEFAULT=
   fi
-  if [ "$INTERACTIVE" = True ]; then
-    whiptail --yesno \
-      "Would you like the SSH server to be enabled?\n\nCaution: Default and weak passwords are a security risk when SSH is enabled!" \
-      $DEFAULT 20 60 2
-    RET=$?
-  else
-    RET=$1
-  fi
+  whiptail --yesno \
+    "Would you like the SSH server to be enabled?\n\nCaution: Default and weak passwords are a security risk when SSH is enabled!" $DEFAULT 20 60 2
+  RET=$?
   if [ $RET -eq 0 ]; then
     ssh-keygen -A &&
     update-rc.d ssh enable &&
@@ -352,9 +251,7 @@ do_ssh() {
   else
     return $RET
   fi
-  if [ "$INTERACTIVE" = True ]; then
-    whiptail --msgbox "The SSH server is $STATUS" 20 60 1
-  fi
+  whiptail --msgbox "The SSH server is $STATUS" 20 60 1
 }
 
 get_vnc() {
@@ -365,17 +262,82 @@ get_vnc() {
   fi
 }
 
+do_config_zram() {
+  if [ -e /etc/udev/rules.d/99-zram.rules ]; then
+    ## get current swap allocation from /etc/udev/rules.d/99-zram.rules
+    size="$(awk -F\" '{print $4}' /etc/udev/rules.d/99-zram.rules)"
+  else
+    size="4G"
+  fi
+  new_size=$(whiptail --inputbox "How much memory (G) should the zRAM swap partition have? Choose 1G, 2G, or 4G - 4G recommended" \
+  19 70 -- "$size" 3>&1 1>&2 2>&3)
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_install_zram() {
+  echo "Configuring zram.service"
+  touch /etc/modules-load.d/zram.conf
+  echo 'zram' > /etc/modules-load.d/zram.conf
+  touch /etc/modprobe.d/zram.conf
+  echo 'options zram num_devices=1' > /etc/modprobe.d/zram.conf
+  touch /etc/udev/rules.d/99-zram.rules
+  echo "KERNEL==\"zram0\", ATTR{disksize}=\"${new_size}\",TAG+=\"systemd\"" \
+    > /etc/udev/rules.d/99-zram.rules
+  touch /etc/systemd/system/zram.service
+  echo "Installing zram.service"
+  cat << EOF > /etc/systemd/system/zram.service
+[Unit]
+Description=Swap with zram
+After=multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStartPre=/sbin/mkswap /dev/zram0
+ExecStart=/sbin/swapon /dev/zram0
+ExecStop=/sbin/swapoff /dev/zram0
+
+[Install]
+WantedBy=multi-user.target
+EOF
+  systemctl enable zram
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_zram_menu() {
+  whiptail --yesno "Would like to enable the zram swapping kernel module?" --defaultno 20 60 2
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    do_config_zram
+    do_install_zram
+    STATUS=enabled
+  elif [ $RET -eq 1 ]; then
+    if [ -e /etc/udev/rules.d/99-zram.rules ];then
+      systemctl disable --now zram
+    fi
+    STATUS=disabled
+  fi
+  whiptail --msgbox "ZRAM swapping is $STATUS" 20 60 1
+  return $RET
+}
+
 do_vnc() {
   DEFAULT=--defaultno
   if [ $(get_vnc) -eq 0 ]; then
     DEFAULT=
   fi
-  if [ "$INTERACTIVE" = True ]; then
-    whiptail --yesno "Would you like the VNC Server to be enabled?" $DEFAULT 20 60 2
-    RET=$?
-  else
-    RET=$1
-  fi
+  whiptail --yesno "Would you like the VNC Server to be enabled?" $DEFAULT 20 60 2
+  RET=$?
   if [ $RET -eq 0 ]; then
     if is_installed realvnc-vnc-server || apt-get install realvnc-vnc-server; then
       systemctl enable vncserver-x11-serviced.service &&
@@ -393,219 +355,27 @@ do_vnc() {
   else
     return $RET
   fi
-  if [ "$INTERACTIVE" = True ]; then
-    whiptail --msgbox "The VNC Server is $STATUS" 20 60 1
-  fi
-}
-
-disable_raspi_config_at_boot() {
-  if [ -e /etc/profile.d/birdnetpi-config.sh ]; then
-    rm -f /etc/profile.d/birdnetpi-config.sh
-    if [ -e /etc/systemd/system/getty@tty1.service.d/birdnetpi-config-override.conf ]; then
-      rm /etc/systemd/system/getty@tty1.service.d/birdnetpi-config-override.conf
-    fi
-    telinit q
-  fi
-}
-
-get_boot_cli() {
-  if systemctl get-default | grep -q multi-user ; then
-    echo 0
-  else
-    echo 1
-  fi
-}
-
-get_autologin() {
-  if [ $(get_boot_cli) -eq 0 ]; then
-    # booting to CLI
-    # stretch or buster - is there an autologin conf file?
-    if [ -e /etc/systemd/system/getty@tty1.service.d/autologin.conf ] ; then
-      echo 0
-    else
-      # stretch or earlier - check the getty service symlink for autologin
-      if [ $(deb_ver) -le 9 ] && grep -q autologin /etc/systemd/system/getty.target.wants/getty@tty1.service ; then
-        echo 0
-      else
-        echo 1
-      fi
-    fi
-  else
-    # booting to desktop - check the autologin for lightdm
-    if grep -q "^autologin-user=" /etc/lightdm/lightdm.conf ; then
-      echo 0
-    else
-      echo 1
-    fi
-  fi
-}
-
-do_update() {
-  apt-get update &&
-  apt-get install birdnetpi-config &&
-  printf "Sleeping 5 seconds before reloading birdnetpi-config\n" &&
-  sleep 5 &&
-  exec birdnetpi-config
+  whiptail --msgbox "The VNC Server is $STATUS" 20 60 1
 }
 
 do_audio() {
   if is_pulseaudio ; then
     oIFS="$IFS"
-    if [ "$INTERACTIVE" = True ]; then
-      list=$(sudo -u $SUDO_USER XDG_RUNTIME_DIR=/run/user/$SUDO_UID pacmd list-sinks | grep -e index -e alsa.name | sed s/*//g | sed s/^[' '\\t]*//g | sed s/'index: '//g | sed s/'alsa.name = '//g | sed s/'bcm2835 '//g | sed s/\"//g | tr '\n' '/')
-      if ! [ -z "$list" ] ; then
-        IFS="/"
-        AUDIO_OUT=$(whiptail --menu "Choose the audio output" 20 60 10 ${list} 3>&1 1>&2 2>&3)
-      else
-        whiptail --msgbox "No internal audio devices found" 20 60 1
-        return 1
-      fi
+    list=$(sudo -u $SUDO_USER XDG_RUNTIME_DIR=/run/user/$SUDO_UID pacmd list-sources | grep -B1 -e 'alsa.card_name' -e 'name.*input' | grep -A4 index | sed -e s/*//g | sed s/^[' '\\t]*//g | grep -e index -e card_name | sed s/'index: '//g | sed s/'alsa.card_name = '//g | sed s/\"//g | tr '\n' '\/')
+    if ! [ -z "$list" ] ; then
+      IFS="/"
+      AUDIO_IN=$(whiptail --menu "Choose the audio input" 20 60 10 ${list} 3>&1 1>&2 2>&3)
+      return 0
     else
-      AUDIO_OUT=$1
-      true
+      whiptail --msgbox "No internal audio devices found" 20 60 1
+      return 1
     fi
     if [ $? -eq 0 ]; then
-      sudo -u $SUDO_USER XDG_RUNTIME_DIR=/run/user/$SUDO_UID pactl set-default-sink $AUDIO_OUT
+      sudo -u $SUDO_USER XDG_RUNTIME_DIR=/run/user/$SUDO_UID pactl set-default-source "$AUDIO_IN"
     fi
     IFS=$oIFS
-  else
-    if aplay -l | grep -q "bcm2835 ALSA"; then
-      if [ "$INTERACTIVE" = True ]; then
-        AUDIO_OUT=$(whiptail --menu "Choose the audio output" 20 60 10 \
-          "0" "Auto" \
-          "1" "Force 3.5mm ('headphone') jack" \
-          "2" "Force HDMI" \
-          3>&1 1>&2 2>&3)
-      else
-        AUDIO_OUT=$1
-      fi
-      if [ $? -eq 0 ]; then
-        amixer cset numid=3 "$AUDIO_OUT"
-      fi
-    else
-      ASPATH=$(getent passwd $USER | cut -d : -f 6)/.asoundrc
-      if [ "$INTERACTIVE" = True ]; then
-        CARD0=$(LC_ALL=C aplay -l | grep bcm2835 | grep "card 0" | cut -d [ -f 3 | cut -d ] -f 1 | cut -d ' ' -f 2-)
-        CARD1=$(LC_ALL=C aplay -l | grep bcm2835 | grep "card 1" | cut -d [ -f 3 | cut -d ] -f 1 | cut -d ' ' -f 2-)
-        CARD2=$(LC_ALL=C aplay -l | grep bcm2835 | grep "card 2" | cut -d [ -f 3 | cut -d ] -f 1 | cut -d ' ' -f 2-)
-        if ! [ -z "$CARD2" ]; then
-          AUDIO_OUT=$(whiptail --menu "Choose the audio output" 20 60 10 \
-            "0" "$CARD0" \
-            "1" "$CARD1" \
-            "2" "$CARD2" \
-            3>&1 1>&2 2>&3)
-        elif ! [ -z "$CARD1" ]; then
-          AUDIO_OUT=$(whiptail --menu "Choose the audio output" 20 60 10 \
-            "0" "$CARD0" \
-            "1" "$CARD1" \
-            3>&1 1>&2 2>&3)
-        elif ! [ -z "$CARD0" ]; then
-          AUDIO_OUT=$(whiptail --menu "Choose the audio output" 20 60 10 \
-            "0" "$CARD0" \
-            3>&1 1>&2 2>&3)
-        else
-          whiptail --msgbox "No internal audio devices found" 20 60 1
-          false
-        fi
-      else
-        AUDIO_OUT=$1
-      fi
-      if [ $? -eq 0 ]; then
-        cat << EOF > $ASPATH
-pcm.!default {
-  type asym
-  playback.pcm {
-    type plug
-    slave.pcm "output"
-  }
-  capture.pcm {
-    type plug
-    slave.pcm "input"
-  }
-}
-
-pcm.output {
-  type hw
-  card $AUDIO_OUT
-}
-
-ctl.!default {
-  type hw
-  card $AUDIO_OUT
-}
-EOF
-      fi
     fi
-  fi
-}
-
-do_resolution() {
-  if [ "$INTERACTIVE" = True ]; then
-    CMODE=$(get_config_var hdmi_mode $CONFIG)
-    CGROUP=$(get_config_var hdmi_group $CONFIG)
-    if [ $CMODE -eq 0 ] ; then
-      CSET="Default"
-    elif [ $CGROUP -eq 2 ] ; then
-      CSET="DMT Mode "$CMODE
-    else
-      CSET="CEA Mode "$CMODE
-    fi
-    oIFS="$IFS"
-    IFS="/"
-    if tvservice -d /dev/null | grep -q Nothing ; then
-      value="Default/720x480/DMT Mode 4/640x480 60Hz 4:3/DMT Mode 9/800x600 60Hz 4:3/DMT Mode 16/1024x768 60Hz 4:3/DMT Mode 85/1280x720 60Hz 16:9/DMT Mode 35/1280x1024 60Hz 5:4/DMT Mode 51/1600x1200 60Hz 4:3/DMT Mode 82/1920x1080 60Hz 16:9/"
-    else
-      value="Default/Monitor preferred resolution/"
-      value=$value$(tvservice -m CEA | grep progressive | cut -b 12- | sed 's/mode \([0-9]\+\): \([0-9]\+\)x\([0-9]\+\) @ \([0-9]\+\)Hz \([0-9]\+\):\([0-9]\+\), clock:[0-9]\+MHz progressive/CEA Mode \1\/\2x\3 \4Hz \5:\6/' | tr '\n' '/')
-      value=$value$(tvservice -m DMT | grep progressive | cut -b 12- | sed 's/mode \([0-9]\+\): \([0-9]\+\)x\([0-9]\+\) @ \([0-9]\+\)Hz \([0-9]\+\):\([0-9]\+\), clock:[0-9]\+MHz progressive/DMT Mode \1\/\2x\3 \4Hz \5:\6/' | tr '\n' '/')
-    fi
-    RES=$(whiptail --default-item $CSET --menu "Choose screen resolution" 20 60 10 ${value} 3>&1 1>&2 2>&3)
-    STATUS=$?
-    IFS=$oIFS
-    if [ $STATUS -eq 0 ] ; then
-      GRS=$(echo "$RES" | cut -d ' ' -f 1)
-      MODE=$(echo "$RES" | cut -d ' ' -f 3)
-      if [ $GRS = "Default" ] ; then
-        MODE=0
-      elif [ $GRS = "DMT" ] ; then
-        GROUP=2
-      else
-        GROUP=1
-      fi
-    fi
-  else
-    GROUP=$1
-    MODE=$2
-    STATUS=0
-  fi
-  if [ $STATUS -eq 0 ]; then
-    if [ $MODE -eq 0 ]; then
-      clear_config_var hdmi_force_hotplug $CONFIG
-      clear_config_var hdmi_group $CONFIG
-      clear_config_var hdmi_mode $CONFIG
-    else
-      set_config_var hdmi_force_hotplug 1 $CONFIG
-      set_config_var hdmi_group $GROUP $CONFIG
-      set_config_var hdmi_mode $MODE $CONFIG
-    fi
-    if [ "$INTERACTIVE" = True ]; then
-      if [ $MODE -eq 0 ] ; then
-        whiptail --msgbox "The resolution is set to default" 20 60 1
-      else
-        whiptail --msgbox "The resolution is set to $GRS mode $MODE" 20 60 1
-      fi
-    fi
-    if [ $MODE -eq 0 ] ; then
-      TSET="Default"
-    elif [ $GROUP -eq 2 ] ; then
-      TSET="DMT Mode "$MODE
-    else
-      TSET="CEA Mode "$MODE
-    fi
-    if [ "$TSET" != "$CSET" ] ; then
-      ASK_TO_REBOOT=1
-    fi
-  fi
+    sudo -u $SUDO_USER pulseaudio -k
 }
 
 list_wlan_interfaces() {
@@ -622,25 +392,21 @@ do_wifi_ssid_passphrase() {
   IFACE="$(echo "$IFACE_LIST" | head -n 1)"
 
   if [ -z "$IFACE" ]; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "No wireless interface found" 20 60
-    fi
+    whiptail --msgbox "No wireless interface found" 20 60
     return 1
   fi
 
   if ! wpa_cli -i "$IFACE" status > /dev/null 2>&1; then
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
-    fi
+    whiptail --msgbox "Could not communicate with wpa_supplicant" 20 60
     return 1
   fi
 
-  if [ "$INTERACTIVE" = True ] && [ -z "$(get_wifi_country)" ]; then
+  if [ -z "$(get_wifi_country)" ]; then
     do_wifi_country
   fi
 
   SSID="$1"
-  while [ -z "$SSID" ] && [ "$INTERACTIVE" = True ]; do
+  while [ -z "$SSID" ] ; do
     SSID=$(whiptail --inputbox "Please enter SSID" 20 60 3>&1 1>&2 2>&3)
     if [ $? -ne 0 ]; then
       return 0
@@ -650,14 +416,12 @@ do_wifi_ssid_passphrase() {
   done
 
   PASSPHRASE="$2"
-  while [ "$INTERACTIVE" = True ]; do
-    PASSPHRASE=$(whiptail --passwordbox "Please enter passphrase. Leave it empty if none." 20 60 3>&1 1>&2 2>&3)
-    if [ $? -ne 0 ]; then
-      return 0
-    else
-      break
-    fi
-  done
+  PASSPHRASE=$(whiptail --passwordbox "Please enter passphrase. Leave it empty if none." 20 60 3>&1 1>&2 2>&3)
+  if [ $? -ne 0 ]; then
+    return 0
+  else
+    return 1
+  fi
 
   # Escape special characters for embedding in regex below
   local ssid="$(echo "$SSID" \
@@ -699,9 +463,7 @@ do_wifi_ssid_passphrase() {
     wpa_cli -i "$IFACE" enable_network "$ID" > /dev/null 2>&1
   else
     wpa_cli -i "$IFACE" remove_network "$ID" > /dev/null 2>&1
-    if [ "$INTERACTIVE" = True ]; then
-      whiptail --msgbox "Failed to set SSID or passphrase" 20 60
-    fi
+    whiptail --msgbox "Failed to set SSID or passphrase" 20 60
   fi
   wpa_cli -i "$IFACE" save_config > /dev/null 2>&1
 
@@ -712,20 +474,248 @@ do_wifi_ssid_passphrase() {
   return $RET
 }
 
-do_update() {
-  apt update && apt -y full-upgrade
-  ASK_TO_REBOOT=1
+do_reget_birdnetpi_urls() {
+  birdnetpi_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetpi.pmcgui.xyz\"." \
+  19 70 -- "https://" 3>&1 1>&2 2>&3) extractionlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://extractionlog.pmcgui.xyz\"." 19 70 -- "https://" 3>&1 1>&2 2>&3) birdnetlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetlog.pmcgui.xyz\"." 19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_reget_db_root_pwd() {
+  db_root_pwd=$(whiptail --inputbox "Please set the password the 'root' user will use to access the database." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_reget_db_pwd() {
+  db_pwd=$(whiptail --inputbox "Please set the password the 'birder' user will use to access the database." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_reget_caddy_pwd() {
+  caddy_pwd=$(whiptail --inputbox "Please set the password for the web interface." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+
+do_reget_lon() {
+  lon="$(curl -s4 ifconfig.co/json | awk '/lon/ {print $2}' | tr -d ',')"
+  new_lon=$(whiptail --inputbox "Please set the longitude where recordings will take place." \
+  19 70 -- "$lon" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_reget_lat() {
+  lat="$(curl -s4 ifconfig.co/json | awk '/lat/ {print $2}' | tr -d ',')"
+  new_lat=$(whiptail --inputbox "Please set the latitude where recordings will take place." \
+  19 70 -- "$lat" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_confidence() {
+  confidence="$(awk -F= '/CONFIDENCE=/ {print $2}' ${birdnetpi_dir}/birdnet.conf)"
+  new_confidence=$(whiptail --inputbox "Please set the minimum confidence score BirdNET-Lite should use." \
+  19 70 -- "$confidence" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+
+do_get_overlap() {
+  overlap="$(awk -F= '/OVERLAP=/ {print $2}' ${birdnetpi_dir}/birdnet.conf)"
+  new_overlap=$(whiptail --inputbox "Please set the overlap BirdNET-Lite should use." \
+  19 70 -- "$overlap" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+
+do_get_sensitivity() {
+  sensitivity="$(awk -F= '/SENSITIVITY=/ {print $2}' ${birdnetpi_dir}/birdnet.conf)"
+  new_sensitivity=$(whiptail --inputbox "Please set the simoid sensitivty BirdNET-Lite should use." \
+  19 70 -- "$sensitivity" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_birdnetlog_url() {
+  birdnetlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetlog.pmcgui.xyz\"." \
+  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_extractionlog_url() {
+  extractionlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://extractionlog.pmcgui.xyz\"." \
+  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_birdnetpi_url() {
+  birdnetpi_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetpi.pmcgui.xyz\"." \
+  19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_db_root_pwd() {
+  db_root_pwd=$(whiptail --inputbox "Please set the password the 'root' user will use to access the database." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_db_pwd() {
+  db_pwd=$(whiptail --inputbox "Please set the password the 'birder' user will use to access the database." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_ice_pwd() {
+  ice_pwd=$(whiptail --inputbox "Please set the password for the live stream." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_caddy_pwd() {
+  caddy_pwd=$(whiptail --inputbox "Please set the password for the web interface." \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+
+do_get_lon() {
+  lon="$(curl -s4 ifconfig.co/json | awk '/lon/ {print $2}' | tr -d ',')"
+  new_lon=$(whiptail --inputbox "Please set the longitude where recordings will take place." \
+  19 70 -- "$lon" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_lat() {
+  lat="$(curl -s4 ifconfig.co/json | awk '/lat/ {print $2}' | tr -d ',')"
+  new_lat=$(whiptail --inputbox "Please set the latitude where recordings will take place." \
+  19 70 -- "$lat" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_update_os() {
+  apt update && apt -y full-upgrade && \
+    ASK_TO_REBOOT=1
+}
+
+do_update_birdnet() {
+  sudo -E -upi ${birdnetpi_dir}/scripts/update_birdnet.sh
 }
 
 do_install_birdnet() {
-  ${my_dir}/Birders_Guide_Installer.sh
-  ASK_TO_REBOOT=1
+  sudo -E -upi ${birdnetpi_dir}/Birders_Guide_Installer.sh && \
+    ASK_TO_REBOOT=1
+}
+
+insist_on_reboot() {
+  if [ $ASK_TO_REBOOT -eq 2 ]; then
+    whiptail --yesno "You really should reboot. Do that now?" 20 60 2
+    if [ $? -eq 0 ]; then # yes
+      sync
+      reboot
+    fi
+  fi
 }
 
 do_finish() {
-  disable_raspi_config_at_boot
   if [ $ASK_TO_REBOOT -eq 1 ]; then
     whiptail --yesno "Would you like to reboot now?" 20 60 2
+    if [ $? -eq 0 ]; then # yes
+      sync
+      reboot
+    fi
+  elif [ $ASK_TO_REBOOT -eq 2 ]; then
+    whiptail --yesno "You really should reboot. Do that now?" 20 60 2
     if [ $? -eq 0 ]; then # yes
       sync
       reboot
@@ -733,140 +723,304 @@ do_finish() {
   fi
   exit 0
 }
+
 # Everything else needs to be run as root
 if [ $(id -u) -ne 0 ]; then
-  printf "Script must be run as root. Try 'sudo birdnetpi-config'\n"
+  printf "Script must be run as root. Try 'sudo birdnet-pi-config'\n"
   exit 1
 fi
 
-if [ -n "${OPT_MEMORY_SPLIT:-}" ]; then
-  set -e # Fail when a command errors
-  set_memory_split "${OPT_MEMORY_SPLIT}"
-  exit 0
-fi
-
-do_system_menu() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --menu "System Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "Password" "Change password for the '$USER' user" \
-      "Audio" "Select audio device you'd like BirdNET-Pi to use" \
-      "Wireless LAN" "Enter SSID and passphrase" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      Password*) do_change_pass ;;
-      Audio*) do_audio ;;
-      Wireless*) do_wifi_ssid_passphrase ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-do_display_menu() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --menu "Display Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "Resolution" "Set a specific screen resolution" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      Resolution*) do_resolution ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-do_interface_menu() {
-  if is_pi ; then
-    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --menu "Interfacing Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "SSH" "Enable/disable remote command line access using SSH" \
-      "VNC" "Enable/disable graphical remote access using RealVNC" \
-      3>&1 1>&2 2>&3)
-  else
-      exit
-  fi
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      SSH*) do_ssh ;;
-      VNC*) do_vnc ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-
-do_internationalisation_menu() {
-  FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --menu "Localisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "Locale" "Configure language and regional settings" \
-    "Timezone" "Configure time zone" \
-    "Keyboard" "Set keyboard layout to match your keyboard" \
-    "WLAN Country" "Set legal wireless channels for your country" \
-    3>&1 1>&2 2>&3)
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      Locale*) do_change_locale ;;
-      Time*) do_change_timezone ;;
-      Key*) do_configure_keyboard ;;
-      WLAN*) do_wifi_country ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
-}
-#
-# Interactive use loop
-#
-if [ "$INTERACTIVE" = True ]; then
-  [ -e $CONFIG ] || touch $CONFIG
-  calc_wt_size
-  while [ "$USER" = "root" ] || [ -z "$USER" ]; do
-    if ! USER=$(whiptail --inputbox "birdnetpi-config could not determine the default user.\\n\\nWhat user should these settings apply to?" 20 60 pi 3>&1 1>&2 2>&3); then
-      return 0
-    fi
-  done
-  while true; do
+do_advanced_reconfig_menu() {
+  MENU=9
+  while [ $MENU -eq 9 ];do
     if is_pi ; then
-      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnetpi-config)" --backtitle "$(cat /proc/device-tree/model)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
-        "System Options" "Configure system settings" \
-        "Display Options" "Configure display settings" \
-        "Interface Options" "Configure connections to peripherals" \
-        "Localisation Options" "Configure language and regional settings" \
-        "Update the OS" "Update the underlying operating system" \
-        "Install BirdNET-PI" "Install BirdNET-Pi" \
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "Sensitivity" "Set the sigmoid sensitivity" \
+        "Confidence" "Set the minimum confidence score required for a detection" \
+        "Overlap" "Set the analysis overlap in seconds" \
+        "BirdNET-Pi URLs" "Set the URLs your installation should use" \
         3>&1 1>&2 2>&3)
     else
         exit
     fi
     RET=$?
     if [ $RET -eq 1 ]; then
-      do_finish
+      return 0
+      MENU=0
     elif [ $RET -eq 0 ]; then
       case "$FUN" in
-        System*) do_system_menu ;;
-        Display*) do_display_menu ;;
-        Interface*) do_interface_menu ;;
-        Localisation*) do_internationalisation_menu ;;
-        Update*) do_update;;
-        Install*) do_install_birdnet;;
+        Sens*) do_get_sensitivity;;
+        Confi*) do_get_confidence;;
+        Overlap*) do_get_overlap;;
+        Bird*) do_reget_birdnetpi_urls;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-    else
-      exit 1
     fi
   done
-fi
+}
+
+do_reget_db_pwds() {
+  MENU=8
+  while [ $MENU -eq 8 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Reset Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "'birder'   " "Set the database password for the 'birder' user" \
+        "'root'     " "Set the database password for the 'root' user" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        *bird*) do_reget_db_pwd;;
+        *root*) do_reget_db_root_pwd;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_get_db_pwds() {
+  MENU=7
+  while [ $MENU -eq 7 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Set Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "'birder'   " "Set the database password for the 'birder' user" \
+        "'root'     " "Set the database password for the 'root' user" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        *bird*) do_get_db_pwd;;
+        *root*) do_get_db_root_pwd;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_interface_menu() {
+  MENU=6
+  while [ $MENU -eq 6 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Interfacing Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "SSH" "Enable/disable remote command line access using SSH" \
+        "VNC" "Enable/disable graphical remote access using RealVNC" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        SSH*) do_ssh ;;
+        VNC*) do_vnc ;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_advanced_config_menu() {
+  MENU=5
+  while [ $MENU -eq 5 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "Sensitivity" "Set the sigmoid sensitivity" \
+        "Confidence" "Set the minimum confidence score required for a detection" \
+        "Overlap" "Set the analysis overlap in seconds" \
+        "BirdNET-Pi URLs" "Set the URLs your installation should use" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        Sens*) do_get_sensitivity;;
+        Confi*) do_get_confidence;;
+        Overlap*) do_get_overlap;;
+        Bird*) do_get_birdnetpi_url; do_get_birdnetlog_url; do_get_extractionlog_url;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_system_menu() {
+  MENU=4
+  while [ $MENU -eq 4 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "System Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "Password" "Change password for the '$USER' user" \
+        "Audio" "Select audio device you'd like BirdNET-Pi to use" \
+        "Wireless LAN" "Enter SSID and passphrase" \
+        "Update the OS" "Update the underlying operating system" \
+        "Interface Options" "Enable/Disable SSH and VNC" \
+        "Configure zRAM" "Enable/Disable zRAM" \
+        "Timezone" "Configure time zone" \
+        "Keyboard" "Set keyboard layout to match your keyboard" \
+        "WLAN Country" "Set legal wireless channels for your country" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        Password*) do_change_pass ;;
+        Audio*) do_audio ;;
+        Wireless*) do_wifi_ssid_passphrase ;;
+        Update*) do_update_os ;;
+        Interface*) do_interface_menu ;;
+        Configure*) do_zram_menu ;;
+        Time*) do_change_timezone; insist_on_reboot ;;
+        Key*) do_configure_keyboard ;;
+        WLAN*) do_wifi_country ;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+
+do_reconfig_birdnet_menu() {
+  MENU=3
+  while [ $MENU -eq 3 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Re-configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "Latitude " "Set the latitude your system should use" \
+        "Longitude" "Set the longitude your system should use" \
+        "Caddy Password" "Set the web interface password" \
+        "Database Passwords" "Set the passwords the MariaDB will use" \
+        "Advanced Settings" "Sensitivity, Overlap, Confidence, URLs" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        Lat*) do_reget_lat;;
+        Lon*) do_reget_lon;;
+        Cad*) do_reget_caddy_pwd;;
+        Data*) do_reget_db_pwds;;
+        Advanced*) do_advanced_reconfig_menu;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_config_birdnet_menu() {
+  MENU=2
+  while [ $MENU -eq 2 ];do
+    if is_pi ; then
+      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "BirdNET-Pi Configuration Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "Latitude " "Set the latitude your system should use" \
+        "Longitude" "Set the longitude your system should use" \
+        "Caddy Password" "Set the web interface password" \
+        "IceCast2 Password" "Set the IceCast2 password" \
+        "Database Passwords" "Set the passwords the MariaDB will use" \
+        "Set Custom URLS" "Designate custom URLs for the web services if you've set that up" \
+        3>&1 1>&2 2>&3)
+    else
+        exit
+    fi
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        Lat*) do_get_lat;;
+        Lon*) do_get_lon;;
+        Cad*) do_get_caddy_pwd;;
+        Ice*) do_get_ice_pwd;;
+        Data*) do_get_db_pwds;;
+        Set*) do_get_birdnetpi_url; do_get_birdnetlog_url; do_get_extractionlog_url;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+do_internationalisation_menu() {
+  MENU=1
+  while [ $MENU -eq 1 ];do
+    FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Localisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+      "Locale" "Configure language and regional settings" \
+      "Time Zone" "Set the Time Zone" \
+      3>&1 1>&2 2>&3)
+    RET=$?
+    if [ $RET -eq 1 ]; then
+      return 0
+      MENU=0
+    elif [ $RET -eq 0 ]; then
+      case "$FUN" in
+        Locale*) do_change_locale;;
+        Time*) do_change_timezone;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+    fi
+  done
+}
+
+
+
+#
+# Interactive use loop
+#
+[ -e $CONFIG ] || touch $CONFIG
+calc_wt_size
+while [ "$USER" = "root" ] || [ -z "$USER" ]; do
+  if ! USER=$(whiptail --inputbox "birdnet-pi-config could not determine the default user.\\n\\nWhat user should these settings apply to?" 20 60 pi 3>&1 1>&2 2>&3); then
+    return 0
+  fi
+done
+while true; do
+  FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --backtitle "$(cat /proc/device-tree/model)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
+    "Step 1" "Configure language and timezone" \
+    "Step 2" "Configure BirdNET-Pi before installation" \
+    "Step 3" "Install BirdNET-Pi" \
+    "Step 4" "Reconfigure BirdNET-Pi AFTER installation" \
+    "Step 5" "Update BirdNET-Pi (run this if you changed anything in Step 4)" \
+    "System Options" "Configure system settings" \
+    3>&1 1>&2 2>&3)
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    do_finish
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      *1) do_internationalisation_menu ;;
+      *2) do_config_birdnet_menu ;;
+      *3) do_install_birdnet;;
+      *4) do_reconfig_birdnet_menu ;;
+      *5) do_update_birdnet;;
+      Sys*) do_system_menu ;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+done

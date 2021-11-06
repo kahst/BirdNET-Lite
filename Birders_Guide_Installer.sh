@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -e
+USER=pi
+HOME=/home/pi
 my_dir=${HOME}/BirdNET-Pi
 branch=main
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
-
 
 if [ "$(uname -m)" != "aarch64" ];then
   echo "BirdNET-Pi requires a 64-bit OS.
@@ -13,63 +14,6 @@ Please take a look at https://birdnetwiki.pmcgui.xyz for more
 information"
   exit 1
 fi
-
-install_zram_swap() {
-  echo
-  echo "Configuring zram.service"
-  sudo touch /etc/modules-load.d/zram.conf
-  echo 'zram' | sudo tee /etc/modules-load.d/zram.conf
-  sudo touch /etc/modprobe.d/zram.conf
-  echo 'options zram num_devices=1' | sudo tee /etc/modprobe.d/zram.conf
-  sudo touch /etc/udev/rules.d/99-zram.rules
-  echo 'KERNEL=="zram0", ATTR{disksize}="4G",TAG+="systemd"' \
-    | sudo tee /etc/udev/rules.d/99-zram.rules
-  sudo touch /etc/systemd/system/zram.service
-  echo "Installing zram.service"
-  cat << EOF | sudo tee /etc/systemd/system/zram.service &> /dev/null
-[Unit]
-Description=Swap with zram
-After=multi-user.target
-
-[Service]
-Type=oneshot 
-RemainAfterExit=true
-ExecStartPre=/sbin/mkswap /dev/zram0
-ExecStart=/sbin/swapon /dev/zram0
-ExecStop=/sbin/swapoff /dev/zram0
-
-[Install]
-WantedBy=multi-user.target
-EOF
-  sudo systemctl enable zram
-  echo
-  echo "Installing stage 2 installation script now."
-  cd ~
-  curl -s -O "https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/${branch}/Birders_Guide_Installer.sh"
-  chmod +x Birders_Guide_Installer.sh
-  cat << EOF | sudo tee /etc/systemd/user/birdnet-system-installer.service &> /dev/null
-[Unit]
-Description=A BirdNET-Pi Installation Script Service
-After=graphical.target network-online.target
-
-[Service]
-Type=simple
-Restart=on-failure
-RestartSec=3s
-ExecStart=lxterminal -e /home/pi/Birders_Guide_Installer.sh
-
-[Install]
-WantedBy=default.target
-EOF
-  systemctl --user enable birdnet-system-installer.service
-  echo
-  echo "Stage 1 complete"
-  touch ${HOME}/stage_1_complete
-  echo
-  echo "Rebooting the system in 5 seconds"
-  sleep 5
-  sudo reboot
-}
 
 stage_1() {
   echo
@@ -84,15 +28,8 @@ stage_1() {
     echo "Installing git"
     sudo apt install -qqy git
   fi
-  ZRAM="$(swapon --show=SIZE,NAME | awk -FG '!/SIZE/ && /zram/ {print $1}')"
-  [ ! -z ${ZRAM} ] || ZRAM=0
-  if [ ${ZRAM} -lt 4 ];then
-    install_zram_swap
-  else
-    echo "Stage 1 complete"
-    stage_2
-    exit
-  fi
+  touch ${HOME}/stage_1_complete
+  echo "Stage 1 complete"
 }
 
 stage_2() {
@@ -106,62 +43,32 @@ stage_2() {
   echo "Connected!"
   echo
   if [ ! -d ${my_dir} ];then
-    cd ~ || exit 1
+    cd ${HOME} || exit 1
     echo "Cloning the BirdNET-Pi repository $branch branch into your home directory"
-    git clone -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ~/BirdNET-Pi
+    git clone -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ${HOME}/BirdNET-Pi
   else
     cd ${my_dir} && git checkout ${branch}
   fi
 
-  if [ -f ${my_dir}/Birders_Guide_Installer_Configuration.txt ];then
-    echo
+  source ${my_dir}/Birders_Guide_Installer_Configuration.txt
+  if [ -z ${LATITUDE} ] || [ -z ${LONGITUDE} ] || [ -z ${CADDY_PWD} ] || [ -z ${ICE_PWD} ] || [ -z ${DB_PWD} ] || [ -z ${DB_ROOT_PWD} ];then
     echo
     echo "Follow the instructions to fill out the LATITUDE and LONGITUDE variables
 and set the passwords for the live audio stream. Save the file after editing
 and then close the Mouse Pad editing window to continue."
-    if ( env | grep SSH_CONNECTION &> /dev/null );then
-      editor=nano
+    echo
+    if [ -z "$SSH_CONNECTION" ];then
+      EDITOR=mousepad
     else
-      editor=mousepad
+      EDITOR=nano
     fi
-    $editor ${my_dir}/Birders_Guide_Installer_Configuration.txt
-    while pgrep $editor &> /dev/null;do
+    $EDITOR ${my_dir}/Birders_Guide_Installer_Configuration.txt
+    while pgrep $EDITOR &> /dev/null;do
       sleep 1
     done
     source ${my_dir}/Birders_Guide_Installer_Configuration.txt || exit 1
-  else
-    echo "Something went wrong. I can't find the configuration file."
-    exit 1
-  fi
-
-  if [ -z ${LATITUDE} ] || [ -z ${LONGITUDE} ] || [ -z ${CADDY_PWD} ] || [ -z ${ICE_PWD} ] || [ -z ${DB_PWD} ] || [ -z ${DB_ROOT_PWD} ];then
-    echo
-    echo
-    echo "It looks like you haven't filled out the Birders_Guide_Installer_Configuration.txt file
-completely.
-
-Open that file to edit it. (Go to the folder icon in the top left and look for the \"BirdNET-Pi\"
-folder and double-click the file called \"Birders_Guide_Installer_Configuration.txt\"
-Enter the latitude and longitude of where the BirdNET-Pi will be. 
-You can find this information at https://maps.google.com
-
-Find your location on the map and right click to find your coordinates.
-After you have filled out the configuration file, you can re-run this script. Just do the exact
-same things you did to start this (copying and pasting from the Wiki) to try again.
-Press Enter to close this window.
-Good luck!"
-    read
-    exit 1
   fi
   echo "Installing the BirdNET-Pi configuration file."
-  [ -f ${my_dir}/soundcard_params.txt ] || touch ${my_dir}/soundcard_params.txt
-  SOUND_PARAMS="${HOME}/BirdNET-Pi/soundcard_params.txt"
-  SOUND_CARD="$(sudo -u pi aplay -L \
-   | grep -e '^hw' \
-   | cut -d, -f1  \
-   | grep -ve 'vc4' -e 'Head' -e 'PCH' \
-   | uniq)"
-  script -c "arecord -D ${SOUND_CARD} --dump-hw-params" -a ${SOUND_PARAMS} &> /dev/null
   install_birdnet_config || exit 1
   echo "Installing BirdNET-Lite"
   if ${my_dir}/scripts/install_birdnet.sh << EOF ; then
@@ -242,9 +149,9 @@ DO_RECORDING=y
 ## will be web-hosted. If you do not own a domain, or would just prefer to keep 
 ## the BirdNET-Pi on your local network, keep this EMPTY.
 
-BIRDNETPI_URL=
-EXTRACTIONLOG_URL=
-BIRDNETLOG_URL=
+BIRDNETPI_URL=${BIRDNETPI_URL}
+EXTRACTIONLOG_URL=${EXTRACTIONLOG_URL}
+BIRDNETLOG_URL=${BIRDNETLOG_URL}
 
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## the "Processed" directory and live audio stream. This MUST be set if you
@@ -387,26 +294,10 @@ EOF
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf ${my_dir}/birdnet.conf /etc/birdnet/birdnet.conf
 }
-echo "
-Welcome to the Birders Guide Installer script!
-
-The installer runs in two stages:
-Stage 1 configures and enables the zRAM kernel module and allocates 4G
-        to its swapping size if needed. This will trigger a reboot.
-Stage 1 also ensures the system is up to date.
-Stage 2 guides you through configuring the essentials and installs the full BirdNET-Pi system."
-
-
 if [ ! -f ${HOME}/stage_1_complete ] ;then
   stage_1
+  stage_2
 else
   stage_2
-  if [ -f ${HOME}/Birders_Guide_Installer.sh ];then
-  rm ${HOME}/Birders_Guide_Installer.sh
-  fi
-  rm ${HOME}/stage_1_complete
-  ${my_dir}/scripts/dump_logs.sh
-  systemctl --user disable --now birdnet-system-installer.service
-  sudo rm -f /etc/systemd/user/birdnet-system-installer.service
 fi  
 

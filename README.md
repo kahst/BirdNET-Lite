@@ -1,5 +1,5 @@
 # BirdNET-Pi
-![version](https://img.shields.io/badge/version-0.4-blue)
+![version](https://img.shields.io/badge/version-0.7-blue)
 
 A realtime acoustic bird classification system for the Raspberry Pi 4B
 
@@ -32,15 +32,7 @@ The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://githu
 
 The system can be installed with:
 ```
-curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/main/Birders_Guide_Installer.sh | bash
-```
-
-The script first enables and configures the zRAM kernel module for swapping, and reboots. 
-After the reboot, the configuration file is opened for editing. Here, you will input your latitude and longitude and will set a few passwords to protect your Pi. When the installation has finished, the BirdNET-Pi is ready to start collecting and analyzing data on the next boot. 
-
-If you have trouble with the installation script, you can cancel and rerun the installer:
-```
-~/BirdNET-Pi/Birders_Guide_Installer.sh
+curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/newinstaller/newinstaller.sh | bash
 ```
 
 ## Access

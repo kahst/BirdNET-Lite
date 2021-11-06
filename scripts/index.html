@@ -1,48 +1,94 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<form action="/scripts/edit_birdnet.conf.php">
-    <input type="submit" value="Edit the birdnet.conf file">
-</form>
+<style>
+* {
+	box-sizing: border-box;
+}
 
-<form action="/scripts/stop_core_services.php" onclick="return confirm('Stop core services?')">
-    <input type="submit" value="Stop Core BirdNET-Pi Services">
-</form>
+/* Create two unequal columns that floats next to each other */
+.column {
+	float: left;
+	padding: 10px;
+}
 
-<form action="/scripts/restart_services.php" onclick="return confirm('Restart ALL services?')">
-    <input type="submit" value="Restart ALL BirdNET-Pi Services">
-</form>
+.first {
+	width: calc(50% - 70px);
+}
 
-<form action="/scripts/restart_birdnet_analysis.php">
-    <input type="submit" value="Restart BirdNET Analysis Service">
-</form>
+.second {
+	width: calc(50% - 30px);
+}
 
-<form action="/scripts/restart_birdnet_recording.php">
-    <input type="submit" value="Restart Recording Service">
-</form>
+/* Clear floats after the columns */
+.row:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+body {
+	background-color: rgb(119, 196, 135);
+}
 
-<form action="/scripts/restart_extraction.php">
-    <input type="submit" value="Restart Extraction Service">
-</form>
+a {
+	text-decoration: none;
+	color: white;
+}
 
-<form action="/scripts/restart_caddy.php" onclick="return confirm('Restart Caddy? You will be disconnected for about 20 seconds.')">
-    <input type="submit" value="Restart Caddy">
-</form>
+.block {
+	display: block;
+	font-weight: bold;
+	width:100%;
+	border: none;
+	background-color: #04AA6D;
+	padding: 20px 20px;
+	color: white;
+	font-size: medium;
+	cursor: pointer;
+	text-align: center;
+}
+</style>
+<body style="background-color: rgb(119, 196, 135);">
+	<div class="row">
+		<div class="column first">
 
-<form action="/scripts/backup_data.php" onclick="return confirm('Backup ALL Data? Warning: This could take a long time.')">
-    <input type="submit" value="Backup ALL data">
-</form>
+			<form action="/scripts/stop_core_services.php" onclick="return confirm('Stop core services?')">
+				<button type="submit" class="block">Stop Core BirdNET-Pi Services</button>
+			</form>
+			<form action="/scripts/restart_services.php" onclick="return confirm('Restart ALL services?')">
+				<button type="submit" class="block">Restart ALL BirdNET-Pi Services</button>
+			</form>
+			<form action="/scripts/restart_birdnet_analysis.php">
+				<button type="submit" class="block">Restart BirdNET Analysis Service</button>
+			</form>
+			<form action="/scripts/restart_birdnet_recording.php">
+				<button type="submit" class="block">Restart Recording Service</button>
+			</form>
+			<form action="/scripts/restart_extraction.php">
+				<button type="submit" class="block">Restart Extraction Service</button>
+			</form>
+			<form action="/scripts/restart_caddy.php" onclick="return confirm('Restart Caddy? You will be disconnected for about 20 seconds.')">
+				<button type="submit" class="block">Restart Caddy</button>
+			</form>
+		</div>
+		<div class="column second">
+			<form >
+				<button type="submit" class="block"><a target="_content" href="/scripts/adminer.php">Database Maintenance</a></button>
+			</form>
 
-<form action="/scripts/clear_all_data.php" onclick="return confirm('Clear ALL Data? This cannot be undone.')">
-    <input type="submit" value="Clear ALL data">
-</form>
-
-<form action="/scripts/update_birdnet.php" onclick="return confirm('BE SURE TO STASH ANY LOCAL CHANGES YOU HAVE MADE TO THE SYSTEM BEFORE UPDATING!!!')">
-    <input type="submit" value="Update BirdNET-Pi">
-</form>
-
-<form action="/scripts/reboot_system.php" onclick="return confirm('Are you sure you want to reboot?')">
-    <input type="submit" value="Reboot BirdNET-Pi">
-</form>
-
-<form action="/scripts/shutdown_system.php" onclick="return confirm('Are you sure you want to shutdown?')">
-    <input type="submit" value="Shutdown BirdNET-Pi">
-</form>
+			<form action="/scripts/backup_data.php" onclick="return confirm('Backup ALL Data? Warning: This could take a long time.')">
+				<button type="submit" class="block">Backup ALL data</button>
+			</form>
+			<form action="/scripts/reboot_system.php" onclick="return confirm('Are you sure you want to reboot?')">
+				<button type="submit" class="block">Reboot BirdNET-Pi</button>
+			</form>
+			<form action="/scripts/update_birdnet.php" onclick="return confirm('BE SURE TO STASH ANY LOCAL CHANGES YOU HAVE MADE TO THE SYSTEM BEFORE UPDATING!!!')">
+				<button style="color:blue;" type="submit" class="block">Update BirdNET-Pi</button>
+			</form>
+			<form action="/scripts/shutdown_system.php" onclick="return confirm('Are you sure you want to shutdown?')">
+				<button style="color: red;" type="submit" class="block">Shutdown BirdNET-Pi</button>
+			</form>
+			<form action="/scripts/clear_all_data.php" onclick="return confirm('Clear ALL Data? This cannot be undone.')">
+				<button style="color: red;" type="submit" class="block">Clear ALL data</button>
+			</form>
+		</div>
+	</div>
+</body>

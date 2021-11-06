@@ -16,6 +16,7 @@ set_hostname() {
     echo "Setting hostname to 'birdnetpi'"
     hostnamectl set-hostname birdnetpi
     sed -i 's/raspberrypi/birdnetpi/g' /etc/hosts
+    sed -i 's/localhost$/localhost birdnetpi.local/g' /etc/hosts
   fi
 }
 
@@ -32,8 +33,7 @@ install_mariadb() {
     apt -qqy install mariadb-server
     echo "MariaDB Installed"
   fi
-  sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/analyze.py
-  sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/viewdb.php
+  ${my_dir}/update_db_pwd.sh
 }
 
 install_birdnet_analysis() {
@@ -110,20 +110,26 @@ create_necessary_dirs() {
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
-  set -x
   if [ ! -z ${BIRDNETLOG_URL} ];then
-    BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
+    #BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+    phpfiles="$(grep -l "birdnetpi.local:8080" ${my_dir}/*.php)"
+    for i in "${phpfiles[@]}";do
+      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" ${i}
+    done
   fi
-  set +x
   if [ ! -z ${EXTRACTIONLOG_URL} ];then
-    EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
+    #EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+    phpfiles="$(grep -l "birdnetpi.local:8888" ${my_dir}/*.php)"
+    for i in "${phpfiles[@]}";do
+      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" ${i}
+    done
   fi
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
   if [ ! -z ${BIRDNETPI_URL} ];then
-    BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
+    #BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
     phpfiles="$(grep -l birdnetpi.local ${my_dir}/*.php)"
     for i in "${phpfiles[@]}";do
@@ -134,7 +140,10 @@ create_necessary_dirs() {
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
-  [ -L ${EXTRACTED}/phpsysinfo/phpsysinfo.ini ] || sudo -u ${USER} cp ${HOME}/phpsysinfo/phpsysinfo.ini.new ${HOME}/phpsysinfo/phpsysinfo.ini
+  sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
+  sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
+  sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
+
 }
 
 install_alsa() {
@@ -236,6 +245,13 @@ ${BIRDNETLOG_URL} {
 EOF
   fi
   systemctl reload caddy
+}
+
+update_etc_hosts() {
+  #BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
+  #EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
+  #BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
+  sed -ie s/'birdnetpi.local'/"birdnetpi.local ${BIRDNETPI_URL//https:\/\/} ${EXTRACTIONLOG_URL//https:\/\/} ${BIRDNETLOG_URL//https:\/\/}"/g /etc/hosts
 }
 
 install_avahi_aliases() {
@@ -407,6 +423,8 @@ install_livestream_service() {
   cat << EOF > /etc/systemd/system/livestream.service
 [Unit]
 Description=BirdNET-Pi Live Stream
+After=network-online.target
+Requires=network-online.target
 
 [Service]
 Environment=XDG_RUNTIME_DIR=/run/user/1000
@@ -458,6 +476,7 @@ install_selected_services() {
 
     install_caddy
     install_Caddyfile
+    update_etc_hosts
     install_avahi_aliases
     install_gotty_logs
     install_sox

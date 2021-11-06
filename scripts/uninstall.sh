@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Uninstall script to remove everything
-# set -x # Uncomment to debug
+#set -x # Uncomment to debug
 trap 'rm -f ${TMPFILE}' EXIT
+my_dir=/home/pi/BirdNET-Pi/scripts
 source /etc/birdnet/birdnet.conf &> /dev/null
 SCRIPTS=(birdnet_analysis.sh
 birdnet_recording.sh
@@ -44,8 +45,8 @@ tmux
 uninstall.sh
 update_species.sh
 ${HOME}/.gotty)
-
-services=$(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort)
+set -x
+services=($(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort))
 
 remove_services() {
   for i in "${services[@]}"; do
@@ -59,6 +60,7 @@ remove_services() {
       sudo rm -drf /etc/systemd/system/"${i}"
     fi
   done
+  set +x
   remove_icecast
   remove_crons
 }
