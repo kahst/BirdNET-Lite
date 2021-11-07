@@ -29,6 +29,7 @@ The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://githu
 
 ## Installation
 [Headless installation guide available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/%22Headless%22-installation-using-VNC)
+[Pre-installeld beta image available for testing here](https://github.com/mcguirepr89/BirdNET-Pi/discussions/63)
 
 The system can be installed with:
 ```
