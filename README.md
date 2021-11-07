@@ -14,9 +14,10 @@ Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from 
 ## Introduction
 The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite). It is able to recognize bird sounds from a USB sound card in realtime. 
 
-[Check out my live system](https://birdnetpi.pmcgui.xyz)<br>
-[and NatureStation.net](https://birds.naturestation.net)<br>
-[and an installation in Germany](https://birdnetpigermany.hopto.org)
+Check out birds from around the world
+- [My system in North Carolina, United States](https://birdnetpi.pmcgui.xyz)<br>
+- [NatureStation.net in Johannesburg, South Africa](https://birds.naturestation.net)<br>
+- [Weiskirchen, Germany](https://birdnetpigermany.hopto.org)
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
