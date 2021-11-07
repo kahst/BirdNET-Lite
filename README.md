@@ -1,7 +1,15 @@
-# BirdNET-Pi
-![version](https://img.shields.io/badge/version-0.7-blue)
-
+<h1 align="center">
+BirdNET-Pi <img src="https://img.shields.io/badge/version-0.7-blue" />
+</h1>
+<p align="center">
 A realtime acoustic bird classification system for the Raspberry Pi 4B
+</p>
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/60325264/140656397-bf76bad4-f110-467c-897d-992ff0f96476.png" />
+</p>
+<p align="center">
+Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+</p>
 
 ## Introduction
 The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite). It is able to recognize bird sounds from a USB sound card in realtime. 
