@@ -42,7 +42,7 @@ Pre-installeld beta image available for testing [HERE](https://github.com/mcguir
 
 The system can be installed with:
 ```
-curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/newinstaller/newinstaller.sh | bash
+curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/main/newinstaller.sh | bash
 ```
 
 ## Access
