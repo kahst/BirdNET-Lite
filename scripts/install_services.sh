@@ -209,9 +209,8 @@ install_Caddyfile() {
   if [ -f /etc/caddy/Caddyfile ];then
     cp /etc/caddy/Caddyfile{,.original}
   fi
-  HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   php_version="$(awk -F. '{print $2}' <(ls -l $(which /etc/alternatives/php)))"
-  echo "php_version=${php_version}"
+  HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   cat << EOF > /etc/caddy/Caddyfile
 http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}

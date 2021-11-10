@@ -207,6 +207,7 @@ install_Caddyfile() {
   if [ -f /etc/caddy/Caddyfile ];then
     cp /etc/caddy/Caddyfile{,.original}
   fi
+  php_version="$(awk -F. '{print $2}' <(ls -l $(which /etc/alternatives/php)))"
   HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   cat << EOF > /etc/caddy/Caddyfile
 http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
@@ -225,7 +226,7 @@ http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
     birdnet ${HASHWORD}
   }
   reverse_proxy /stream localhost:8000
-  php_fastcgi unix//run/php/php7.3-fpm.sock
+  php_fastcgi unix//run/php/php7.${php_version}-fpm.sock
 }
 EOF
   if [ ! -z ${EXTRACTIONLOG_URL} ];then
