@@ -34,7 +34,12 @@ install_mariadb() {
     echo "MariaDB Installed"
   fi
   echo "Initializing the database"
-  ${my_dir}/createdb.sh
+  source /etc/os-release
+  if [[ "${VERSION_CODENAME}" == "buster" ]];then
+    ${my_dir}/createdb_buster.sh
+  elif [[ "${VERSION_CODENAME}" == "bullseye" ]];then
+    ${my_dir}/createdb_bullseye.sh
+  fi
 }
 
 install_birdnet_analysis() {

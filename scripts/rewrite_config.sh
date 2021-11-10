@@ -24,11 +24,6 @@ sed -i s/'^DB_PWD=.*'/"DB_PWD=${db_pwd}"/g ${birdnet_conf}
 ${birdnetpi_dir}/scripts/update_db_pwd.sh
 fi
 
-if ! [ -z ${db_root_pwd} ];then
-	exit 1 #for now
-sed -i s/'^DB_ROOT_PWD=.*'/"DB_ROOT_PWD=${db_root_pwd}"/g ${birdnet_conf}
-fi
-
 if ! [ -z ${birdnetpi_url} ];then
 sed -i s/'^BIRDNETPI_URL=.*'/"BIRDNETPI_URL=${birdnetpi_url/\/\//\\\/\\\/}"/g ${birdnet_conf}
 sed -i s/'^EXTRACTIONLOG_URL=.*'/"EXTRACTIONLOG_URL=${extractionlog_url/\/\//\\\/\\\/}"/g ${birdnet_conf}

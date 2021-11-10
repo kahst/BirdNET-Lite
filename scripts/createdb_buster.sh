@@ -7,6 +7,7 @@
 # If using this script to re-initialize (DROP then CREATE)
 # the DB, be sure to run this as root or with sudo
 source /etc/birdnet/birdnet.conf
+DB_ROOT_PWD=staggerwontonpurporting
 mysql_secure_installation << EOF
 
 y

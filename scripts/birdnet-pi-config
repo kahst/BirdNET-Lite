@@ -485,17 +485,6 @@ do_reget_birdnetpi_urls() {
   fi
 }
 
-do_reget_db_root_pwd() {
-  db_root_pwd=$(whiptail --inputbox "Please set the password the 'root' user will use to access the database." \
-  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
-  if [ $? -eq 0 ];then
-    return 0
-    ASK_TO_REBOOT=2
-  else
-    return 1
-  fi
-}
-
 do_reget_db_pwd() {
   db_pwd=$(whiptail --inputbox "Please set the password the 'birder' user will use to access the database." \
   19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
@@ -606,17 +595,6 @@ do_get_extractionlog_url() {
 do_get_birdnetpi_url() {
   birdnetpi_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetpi.pmcgui.xyz\"." \
   19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
-  if [ $? -eq 0 ];then
-    return 0
-    ASK_TO_REBOOT=2
-  else
-    return 1
-  fi
-}
-
-do_get_db_root_pwd() {
-  db_root_pwd=$(whiptail --inputbox "Please set the password the 'root' user will use to access the database." \
-  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
   if [ $? -eq 0 ];then
     return 0
     ASK_TO_REBOOT=2
@@ -759,56 +737,6 @@ do_advanced_reconfig_menu() {
   done
 }
 
-do_reget_db_pwds() {
-  MENU=8
-  while [ $MENU -eq 8 ];do
-    if is_pi ; then
-      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Reset Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-        "'birder'   " "Set the database password for the 'birder' user" \
-        "'root'     " "Set the database password for the 'root' user" \
-        3>&1 1>&2 2>&3)
-    else
-        exit
-    fi
-    RET=$?
-    if [ $RET -eq 1 ]; then
-      return 0
-      MENU=0
-    elif [ $RET -eq 0 ]; then
-      case "$FUN" in
-        *bird*) do_reget_db_pwd;;
-        *root*) do_reget_db_root_pwd;;
-        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-    fi
-  done
-}
-
-do_get_db_pwds() {
-  MENU=7
-  while [ $MENU -eq 7 ];do
-    if is_pi ; then
-      FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Set Datbase Passwords" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-        "'birder'   " "Set the database password for the 'birder' user" \
-        "'root'     " "Set the database password for the 'root' user" \
-        3>&1 1>&2 2>&3)
-    else
-        exit
-    fi
-    RET=$?
-    if [ $RET -eq 1 ]; then
-      return 0
-      MENU=0
-    elif [ $RET -eq 0 ]; then
-      case "$FUN" in
-        *bird*) do_get_db_pwd;;
-        *root*) do_get_db_root_pwd;;
-        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-      esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-    fi
-  done
-}
-
 do_interface_menu() {
   MENU=6
   while [ $MENU -eq 6 ];do
@@ -911,7 +839,7 @@ do_reconfig_birdnet_menu() {
         "Latitude " "Set the latitude your system should use" \
         "Longitude" "Set the longitude your system should use" \
         "Caddy Password" "Set the web interface password" \
-        "Database Passwords" "Set the passwords the MariaDB will use" \
+        "Database Password" "Set the password BirdNET-Pi will use to access the DB" \
         "Advanced Settings" "Sensitivity, Overlap, Confidence, URLs" \
         3>&1 1>&2 2>&3)
     else
@@ -926,7 +854,7 @@ do_reconfig_birdnet_menu() {
         Lat*) do_reget_lat;;
         Lon*) do_reget_lon;;
         Cad*) do_reget_caddy_pwd;;
-        Data*) do_reget_db_pwds;;
+        Data*) do_reget_db_pwd;;
         Advanced*) do_advanced_reconfig_menu;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
@@ -943,7 +871,7 @@ do_config_birdnet_menu() {
         "Longitude" "Set the longitude your system should use" \
         "Caddy Password" "Set the web interface password" \
         "IceCast2 Password" "Set the IceCast2 password" \
-        "Database Passwords" "Set the passwords the MariaDB will use" \
+        "Database Password" "Set the password BirdNET-Pi will use to access the DB" \
         "Set Custom URLS" "Designate custom URLs for the web services if you've set that up" \
         3>&1 1>&2 2>&3)
     else
@@ -959,7 +887,7 @@ do_config_birdnet_menu() {
         Lon*) do_get_lon;;
         Cad*) do_get_caddy_pwd;;
         Ice*) do_get_ice_pwd;;
-        Data*) do_get_db_pwds;;
+        Data*) do_get_db_pwd;;
         Set*) do_get_birdnetpi_url; do_get_birdnetlog_url; do_get_extractionlog_url;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1

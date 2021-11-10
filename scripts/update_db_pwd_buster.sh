@@ -3,7 +3,10 @@
 source /etc/birdnet/birdnet.conf
 
 sudo mysql -e "
-  SET PASSWORD FOR 'birder'@'localhost' = PASSWORD('${DB_PWD}');
+  UPDATE mysql.user 
+  SET Password=PASSWORD('${DB_PWD}') 
+  WHERE USER='birder' 
+  AND Host='localhost';
   FLUSH PRIVILEGES";
 git -C /home/pi/BirdNET-Pi checkout -f analyze.py
 git -C /home/pi/BirdNET-Pi checkout -f scripts/viewdb.php 
