@@ -33,7 +33,7 @@ Check out birds from around the world
 
 ## Requirements
 * A Raspberry Pi 4B
-* An SD Card with the 64-bit version of RaspiOS installed [(download the latest here)](https://downloads.raspberrypi.org/raspios_arm64/images/)
+* An SD Card with the 64-bit version of RaspiOS installed (Buster and Bullseye compatible) [(download the latest here)](https://downloads.raspberrypi.org/raspios_arm64/images/)
 * A USB Microphone or Sound Card
 
 ## Installation
