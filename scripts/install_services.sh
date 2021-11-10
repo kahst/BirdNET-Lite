@@ -210,6 +210,7 @@ install_Caddyfile() {
     cp /etc/caddy/Caddyfile{,.original}
   fi
   HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
+  php_version="$(awk -F. '{print $2}' <(ls -l $(which /etc/alternatives/php)))"
   cat << EOF > /etc/caddy/Caddyfile
 http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
@@ -227,7 +228,7 @@ http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
     birdnet ${HASHWORD}
   }
   reverse_proxy /stream localhost:8000
-  php_fastcgi unix//run/php/php7.3-fpm.sock
+  php_fastcgi unix//run/php/php7.${php_version}-fpm.sock
 }
 EOF
   if [ ! -z ${EXTRACTIONLOG_URL} ];then
@@ -352,16 +353,16 @@ install_sox() {
 }
 
 install_php() {
-  if ! which php &> /dev/null || ! which php-fpm7.3 || ! apt list --installed | grep php-xml;then
+  if ! which php &> /dev/null || ! which php-fpm || ! apt list --installed | grep php-xml;then
     echo "Installing PHP modules"
     apt -qq update
-    apt install -qqy php php-fpm php7.3-mysql php-xml
+    apt install -qqy php php-fpm php-mysql php-xml
   else
     echo "PHP and PHP-FPM installed"
   fi
     echo "Configuring PHP for Caddy"
-    sed -i 's/www-data/caddy/g' /etc/php/7.3/fpm/pool.d/www.conf
-    systemctl restart php7.3-fpm.service
+    sed -i 's/www-data/caddy/g' /etc/php/*/fpm/pool.d/www.conf
+    systemctl restart php7\*-fpm.service
     echo "Adding Caddy sudoers rule"
     cat << EOF > /etc/sudoers.d/010_caddy-nopasswd
 caddy ALL=(ALL) NOPASSWD: ALL
