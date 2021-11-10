@@ -478,6 +478,7 @@ install_selected_services() {
     install_recording_service
   fi
 
+    install_php
     install_caddy
     install_Caddyfile
     update_etc_hosts
@@ -485,7 +486,6 @@ install_selected_services() {
     install_gotty_logs
     install_sox
     install_mariadb
-    install_php
     install_spectrogram_service
     install_edit_birdnet_conf
     install_pushed_notifications
