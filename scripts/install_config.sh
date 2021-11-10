@@ -103,8 +103,6 @@ get_DB_PWDS() {
   if [ ! -z ${DB_PWD} ];then
     read -p "Please set a password for your database: " DB_PWD
     echo
-    read -p "Please set a root password for the database: " DB_ROOT_PWD
-    echo
   fi
 }
 
@@ -376,7 +374,6 @@ RECORDING_LENGTH=
 EXTRACTION_LENGTH=
 
 DB_PWD=${DB_PWD}
-DB_ROOT_PWD=${DB_ROOT_PWD}
 
 LAST_RUN=$(dirname ${my_dir})/lastrun.txt
 THIS_RUN=$(dirname ${my_dir})/thisrun.txt

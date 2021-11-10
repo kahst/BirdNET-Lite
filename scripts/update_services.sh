@@ -33,7 +33,12 @@ install_mariadb() {
     apt -qqy install mariadb-server
     echo "MariaDB Installed"
   fi
-  ${my_dir}/update_db_pwd.sh
+  source /etc/os-release
+  if [[ "${VERSION_CODENAME}" == "buster" ]];then
+    ${my_dir}/update_db_pwd_buster.sh
+  elif [[ "${VERSION_CODENAME}" == "bullseye" ]];then
+    ${my_dir}/update_db_pwd_bullseye.sh
+  fi
 }
 
 install_birdnet_analysis() {

@@ -51,7 +51,7 @@ stage_2() {
   fi
 
   source ${my_dir}/Birders_Guide_Installer_Configuration.txt
-  if [ -z ${LATITUDE} ] || [ -z ${LONGITUDE} ] || [ -z ${CADDY_PWD} ] || [ -z ${ICE_PWD} ] || [ -z ${DB_PWD} ] || [ -z ${DB_ROOT_PWD} ];then
+  if [ -z ${LATITUDE} ] || [ -z ${LONGITUDE} ] || [ -z ${CADDY_PWD} ] || [ -z ${ICE_PWD} ] || [ -z ${DB_PWD} ];then
     echo
     echo "Follow the instructions to fill out the LATITUDE and LONGITUDE variables
 and set the passwords for the live audio stream. Save the file after editing
