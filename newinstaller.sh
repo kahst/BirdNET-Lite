@@ -10,6 +10,6 @@ fi
 git clone -b ${branch} https://github.com/mcguirepr89/BirdNET-Pi.git ${HOME}/BirdNET-Pi
 echo 'Now, run the following script
 
-    sudo -E ${HOME}/BirdNET-Pi/scripts/birdnet-pi-config
+    /home/pi/BirdNET-Pi/scripts/birdnet-pi-config
     
 '

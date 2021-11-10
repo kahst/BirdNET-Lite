@@ -52,16 +52,22 @@ install_birdnet() {
   source ./birdnet/bin/activate
   echo "Upgrading pip, wheel, and setuptools"
   pip3 install --upgrade pip wheel setuptools
-  if [ ! -f $(dirname ${my_dir})/tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl ];then
-    echo "Fetching the TFLite pre-built binaries"
-    TFLITE_URL="https://drive.google.com/uc?export=download&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
-    curl -c /tmp/cookie ${TFLITE_URL}
-    CODE="$(awk '/_warning_/ {print $NF}' /tmp/cookie)"
-    TF_COOKIE="https://drive.google.com/uc?export=download&confirm=${CODE}&id=1dlEbugFDJXs-YDBCUC6WjADVtIttWxZA"
-    curl -Lb /tmp/cookie ${TF_COOKIE} -o tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
-  fi
+set -x
+  python_version="$(awk -F. '{print $2}' <(ls -l $(which /usr/bin/python3)))"
+  echo "python_version=${python_version}"
+  # TFLite Pre-built binaires from https://github.com/PINTO0309/TensorflowLite-bin
+  # Python 3.7
+  if [[ "$python_version" == 7 ]];then
   echo "Installing the TFLite bin wheel"
   pip3 install --upgrade tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
+  fi
+
+  # Python 3.9
+  if [[ "$python_version" == 9 ]];then
+  echo "Installing the TFLite bin wheel"
+  pip3 install --upgrade tflite_runtime-2.6.0-cp39-none-linux_aarch64.whl
+  fi
+set +x
   echo "Installing colorama==0.4.4"
   pip3 install colorama==0.4.4
   echo "Installing librosa"
