@@ -31,13 +31,10 @@ LONGITUDE=
 CADDY_PWD=
 ICE_PWD=
 
-# 1. DB_PWD is the password that the system will use to access the database. Set this to
-#    anything you want.
-# 2. DB_ROOT_PWD is the password that the system will use to secure the database's root
-#    account. Set this to anything you want.
+# DB_PWD is the password that the system will use to access the database. Set this to
+# anything you want.
 
 DB_PWD=
-DB_ROOT_PWD=
 
 # This section can be left alone. If you setup a Pushed.co
 # mobile application, you can enter the App secret and secret

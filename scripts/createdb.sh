@@ -10,8 +10,8 @@ source /etc/birdnet/birdnet.conf
 mysql_secure_installation << EOF
 
 y
-${DB_ROOT_PWD}
-${DB_ROOT_PWD}
+n
+y
 y
 y
 y

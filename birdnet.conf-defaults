@@ -36,13 +36,11 @@ RECS_DIR=/home/pi/BirdSongs
 CADDY_PWD=changeme
 
 #-------------------------  MariaDB User Passwords  ---------------------------#
-#_____________The variables below set the 'birder' and 'root'__________________# 
-#_______________________user passwords for the MariaDB_________________________#
+#_____________The variable below sets the password for the_____________________# 
+#_______________________'birder' user on the MariaDB___________________________#
 
 ## DB_PWD is for the 'birder' user
 DB_PWD=changeme
-## DB_ROOT_PWD is for the 'root' user
-DB_ROOT_PWD=changeme
 
 #-------------------------  Live Audio Stream  --------------------------------#
 #_____________The variable below configures/enables the live___________________# 
