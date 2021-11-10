@@ -52,21 +52,22 @@ install_birdnet() {
   source ./birdnet/bin/activate
   echo "Upgrading pip, wheel, and setuptools"
   pip3 install --upgrade pip wheel setuptools
-
-  python_version="$(awk -F. '{print $2}' <(ls -l $(which python3)))"
+set -x
+  python_version="$(awk -F. '{print $2}' <(ls -l $(which /usr/bin/python3)))"
+  echo "python_version=${python_version}"
   # TFLite Pre-built binaires from https://github.com/PINTO0309/TensorflowLite-bin
   # Python 3.7
-  if [ "$python_version" -eq 7 ];then
+  if [[ "$python_version" == 7 ]];then
   echo "Installing the TFLite bin wheel"
   pip3 install --upgrade tflite_runtime-2.6.0-cp37-none-linux_aarch64.whl
   fi
 
   # Python 3.9
-  if [ "$python_version" -eq 9 ];then
+  if [[ "$python_version" == 9 ]];then
   echo "Installing the TFLite bin wheel"
   pip3 install --upgrade tflite_runtime-2.6.0-cp39-none-linux_aarch64.whl
   fi
-
+set +x
   echo "Installing colorama==0.4.4"
   pip3 install colorama==0.4.4
   echo "Installing librosa"
