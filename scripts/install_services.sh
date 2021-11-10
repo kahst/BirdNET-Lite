@@ -211,6 +211,7 @@ install_Caddyfile() {
   fi
   HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   php_version="$(awk -F. '{print $2}' <(ls -l $(which /etc/alternatives/php)))"
+  echo "php_version=${php_version}"
   cat << EOF > /etc/caddy/Caddyfile
 http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
@@ -478,6 +479,7 @@ install_selected_services() {
     install_recording_service
   fi
 
+    install_php
     install_caddy
     install_Caddyfile
     update_etc_hosts
@@ -485,7 +487,6 @@ install_selected_services() {
     install_gotty_logs
     install_sox
     install_mariadb
-    install_php
     install_spectrogram_service
     install_edit_birdnet_conf
     install_pushed_notifications

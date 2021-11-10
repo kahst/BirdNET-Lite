@@ -350,15 +350,15 @@ install_sox() {
 }
 
 install_php() {
-  if ! which php &> /dev/null || ! which php-fpm7.3 || ! apt list --installed | grep php-xml;then
+  if ! which php &> /dev/null || ! which php-fpm || ! apt list --installed | grep php-xml;then
     echo "Installing PHP modules"
     apt -qq update
-    apt install -qqy php php-fpm php7.3-mysql php-xml
+    apt install -qqy php php-fpm php-mysql php-xml
   else
     echo "PHP and PHP-FPM installed"
   fi
     echo "Configuring PHP for Caddy"
-    sed -i 's/www-data/caddy/g' /etc/php/7.3/fpm/pool.d/www.conf
+    sed -i 's/www-data/caddy/g' /etc/php/*/fpm/pool.d/www.conf
     echo "Adding Caddy sudoers rule"
     cat << EOF > /etc/sudoers.d/010_caddy-nopasswd
 caddy ALL=(ALL) NOPASSWD: ALL
@@ -474,6 +474,7 @@ install_selected_services() {
     install_recording_service
   fi
 
+    install_php
     install_caddy
     install_Caddyfile
     update_etc_hosts
@@ -481,7 +482,6 @@ install_selected_services() {
     install_gotty_logs
     install_sox
     install_mariadb
-    install_php
     install_spectrogram_service
     install_edit_birdnet_conf
     install_pushed_notifications
