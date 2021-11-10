@@ -2,7 +2,7 @@
 # Simple new installer
 HOME=/home/pi
 USER=pi
-branch=bullseye
+branch=main
 sudo apt update
 if ! which git &> /dev/null;then
   sudo apt -y install git

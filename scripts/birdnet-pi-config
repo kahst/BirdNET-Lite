@@ -7,7 +7,7 @@
 #set -x
 birdnetpi_dir=/home/pi/BirdNET-Pi
 birders_config=${birdnetpi_dir}/Birders_Guide_Installer_Configuration.txt
-branch=bullseye
+branch=main
 INTERACTIVE=True
 ASK_TO_REBOOT=0
 BLACKLIST=/etc/modprobe.d/raspi-blacklist.conf
