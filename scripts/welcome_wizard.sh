@@ -151,4 +151,3 @@ set_db_pwd() {
 
 
 overview
-exit
