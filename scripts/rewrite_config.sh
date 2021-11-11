@@ -15,13 +15,13 @@ fi
 if ! [ -z ${caddy_pwd} ];then
 sed -i s/'^CADDY_PWD=.*'/"CADDY_PWD=${caddy_pwd}"/g ${birdnet_conf}
 hash_pwd=$(caddy hash-password -plaintext ${caddy_pwd})
-sed -i s/'birdnet\ .*'/"birdnet ${hash_pwd}"/g /etc/caddy/Caddyfile
-systemctl reload caddy
+sudo sed -i s/'birdnet\ .*'/"birdnet ${hash_pwd}"/g /etc/caddy/Caddyfile
+sudo systemctl reload caddy
 fi
 
 if ! [ -z ${db_pwd} ];then
 sed -i s/'^DB_PWD=.*'/"DB_PWD=${db_pwd}"/g ${birdnet_conf}
-${birdnetpi_dir}/scripts/update_db_pwd.sh
+${birdnetpi_dir}/scripts/update_db_pwd_bullseye.sh
 fi
 
 if ! [ -z ${birdnetpi_url} ];then
