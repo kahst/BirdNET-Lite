@@ -1,50 +1,45 @@
 <html>
-  <head>
-    <title>BirdNET-Pi</title>
-    <style type="text/css">
+	<head>
+		<title>BirdNET-Pi</title>
+		<style type="text/css">
 a {
 	font-weight:bold;
 	text-decoration:none;
 	color:black;
 }
-
 body {
-  text-align:center;
-  font-family:verdana,arial,sans-serif;
-  font-size:medium;
-  margin:10px;
-  background-color: rgb(119, 196, 135);
+	text-align:center;
+	font-family:verdana,arial,sans-serif;
+	font-size:medium;
+	margin:10px;
+	background-color: rgb(119, 196, 135);
 }
   #content {
-    position: relative;
+	  position: relative;
   }
   #content img {
-    position: absolute;
-    top: 0px;
-    left: 0px;
+	  position: absolute;
+	  top: 0px;
+	  left: 0px;
+	  padding-top: 5px;
+	  padding-left: 10px;
   }
-  #content2 img {
-    position: absolute;
-    top: 0px;
-    right: 0px;
+  footer {
+	  position: absolute;
+	  bottom: 0px;
+	  left: 0px;
+	  right: 0px;
+	  width: 100%;
+
   }
-    </style>
-  </head>
-  <body>
-    <div id="content">
-      <img src="images/bird.png" class="ribbon"/>
-    </div>
-    <h1><em>BirdNET</em>-Pi</h1>
-    <p>
-    <a href="/viewdb.php" target="content">Database View</a> | 
-    <a href="/spectrogram.php" target="content">Spectrogram View</a> | 
-    <a href="http://birdnetpi.local:8080" target="content">BirdNET-Lite Log</a> |
-    <a href="http://birdnetpi.local:8888" target="content">Extraction Log</a> |
-    <a href="http://birdnetpi.local/phpsysinfo" target="content">System Info</a> | 
-    <a href="http://birdnetpi.local/scripts/" target="content">Tools</a>
-    </p>
-    <div id="content2">
-      <img src="images/version.svg" class="ribbon"/>
-    </div>
-  </body>
+		</style>
+	</head>
+	<body>
+		<h1>BirdNET-Pi<img style="padding-left: 5px" src="images/version.svg" class="ribbon"/></h1>
+		</div>
+		<p>
+		<a href="/viewdb.php" target="content">Database View</a> | 
+		<a href="/spectrogram.php" target="content">Spectrogram View</a>
+		</p>
+	</body>
 </html>

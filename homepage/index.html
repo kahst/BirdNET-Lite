@@ -3,6 +3,11 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BirdNET-Pi</title>
+<style>
+* {
+	background-color: background-color: rgb(119, 196, 135);
+}
+</style>
 </head>
 <!--
 Note the following:
@@ -21,20 +26,20 @@ Note the following:
 </script>
 
 <frameset rows="100,*" frameborder="0" border="0" framespacing="0">
-  <frame name="topNav" src="top.html" scrolling="off">
-<frameset cols="150,*" frameborder="0" border="0" framespacing="0">
-	 <frameset rows="*,70" frameborder="0" border="0" framespacing="0">
-	<frame name="menu" src="menu.html" marginheight="0" marginwidth="0" scrolling="off" noresize>
-	  <frame name="footer" src="footer.html" scrolling="off">
-	 </frameset>
-	<frame name="content" src="/viewdb.php" marginheight="0" marginwidth="0" scrolling="auto" noresize>
-</frameset>
+	<frameset style="background-color: rgb(119, 196, 135);" cols="150,*,150" frameborder="0" border="0" framespacing="0">
+		<frame style="fill: none;background: rgb(119, 196, 135);padding-top: 15px;padding-left: 32.5px;padding-right: 32.5px;"src="images/bird.png" class="ribbon"/>
+		<frame name="topNav" src="top.html" scrolling="off">
+		<frame name="footer" src="footer.html" scrolling="off">
+	</frameset>
+	<frameset cols="150,*" frameborder="0" border="0" framespacing="0">
+			<frame name="menu" src="menu.html" marginheight="0" marginwidth="0" scrolling="off" noresize>
+		<frame name="content" src="/viewdb.php" marginheight="0" marginwidth="0" scrolling="auto" noresize>
 
-<! -- <frame name="footer" src="footer.html" scrolling="off"> -->
+	<! -- <frame name="footer" src="footer.html" scrolling="off"> -->
 
-<noframes>
-<p>This section (everything between the 'noframes' tags) will only be displayed if the users' browser doesn't support frames. You can provide a link to a non-frames version of the website here. Feel free to use HTML tags within this section.</p>
-</noframes>
+	<noframes>
+		<p>This section (everything between the 'noframes' tags) will only be displayed if the users' browser doesn't support frames. You can provide a link to a non-frames version of the website here. Feel free to use HTML tags within this section.</p>
+	</noframes>
 
 </frameset>
 </html>
