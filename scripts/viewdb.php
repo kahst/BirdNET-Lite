@@ -63,10 +63,14 @@ $mysqli->close();
 	<title>BirdNET-Pi DB</title>
 	<!-- CSS FOR STYLING THE PAGE -->
 <link rel="stylesheet" href="style.css">
+<style>
+</style>
 </head>
 <body style="background-color: rgb(119, 196, 135);background-image: linear-gradient(to top, rgb(119, 196, 135),black;">
 
 	<section>
+<div class="row">
+ <div cladd="column" style="width: 75%;padding-left: 15%;">
 		<h2>Number of Detections</h2>
 		<table>
 			<tr>
@@ -82,6 +86,8 @@ $mysqli->close();
 				<td><?php echo $speciescount;?></td>
 			</tr>
 		</table>
+</div>
+</div>
 <div class="row">
   <div class="column">
 		<h2>Detected Species</h2>
