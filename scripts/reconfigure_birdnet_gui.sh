@@ -6,10 +6,12 @@ birdnetpi_dir=/home/pi/BirdNET-Pi
 birdnet_conf=${birdnetpi_dir}/birdnet.conf
 
 rearview() {
-  zenity --title="Configuration Wizard" --width=300 --ok-label="Exit" --window-icon=/usr/share/pixmaps/red-cardinal32.png \
- --extra-button="Next" --info --text="Caddy is reloading and the passwords are being updated.
+  zenity --title="Configuration Complete!!" --width=300 --ok-label="Finished" --window-icon=/usr/share/pixmaps/red-cardinal32.png \
+    --info --text="
+Caddy is reloading and the passwords are being updated.
 
-  Please allow 20 more seconds before pressing \"Next\"" --no-wrap --icon-name=red-cardinal
+When the system is updated with your new information,
+the main web page will open automatically" --no-wrap --icon-name=red-cardinal
 }
 rearview &
 
@@ -48,3 +50,4 @@ sed -i s/'^CONFIDENCE=.*'/"CONFIDENCE=${new_confidence}"/g ${birdnet_conf}
 fi
 
 ${birdnetpi_dir}/scripts/update_birdnet.sh
+xdg-open http://birdnetpi.local
