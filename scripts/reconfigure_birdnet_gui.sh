@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 # Writes variables to config file
 set -x
-source /home/pi/welcome_wizard.sh
 birdnetpi_dir=/home/pi/BirdNET-Pi
+source ${birdnetpi_dir}/scripts/welcome_wizard.sh
 birdnet_conf=${birdnetpi_dir}/birdnet.conf
 
 rearview() {
