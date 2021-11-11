@@ -220,11 +220,11 @@ REC_CARD=default
 ## after extractions have been made from them. This includes both WAVE and
 ## BirdNET.selection.txt files.
 
-PROCESSED=${RECS_DIR}/Processed
+PROCESSED=/home/pi/BirdSongs/Processed
 
 ## EXTRACTED is the directory where the extracted audio selections are moved.
 
-EXTRACTED=${RECS_DIR}/Extracted
+EXTRACTED=/home/pi/BirdSongs/Extracted
 
 ## IDFILE is the file that keeps a complete list of every spececies that
 ## BirdNET has identified from your data-set. It is persistent across
