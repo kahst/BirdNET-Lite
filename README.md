@@ -81,4 +81,4 @@ arm_freq=1750
 ```
 Be sure the Pi is adequately cooled and powered.
 
-For some reason, the system seems to run more efficiently and the birds sound better when you _star the project_ . . . :)
+For some reason, the system seems to run more efficiently and the birds sound better when you [![Star on GitHub](https://img.shields.io/github/stars/mcguirepr89/BirdNET-Pi.svg?style=social)](https://github.com/mcguirepr89/BirdNET-Pi/stargazers) the project :)
