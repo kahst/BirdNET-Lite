@@ -80,3 +80,5 @@ over_voltage=6
 arm_freq=1750
 ```
 Be sure the Pi is adequately cooled and powered.
+
+For some reason, the system seems to run more efficiently and the birds sound better when you _star the project_ . . . :)
