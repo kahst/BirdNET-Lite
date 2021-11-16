@@ -51,4 +51,4 @@ fi
 
 ${birdnetpi_dir}/scripts/update_birdnet.sh
 xdg-open http://birdnetpi.local
-systemctl --user disable birdnet-pi-config-gui
+systemctl --user disable birdnet-pi-welcome-wizard.service
