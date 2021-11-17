@@ -97,6 +97,11 @@ setup_wifi() {
   wifi_list="$(zenity --title="Connect to WiFi" --extra-button="Refresh WiFi List" --window-icon=/usr/share/pixmaps/red-cardinal32.png --info --text="Use the Networking Icon in the bottom right corner of
 the screen to select your WiFi network. Enter the credentials to connect when prompted.
 
+If you are currently connected to BirdNET-Pi via its Access Point and VNC/NoMachine,
+this connection will be severed as soon as the new connection is made.
+Simply connect your VNC/NoMachine client to the network which you are 
+currently configuring BirdNET-Pi to use, and you will be able to resume the setup.
+
 Press \"Continue\" AFTER you have connected." --ok-label="Continue" --no-wrap)"
   [ -z ${wifi_list} ] && break
   if [[ "${wifi_list}" == "Refresh WiFi List" ]];then
