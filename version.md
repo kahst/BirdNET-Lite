@@ -1,7 +1,7 @@
 # main v0.9 -- pre-installed image
 - Bug fix for Auto Access Point
 - Improved Welcome Wizard
-- Support for GPIO shutdown, reboot, and 
+- Support for GPIO shutdown, reboot, and power on
 - Ships with Caddy 2.4.5 to avoid 2.4.6 bug
 - IceCast2 bug fix (for pre-installed image)
 
