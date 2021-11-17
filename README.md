@@ -1,5 +1,5 @@
 <h1 align="center">
-BirdNET-Pi <img src="https://img.shields.io/badge/version-0.8-blue" />
+BirdNET-Pi <img src="https://img.shields.io/badge/version-0.9-blue" />
 </h1>
 <p align="center">
 A realtime acoustic bird classification system for the Raspberry Pi 4B

@@ -50,5 +50,6 @@ sed -i s/'^CONFIDENCE=.*'/"CONFIDENCE=${new_confidence}"/g ${birdnet_conf}
 fi
 
 ${birdnetpi_dir}/scripts/update_birdnet.sh
+sudo apt install -y --reinstall icecast2
 xdg-open http://birdnetpi.local
 systemctl --user disable birdnet-pi-welcome-wizard.service
