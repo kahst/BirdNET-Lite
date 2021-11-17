@@ -94,7 +94,7 @@ setup_wifi() {
   sudo systemctl start dhcpcd
   wifi_list=""
   until [[ "${wifi_list}" == "Continue" ]];do
-  wifi_list="$(zenity --title="Connect to WiFi" --extra-button="Refresh WiFi List" --window-icon=/usr/share/pixmaps/red-cardinal32.png --info --text="Use the Networking Icon in the top right corner of
+  wifi_list="$(zenity --title="Connect to WiFi" --extra-button="Refresh WiFi List" --window-icon=/usr/share/pixmaps/red-cardinal32.png --info --text="Use the Networking Icon in the bottom right corner of
 the screen to select your WiFi network. Enter the credentials to connect when prompted.
 
 Press \"Continue\" AFTER you have connected." --ok-label="Continue" --no-wrap)"
