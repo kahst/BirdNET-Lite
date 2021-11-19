@@ -64,7 +64,7 @@ If you encounter any issues at any point, or have questions, comments, concerns,
 ## Sharing
 I hope that if you find BirdNET-Pi has been worth your time, you will share your setup, results, customizations, etc. [HERE](https://github.com/mcguirepr89/BirdNET-Pi/discussions/69) and will consider [making your installation public](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi).
 
-## ToDo, Notes, and Comming Soon 
+## ToDo, Notes, and Coming Soon 
 
 ### Internationalization:
 The bird names are in English by default, but other localized versions are available. Please download the labels_l18n.zip file and replace the `model/labels.txt` with the corresponding language.
