@@ -13,10 +13,15 @@ import librosa
 import numpy as np
 import math
 import time
+from decimal import Decimal
+import json
 ###############################################################################    
+import requests
 import mysql.connector
-###############################################################################    
-from datetime import date, datetime
+###############################################################################
+import datetime
+from pathlib import Path
+
 def loadModel():
 
     global INPUT_LAYER_INDEX
@@ -187,6 +192,7 @@ def main():
 
     # Parse passed arguments
     parser = argparse.ArgumentParser()
+    parser.add_argument('--s', type=int, default=99, help='BirdWeather station id.')
     parser.add_argument('--i', help='Path to input file.')
     parser.add_argument('--o', default='result.csv', help='Path to output file. Defaults to result.csv.')
     parser.add_argument('--lat', type=float, default=-1, help='Recording location latitude. Set -1 to ignore.')
@@ -196,6 +202,7 @@ def main():
     parser.add_argument('--sensitivity', type=float, default=1.0, help='Detection sensitivity; Higher values result in higher sensitivity. Values in [0.5, 1.5]. Defaults to 1.0.')
     parser.add_argument('--min_conf', type=float, default=0.1, help='Minimum confidence threshold. Values in [0.01, 0.99]. Defaults to 0.1.')   
     parser.add_argument('--custom_list', default='', help='Path to text file containing a list of species. Not used if not provided.')
+    parser.add_argument('--meta_data', default='Testing', help='Location meta_data for BirdWeather station.')    
 
     args = parser.parse_args()
 
@@ -208,75 +215,128 @@ def main():
     else:
         WHITE_LIST = []
 
+    station_id = args.s    
+    location_meta_data = args.meta_data
 
     # Read audio data
     audioData = readAudioData(args.i, args.overlap)
 
+    #now = datetime.now()
+
+    full_file_name = args.i
+    file_name = Path(full_file_name).stem
+    file_date = file_name.split('-birdnet-')[0]
+    file_time = file_name.split('-birdnet-')[1]
+    date_time_str = file_date + ' ' + file_time
+    date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+    #print('Date:', date_time_obj.date())
+    #print('Time:', date_time_obj.time())
+    print('Date-time:', date_time_obj)
+    now = date_time_obj
+    current_date = now.strftime("%Y/%m/%d")
+    current_time = now.strftime("%H:%M:%S")
+    current_iso8601 = now.isoformat()
+    
+    week_number = int(now.strftime("%V"))
     # Process audio data and get detections
-    week = max(1, min(args.week, 48))
+    #week = max(1, min(args.week, 48))
+    week = max(1, min(week_number, 48))
     sensitivity = max(0.5, min(1.0 - (args.sensitivity - 1.0), 1.5))
     detections = analyzeAudioData(audioData, args.lat, args.lon, week, sensitivity, args.overlap, interpreter)
 
     # Write detections to output file
     min_conf = max(0.01, min(args.min_conf, 0.99))
     writeResultsToFile(detections, min_conf, args.o)
-    now = datetime.now()
     
 ###############################################################################    
 ###############################################################################    
-
-
+    
+    soundscape_uploaded = False
 
     # Write detections to Database
     for i in detections:
-        print("\n", detections[i][0],"\n")
+      print("\n", detections[i][0],"\n")
     with open('BirdDB.txt', 'a') as rfile:
-            for d in detections:
-                print("\n", "Database Entry", "\n")
-                for entry in detections[d]:
-                    if entry[1] >= min_conf and (entry[0] in WHITE_LIST or len(WHITE_LIST) == 0):
-                        current_date = now.strftime("%Y/%m/%d")
-                        current_time = now.strftime("%H:%M:%S")
-                        rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' \
-                        + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' \
-                        + str(sensitivity) +';' + str(args.overlap) + '\n')
+        for d in detections:
+            print("\n", "Database Entry", "\n")
+            for entry in detections[d]:
+                if entry[1] >= min_conf and (entry[0] in WHITE_LIST or len(WHITE_LIST) == 0):
+                    rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' \
+                    + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' \
+                    + str(sensitivity) +';' + str(args.overlap) + '\n')
 
-                        def insert_variables_into_table(Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap):
-                            try:
-                                connection = mysql.connector.connect(host='localhost',
-                                                                     database='birds',
-                                                                     user='birder',
-                                                                     password='databasepassword')
-                                cursor = connection.cursor()
-                                mySql_insert_query = """INSERT INTO detections (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
-                                                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
+                    def insert_variables_into_table(Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap):
+                        try:
+                            connection = mysql.connector.connect(host='localhost',
+                                                                 database='birds',
+                                                                 user='birder',
+                                                                 password='changeme')
+                            cursor = connection.cursor()
+                            mySql_insert_query = """INSERT INTO detections (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
+                                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
+                    
+                            record = (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
+
+                            cursor.execute(mySql_insert_query, record)
+                            connection.commit()
+                            print("Record inserted successfully into detections table")
+
+                    
+                        except mysql.connector.Error as error:
+                            print("Failed to insert record into detections table {}".format(error))
                         
-                                record = (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
+                        finally:
+                            if connection.is_connected():
+                                connection.close()
+                                print("MySQL connection is closed")
 
-                                cursor.execute(mySql_insert_query, record)
-                                connection.commit()
-                                print("Record inserted successfully into detections table")
+                    species = entry[0]
+                    sci_name,com_name = species.split('_')
+                    insert_variables_into_table(str(current_date), str(current_time), sci_name, com_name, \
+                    str(entry[1]), str(args.lat), str(args.lon), str(min_conf), str(week), \
+                    str(args.sensitivity), str(args.overlap))
 
-                        
-                            except mysql.connector.Error as error:
-                                print("Failed to insert record into detections table {}".format(error))
-                            
-                            finally:
-                                if connection.is_connected():
-                                    connection.close()
-                                    print("MySQL connection is closed")
+                    print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + '\n')
 
-                        species = entry[0]
-                        sci_name,com_name = species.split('_')
-                        insert_variables_into_table(str(current_date), str(current_time), sci_name, com_name, \
-                        str(entry[1]), str(args.lat), str(args.lon), str(min_conf), str(week), \
-                        str(args.sensitivity), str(args.overlap))
+                    if soundscape_uploaded is False:
+                        # POST soundscape to server
+                        post_url = "https://app.birdweather.com/api/v1/soundscapes" + "?timestamp=" + current_iso8601
 
-                        print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + '\n')
+                        with open(args.i, 'rb') as f:
+                            wav_data = f.read()
+                        response = requests.post(url=post_url, data=wav_data, headers={'Content-Type': 'application/octet-stream'})
+                        print("Soundscape POST Response Status - ", response.status_code)
+                        sdata = response.json()
+                        soundscape_id = sdata['soundscape']['id']
+                        soundscape_uploaded = True
 
-                        time.sleep(3)
+                    # POST detection to server
+                    api_url = "https://app.birdweather.com/api/v1/detections"
+                    start_time = d.split(';')[0]
+                    end_time = d.split(';')[1]
+                    post_begin = "{ "
+                    post_station_id = "\"stationId\": \"" + str(station_id) + "\","
+                    now_p_start = now + datetime.timedelta(seconds=float(start_time))
+                    current_iso8601 = now_p_start.isoformat();
+                    post_timestamp =  "\"timestamp\": \"" + current_iso8601 + "\","
+                    post_lat = "\"lat\": " + str(args.lat) + ","
+                    post_lon = "\"lon\": " + str(args.lon) + ","
+                    post_soundscape_id = "\"soundscapeId\": " + str(soundscape_id) + ","
+                    post_soundscape_start_time = "\"soundscapeStartTime\": " + start_time + ","
+                    post_soundscape_end_time = "\"soundscapeEndTime\": " + end_time + ","
+                    post_commonName = "\"commonName\": \"" + entry[0].split('_')[1] + "\","
+                    post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
+                    post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
+                    post_confidence = "\"confidence\": " + str(entry[1]) + ","
+                    post_metadata = "\"metadata\": { \"location\": \"" + location_meta_data + "\" }"
+                    post_end = " }"
 
-                        now = datetime.now()
+                    post_json = post_begin + post_station_id + post_timestamp + post_lat + post_lon + post_soundscape_id + post_soundscape_start_time + post_soundscape_end_time + post_commonName + post_scientificName + post_algorithm + post_confidence + post_metadata + post_end
+                    print(post_json)
+                    response = requests.post(api_url, json=json.loads(post_json))
+                    print("Detection POST Response Status - ", response.status_code)
+
+                    #time.sleep(3)
 
 ###############################################################################    
 ###############################################################################    
