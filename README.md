@@ -76,12 +76,4 @@ The bird names are in English by default, but other localized versions are avail
 The pre-built TFLite binaries for this project also support [the BirdNET-Demo](https://github.com/kahst/BirdNET-Demo), which I am currently testing for integration into the BirdNET-Pi. If you know anything about JavaScript and are willing to help, please let me know in the [Live Analysis discussion](https://github.com/mcguirepr89/BirdNET-Pi/discussions/24).
 
 ### Tips:
-You can try to overclock your Pi by placing the following in your `/boot/config.txt` file:
-
-```
-over_voltage=6
-arm_freq=1750
-```
-Be sure the Pi is adequately cooled and powered.
-
 For some reason, the system seems to run more efficiently and the birds sound better when you [![Star on GitHub](https://img.shields.io/github/stars/mcguirepr89/BirdNET-Pi.svg?style=social)](https://github.com/mcguirepr89/BirdNET-Pi/stargazers) the project :)
