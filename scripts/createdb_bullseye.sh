@@ -41,3 +41,5 @@ exit
 EOF
 sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/analyze.py
 sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/viewdb.php
+sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/overview.php
+sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/viewday.php
