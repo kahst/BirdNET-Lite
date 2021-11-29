@@ -152,7 +152,7 @@ run_analysis() {
 --overlap "${OVERLAP}" \
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
---s "${STATION_NUMBER}"\
+--s "${STATION_NUMBER}" \
 --meta_data "${STATION_NAME}""
       "${VENV}"/bin/python analyze.py \
         --i "${1}/${i}" \
@@ -163,7 +163,7 @@ run_analysis() {
         --overlap "${OVERLAP}" \
 	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
-        --s "${STATION_NUMBER}"\
+        --s "${STATION_NUMBER}" \
         --meta_data "${STATION_NAME}"
     elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ] && [ ! -z $STATION_NUMBER ];then
       echo "python3 analyze.py \
@@ -176,7 +176,7 @@ run_analysis() {
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
 --custom_list "${CUSTOM_LIST}"\
---s "${STATION_NUMBER}"\
+--s "${STATION_NUMBER}" \
 --meta_data "${STATION_NAME}""
       "${VENV}"/bin/python analyze.py \
         --i "${1}/${i}" \
@@ -187,8 +187,8 @@ run_analysis() {
         --overlap "${OVERLAP}" \
 	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
-        --custom_list "${CUSTOM_LIST}"\
-        --s "${STATION_NUMBER}"\
+        --custom_list "${CUSTOM_LIST}" \
+        --s "${STATION_NUMBER}" \
         --meta_data "${STATION_NAME}" 
     fi
   done
