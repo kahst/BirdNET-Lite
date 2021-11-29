@@ -317,7 +317,7 @@ ExecStart=/usr/local/bin/daily_plot.py
 [Install]
 WantedBy=multi-user.target
 EOF
-  sudo systemctl enable chart_viewer.service
+  systemctl enable chart_viewer.service
 }
 
 install_gotty_logs() {
