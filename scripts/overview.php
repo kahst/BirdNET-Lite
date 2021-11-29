@@ -1,8 +1,8 @@
-                                                                           <?php
+<?php
 header("refresh: 300;");
 $myDate = date('d-m-Y');
 $user = 'birder';
-$password = '7dhh2bbc0sp4if97';
+$password = 'databasepassword';
 $database = 'birds';
 $servername='localhost';
 $mysqli = new mysqli($servername, $user, $password, $database);
