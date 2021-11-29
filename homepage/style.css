@@ -7,12 +7,21 @@
   display: flex;
 }
 
+.column1 {
+  flex: 70%;
+}
+
+.column2 {
+  flex: 30%;
+}
+
 .column {
   flex: 50%;
   padding-right: 5px;
 }
 
 table {
+  background-color: rgb(219, 255, 235);
   margin: 0 auto;
   font-size: large;
   border-collapse: collapse;
@@ -37,18 +46,13 @@ h2 {
 	' Calibri', 'Trebuchet MS', 'sans-serif';
 }
 
-td {
-	background-color: rgb(119, 196, 135);
-	border: 1px solid black;
-}
-
 th,
 td {
+  background-color: rgb(219, 255, 235);
 	font-weight: bold;
 	border: 1px solid black;
 	padding: 10px;
 	text-align: center;
-  	background-color: rgb(219, 296, 235);
 }
 
 @media screen and (max-width: 800px) {
@@ -57,6 +61,7 @@ td {
     width: 100%;
   }
   table {
+    background-color: rgb(219, 255, 235);
     margin: 0 auto;
     font-size: medium;
     border-collapse: collapse;
@@ -81,13 +86,9 @@ td {
   	' Calibri', 'Trebuchet MS', 'sans-serif';
   }
   
-  td {
-  	background-color: rgb(119, 196, 135);
-  	border: 1px solid black;
-  }
-  
   th,
   td {
+    background-color: rgb(219, 255, 235);
   	font-weight: bold;
   	border: 1px solid black;
   	padding: 10px;

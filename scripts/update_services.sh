@@ -7,7 +7,7 @@ USER=pi
 HOME=/home/pi
 my_dir=${HOME}/BirdNET-Pi/scripts
 tmpfile=$(mktemp)
-nomachine_url="https://download.nomachine.com/download/7.6/Arm/nomachine_7.6.2_3_arm64.deb"
+nomachine_url="https://download.nomachine.com/download/7.7/Arm/nomachine_7.7.4_1_arm64.deb"
 gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_arm.tar.gz"
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
@@ -300,6 +300,24 @@ EOF
    systemctl enable spectrogram_viewer.service
 }
 
+install_chart_viewer_service() {
+  echo "Installing the chart_viewer.service"
+  cat << EOF > /etc/systemd/system/chart_viewer.service
+[Unit]
+Description=BirdNET-Pi Chart Viewer Service
+
+[Service]
+Restart=always
+RestartSec=300
+Type=simple
+User=pi
+ExecStart=/usr/local/bin/daily_plot.py
+[Install]
+WantedBy=multi-user.target
+EOF
+  sudo systemctl enable chart_viewer.service
+}
+
 install_gotty_logs() {
   echo "Installing GoTTY logging"
   if ! which gotty &> /dev/null;then
@@ -489,6 +507,7 @@ install_selected_services() {
     install_sox
     install_mariadb
     install_spectrogram_service
+    install_chart_viewer_service
     install_edit_birdnet_conf
     install_pushed_notifications
 

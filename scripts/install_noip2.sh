@@ -5,5 +5,6 @@ tar -vzxf noip-duc-linux.tar.gz
 cd noip-2*
 make
 make install
-sed '/^exit 0$/i \/usr\/local\/bin\/noip2' /etc/rc.local
+chmod a+wr /usr/local/etc/no-ip2.conf
+sed -i '/^exit 0$/i \/usr\/local\/bin\/noip2' /etc/rc.local
 noip2 -S

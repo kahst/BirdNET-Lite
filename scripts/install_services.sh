@@ -302,6 +302,24 @@ EOF
    systemctl enable spectrogram_viewer.service
 }
 
+install_chart_viewer_service() {
+  echo "Installing the chart_viewer.service"
+  cat << EOF > /etc/systemd/system/chart_viewer.service
+[Unit]
+Description=BirdNET-Pi Chart Viewer Service
+
+[Service]
+Restart=always
+RestartSec=300
+Type=simple
+User=pi
+ExecStart=/usr/local/bin/daily_plot.py
+[Install]
+WantedBy=multi-user.target
+EOF
+  sudo systemctl enable chart_viewer.service
+}
+
 install_gotty_logs() {
   echo "Installing GoTTY logging"
   if ! which gotty &> /dev/null;then
@@ -492,6 +510,7 @@ install_selected_services() {
     install_sox
     install_mariadb
     install_spectrogram_service
+    install_chart_viewer_service
     install_edit_birdnet_conf
     install_pushed_notifications
 
