@@ -88,7 +88,47 @@ $mysqli->close();
 		</table>
 </div>
 </div>
-<div class="row">
+		</table>
+  </div>
+</div>
+		<h2>Today's Detections</h2>
+		<!-- TABLE CONSTRUCTION-->
+		<table>
+			<tr>
+				<th>Time</th>
+				<th>Scientific Name</th>
+				<th>Common Name</th>
+				<th>Confidence</th>
+				<th>Lat</th>
+				<th>Lon</th>
+				<th>Cutoff</th>
+				<th>Week</th>
+				<th>Sens</th>
+				<th>Overlap</th>
+			</tr>
+			<!-- PHP CODE TO FETCH DATA FROM ROWS-->
+<?php // LOOP TILL END OF DATA
+while($rows=$mosttable ->fetch_assoc())
+{
+?>
+			<tr>
+				<!--FETCHING DATA FROM EACH
+					ROW OF EVERY COLUMN-->
+				<td><?php echo $rows['Time'];?></td>
+				<td><?php echo $rows['Sci_Name'];?></td>
+				<td><?php echo $rows['Com_Name'];?></td>
+				<td><?php echo $rows['Confidence'];?></td>
+				<td><?php echo $rows['Lat'];?></td>
+				<td><?php echo $rows['Lon'];?></td>
+				<td><?php echo $rows['Cutoff'];?></td>
+				<td><?php echo $rows['Week'];?></td>
+				<td><?php echo $rows['Sens'];?></td>
+				<td><?php echo $rows['Overlap'];?></td>
+			</tr>
+<?php
+}
+?>
+		</table><div class="row">
   <div class="column">
 		<h2>Detected Species</h2>
 		<table>
@@ -132,47 +172,7 @@ while($rows=$speciestally ->fetch_assoc())
 <?php
 }
 ?>
-		</table>
-  </div>
-</div>
-		<h2>Today's Detections</h2>
-		<!-- TABLE CONSTRUCTION-->
-		<table>
-			<tr>
-				<th>Time</th>
-				<th>Scientific Name</th>
-				<th>Common Name</th>
-				<th>Confidence</th>
-				<th>Lat</th>
-				<th>Lon</th>
-				<th>Cutoff</th>
-				<th>Week</th>
-				<th>Sens</th>
-				<th>Overlap</th>
-			</tr>
-			<!-- PHP CODE TO FETCH DATA FROM ROWS-->
-<?php // LOOP TILL END OF DATA
-while($rows=$mosttable ->fetch_assoc())
-{
-?>
-			<tr>
-				<!--FETCHING DATA FROM EACH
-					ROW OF EVERY COLUMN-->
-				<td><?php echo $rows['Time'];?></td>
-				<td><?php echo $rows['Sci_Name'];?></td>
-				<td><?php echo $rows['Com_Name'];?></td>
-				<td><?php echo $rows['Confidence'];?></td>
-				<td><?php echo $rows['Lat'];?></td>
-				<td><?php echo $rows['Lon'];?></td>
-				<td><?php echo $rows['Cutoff'];?></td>
-				<td><?php echo $rows['Week'];?></td>
-				<td><?php echo $rows['Sens'];?></td>
-				<td><?php echo $rows['Overlap'];?></td>
-			</tr>
-<?php
-}
-?>
-		</table>
+
 	</section>
 </div>
 </html>
