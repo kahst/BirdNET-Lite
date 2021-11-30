@@ -59,6 +59,6 @@ sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME
 
 sudo -u ${BIRDNET_USER} cp -f ${HOME}/BirdNET-Pi/homepage/index.html ${EXTRACTED}/
 echo "Dropping and re-creating database"
-sudo /home/pi/BirdNET-Pi/scripts/createdb.sh
+sudo /home/pi/BirdNET-Pi/scripts/createdb_bullseye.sh
 echo "Restarting services"
 sudo systemctl restart birdnet_recording.service
