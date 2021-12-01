@@ -24,7 +24,7 @@ Check out birds from around the world
 * Web interface access to all data and logs
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
-* [BirdWeather](https://app.birdweather.com) integration (you will need to be issued a Station ID -- for now, request that from [@timsterc here](https://github.com/mcguirepr89/BirdNET-Pi/discussions/82))
+* [BirdWeather](https://app.birdweather.com) integration (you will need to be issued a BirdWeather ID -- for now, request that from [@timsterc here](https://github.com/mcguirepr89/BirdNET-Pi/discussions/82))
 * MariaDB integration
 * NoMachine remote desktop (for personal use only)
 * Live audio stream
