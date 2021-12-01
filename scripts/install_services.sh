@@ -113,6 +113,7 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/By_Date ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Date
   [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
   [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
+  [ -d ${EXTRACTED}/Charts ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  

@@ -112,6 +112,7 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/By_Date ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Date
   [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
   [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
+  [ -d ${EXTRACTED}/Charts ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
@@ -150,9 +151,7 @@ create_necessary_dirs() {
   sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
 
   echo "Setting Wttr.in URL to "${LATITUDE}", "${LONGITUDE}""
-  set -x
   sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
-  set +x
 }
 
 install_alsa() {
