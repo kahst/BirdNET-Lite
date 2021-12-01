@@ -54,11 +54,10 @@ DB_PWD=changeme
 ICE_PWD=changeme
 
 #---------------------  BirdWeather Station Information -----------------------#
-#________The two variables below can be set to have your BirdNET-Pi____________#
-#_______________also act as a BirdWeather listening station____________________#
+#_____________The variable below can be set to have your BirdNET-Pi____________#
+#__________________also act as a BirdWeather listening station_________________#
 
-STATION_NUMBER=99999
-STATION_NAME="Testing"
+BIRDWEATHER_ID=
 
 #-----------------------  Web-hosting/Caddy File-server -----------------------#
 #________The four variables below can be set to enable internet access_________#
