@@ -12,7 +12,7 @@ Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from 
 </p>
 
 ## Introduction
-The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite). It is able to recognize bird sounds from a USB sound card in realtime. 
+The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite) by [**@kahst**](https://github.com/kahst) using [pre-built TFLite binaries](https://github.com/PINTO0309/TensorflowLite-bin) by [**@PINTO0309**](https://github.com/PINTO0309) . It is able to recognize bird sounds from a USB sound card in realtime. 
 
 Check out birds from around the world
 - [My system in North Carolina, United States](https://birdnetpi.pmcgui.xyz)<br>
@@ -24,6 +24,7 @@ Check out birds from around the world
 * Web interface access to all data and logs
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
+* [BirdWeather](https://app.birdweather.com) integration (you will need to be issued a Station ID -- for now, request that from [@timsterc here](https://github.com/mcguirepr89/BirdNET-Pi/discussions/82))
 * MariaDB integration
 * NoMachine remote desktop (for personal use only)
 * Live audio stream
@@ -75,12 +76,4 @@ The bird names are in English by default, but other localized versions are avail
 The pre-built TFLite binaries for this project also support [the BirdNET-Demo](https://github.com/kahst/BirdNET-Demo), which I am currently testing for integration into the BirdNET-Pi. If you know anything about JavaScript and are willing to help, please let me know in the [Live Analysis discussion](https://github.com/mcguirepr89/BirdNET-Pi/discussions/24).
 
 ### Tips:
-You can try to overclock your Pi by placing the following in your `/boot/config.txt` file:
-
-```
-over_voltage=6
-arm_freq=1750
-```
-Be sure the Pi is adequately cooled and powered.
-
 For some reason, the system seems to run more efficiently and the birds sound better when you [![Star on GitHub](https://img.shields.io/github/stars/mcguirepr89/BirdNET-Pi.svg?style=social)](https://github.com/mcguirepr89/BirdNET-Pi/stargazers) the project :)
