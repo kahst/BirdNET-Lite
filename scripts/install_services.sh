@@ -36,9 +36,9 @@ install_mariadb() {
   echo "Initializing the database"
   source /etc/os-release
   if [[ "${VERSION_CODENAME}" == "buster" ]];then
-    ${my_dir}/createdb_buster.sh
+    USER=${USER} ${my_dir}/createdb_buster.sh
   elif [[ "${VERSION_CODENAME}" == "bullseye" ]];then
-    ${my_dir}/createdb_bullseye.sh
+    USER=${USER} ${my_dir}/createdb_bullseye.sh
   fi
 }
 
