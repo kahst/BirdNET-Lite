@@ -17,7 +17,7 @@ df['Date']=pd.to_datetime(df['Date'])
 df['Time']=pd.to_datetime(df['Time'])
 
 #Add round hours to dataframe
-df['Hour of day'] = [r.hour for r in df.Time]
+df['Hour of Day'] = [r.hour for r in df.Time]
 
 #Create separate dataframes for separate locations
 df_jhb=df[df.Lat > -32]
@@ -25,7 +25,7 @@ df_ec = df[df.Lat < -32]
 
 #Get todays readings for Joburg
 now = datetime.now()
-df_jhb_today = df_jhb[df_jhb['Date']==now.strftime("%d-%m-%y")]
+df_jhb_today = df_jhb[df_jhb['Date']==now.strftime("%Y-%m-%d")]
 
 # Definition to start getting top N detections - work in process
 def filter_by_freq(df: pd.DataFrame, column: str, min_freq: int) -> pd.DataFrame:
@@ -80,7 +80,7 @@ plot.set(xlabel="Detections")
 
 #Generate crosstab matrix for heatmap plot
 
-heat = pd.crosstab(df_jhb_top10_today['Com_Name'],df_jhb_top10_today['Hour of day'])
+heat = pd.crosstab(df_jhb_top10_today['Com_Name'],df_jhb_top10_today['Hour of Day'])
 #Order heatmap Birds by frequency of occurrance
 heat.index = pd.CategoricalIndex(heat.index, categories = pd.value_counts(df_jhb_top10_today['Com_Name']).iloc[:10].index)
 heat.sort_index(level=0, inplace=True)
@@ -98,16 +98,16 @@ for _, spine in plot.spines.items():
     spine.set_visible(True)
 
 plot.set(ylabel=None)
-plot.set(xlabel="Hour of day")
+plot.set(xlabel="Hour of Day")
 #Set combined plot layout and titles
 plt.tight_layout()
 f.subplots_adjust(top=0.9)
-plt.suptitle("Last Updated: "+ str(now.strftime("%B %d, %Y %I:%M%P")))
+plt.suptitle("Last Updated: "+ str(now.strftime("%B, %d at %I:%M%P")))
 
 #Save combined plot
 savename='/home/pi/BirdSongs/Extracted/Combo-'+str(now.strftime("%d-%m-%Y"))+'.png'
 plt.savefig(savename)
-
+plt.close()
 
 
 #Get bottom 10 today
@@ -124,9 +124,9 @@ f, axs = plt.subplots(1, 2, figsize = (8, 4), gridspec_kw=dict(width_ratios=[3, 
 plot=sns.countplot(y='Com_Name', data = df_jhb_bot10_today, palette = pal+"_r", order=pd.value_counts(df_jhb_bot10_today['Com_Name']).iloc[:10].index, ax=axs[0])
 plot.set_yticklabels(['\n'.join(textwrap.wrap(ticklabel.get_text(),17)) for ticklabel in plot.get_yticklabels()])
 plot.set(ylabel=None)
-plot.set(xlabel="Detections")
+plot.set(xlabel="no. of detections")
 #Generate crosstab matrix for heatmap plot
-heat = pd.crosstab(df_jhb_bot10_today['Com_Name'],df_jhb_bot10_today['Hour of day'])
+heat = pd.crosstab(df_jhb_bot10_today['Com_Name'],df_jhb_bot10_today['Hour of Day'])
 
 #Order heatmap Birds by frequency of occurrance
 heat.index = pd.CategoricalIndex(heat.index, categories = pd.value_counts(df_jhb_bot10_today['Com_Name']).iloc[:10].index)
@@ -146,9 +146,9 @@ plot.set(ylabel=None)
 plt.tight_layout()
 f.subplots_adjust(top=0.9)
 plt.suptitle("Bottom 10 Detected: "+ str(now.strftime("%d-%h-%Y %H:%M")))
-plot.set(xlabel="Hour of day")
+plot.set(xlabel="Hour of Day")
 #Save combined plot
 savename='/home/pi/BirdSongs/Extracted/Combo2-'+str(now.strftime("%d-%m-%Y"))+'.png'
 plt.savefig(savename)
 
-plt.show()
+plt.close()
