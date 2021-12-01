@@ -93,5 +93,5 @@ table,th,td {
 	</section>
 </div>
 
-<img src='/Combo-<?php echo $myDate;?>.png?nocache=<?php echo time();?>' class="center">
+<img src='/Charts/Combo-<?php echo $myDate;?>.png?nocache=<?php echo time();?>' class="center">
 </html>

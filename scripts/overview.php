@@ -125,7 +125,7 @@ while($rows=$mostrecent ->fetch_assoc())
   </div>
 </div>
     <h2 style="margin-left: -150px;">Today's Top 10 Species</h2>
-<img src='/Combo-<?php echo $myDate;?>.png?nocache=<?php echo time();?>' style="width: 100%;padding: 5px;">
+<img src='/Charts/Combo-<?php echo $myDate;?>.png?nocache=<?php echo time();?>' style="width: 100%;padding: 5px;">
     <h2 style="margin-left: -150px;">Currently Analyzing</h2>
 <img src='/spectrogram.png?nocache=<?php echo time();?>' style="width: 100%;padding: 5px;">
 </html>
