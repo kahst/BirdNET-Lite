@@ -52,7 +52,7 @@ remove_services
 remove_scripts
 
 # Stage 2 does a git pull to fetch new things
-sudo -u${USER} git -C ${HOME}/BirdNET-Pi checkout -f
-sudo -u${USER} git -C ${HOME}/BirdNET-Pi pull -f
+#sudo -u${USER} git -C ${HOME}/BirdNET-Pi checkout -f
+#sudo -u${USER} git -C ${HOME}/BirdNET-Pi pull -f
 # Trigger the new update_birdnet2.sh
 sudo -u${USER} ${my_dir}/update_birdnet2.sh
