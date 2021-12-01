@@ -12,7 +12,7 @@ Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from 
 </p>
 
 ## Introduction
-The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite). It is able to recognize bird sounds from a USB sound card in realtime. 
+The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite) by [**@kahst**](https://github.com/kahst) using [pre-built TFLite binaries](https://github.com/PINTO0309/TensorflowLite-bin) by [**@PINTO0309**](https://github.com/PINTO0309) . It is able to recognize bird sounds from a USB sound card in realtime. 
 
 Check out birds from around the world
 - [My system in North Carolina, United States](https://birdnetpi.pmcgui.xyz)<br>
