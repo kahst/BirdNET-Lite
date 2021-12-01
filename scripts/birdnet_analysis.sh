@@ -102,7 +102,7 @@ run_analysis() {
       done
     fi
 
-    if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ] && [ -z $STATION_NUMBER ];then
+    if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ] && [ -z $BIRDWEATHER_ID ];then
       echo "python3 analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
@@ -121,7 +121,7 @@ run_analysis() {
         --overlap "${OVERLAP}" \
 	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}"
-    elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ] && [ -z $STATION_NUMBER ];then
+    elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ] && [ -z $BIRDWEATHER_ID ];then
       echo "python3 analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
@@ -142,7 +142,7 @@ run_analysis() {
 	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
 	      --custom_list "${CUSTOM_LIST}"
-    elif [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ] && [ ! -z $STATION_NUMBER ];then
+    elif [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
       echo "python3 analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
@@ -152,8 +152,7 @@ run_analysis() {
 --overlap "${OVERLAP}" \
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
---s "${STATION_NUMBER}" \
---meta_data "${STATION_NAME}""
+--birdweather_id IN_USE" 
       "${VENV}"/bin/python analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -163,9 +162,8 @@ run_analysis() {
         --overlap "${OVERLAP}" \
 	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
-        --s "${STATION_NUMBER}" \
-        --meta_data "${STATION_NAME}"
-    elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ] && [ ! -z $STATION_NUMBER ];then
+        --birdweather_id "${BIRDWEATHER_ID}"
+    elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
       echo "python3 analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
@@ -175,9 +173,8 @@ run_analysis() {
 --overlap "${OVERLAP}" \
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
---custom_list "${CUSTOM_LIST}"\
---s "${STATION_NUMBER}" \
---meta_data "${STATION_NAME}""
+--custom_list "${CUSTOM_LIST}" \
+--birdweather_id IN_USE" 
       "${VENV}"/bin/python analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -188,8 +185,7 @@ run_analysis() {
 	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
         --custom_list "${CUSTOM_LIST}" \
-        --s "${STATION_NUMBER}" \
-        --meta_data "${STATION_NAME}" 
+        --birdweather_id "${BIRDWEATHER_ID}" 
     fi
   done
 }
