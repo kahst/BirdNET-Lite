@@ -36,5 +36,6 @@ six
 SoundFile
 tflite-runtime
 threadpoolctl
+tzlocal
 urllib3
 wheel

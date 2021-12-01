@@ -1,3 +1,5 @@
+# BirdWeather edits by @timsterc
+# Other edits by @CaiusX and @mcguirepr89
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = ''

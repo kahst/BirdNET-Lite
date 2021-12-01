@@ -1,5 +1,7 @@
 /* style sheet */
 * {
+	font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
+	' Calibri', 'Trebuchet MS', 'sans-serif';
   box-sizing: border-box;
 }
 
@@ -34,16 +36,12 @@ h1 {
 	text-align: center;
 	color: black;
 	font-size: xx-large;
-	font-family: 'Gill Sans', 'Gill Sans MT',
-	' Calibri', 'Trebuchet MS', 'sans-serif';
 }
 
 h2 {
 	text-align: center;
 	color: black;
 	font-size: large;
-	font-family: 'Gill Sans', 'Gill Sans MT',
-	' Calibri', 'Trebuchet MS', 'sans-serif';
 }
 
 th,
