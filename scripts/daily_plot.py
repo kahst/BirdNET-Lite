@@ -105,7 +105,7 @@ f.subplots_adjust(top=0.9)
 plt.suptitle("Last Updated: "+ str(now.strftime("%B, %d at %I:%M%P")))
 
 #Save combined plot
-savename='/home/pi/BirdSongs/Extracted/Combo-'+str(now.strftime("%d-%m-%Y"))+'.png'
+savename='/home/pi/BirdSongs/Extracted/Charts/Combo-'+str(now.strftime("%d-%m-%Y"))+'.png'
 plt.savefig(savename)
 plt.close()
 
@@ -148,7 +148,7 @@ f.subplots_adjust(top=0.9)
 plt.suptitle("Bottom 10 Detected: "+ str(now.strftime("%d-%h-%Y %H:%M")))
 plot.set(xlabel="Hour of Day")
 #Save combined plot
-savename='/home/pi/BirdSongs/Extracted/Combo2-'+str(now.strftime("%d-%m-%Y"))+'.png'
+savename='/home/pi/BirdSongs/Extracted/Charts/Combo2-'+str(now.strftime("%d-%m-%Y"))+'.png'
 plt.savefig(savename)
 
 plt.close()
