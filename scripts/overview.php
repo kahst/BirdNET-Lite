@@ -50,36 +50,33 @@ $mysqli->close();
 
 <head>
   <meta charset="UTF-8">
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Overview</title>
   <!-- CSS FOR STYLING THE PAGE -->
 <link rel="stylesheet" href="style.css">
 
 
 <style>
-table,td,th {
-    background-color: rgb(219, 255, 235);
-}
 .center {
   display: block;
   margin-left: 5px;
   margin-right: 5px;
   width: 90%;
-  padding-top: 10px;
+  padding: 5px;
 }
 .center2 {
   display: block;
   margin-left: 5px;
   margin-right: 5px;
   width: 100%;
-  padding-top: 10px;
+  padding: 5px;
 }
 </style>
 </head>
 <body style="background-color: rgb(119, 196, 135);">
-    <h2 style="margin-left: -150px;">Overview</h2>
+    <h2>Overview</h2>
 <div class="row">
- <div class="column" style="padding-right: 5px;">
+ <div class="column2">
 <?php // LOOP TILL END OF DATA
 while($rows=$mostrecent ->fetch_assoc())
 {
@@ -98,8 +95,8 @@ while($rows=$mostrecent ->fetch_assoc())
 }
 ?>
 
-<div class="row" style="padding-top: 10px;">
- <div class="column" style="flex: 70%;padding-right: auto;">
+<div class="row">
+ <div class="column">
     <table>
       <tr>
         <th></th>
@@ -115,7 +112,7 @@ while($rows=$mostrecent ->fetch_assoc())
       </tr>
     </table>
   </div>
- <div class="column" style="flex: 30%;padding-right: 5px;padding-left: auto;">
+ <div class="column">
     <table>
       <tr>
         <th>Species Detected Today</th>
@@ -124,8 +121,8 @@ while($rows=$mostrecent ->fetch_assoc())
     </table>
   </div>
 </div>
-    <h2 style="margin-left: -150px;">Today's Top 10 Species</h2>
-<img src='/Charts/Combo-<?php echo $myDate;?>.png?nocache=<?php echo time();?>' style="width: 100%;padding: 5px;">
-    <h2 style="margin-left: -150px;">Currently Analyzing</h2>
+    <h2>Today's Top 10 Species</h2>
+<img src='/Charts/Combo-<?php echo $myDate;?>.png?nocache=<?php echo time();?>' style="width: 100%;padding: 5px;margin-left: auto;margin-right: auto;display: block;">
+    <h2>Currently Analyzing</h2>
 <img src='/spectrogram.png?nocache=<?php echo time();?>' style="width: 100%;padding: 5px;">
 </html>

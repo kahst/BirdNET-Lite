@@ -66,21 +66,23 @@ table,th,td {
 }
 </style>
 </head>
-<body style="background-color: rgb(119, 196, 135);background-image: linear-gradient(to top, rgb(119, 196, 135),black;">
+
+<img src='/Charts/Combo-<?php echo $myDate;?>.png?nocache=<?php echo time();?>' class="center">
+<body style="background-color: rgb(119, 196, 135);">
 
 	<section>
 <div class="row">
- <div cladd="column" style="width: 100%;padding-left: 15%;padding-right: 15%;padding-bottom: 10px;">
-		<h2>Number of Detections</h2>
+ <div class="column2">
 		<table>
 			<tr>
-
+				<th></th>
 				<th>Today</th>
 				<th>Last Hour</th>
 				<th>Number of Unique Species Today</th>
 			</tr>
 			<tr>
 
+				<th>Number of Detections</th>
 				<td><?php echo $todayscount;?></td>
 				<td><?php echo $lasthourcount;?></td>
 				<td><?php echo $speciescount;?></td>
@@ -93,5 +95,4 @@ table,th,td {
 	</section>
 </div>
 
-<img src='/Charts/Combo-<?php echo $myDate;?>.png?nocache=<?php echo time();?>' class="center">
 </html>
