@@ -1,4 +1,5 @@
 # main v.10 & pre-installed image notes
+- New "BirdWeather" Chromium App (Pre-install image)
 - New Infographics _chart_viewer.service_ (courtesy of @CaiusX)
 - New "Overview"
 - BirdWeather Support
