@@ -35,9 +35,9 @@ install_mariadb() {
   fi
   source /etc/os-release
   if [[ "${VERSION_CODENAME}" == "buster" ]];then
-    ${my_dir}/update_db_pwd_buster.sh
+    USER=${USER} ${my_dir}/update_db_pwd_buster.sh
   elif [[ "${VERSION_CODENAME}" == "bullseye" ]];then
-    ${my_dir}/update_db_pwd_bullseye.sh
+    USER=${USER} ${my_dir}/update_db_pwd_bullseye.sh
   fi
 }
 
