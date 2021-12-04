@@ -145,6 +145,8 @@ create_necessary_dirs() {
   fi
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewday.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
   sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
@@ -154,7 +156,14 @@ create_necessary_dirs() {
   echo "Setting Wttr.in URL to "${LATITUDE}", "${LONGITUDE}""
   sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
 
+}
 
+generate_BirdDB() {
+  echo "Generating BirdDB.txt"
+  [ -f $(dirname ${my_dir})/BirdDB.txt ] || sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
+  if ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
+    sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
+  fi
 }
 
 install_alsa() {
