@@ -52,7 +52,6 @@ install_birdnet() {
   source ./birdnet/bin/activate
   echo "Upgrading pip, wheel, and setuptools"
   pip3 install --upgrade pip wheel setuptools
-set -x
   python_version="$(awk -F. '{print $2}' <(ls -l $(which /usr/bin/python3)))"
   echo "python_version=${python_version}"
   # TFLite Pre-built binaires from https://github.com/PINTO0309/TensorflowLite-bin
@@ -67,13 +66,14 @@ set -x
   echo "Installing the TFLite bin wheel"
   pip3 install --upgrade tflite_runtime-2.6.0-cp39-none-linux_aarch64.whl
   fi
-set +x
   echo "Installing colorama==0.4.4"
   pip3 install colorama==0.4.4
   echo "Installing librosa"
   pip3 install librosa
   echo "Installing mysql-connector-python"
   pip3 install mysql-connector-python
+  echo "Making sure everything else is installed"
+  pip3 install -U -r /home/pi/BirdNET-Pi/requirements.txt
 }
 
 read -sp "\

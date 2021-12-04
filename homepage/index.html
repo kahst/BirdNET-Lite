@@ -1,45 +1,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BirdNET-Pi</title>
-<style>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BirdNET-Pi</title>
+    <style>
 * {
-	background-color: background-color: rgb(119, 196, 135);
+  background-color: background-color: rgb(119, 196, 135);
 }
-</style>
-</head>
-<!--
-Note the following:
-1. Each frame has it's own 'frame' tag.
-2. Each frame has a name (eg, name="menu"). This is used for when you need to load one frame from another. For example, your left frame might have links that, when clicked on, loads a new page in the right frame. This is acheived by using 'target="content"' within your links/anchor tags.
-3. Each 'frame' tag has a 'src' attribute. This is where you specify the name of the file to be loaded into that frame when the page first loads.
-4. You can change the size of the frames by changing the value of the 'cols' and/or 'rows' attribute. A value of "200" sets the frame at 200 pixels. An asterisk (*) specifies that the frame should use up whatever space is left over from the other frames. You can also use percentage values if desired (i.e. 20%,80%)
-5. To specify a border, set 'frameborder' and 'border' to "1". I included both attributes for maximum browser compatibility.
-6. The 'framespacing' attribute doesn't work in all browsers, but you can set any numeric value you like here.
-7. To learn more about HTML frames, check out: http://www.quackit.com/html/tutorial/html_frames.cfm
--->
-<script type="text/javascript">
-  if (screen.width <= 699) {
-    document.location = "/mobile.html";
-  }
-</script>
+    </style>
+  </head>
+  <!--
+    Note the following:
+    1. Each frame has it's own 'frame' tag.
+    2. Each frame has a name (eg, name="menu"). This is used for when you need to load one frame from another. For example, your left frame might have links that, when clicked on, loads a new page in the right frame. This is acheived by using 'target="content"' within your links/anchor tags.
+    3. Each 'frame' tag has a 'src' attribute. This is where you specify the name of the file to be loaded into that frame when the page first loads.
+    4. You can change the size of the frames by changing the value of the 'cols' and/or 'rows' attribute. A value of "200" sets the frame at 200 pixels. An asterisk (*) specifies that the frame should use up whatever space is left over from the other frames. You can also use percentage values if desired (i.e. 20%,80%)
+    5. To specify a border, set 'frameborder' and 'border' to "1". I included both attributes for maximum browser compatibility.
+    6. The 'framespacing' attribute doesn't work in all browsers, but you can set any numeric value you like here.
+    7. To learn more about HTML frames, check out: http://www.quackit.com/html/tutorial/html_frames.cfm
+  -->
+  <script type="text/javascript">
+    if (screen.width <= 699) {
+          document.location = "/mobile.html";
+        }
+  </script>
 
-<frameset rows="100,*" frameborder="0" border="0" framespacing="0">
-	<frameset style="background-color: rgb(119, 196, 135);" cols="150,*,150" frameborder="0" border="0" framespacing="0">
-		<frame style="fill: none;background: rgb(119, 196, 135);padding-top: 15px;padding-left: 32.5px;padding-right: 32.5px;"src="images/bird.png" class="ribbon"/>
-		<frame name="topNav" src="top.html" scrolling="off">
-		<frame name="footer" src="footer.html" scrolling="off">
-	</frameset>
-	<frameset cols="150,*" frameborder="0" border="0" framespacing="0">
-			<frame name="menu" src="menu.html" marginheight="0" marginwidth="0" scrolling="off" noresize>
-		<frame name="content" src="/viewdb.php" marginheight="0" marginwidth="0" scrolling="auto" noresize>
+  <frameset rows="100,*" frameborder="0" border="0" framespacing="0">
+    <frameset style="background-color: rgb(119, 196, 135);" cols="*,150" frameborder="0" border="0" framespacing="0" />
+      <frame name="topNav" src="top.html" scrolling="off">
+      <frame name="footer" src="footer.html" scrolling="off">
+    </frameset>
+    <frameset cols="150,*" frameborder="0" border="0" framespacing="0">
+      <frame name="menu" src="menu.html" marginheight="0" marginwidth="0" scrolling="auto" noresize>
+      <frame name="content" src="/overview.php" marginheight="0" marginwidth="0" scrolling="auto" noresize>
 
-	<! -- <frame name="footer" src="footer.html" scrolling="off"> -->
+      <noframes>
+        <p>This section (everything between the 'noframes' tags) will only be displayed if the users' browser doesn't support frames. You can provide a link to a non-frames version of the website here. Feel free to use HTML tags within this section.</p>
+      </noframes>
 
-	<noframes>
-		<p>This section (everything between the 'noframes' tags) will only be displayed if the users' browser doesn't support frames. You can provide a link to a non-frames version of the website here. Feel free to use HTML tags within this section.</p>
-	</noframes>
-
-</frameset>
+    </frameset>
 </html>

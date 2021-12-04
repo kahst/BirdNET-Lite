@@ -1,18 +1,19 @@
 # Birders Guide Installer Configuration File
 
-###########################################################################
+################################################################################
 #              Fill this out in order to install BirdNET-Lite
 #                Follow the instructions for each section.
-###########################################################################
+################################################################################
 
 
 # 1. To find your latitude and longitude, you can go to https://maps.google.com
 # 1a. Find the location on the map where you will be putting the BirdNET-Lite
-# 1b. Right-click the location to view the latitude and longitude and click them to
-#     copy them to your clip-board.
-# 2. Enter the latitude and longitude here. Be certain not to mix them up and
-#    only go to the thousandth's decimal place. The first number is the latitude,
-#    and the second is longitude. See the example below.
+# 1b. Right-click the location to view the latitude and longitude and click 
+#     them to copy them to your clip-board.
+# 2. Enter the latitude and longitude here. Be certain not to mix them up.
+#    The first number is the latitude, and the second is longitude. See the 
+#    example below.
+#
 # Example: these coordinates would indicate the Eiffel Tower in Paris, France.
 # LATITUDE=48.858
 # LONGITUDE=2.294
@@ -22,17 +23,17 @@ LONGITUDE=
 
 # 1. CADDY_PWD is the password you will use to access your live audio stream and
 #    maintenance tools. You can set this to anything, but keep it alpha-numeric.
-#    You will probably also want to write this one down if you ever plan to listen
-#    to the live stream.
-# 2. ICE_PWD is the password that IceCast2 will use to authenticate the stream source.
-#    You can set this to anything also, but keep it alpha-numeric. You will never use
-#    this again, so just set it to your favorite word.
+#    You will probably also want to write this one down if you ever plan to 
+#    listen to the live stream.
+# 2. ICE_PWD is the password that IceCast2 will use to authenticate the stream 
+#    source.You can set this to anything also, but keep it alpha-numeric. You 
+#    will never use this again, so just set it to your favorite word.
 
 CADDY_PWD=
 ICE_PWD=
 
-# DB_PWD is the password that the system will use to access the database. Set this to
-# anything you want.
+# DB_PWD is the password that the system will use to access the database. Set 
+# this to anything you want.
 
 DB_PWD=
 
@@ -49,3 +50,10 @@ PUSHED_APP_KEY=
 BIRDNETPI_URL=
 BIRDNETLOG_URL=
 EXTRACTIONLOG_URL=
+
+# If you would like to POST your BirdNET-Pi detections to 
+# https://app.birdweather.com, reach out to github:@timsterc for a unique and 
+# confidential BirdWeather ID. Place that here if you have one already.
+# You can always add this later and the system will immediately start POSTing.
+
+BIRDWEATHER_ID=

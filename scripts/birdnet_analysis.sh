@@ -91,18 +91,18 @@ run_analysis() {
     if [ "${RECORDING_LENGTH}" == "01:00" ];then
       until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "${RECORDING_LENGTH}" ];do
         sleep 1
-	[ $a -ge 60 ] && sudo rm -f ${1}/${i} && break
-	a=$((a+1))
+      	[ $a -ge 60 ] && sudo rm -f ${1}/${i} && break
+      	a=$((a+1))
       done	
     else 
       until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "00:${RECORDING_LENGTH}" ];do
         sleep 1
-	[ $a -ge ${RECORDING_LENGTH} ] && sudo rm -f ${1}/${i} && break
-	a=$((a+1))
+      	[ $a -ge ${RECORDING_LENGTH} ] && sudo rm -f ${1}/${i} && break
+      	a=$((a+1))
       done
     fi
 
-    if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ];then
+    if [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ] && [ -z $BIRDWEATHER_ID ];then
       echo "python3 analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
@@ -119,9 +119,9 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
-	--sensitivity "${SENSITIVITY}" \
+	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}"
-    elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ];then
+    elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ] && [ -z $BIRDWEATHER_ID ];then
       echo "python3 analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
@@ -139,10 +139,54 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
-	--sensitivity "${SENSITIVITY}" \
+	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
-	--custom_list "${CUSTOM_LIST}"
-   fi
+	      --custom_list "${CUSTOM_LIST}"
+    elif [ -f ${1}/${i} ] && [ ! -f ${CUSTOM_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
+      echo "python3 analyze.py \
+--i "${1}/${i}" \
+--o "${1}/${i}.csv" \
+--lat "${LATITUDE}" \
+--lon "${LONGITUDE}" \
+--week "${WEEK}" \
+--overlap "${OVERLAP}" \
+--sensitivity "${SENSITIVITY}" \
+--min_conf "${CONFIDENCE}" \
+--birdweather_id IN_USE" 
+      "${VENV}"/bin/python analyze.py \
+        --i "${1}/${i}" \
+        --o "${1}/${i}.csv" \
+        --lat "${LATITUDE}" \
+        --lon "${LONGITUDE}" \
+        --week "${WEEK}" \
+        --overlap "${OVERLAP}" \
+	      --sensitivity "${SENSITIVITY}" \
+        --min_conf "${CONFIDENCE}" \
+        --birdweather_id "${BIRDWEATHER_ID}"
+    elif [ -f ${1}/${i} ] && [ -f ${CUSTOM_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
+      echo "python3 analyze.py \
+--i "${1}/${i}" \
+--o "${1}/${i}.csv" \
+--lat "${LATITUDE}" \
+--lon "${LONGITUDE}" \
+--week "${WEEK}" \
+--overlap "${OVERLAP}" \
+--sensitivity "${SENSITIVITY}" \
+--min_conf "${CONFIDENCE}" \
+--custom_list "${CUSTOM_LIST}" \
+--birdweather_id IN_USE" 
+      "${VENV}"/bin/python analyze.py \
+        --i "${1}/${i}" \
+        --o "${1}/${i}.csv" \
+        --lat "${LATITUDE}" \
+        --lon "${LONGITUDE}" \
+        --week "${WEEK}" \
+        --overlap "${OVERLAP}" \
+	      --sensitivity "${SENSITIVITY}" \
+        --min_conf "${CONFIDENCE}" \
+        --custom_list "${CUSTOM_LIST}" \
+        --birdweather_id "${BIRDWEATHER_ID}" 
+    fi
   done
 }
 

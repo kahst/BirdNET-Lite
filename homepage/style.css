@@ -1,18 +1,34 @@
 /* style sheet */
 * {
+  font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
+  ' Calibri', 'Trebuchet MS', 'sans-serif';
   box-sizing: border-box;
 }
 
-.row {
-  display: flex;
+/* Create two equal columns that floats next to each other */
+.column2 {
+  margin-left: auto;
+  margin-right: auto;
+  width: 75%;
+  padding: 5px;
 }
 
+/* Create two equal columns that floats next to each other */
 .column {
-  flex: 50%;
-  padding-right: 5px;
+  float: left;
+  width: 50%;
+  padding: 5px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 table {
+  background-color: rgb(219, 255, 235);
   margin: 0 auto;
   font-size: large;
   border-collapse: collapse;
@@ -22,82 +38,59 @@ table {
 }
 
 h1 {
-	text-align: center;
-	color: black;
-	font-size: xx-large;
-	font-family: 'Gill Sans', 'Gill Sans MT',
-	' Calibri', 'Trebuchet MS', 'sans-serif';
+  text-align: center;
+  color: black;
+  font-size: xx-large;
 }
 
 h2 {
-	text-align: center;
-	color: black;
-	font-size: large;
-	font-family: 'Gill Sans', 'Gill Sans MT',
-	' Calibri', 'Trebuchet MS', 'sans-serif';
+  margin-left: -150px;
+  text-align: center;
+  color: black;
+  font-size: large;
+}
+
+h3 {
+  text-align: center;
+  color: black;
+  font-size: large;
 }
 
 td {
-	background-color: rgb(119, 196, 135);
-	border: 1px solid black;
+  background-color: rgb(219, 255, 235);
+  font-weight: lighter;
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
 }
 
-th,
-td {
-	font-weight: bold;
-	border: 1px solid black;
-	padding: 10px;
-	text-align: center;
-  	background-color: rgb(219, 296, 235);
+th {
+  background-color: rgb(219, 255, 235);
+  font-weight: bold;
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
 }
 
-@media screen and (max-width: 800px) {
-  .column {
-    float: none;
-    width: 100%;
-  }
-  table {
-    margin: 0 auto;
-    font-size: medium;
-    border-collapse: collapse;
-    border-spacing: 1;
-    width: 100%;
-    border: 1px solid black;
-  }
-  
-  h1 {
-  	text-align: center;
-  	color: black;
-  	font-size: large;
-  	font-family: 'Gill Sans', 'Gill Sans MT',
-  	' Calibri', 'Trebuchet MS', 'sans-serif';
-  }
-  
+@media screen and (max-width: 600px) {
   h2 {
-  	text-align: center;
-  	color: black;
-  	font-size: large;
-  	font-family: 'Gill Sans', 'Gill Sans MT',
-  	' Calibri', 'Trebuchet MS', 'sans-serif';
+    margin-left: 0;
+    text-align: center;
+    color: black;
+    font-size: large;
   }
-  
-  td {
-  	background-color: rgb(119, 196, 135);
-  	border: 1px solid black;
-  }
-  
-  th,
-  td {
-  	font-weight: bold;
-  	border: 1px solid black;
-  	padding: 10px;
-  	text-align: center;
-  }
-}
 
-td {
-	font-weight: lighter;
+  .column {
+    width: 100%;
+  }
+  /* Create two equal columns that floats next to each other */
+  .column2 {
+    float: center;
+    width: 100%;
+    padding: 0px;
+  }
+
+
 }
 body::-webkit-scrollbar {
-	display:none
-}
+  display:none

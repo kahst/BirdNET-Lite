@@ -40,5 +40,7 @@ GRANT ALL ON birds.* TO 'birder'@'localhost' IDENTIFIED BY '${DB_PWD}' WITH GRAN
 FLUSH PRIVILEGES;
 exit
 EOF
-sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/analyze.py
-sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/viewdb.php
+sudo -u${USER} sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/analyze.py
+sudo -u${USER} sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/viewdb.php
+sudo -u${USER} sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/viewday.php
+sudo -u${USER} sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/overview.php

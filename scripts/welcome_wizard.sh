@@ -28,7 +28,7 @@ overview() {
 6) Updating the system to use your new birdnet.conf file" --no-wrap --icon-name=red-cardinal
 
  if [ $? -eq 0 ];then
-   exit 1
+   exit 0
  elif [ $? -eq 1 ];then
    open_rpi_configuration && change_password
  fi

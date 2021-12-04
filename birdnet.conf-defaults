@@ -53,6 +53,12 @@ DB_PWD=changeme
 
 ICE_PWD=changeme
 
+#---------------------  BirdWeather Station Information -----------------------#
+#_____________The variable below can be set to have your BirdNET-Pi____________#
+#__________________also act as a BirdWeather listening station_________________#
+
+BIRDWEATHER_ID=
+
 #-----------------------  Web-hosting/Caddy File-server -----------------------#
 #________The four variables below can be set to enable internet access_________#
 #____________to your data,(e.g., extractions, raw data, live___________________#

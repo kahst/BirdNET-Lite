@@ -1,74 +1,79 @@
 <html>
-<head>
-<title>HTML Frames Example - Menu</title>
-<style type="text/css">
+  <head>
+    <title>HTML Frames Example - Menu</title>
+    <style type="text/css">
 a {
-	text-decoration:none;
-	margin: 0px 0px 0px 0px;
-	color:black;
+  text-decoration:none;
+  margin: 0px 0px 0px 0px;
+  color:black;
+  font-size: small;
 }
 body {
-	font-family:verdana,arial,sans-serif;
-	font-size:medium;
-	margin:10px;
-	background-color: rgb(119, 196, 135);
+  font-family:verdana,arial,sans-serif;
+  font-size:medium;
+  margin:10px;
+  background-color: rgb(119, 196, 135);
+  text-align: left;
+  padding-bottom: 30px;
 }
 h3 {
-	margin: 0px 0px -15px 0px;
-	text-align: center;
+  margin: 0px 0px -15px 0px;
+  text-align: center;
 }
 h4,h5 {
-	text-align: center;
-	margin: 0px 0px 5px 0px;
+  text-align: center;
+  margin: 0px 0px 5px 0px;
 }
 footer {
-   position:absolute;
-   bottom:0;
-   left:0;
-   width:100%;
+  background: rgb(119, 196, 135);
+  position: fixed;
+  padding-top: 10px;
+  left: 0;
+  bottom: 0;
+  width:100%;
 }
 hr {
-	border-bottom: 1px solid black;
+  border-bottom: 1px solid black;
 }
-</style>
-</head>
-<body>
-<h5>Extractions</h5>
-<p style="font-size: small;text-align: center">
-<a href="http://birdnetpi.local/By_Date/" target="content">By Date</a><br>
-<a href="http://birdnetpi.local/By_Common_Name/" target="content">By Common Name</a><br>
-<a href="http://birdnetpi.local/By_Scientific_Name/" target="content">By Scientific Name</a><br>
-<a href="http://birdnetpi.local/Processed/" target="content">Processed</a><br>
+body::-webkit-scrollbar {
+	display:none
+}
+    </style>
+  </head>
+  <body>
 
-</p>
-<hr class="solid">
-<h5>System Links</h5>
-<p style="font-size: small;text-align: center">
-<a href="http://birdnetpi.local/scripts/" target="content">Tools</a><br>
+    <h5>Extractions</h5>
+    - <a href="http://birdnetpi.local/By_Date/" target="content">By Date</a><br>
+    - <a href="http://birdnetpi.local/By_Common_Name/" target="content">By Common Name</a><br>
+    - <a href="http://birdnetpi.local/By_Scientific_Name/" target="content">By Scientific Name</a><br>
+    - <a href="http://birdnetpi.local/Processed/" target="content">Processed</a><br>
 
-<a href="http://birdnetpi.local/phpsysinfo/" target="content">System Info</a><br>
+    <hr class="solid">
 
-<a href="http://birdnetpi.local:8080/" target="content">BirdNET-Lite Log</a><br>
+    <h5>System Links</h5>
+    - <a href="http://birdnetpi.local/scripts/" target="content">Tools</a><br>
+    - <a href="http://birdnetpi.local/phpsysinfo/" target="content">System Info</a><br>
+    - <a href="http://birdnetpi.local:8080" target="content">BirdNET-Lite Log</a><br>
+    - <a href="http://birdnetpi.local:8888" target="content">Extraction Log</a><br>
 
-<a href="http://birdnetpi.local:8888/" target="content">Extraction Log</a><br>
+    <hr class="solid">
 
-</p>
-<hr class="solid">
-<h5>External Links</h5>
-<p style="font-size: small;text-align: center">
-<a href="https://github.com/mcguirepr89/BirdNET-Pi" target="_content">Repository</a><br>
-<a href="https://github.com/mcguirepr89/BirdNET-Pi/wiki" target="_content">Wiki Help Page</a><br>
-<a href="https://wttr.in/" target="content">Wttr.in Report</a><br>
-<a href="https://www.birds.cornell.edu" target="_content">Cornell Lab of Ornithology</a><br>
-</p>
-<hr class="solid">
-<h5>Other<br>BirdNET-Pis</h5>
-<a style="font-size: small;" href="https://birdnetpi.pmcgui.xyz" target="_content">United States,</a>
-<a style="font-size: small;" href="https://birds.naturestation.net" target="_content">South Africa,</a>
-<a style="font-size: small;" href="https://birdnetpigermany.hopto.org" target="_content">Germany</a>
-</body>
-<footer style="font-size: small;">
-Icon by <a style="font-weight: bold" href="https://www.freepik.com" title="Freepik">Freepik</a> from <a style="font-weight: bold" href="https://www.flaticon.com/" title="Flaticon">Flaticon.com</a>
-</footer>
+    <h5>External Links</h5>
+    - <a href="https://app.birdweather.com" target="_content">BirdWeather</a><br>
+    - <a href="https://github.com/mcguirepr89/BirdNET-Pi" target="_content">Repository</a><br>
+    - <a href="https://github.com/mcguirepr89/BirdNET-Pi/wiki" target="_content">Wiki Help Page</a><br>
+    - <a href="https://v2.wttr.in/" target="content">Wttr.in Report</a><br>
+    - <a href="https://www.birds.cornell.edu" target="_content">Cornell Lab of Ornithology</a><br>
+    <hr class="solid">
+
+    <h5>Other<br>BirdNET-Pis</h5>
+    - <a href="https://birdnetpi.pmcgui.xyz" target="_content">United States</a><br>
+    - <a href="https://birds.naturestation.net" target="_content">South Africa</a><br>
+    - <a href="https://birdnetpigermany.hopto.org" target="_content">Germany</a>
+
+  </body>
+  <footer style="font-size: small;">
+    Icon by <a target="_content" style="font-weight: bold" href="https://www.freepik.com" title="Freepik">Freepik</a> from <a target="_content" style="font-weight: bold" href="https://www.flaticon.com/" title="Flaticon">Flaticon.com</a>
+  </footer>
 
 </html>

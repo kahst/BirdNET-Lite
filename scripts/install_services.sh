@@ -36,9 +36,9 @@ install_mariadb() {
   echo "Initializing the database"
   source /etc/os-release
   if [[ "${VERSION_CODENAME}" == "buster" ]];then
-    ${my_dir}/createdb_buster.sh
+    USER=${USER} ${my_dir}/createdb_buster.sh
   elif [[ "${VERSION_CODENAME}" == "bullseye" ]];then
-    ${my_dir}/createdb_bullseye.sh
+    USER=${USER} ${my_dir}/createdb_bullseye.sh
   fi
 }
 
@@ -113,6 +113,7 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/By_Date ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Date
   [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
   [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
+  [ -d ${EXTRACTED}/Charts ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
@@ -144,13 +145,27 @@ create_necessary_dirs() {
   fi
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewday.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
   sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
   sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
   sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
 
+  echo "Setting Wttr.in URL to "${LATITUDE}", "${LONGITUDE}""
+  sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
 
+}
+
+generate_BirdDB() {
+  echo "Generating BirdDB.txt"
+  if ! [ -f $(dirname ${my_dir})/BirdDB.txt ];then
+    sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
+    echo "Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap" | sudo -u ${USER} tee -a $(dirname ${my_dir})/BirdDB.txt
+  elif ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
+    sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
+  fi
 }
 
 install_alsa() {
@@ -300,6 +315,24 @@ ExecStart=/usr/local/bin/spectrogram.sh
 WantedBy=multi-user.target
 EOF
    systemctl enable spectrogram_viewer.service
+}
+
+install_chart_viewer_service() {
+  echo "Installing the chart_viewer.service"
+  cat << EOF > /etc/systemd/system/chart_viewer.service
+[Unit]
+Description=BirdNET-Pi Chart Viewer Service
+
+[Service]
+Restart=always
+RestartSec=300
+Type=simple
+User=pi
+ExecStart=/usr/local/bin/daily_plot.py
+[Install]
+WantedBy=multi-user.target
+EOF
+  systemctl enable chart_viewer.service
 }
 
 install_gotty_logs() {
@@ -492,6 +525,7 @@ install_selected_services() {
     install_sox
     install_mariadb
     install_spectrogram_service
+    install_chart_viewer_service
     install_edit_birdnet_conf
     install_pushed_notifications
 
@@ -505,6 +539,7 @@ install_selected_services() {
   fi
 
   create_necessary_dirs
+  generate_BirdDB
   install_cleanup_cron
 }
 
