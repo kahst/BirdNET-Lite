@@ -18,7 +18,7 @@ echo "Recreating necessary directories"
 [ -d ${EXTRACTED}/By_Date ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Date
 [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
 [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
-[ -d ${EXTRACTED}/Charts] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
+[ -d ${EXTRACTED}/Charts ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
 [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}
@@ -65,7 +65,7 @@ generate_BirdDB() {
   echo "Generating BirdDB.txt"
   [ -f $(dirname ${my_dir})/BirdDB.txt ] || sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
   if ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
-    sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
+    sudo -u ${USER} sed -i '1i Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
   fi
 }
 generate_BirdDB
