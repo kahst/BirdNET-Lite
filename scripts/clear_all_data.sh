@@ -12,6 +12,7 @@ sudo systemctl stop birdnet_recording.service
 echo "Removing all data . . . "
 sudo rm -drf "${RECS_DIR}"
 sudo rm -f "${IDFILE}"
+sudo rm -f $(dirname ${my_dir})/BirdDB.txt
 echo "Recreating necessary directories"
 echo "Creating necessary directories"
 [ -d ${EXTRACTED} ] || sudo -u ${USER} mkdir -p ${EXTRACTED}
@@ -49,6 +50,8 @@ if [ ! -z ${BIRDNETPI_URL} ];then
 fi
 
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
+sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
+sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewday.php ${EXTRACTED}
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
 sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
 sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
@@ -56,7 +59,14 @@ sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}
 sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
 
 
-
+generate_BirdDB() {
+  echo "Generating BirdDB.txt"
+  [ -f $(dirname ${my_dir})/BirdDB.txt ] || sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
+  if ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
+    sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
+  fi
+}
+generate_BirdDB
 sudo -u ${BIRDNET_USER} cp -f ${HOME}/BirdNET-Pi/homepage/index.html ${EXTRACTED}/
 echo "Dropping and re-creating database"
 sudo /home/pi/BirdNET-Pi/scripts/createdb_bullseye.sh

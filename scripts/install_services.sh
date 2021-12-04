@@ -537,6 +537,7 @@ install_selected_services() {
   fi
 
   create_necessary_dirs
+  generate_BirdDB
   install_cleanup_cron
 }
 
