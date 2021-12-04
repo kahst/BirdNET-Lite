@@ -61,14 +61,10 @@ sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME
 echo "Setting Wttr.in URL to "${LATITUDE}", "${LONGITUDE}""
 sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
 
-generate_BirdDB() {
-  echo "Generating BirdDB.txt"
-  [ -f $(dirname ${my_dir})/BirdDB.txt ] || sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
-  if ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
-    sudo -u ${USER} sed -i '1i Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
-  fi
-}
-generate_BirdDB
+echo "Generating BirdDB.txt"
+[ -f $(dirname ${my_dir})/BirdDB.txt ] || sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
+echo "Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap" | sudo -u ${BIRDNET_USER} tee -a $(dirname ${my_dir})/BirdDB.txt
+
 sudo -u ${BIRDNET_USER} cp -f ${HOME}/BirdNET-Pi/homepage/index.html ${EXTRACTED}/
 echo "Dropping and re-creating database"
 sudo /home/pi/BirdNET-Pi/scripts/createdb_bullseye.sh

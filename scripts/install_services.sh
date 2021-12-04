@@ -160,8 +160,10 @@ create_necessary_dirs() {
 
 generate_BirdDB() {
   echo "Generating BirdDB.txt"
-  [ -f $(dirname ${my_dir})/BirdDB.txt ] || sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
-  if ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
+  if ! [ -f $(dirname ${my_dir})/BirdDB.txt ];then
+    sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
+    echo "Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap" | sudo -u ${USER} tee -a $(dirname ${my_dir})/BirdDB.txt
+  elif ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
     sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
   fi
 }
