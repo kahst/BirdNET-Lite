@@ -39,7 +39,7 @@ Check out birds from around the world
 
 ## Installation
 Headless installation guide available [HERE](https://github.com/mcguirepr89/BirdNET-Pi/wiki/%22Headless%22-installation-using-VNC)<br>
-Pre-installeld beta image available for testing [HERE](https://pmcgui.xyz/sdm_downloads/birdnet-pi-v0-10-beta/)
+Pre-installeld beta image available for testing [HERE](https://github.com/mcguirepr89/BirdNET-Pi/discussions/11#discussioncomment-1751201)
 
 The system can be installed with:
 ```
