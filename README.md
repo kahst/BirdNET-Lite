@@ -1,5 +1,5 @@
 <h1 align="center">
-BirdNET-Pi <img src="https://img.shields.io/badge/version-0.9-blue" />
+BirdNET-Pi <img src="https://img.shields.io/badge/version-0.10-blue" />
 </h1>
 <p align="center">
 A realtime acoustic bird classification system for the Raspberry Pi 4B
@@ -39,7 +39,7 @@ Check out birds from around the world
 
 ## Installation
 Headless installation guide available [HERE](https://github.com/mcguirepr89/BirdNET-Pi/wiki/%22Headless%22-installation-using-VNC)<br>
-Pre-installeld beta image available for testing [HERE](https://pmcgui.xyz/sdm_downloads/birdnet-pi-v0-9-beta/)
+Pre-installeld beta image available for testing [HERE](https://pmcgui.xyz/sdm_downloads/birdnet-pi-v0-10-beta/)
 
 The system can be installed with:
 ```
