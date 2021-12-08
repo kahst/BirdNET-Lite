@@ -24,28 +24,28 @@ echo "Recreating necessary directories"
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}
 if [ ! -z ${BIRDNETLOG_URL} ];then
   BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-  sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+  sudo -u ${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
   phpfiles="$(grep -l "birdnetpi.local:8080" ${my_dir}/*.php)"
   for i in "${phpfiles[@]}";do
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" ${i}
+    sudo -u ${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" ${i}
   done
 fi
 if [ ! -z ${EXTRACTIONLOG_URL} ];then
   EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-  sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+  sudo -u ${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
   phpfiles="$(grep -l "birdnetpi.local:8888" ${my_dir}/*.php)"
   for i in "${phpfiles[@]}";do
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" ${i}
+    sudo -u ${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" ${i}
   done
 fi
 
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
 if [ ! -z ${BIRDNETPI_URL} ];then
   BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
-  sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+  sudo -u ${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
   phpfiles="$(grep -l birdnetpi.local ${my_dir}/*.php)"
   for i in "${phpfiles[@]}";do
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" ${i}
+    sudo -u ${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" ${i}
   done
 fi
 
@@ -59,7 +59,8 @@ sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}
 sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
 
 echo "Setting Wttr.in URL to "${LATITUDE}", "${LONGITUDE}""
-sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
+sudo -u ${USER} git -C $(dirname ${my_dir}) checkout -f homepage/menu.html
+sudo -u ${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
 
 echo "Generating BirdDB.txt"
 [ -f $(dirname ${my_dir})/BirdDB.txt ] || sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
