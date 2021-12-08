@@ -539,6 +539,7 @@ install_selected_services() {
   create_necessary_dirs
   generate_BirdDB
   install_cleanup_cron
+  systemctl restart php7.${php_version}-fpm
 }
 
 if [ -f ${config_file} ];then 

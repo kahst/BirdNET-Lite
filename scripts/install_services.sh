@@ -40,6 +40,7 @@ install_mariadb() {
   elif [[ "${VERSION_CODENAME}" == "bullseye" ]];then
     USER=${USER} ${my_dir}/createdb_bullseye.sh
   fi
+  systemctl restart php7.${php_version}-fpm
 }
 
 install_birdnet_analysis() {
