@@ -1,11 +1,8 @@
 <?php
 header("refresh: 300;");
 $myDate = date('d-m-Y');
-$user = 'birder';
-$password = 'databasepassword';
-$database = 'birds';
-$servername='localhost';
-$mysqli = new mysqli($servername, $user, $password, $database);
+$mysqli = mysqli_connect();
+$mysqli->select_db('birds');
 
 if ($mysqli->connect_error) {
 	die('Connect Error (' .
