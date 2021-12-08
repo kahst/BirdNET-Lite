@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # This reinstalls the services
-set -x # Uncomment to enable debugging
+#set -x # Uncomment to enable debugging
 trap 'rm -f ${tmpfile}' EXIT
 trap 'exit 1' SIGINT SIGHUP
 USER=pi
