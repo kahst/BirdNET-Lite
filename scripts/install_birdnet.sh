@@ -66,12 +66,6 @@ install_birdnet() {
   echo "Installing the TFLite bin wheel"
   pip3 install --upgrade tflite_runtime-2.6.0-cp39-none-linux_aarch64.whl
   fi
-  echo "Installing colorama==0.4.4"
-  pip3 install colorama==0.4.4
-  echo "Installing librosa"
-  pip3 install librosa
-  echo "Installing mysql-connector-python"
-  pip3 install mysql-connector-python
   echo "Making sure everything else is installed"
   pip3 install -U -r /home/pi/BirdNET-Pi/requirements.txt
 }
