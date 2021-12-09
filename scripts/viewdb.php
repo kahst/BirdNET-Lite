@@ -98,6 +98,7 @@ $mysqli->close();
 <?php // LOOP TILL END OF DATA
 while($rows=$mosttable ->fetch_assoc())
 {
+  $Confidence = sprintf("%.1f%%", $rows['Confidence'] * 100);
 ?>
       <tr>
         <!--FETCHING DATA FROM EACH
@@ -105,7 +106,7 @@ while($rows=$mosttable ->fetch_assoc())
         <td><?php echo $rows['Time'];?></td>
         <td><?php echo $rows['Sci_Name'];?></td>
         <td><?php echo $rows['Com_Name'];?></td>
-        <td><?php echo $rows['Confidence'];?></td>
+        <td><?php echo $Confidence;?></td>
         <td><?php echo $rows['Lat'];?></td>
         <td><?php echo $rows['Lon'];?></td>
         <td><?php echo $rows['Cutoff'];?></td>
@@ -130,12 +131,13 @@ while($rows=$mosttable ->fetch_assoc())
 <?php // LOOP TILL END OF DATA
 while($rows=$specieslist ->fetch_assoc())
 {
+  $MAX = sprintf("%.1f%%", $rows['MAX(Confidence)'] * 100)
 ?>
       <tr>
         <td><?php echo $rows['Com_Name'];?></td>
         <td><?php echo $rows['Date'];?></td>
         <td><?php echo $rows['Time'];?></td>
-        <td><?php echo $rows['MAX(Confidence)'];?></td>
+        <td><?php echo $MAX;?></td>
 
       </tr>
 <?php
