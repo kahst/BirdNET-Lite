@@ -1,5 +1,5 @@
 <h1 align="center">
-BirdNET-Pi <img src="https://img.shields.io/badge/version-0.10-blue" />
+  BirdNET-Pi <img src="https://img.shields.io/badge/version-0.10-blue" /><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg"></a>
 </h1>
 <p align="center">
 A realtime acoustic bird classification system for the Raspberry Pi 4B
@@ -12,12 +12,14 @@ Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from 
 </p>
 
 ## Introduction
-The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite) by [**@kahst**](https://github.com/kahst) using [pre-built TFLite binaries](https://github.com/PINTO0309/TensorflowLite-bin) by [**@PINTO0309**](https://github.com/PINTO0309) . It is able to recognize bird sounds from a USB sound card in realtime. 
+The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite) by [**@kahst**](https://github.com/kahst) using [pre-built TFLite binaries](https://github.com/PINTO0309/TensorflowLite-bin) by [**@PINTO0309**](https://github.com/PINTO0309) . It is able to recognize bird sounds from a USB sound card in realtime.
 
 Check out birds from around the world
 - [My system in North Carolina, United States](https://birdnetpi.pmcgui.xyz)<br>
 - [NatureStation.net in Johannesburg, South Africa](https://birds.naturestation.net)<br>
 - [Weiskirchen, Germany](https://birdnetpigermany.hopto.org)
+
+
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
