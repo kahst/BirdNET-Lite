@@ -120,7 +120,7 @@ while($rows=$mosttable ->fetch_assoc())
     </table>
 <div class="row">
   <div class="column">
-    <h3>Detected Species</h3>
+    <h3>Detected Species by Confidence</h3>
     <table>
       <tr>
         <th>Species</th>
@@ -146,7 +146,7 @@ while($rows=$specieslist ->fetch_assoc())
     </table>
   </div>
   <div class="column">
-    <h3>Species Statistics</h3>
+    <h3>Species List by Detections</h3>
     <table>
       <tr>
         <th>Species</th>
