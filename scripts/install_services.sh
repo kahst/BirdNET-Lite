@@ -217,7 +217,7 @@ install_caddy() {
       'https://dl.cloudsmith.io/public/caddy/stable/setup.deb.sh' \
         | sudo -E bash
     apt -qq update
-    apt install -qqy caddy=2.4.5
+    apt install -qqy caddy=2.4.5 && apt-mark hold caddy
     systemctl enable --now caddy
   else
     echo "Caddy is installed"
