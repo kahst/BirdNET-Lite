@@ -19,7 +19,14 @@ Check out birds from around the world
 - [NatureStation.net in Johannesburg, South Africa](https://birds.naturestation.net)<br>
 - [Weiskirchen, Germany](https://birdnetpigermany.hopto.org)
 
+Currently listening in these countries . . . that I know of . . .
+- The United States
+- Germany
+- South Africa
+- France
+- Austria
 
+If your installation isn't in one of the countries listed above, please let me know so that I can add your country to the list! Let me know either in a GitHub issue, or [email me](mailto:mcguirepr89@gmail.com) and let me know where your BirdNET-Pi is listening.
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
