@@ -3,7 +3,7 @@
 # set -x # Uncomment to debug
 source /etc/birdnet/birdnet.conf &> /dev/null
 LOG_DIR="${HOME}/BirdNET-Pi/logs"
-
+my_dir=/home/pi/BirdNET-Pi/scripts
 services=$(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort)
 
 # Create logs directory
