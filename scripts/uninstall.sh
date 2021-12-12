@@ -4,47 +4,7 @@
 trap 'rm -f ${TMPFILE}' EXIT
 my_dir=/home/pi/BirdNET-Pi/scripts
 source /etc/birdnet/birdnet.conf &> /dev/null
-SCRIPTS=(birdnet_analysis.sh
-birdnet_recording.sh
-birdnet_stats.sh
-cleanup.sh
-clear_all_data.php 
-clear_all_data.sh
-createdb.sh
-disk_usage.sh
-dump_logs.sh
-edit_birdnet.conf.php
-edit_birdnet.conf.sh
-extract_new_birdsounds.sh
-install_birdnet.sh
-install_config.sh
-install_services.sh
-install_tmux_services.sh
-install_zram_service.sh
-livestream.sh
-pretty_date.sh
-reboot_system.php
-reboot_system.sh
-reconfigure_birdnet.sh
-restart_birdnet_analysis.php
-restart_birdnet_analysis.sh
-restart_birdnet_recording.php
-restart_birdnet_recording.sh
-restart_caddy.php
-restart_caddy.sh
-restart_extraction.php
-restart_extraction.sh
-restart_services.php
-restart_services.sh
-shutdown_system.php
-shutdown_system.sh
-species_notifier.sh
-spectrogram.php
-spectrogram.sh
-tmux
-uninstall.sh
-update_species.sh
-${HOME}/.gotty)
+SCRIPTS=($(ls -1 ${my_dir}) ${HOME}/.gotty)
 set -x
 services=($(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort))
 
