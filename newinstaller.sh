@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Simple new installer
-HOME=/home/pi
+HOME=/home/patrick
 USER=patrick
 branch=git_install
 sudo apt update
