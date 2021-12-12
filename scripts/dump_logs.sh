@@ -11,7 +11,7 @@ services=$(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install
 
 # Create services logs
 for i in "${services[@]}";do
-  if [ -L /etc/systemd/system/multi-user.target.wants/${i} ];then
+  if [ -L "/etc/systemd/system/multi-user.target.wants/${i}" ];then
     journalctl -u ${i} -n 100 --no-pager > ${LOG_DIR}/${i}.log
     cp -L /etc/systemd/system/multi-user.target.wants/${i} ${LOG_DIR}/${i}
   fi
