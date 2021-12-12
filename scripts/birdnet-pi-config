@@ -1,4 +1,4 @@
-#!/usr/bin/env -S sudo -E bash
+#!/usr/bin/env -S sudo -E sh
 # Altered from raspi-config tool below
 # https://github.com/RPi-Distro/birdnet-pi-config
 #
