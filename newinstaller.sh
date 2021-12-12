@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Simple new installer
 HOME=/home/pi
-USER=pi
+USER=patrick
 branch=git_install
 sudo apt update
 if ! which git &> /dev/null;then
