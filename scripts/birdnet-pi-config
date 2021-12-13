@@ -479,7 +479,6 @@ do_reget_birdnetpi_urls() {
   19 70 -- "https://" 3>&1 1>&2 2>&3) extractionlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://extractionlog.pmcgui.xyz\"." 19 70 -- "https://" 3>&1 1>&2 2>&3) birdnetlog_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetlog.pmcgui.xyz\"." 19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
   if [ $? -eq 0 ];then
     return 0
-    ASK_TO_REBOOT=2
   else
     return 1
   fi
@@ -934,7 +933,7 @@ while true; do
     "Step 2" "Configure BirdNET-Pi before installation" \
     "Step 3" "Install BirdNET-Pi" \
     "Step 4" "Reconfigure BirdNET-Pi AFTER installation" \
-    "Step 5" "Update BirdNET-Pi (run this if you changed anything in Step 4)" \
+    "Step 5" "Update BirdNET-Pi (run this if you changed URLs)" \
     "System Options" "Configure system settings" \
     3>&1 1>&2 2>&3)
   RET=$?
