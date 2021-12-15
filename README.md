@@ -17,7 +17,6 @@ The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://githu
 Check out birds from around the world
 - [My system in North Carolina, United States](https://birdnetpi.pmcgui.xyz)<br>
 - [NatureStation.net in Johannesburg, South Africa](https://birds.naturestation.net)<br>
-- [Weiskirchen, Germany](https://birdnetpigermany.hopto.org)
 
 Currently listening in these countries . . . that I know of . . .
 - The United States
