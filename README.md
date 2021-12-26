@@ -15,6 +15,7 @@ Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from 
 The BirdNET-Pi project is built on the [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite) by [**@kahst**](https://github.com/kahst) <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg"></a> using [pre-built TFLite binaries](https://github.com/PINTO0309/TensorflowLite-bin) by [**@PINTO0309**](https://github.com/PINTO0309) . It is able to recognize bird sounds from a USB sound card in realtime.
 
 Check out birds from around the world
+- [BirdWeather](https://app.birdweather.com)<br>
 - [My system in North Carolina, United States](https://birdnetpi.pmcgui.xyz) **Currently Offline**<br>
 - [NatureStation.net in Johannesburg, South Africa](https://birds.naturestation.net)<br>
 - [BirdNET-Pi in Öringe, Tyresö, Sweden](https://birdnet.svardsten.se)<br>
