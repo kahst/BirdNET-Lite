@@ -45,7 +45,7 @@ If your installation isn't in one of the countries listed above, please let me k
 
 ## Requirements
 * A Raspberry Pi 4B
-* An SD Card with the 64-bit version of RaspiOS installed (Buster and Bullseye compatible) [(download the latest here)](https://downloads.raspberrypi.org/raspios_arm64/images/)
+* An SD Card with the 64-bit version of RaspiOS installed (please use Bullseye) [(download the latest here)](https://downloads.raspberrypi.org/raspios_arm64/images/)
 * A USB Microphone or Sound Card
 
 ## Installation
@@ -76,7 +76,7 @@ If you encounter any issues at any point, or have questions, comments, concerns,
 If you are not a GitHub user and need help, you can [email me](mailto:mcguirepr89@gmail.com), but I hope you will consider making a GitHub account so that your questions can be answered here for others as well. I expect this project will attract more bird-enthusiasts than Linux-enthusiasts, so please don't feel like any question is too _novice_ or, pardon the phrase, _stupid_ to ask. I want to help!
 
 ## Sharing
-Please join a Discussion!!
+Please join a Discussion!! and please join [https://app.birdweather.com BirdWeather!!]
 I hope that if you find BirdNET-Pi has been worth your time, you will share your setup, results, customizations, etc. [HERE](https://github.com/mcguirepr89/BirdNET-Pi/discussions/69) and will consider [making your installation public](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi).
 
 ## ToDo, Notes, and Coming Soon 
