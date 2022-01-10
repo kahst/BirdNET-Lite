@@ -19,7 +19,7 @@ Check out birds from around the world
 - [My system in North Carolina, United States](https://birdnetpi.pmcgui.xyz) **Currently Offline**<br>
 - [NatureStation.net in Johannesburg, South Africa](https://birds.naturestation.net)<br>
 - [BirdNET-Pi in Öringe, Tyresö, Sweden](https://birdnet.svardsten.se)<br>
-- [Private Nature Garden, Grevenbroich, Germany](http://93.203.135.139) **Coming Soon**<br>
+- [Private Nature Garden, Grevenbroich, Germany](http://93.203.135.139)<br>
 
 Currently listening in these countries . . . that I know of . . .
 - The United States
