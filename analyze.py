@@ -211,7 +211,7 @@ def main():
     audioData = readAudioData(args.i, args.overlap)
 
     # Process audio data and get detections
-    week = max(1, min(args.week, 48))
+    week = max(-1, min(args.week, 48))
     sensitivity = max(0.5, min(1.0 - (args.sensitivity - 1.0), 1.5))
     detections = analyzeAudioData(audioData, args.lat, args.lon, week, sensitivity, args.overlap, interpreter)
 
