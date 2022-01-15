@@ -495,6 +495,18 @@ do_reget_db_pwd() {
   fi
 }
 
+do_reget_birdweather_id() {
+  birdweather_id=$(whiptail --inputbox "Input your BirdWeather ID" \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+
 do_reget_caddy_pwd() {
   caddy_pwd=$(whiptail --inputbox "Please set the password for the web interface." \
   19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/rewrite_config.sh
@@ -594,6 +606,17 @@ do_get_extractionlog_url() {
 do_get_birdnetpi_url() {
   birdnetpi_url=$(whiptail --inputbox "Put your domain here. Example: \"https://birdnetpi.pmcgui.xyz\"." \
   19 70 -- "https://" 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
+  if [ $? -eq 0 ];then
+    return 0
+    ASK_TO_REBOOT=2
+  else
+    return 1
+  fi
+}
+
+do_get_birdweather_id() {
+  birdweather_id=$(whiptail --inputbox "Input your BirdWeather ID" \
+  19 70 3>&1 1>&2 2>&3) ${birdnetpi_dir}/scripts/write_config.sh
   if [ $? -eq 0 ];then
     return 0
     ASK_TO_REBOOT=2
@@ -839,6 +862,7 @@ do_reconfig_birdnet_menu() {
         "Longitude" "Set the longitude your system should use" \
         "Caddy Password" "Set the web interface password" \
         "Database Password" "Set the password BirdNET-Pi will use to access the DB" \
+        "BirdWeather ID" "Input your BirdWeather ID if you have one" \
         "Advanced Settings" "Sensitivity, Overlap, Confidence, URLs" \
         3>&1 1>&2 2>&3)
     else
@@ -854,6 +878,7 @@ do_reconfig_birdnet_menu() {
         Lon*) do_reget_lon;;
         Cad*) do_reget_caddy_pwd;;
         Data*) do_reget_db_pwd;;
+        Bird*) do_reget_birdweather_id;;
         Advanced*) do_advanced_reconfig_menu;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
@@ -871,6 +896,7 @@ do_config_birdnet_menu() {
         "Caddy Password" "Set the web interface password" \
         "IceCast2 Password" "Set the IceCast2 password" \
         "Database Password" "Set the password BirdNET-Pi will use to access the DB" \
+        "BirdWeather ID" "Input your BirdWeather ID if you have one" \
         "Set Custom URLS" "Designate custom URLs for the web services if you've set that up" \
         3>&1 1>&2 2>&3)
     else
@@ -887,6 +913,7 @@ do_config_birdnet_menu() {
         Cad*) do_get_caddy_pwd;;
         Ice*) do_get_ice_pwd;;
         Data*) do_get_db_pwd;;
+        Bird*) do_get_birdweather_id;;
         Set*) do_get_birdnetpi_url; do_get_birdnetlog_url; do_get_extractionlog_url;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
