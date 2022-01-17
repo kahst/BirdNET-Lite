@@ -87,7 +87,7 @@ I hope that if you find BirdNET-Pi has been worth your time, you will share your
 ## ToDo, Notes, and Coming Soon 
 
 ### Internationalization:
-The bird names are in English by default, but other localized versions are available thanks to the wonderful efforts of @patlevin. Please [download the labels_l18n.zip file](https://github.com/kahst/BirdNET-Lite/files/7288803/labels_l18n.zip) and replace the `model/labels.txt` with your corresponding language. [Click here](https://github.com/kahst/BirdNET-Lite/issues/4#issuecomment-886724712) for more information.
+The bird names are in English by default, but other localized versions are available thanks to the wonderful efforts of [@patlevin](https://github.com/patlevin). Please [download the labels_l18n.zip file](https://github.com/kahst/BirdNET-Lite/files/7288803/labels_l18n.zip) and replace the `model/labels.txt` with your corresponding language. [Click here](https://github.com/kahst/BirdNET-Lite/issues/4#issuecomment-886724712) for more information.
 
 ### Realtime Analysis Predictions View
 The pre-built TFLite binaries for this project also support [the BirdNET-Demo](https://github.com/kahst/BirdNET-Demo), which I am currently testing for integration into the BirdNET-Pi. If you know anything about JavaScript and are willing to help, please let me know in the [Live Analysis discussion](https://github.com/mcguirepr89/BirdNET-Pi/discussions/24).
