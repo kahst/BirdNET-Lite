@@ -35,10 +35,10 @@ If your installation isn't in one of the countries listed above, please let me k
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
+* [BirdWeather](https://app.birdweather.com) integration (you will need to be issued a BirdWeather ID -- for now, request that from [@timsterc here](https://github.com/mcguirepr89/BirdNET-Pi/discussions/82))
 * Web interface access to all data and logs
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
-* [BirdWeather](https://app.birdweather.com) integration (you will need to be issued a BirdWeather ID -- for now, request that from [@timsterc here](https://github.com/mcguirepr89/BirdNET-Pi/discussions/82))
 * MariaDB integration
 * NoMachine remote desktop (for personal use only)
 * Live audio stream
