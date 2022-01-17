@@ -44,7 +44,7 @@ If your installation isn't in one of the countries listed above, please let me k
 * Live audio stream
 * Integrated phpSysInfo
 * New species mobile notifications from Pushed.co (for iOS users only)
-* Localisation supported
+* Localization supported
 
 ## Requirements
 * A Raspberry Pi 4B
