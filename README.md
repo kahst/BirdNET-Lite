@@ -92,5 +92,45 @@ The bird names are in English by default, but other localized versions are avail
 ### Realtime Analysis Predictions View
 The pre-built TFLite binaries for this project also support [the BirdNET-Demo](https://github.com/kahst/BirdNET-Demo), which I am currently testing for integration into the BirdNET-Pi. If you know anything about JavaScript and are willing to help, please let me know in the [Live Analysis discussion](https://github.com/mcguirepr89/BirdNET-Pi/discussions/24).
 
-### Tips:
+### Tips and Coming Soon:
 For some reason, the system seems to run more efficiently and the birds sound better when you [![Star on GitHub](https://img.shields.io/github/stars/mcguirepr89/BirdNET-Pi.svg?style=social)](https://github.com/mcguirepr89/BirdNET-Pi/stargazers) the project :)
+
+Expect FULL internationalization options during installation (and available post-installation) for the following languages:
+- German
+- Swedish
+- Frensh
+- Spanish
+
+and detection/database localization for the following languages:
+| Language | Missing | labels (%) |
+| -------- | ------- | ------ |
+| Afrikaans | 5774 | 90.76% |
+| Catalan | 544 | 8.55% |
+| Chinese | 264 | 4.15% |
+| Chinese (Traditional) | 295 | 4.64% |
+| Croatian | 370 | 5.82% |
+| Czech | 683 | 10.74% |
+| Danish | 460 | 7.23% |
+| Dutch | 264 | 4.15% |
+| Estonian | 3171 | 49.84% |
+| Finnish | 518 | 8.14% |
+| French | 264 | 4.15% |
+| German | 264 | 4.15% |
+| Hungarian | 2688 | 42.25% |
+| Icelandic | 5588 | 87.83% |
+| Indonesian | 5550 | 87.24% |
+| Italian | 524 | 8.24% |
+| Japanese | 640 | 10.06% |
+| Latvian | 4821 | 75.78% |
+| Lithuanian | 597 | 9.38% |
+| Northern Sami | 5605 | 88.10% |
+| Norwegian | 325 | 5.11% |
+| Polish | 265 | 4.17% |
+| Portuguese | 2742 | 43.10% |
+| Russian | 808 | 12.70% |
+| Slovak | 264 | 4.15% |
+| Slovenian | 5532 | 86.95% |
+| Spanish | 348 | 5.47% |
+| Swedish | 264 | 4.15% |
+| Thai | 5580 | 87.71% |
+| Ukrainian | 646 | 10.15% |
