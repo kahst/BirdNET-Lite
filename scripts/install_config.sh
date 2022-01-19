@@ -5,6 +5,7 @@ set -e
 trap 'exit 1' SIGINT SIGHUP
 
 my_dir=$(realpath $(dirname $0))
+birdnetpi_dir=$(realpath $(dirname $my_dir))
 BIRDNET_CONF="$(dirname ${my_dir})/birdnet.conf"
 
 get_RECS_DIR() {
@@ -378,9 +379,11 @@ if [ -f ${BIRDNET_CONF} ];then
   #install_birdnet_conf
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf
+  grep -ve '^#' -e '^$' /etc/birdnet/birdnet.conf > ${birdnetpi_dir}/firstrun.ini
 else
   configure
   install_birdnet_conf
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf
+  grep -ve '^#' -e '^$' /etc/birdnet/birdnet.conf > ${birdnetpi_dir}/firstrun.ini
 fi
