@@ -98,7 +98,7 @@ For some reason, the system seems to run more efficiently and the birds sound be
 Expect FULL internationalization options during installation (and available post-installation) for the following languages:
 - German
 - Swedish
-- Frensh
+- French
 - Spanish
 
 and detection/database localization for the following languages:
