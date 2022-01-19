@@ -107,7 +107,6 @@ and detection/database localization for the following languages:
 | Afrikaans | 5774 | 90.76% |
 | Catalan | 544 | 8.55% |
 | Chinese | 264 | 4.15% |
-| Chinese (Traditional) | 295 | 4.64% |
 | Croatian | 370 | 5.82% |
 | Czech | 683 | 10.74% |
 | Danish | 460 | 7.23% |
@@ -123,7 +122,6 @@ and detection/database localization for the following languages:
 | Japanese | 640 | 10.06% |
 | Latvian | 4821 | 75.78% |
 | Lithuanian | 597 | 9.38% |
-| Northern Sami | 5605 | 88.10% |
 | Norwegian | 325 | 5.11% |
 | Polish | 265 | 4.17% |
 | Portuguese | 2742 | 43.10% |
