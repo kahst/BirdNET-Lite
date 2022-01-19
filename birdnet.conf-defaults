@@ -202,6 +202,3 @@ BIRDNET_USER=pi
 ## These are just for debugging
 LAST_RUN=
 THIS_RUN=
-## These are just for debugging
-LAST_RUN=
-THIS_RUN=
