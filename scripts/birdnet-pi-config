@@ -4,7 +4,7 @@
 #
 # See LICENSE file for copyright and license details
 # Copyright (c) 2012 Alex Bradbury <asb@asbradbury.org>
-#set -x
+set -x
 birdnetpi_dir=/home/pi/BirdNET-Pi
 birders_config=${birdnetpi_dir}/Birders_Guide_Installer_Configuration.txt
 branch=main
@@ -215,6 +215,22 @@ do_wifi_country() {
       fi
     fi
     whiptail --msgbox "Wireless LAN country set to $COUNTRY" 20 60 1
+  fi
+  IFS=$oIFS
+}
+
+get_labels_lang() {
+  oIFS="$IFS"
+  #value=$(unzip -l ${birdnetpi_dir}/model/labels_l18n.zip | awk '{print $4}' | tail -n +4 | grep -ve '^$' | tr '\n' '/')
+  value=$(cat ${birdnetpi_dir}/model/labels_lang.txt | tr ',' ' ' | tr '\n' ' ')
+  IFS=" "
+  get_lang=$(whiptail --menu "Select the file that corresponds to your language" 20 60 10 ${value} 3>&1 1>&2 2>&3)
+  labels_lang=$(awk -F, "/$get_lang/{print \$2}" ${birdnetpi_dir}/model/labels_lang.txt)
+  if [ $? -eq 0 ];then
+    whiptail --msgbox "Your installation will now use $labels_lang" 20 60 1
+    mv ${birdnetpi_dir}/model/labels.txt ${birdnetpi_dir}/model/labels.txt.old
+    unzip ${birdnetpi_dir}/model/labels_l18n.zip ${labels_lang} -d ${birdnetpi_dir}/model
+    mv ${birdnetpi_dir}/model/${labels_lang} ${birdnetpi_dir}/model/labels.txt
   fi
   IFS=$oIFS
 }
@@ -925,7 +941,8 @@ do_internationalisation_menu() {
   MENU=1
   while [ $MENU -eq 1 ];do
     FUN=$(whiptail --title "BirdNET-Pi Software Configuration Tool (birdnet-pi-config)" --menu "Localisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-      "Locale" "Configure language and regional settings" \
+      "System Locale" "Configure the system language and regional settings" \
+      "labels.txt" "Set the language to use for species detection" \
       "Time Zone" "Set the Time Zone" \
       3>&1 1>&2 2>&3)
     RET=$?
@@ -934,7 +951,8 @@ do_internationalisation_menu() {
       MENU=0
     elif [ $RET -eq 0 ]; then
       case "$FUN" in
-        Locale*) do_change_locale;;
+        System*) do_change_locale;;
+        label*) get_labels_lang;;
         Time*) do_change_timezone;;
         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
       esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
