@@ -102,7 +102,7 @@ Expect FULL internationalization options during installation (and available post
 - Spanish
 
 and detection/database localization for the following languages:
-| Language | Missing | Missing labels (%) |
+| Language | Missing Species out of 6,362 | Missing labels (%) |
 | -------- | ------- | ------ |
 | Afrikaans | 5774 | 90.76% |
 | Catalan | 544 | 8.55% |
