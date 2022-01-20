@@ -20,7 +20,7 @@ fi
 sudo ./install_services.sh || exit 1
 source /etc/birdnet/birdnet.conf
 
-APT_DEPS=(swig ffmpeg wget unzip curl cmake make)
+APT_DEPS=(swig ffmpeg wget unzip curl cmake make bc)
 LIBS_MODULES=(libjpeg-dev zlib1g-dev python3-dev python3-pip python3-venv)
 
 install_deps() {
