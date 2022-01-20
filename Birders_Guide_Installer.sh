@@ -3,7 +3,7 @@ set -e
 USER=pi
 HOME=/home/pi
 my_dir=${HOME}/BirdNET-Pi
-branch=main
+branch=forms
 trap '${my_dir}/scripts/dump_logs.sh && exit' EXIT SIGHUP SIGINT
 
 if [ "$(uname -m)" != "aarch64" ];then
