@@ -16,7 +16,6 @@ set_hostname() {
     echo "Setting hostname to 'birdnetpi'"
     hostnamectl set-hostname birdnetpi
     sed -i 's/raspberrypi/birdnetpi/g' /etc/hosts
-    sed -i 's/localhost$/localhost birdnetpi.local/g' /etc/hosts
   fi
 }
 
