@@ -7,9 +7,10 @@ source /etc/birdnet/birdnet.conf
 # the birdnet.conf as it was the last time this script was called
 my_dir=$(realpath $(dirname $0))
 if [ -z ${THIS_RUN} ];then THIS_RUN=/home/pi/BirdNET-Pi/thisrun.txt;fi
+[ -f ${THIS_RUN} ] || touch ${THIS_RUN} && chmod g+w ${THIS_RUN}
 if [ -z ${LAST_RUN} ];then LAST_RUN=/home/pi/BirdNET-Pi/lastrun.txt;fi
-if [ -z ${LATITUDE} ];then LATITUDE=-1;fi
-if [ -z ${LONGITUDE} ];then LONGITUDE=-1;fi
+[ -z ${LATITUDE} ] && echo "LATITUDE not set, exiting 1"; exit 1
+[ -z ${LONGITUDE} ] && echo "LONGITUDE not set, exiting 1"; exit 1
 make_thisrun() {
   sleep .4
   awk '!/#/ && !/^$/ {print}' /etc/birdnet/birdnet.conf \
