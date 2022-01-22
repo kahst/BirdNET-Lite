@@ -1,14 +1,33 @@
 <?php
-if(isset($_POST['field1']) && isset($_POST['field2'])) {
-    $data = $_POST['field1'] . '-' . $_POST['field2'] . "\r\n";
-    $ret = file_put_contents('/tmp/mydata.txt', $data, FILE_APPEND | LOCK_EX);
-    if($ret === false) {
-        die('There was an error writing this file');
-    }
-    else {
-        echo "$ret bytes written to file";
-    }
+$latitude = $_POST["latitude"];
+$longitude = $_POST["longitude"];
+$birdweather_id = $_POST["birdweather_id"];
+$pushed_app_key = $_POST["pushed_app_key"];
+$pushed_app_secret = $_POST["pushed_app_secret"];
+
+$contents = file_get_contents("/home/pi/BirdNET-Pi/birdnet.conf");
+$contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
+$contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
+$contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
+$contents = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents);
+$contents = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents);
+
+$contents2 = file_get_contents("/home/pi/BirdNET-Pi/thisrun.txt");
+$contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
+$contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
+$contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
+$contents2 = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents2);
+$contents2 = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents2);
+
+$fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
+$fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
+fwrite($fh, $contents);
+fwrite($fh2, $contents2);
+@session_start();
+
+if(true){
+   $_SESSION['success'] = 1;
+   header("Location:config.php");
 }
-else {
-   die('no post data to process');
-}
+?>
+

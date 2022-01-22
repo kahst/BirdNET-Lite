@@ -45,12 +45,12 @@ a {
 	cursor: pointer;
 	text-align: center;
 }
-@media screen and (max-width: 800px) {
-  	.column {
-    		float: none;
-    		width: 100%;
+	@media screen and (max-width: 800px) {
+		.column {
+			float: none;
+			width: 100%;
+		}
 	}
-}
 </style>
 <body style="background-color: rgb(119, 196, 135);">
 	<div class="row">
@@ -79,9 +79,9 @@ a {
 			<form >
 				<button type="submit" class="block"><a target="_content" href="/scripts/adminer.php">Database Maintenance</a></button>
 			</form>
-
-			<form action="/scripts/backup_data.php" onclick="return confirm('Backup ALL Data? Warning: This could take a long time.')">
-				<button type="submit" class="block">Backup ALL data</button>
+			<form >
+				<button type="submit" class="block"><a target="content" href="/scripts/config.php">Reconfigure System</a></button>
+			</form>
 			</form>
 			<form action="/scripts/reboot_system.php" onclick="return confirm('Are you sure you want to reboot?')">
 				<button type="submit" class="block">Reboot BirdNET-Pi</button>

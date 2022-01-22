@@ -5,3 +5,4 @@ pytz
 tzlocal
 pandas
 seaborn
+basel
