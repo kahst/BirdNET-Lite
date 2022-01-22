@@ -1,6 +1,7 @@
 <?php
 header("refresh: 300;");
 $myDate = date('d-m-Y');
+$chart = "Combo-$myDate.png";
 $mysqli = mysqli_connect();
 $mysqli->select_db('birds');
 
@@ -119,7 +120,13 @@ while($rows=$mostrecent ->fetch_assoc())
   </div>
 </div>
     <h2>Today's Top 10 Species</h2>
-<img src='/Charts/Combo-<?php echo $myDate;?>.png?nocache=<?php echo time();?>' style="width: 100%;padding: 5px;margin-left: auto;margin-right: auto;display: block;">
+<?php
+if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
+  echo "<img src=\"/Charts/$chart?nocache=$time()\" style=\"width: 100%;padding: 5px;margin-left: auto;margin-right: auto;display: block;\">";
+} else {
+    echo "<p style=\"text-align:center;margin-left:-150px;\">No Detections For Today</p>";
+}
+?>
     <h2>Currently Analyzing</h2>
 <img src='/spectrogram.png?nocache=<?php echo time();?>' style="width: 100%;padding: 5px;">
 </html>
