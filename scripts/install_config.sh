@@ -376,6 +376,9 @@ EOF
 # non-interactive installation. Otherwise,the installation is interactive.
 if [ -f ${BIRDNET_CONF} ];then
   source ${BIRDNET_CONF}
+  sed -i "s/LATITUDE=.*/LATITUDE=${LATITUDE}/g" ${BIRDNET_CONF}
+  sed -i "s/LONGITUDE=.*/LONGITUDE=${LONGITUDE}/g" ${BIRDNET_CONF}
+  sed -i "s/DB_PWD=.*/DB_PWD=${DB_PWD}/g" ${BIRDNET_CONF}
   #install_birdnet_conf
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf
