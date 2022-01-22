@@ -218,9 +218,11 @@ install_caddy() {
     apt -qq update
     apt install -qqy caddy=2.4.5 && apt-mark hold caddy
     systemctl enable --now caddy
+    usermod -aG pi caddy
   else
     echo "Caddy is installed"
     systemctl enable --now caddy
+    usermod -aG pi caddy
   fi
 }
 
