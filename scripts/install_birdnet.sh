@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Install BirdNET script
-#set -x # debugging
+set -x # debugging
 set -e # exit installation if anything fails
 my_dir=$(realpath $(dirname $0))
 trap '${my_dir}/dump_logs.sh && echo -e "\n\nExiting the installation. Goodbye!" && exit 1' SIGINT
