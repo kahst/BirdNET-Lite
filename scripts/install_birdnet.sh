@@ -70,15 +70,6 @@ install_birdnet() {
   pip3 install -U -r /home/pi/BirdNET-Pi/requirements.txt
 }
 
-read -sp "\
-Be sure you have read the software license before installing. This is
-available in the BirdNET-Pi directory as "LICENSE"
-If you DO NOT want to install BirdNET and the birdnet_analysis.service, 
-press Ctrl+C to cancel. If you DO wish to install BirdNET and the 
-birdnet_analysis.service, press ENTER to continue with the installation."
-echo
-echo
-
 [ -d ${RECS_DIR} ] || mkdir -p ${RECS_DIR} &> /dev/null
 
 install_deps
