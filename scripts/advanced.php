@@ -42,20 +42,15 @@ a {
   cursor: pointer;
   text-align: center;
 }
-  @media screen and (max-width: 800px) {
-    .column {
-      float: none;
-      width: 100%;
-    }
-  }
+
 form {
   text-align:left;
   margin-left:20px;
 }
-h1 {
-  text-align:center;
+h2 {
+  margin-bottom:0px;
 }
-h2,h3 {
+h3 {
   margin-left: -10px;
   text-align:left;
 }
@@ -66,19 +61,33 @@ input {
   text-align:center;
   font-size:large;
 }
-    </style>
+@media screen and (max-width: 800px) {
+  h2 {
+    margin-bottom:0px;
+    text-align:center;
+  }  form {
+    text-align:left;
+    margin-left:0px;
+  }    
+  .column {
+    float: none;
+    width: 100%;
+  }
+}
+  </style>
   </head>
+      <h2>Advanced Settings</h2>
   <body style="background-color: rgb(119, 196, 135);">
   <div class="row">
     <div class="column first">
     <form action="write_advanced.php" method="POST">
-      <h3>Advanced Settings</h3>
 <?php 
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
 } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
 } ?>
+      <h3>Defaults</h3>
       <label for="full_disk">Full Disk Behavior: </label>
       <input name="full_disk" type="text" value="<?php print($config['FULL_DISK']);?>" /><br>
       <label for="rec_card">Audio Card: </label>

@@ -41,17 +41,13 @@ a {
 	cursor: pointer;
 	text-align: center;
 }
-@media screen and (max-width: 800px) {
-	.column {
-		float: none;
-		width: 100%;
-	}
-}
+
 form {
   text-align:left;
+  margin-left:20px;
 }
-h1 {
-  text-align:center;
+h2 {
+  margin-bottom:0px;
 }
 h3 {
   margin-left: -10px;
@@ -64,7 +60,21 @@ input {
   text-align:center;
   font-size:large;
 }
-    </style>
+@media screen and (max-width: 800px) {
+  h2 {
+    margin-bottom:0px;
+    text-align:center;
+  }
+  form {
+    text-align:left;
+    margin-left:0px;
+  }	
+  .column {
+		float: none;
+		width: 100%;
+	}
+}
+  </style>
   </head>
       <h2>Basic Settings</h2>
   <body style="background-color: rgb(119, 196, 135);">
@@ -77,11 +87,12 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
 } ?>
+      <h3>Required</h3>
       <label for="latitude">Latitude: </label>
       <input name="latitude" type="text" value="<?php print($config['LATITUDE']);?>" /><br>
       <label for="longitude">Longitude: </label>
       <input name="longitude" type="text" value="<?php print($config['LONGITUDE']);?>" />
-      <h4>Optional Services</h4>
+      <h3>Optional</h3>
       <label for="birdweather_id">BirdWeather ID: </label>
       <input name="birdweather_id" type="text" value="<?php print($config['BIRDWEATHER_ID']);?>" /><br>
       <label for="pushed_app_key">Pushed App Key: </label>
