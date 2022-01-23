@@ -187,6 +187,15 @@ install_alsa() {
     apt install -qqy pulseaudio
     echo "PulseAudio installed"
   fi
+  if ! [ -d /etc/lightdm ];then
+    systemctl set-default multi-user.target
+    ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
+    cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin $USER --noclear %I \$TERM
+EOF
+  fi
 }
 
 install_recording_service() {
@@ -308,7 +317,7 @@ Requires=network-online.target
 [Service]
 Restart=always
 Type=simple
-ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(avahi-resolve -4 -n %H.local | cut -f 2)"
+ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(hostname -I |cut -d' ' -f1)"
 
 [Install]
 WantedBy=multi-user.target
@@ -428,25 +437,6 @@ EOF
   fi 
 }
 
-install_edit_birdnet_conf() {
-  cat << EOF > /etc/systemd/system/edit_birdnet_conf.service
-[Unit]
-Description=Edit birdnet.conf
-
-[Service]
-Restart=on-failure
-RestartSec=3
-Type=simple
-User=pi
-Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -w -p 9898 --title-format "Edit birdnet.conf" nano /home/pi/BirdNET-Pi/birdnet.conf
-
-[Install]
-WantedBy=multi-user.target
-EOF
-}
-
-
 install_icecast() {
   if ! which icecast2;then
     echo "Installing IceCast2"
@@ -541,7 +531,6 @@ install_selected_services() {
     install_mariadb
     install_spectrogram_service
     install_chart_viewer_service
-    install_edit_birdnet_conf
     install_pushed_notifications
 
   if [ ! -z "${ICE_PWD}" ];then
