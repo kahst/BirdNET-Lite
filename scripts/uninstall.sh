@@ -26,9 +26,7 @@ remove_services() {
 }
 
 remove_crons() {
-  TMPFILE=$(mktemp)
-  crontab -l | sed -e '/birdnet/,+1d' > "${TMPFILE}"
-  crontab "${TMPFILE}"
+  sed -e '/birdnet/,+1d' /etc/crontab
 }
 
 remove_icecast() {

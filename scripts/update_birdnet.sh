@@ -28,8 +28,7 @@ remove_services() {
 }
 
 remove_crons() {
-  crontab -u${USER} -l | sed -e '/birdnet/,+1d' > "${tmpfile}"
-  crontab -u${USER} "${tmpfile}"
+  sed -e '/birdnet/,+1d' /etc/crontab
 }
 
 remove_icecast() {
