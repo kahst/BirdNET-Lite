@@ -500,13 +500,10 @@ install_nomachine() {
 
 install_cleanup_cron() {
   echo "Installing the cleanup.cron"
-  if ! crontab -u ${USER} -l &> /dev/null;then
-    crontab -u ${USER} $(dirname ${my_dir})/templates/cleanup.cron &> /dev/null
-  else
-    crontab -u ${USER} -l > ${tmpfile}
-    cat $(dirname ${my_dir})/templates/cleanup.cron >> ${tmpfile}
-    crontab -u ${USER} "${tmpfile}" &> /dev/null
-  fi
+  echo $(dirname ${my_dir})/templates/cleanup.cron >> /etc/crontab
+  chown root:pi /etc/crontab
+  chmod g+rw /etc/crontab
+
 }
 
 install_selected_services() {

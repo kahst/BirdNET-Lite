@@ -140,6 +140,7 @@ if(isset($_SESSION['success'])){
       <br>
       <br>
       <button type="text"><a href="config.php">Basic Settings</a></button>
+      <button type="text"><a href="edit_crontab.php">Edit the Crontab</a></button>
     </form>
 </div>
 </div>
