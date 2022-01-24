@@ -28,7 +28,7 @@ remove_services() {
 }
 
 remove_crons() {
-  sed -e '/birdnet/,+1d' /etc/crontab
+  sudo sed -i '/birdnet/,+1d' /etc/crontab
 }
 
 remove_icecast() {
