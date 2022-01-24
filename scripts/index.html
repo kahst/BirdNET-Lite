@@ -1,6 +1,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 * {
+  font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
+  ' Calibri', 'Trebuchet MS', 'sans-serif';
+  box-sizing: border-box;
+
 	box-sizing: border-box;
 }
 
@@ -45,37 +49,16 @@ a {
 	cursor: pointer;
 	text-align: center;
 }
-	@media screen and (max-width: 800px) {
-		.column {
-			float: none;
-			width: 100%;
+		@media screen and (max-width: 800px) {
+			.column {
+				float: none;
+				width: 100%;
+			}
 		}
-	}
 </style>
 <body style="background-color: rgb(119, 196, 135);">
 	<div class="row">
 		<div class="column first">
-
-			<form action="/scripts/stop_core_services.php" onclick="return confirm('Stop core services?')">
-				<button type="submit" class="block">Stop Core Services</button>
-			</form>
-			<form action="/scripts/restart_services.php" onclick="return confirm('Restart ALL services?')">
-				<button type="submit" class="block">Restart ALL Services</button>
-			</form>
-			<form action="/scripts/restart_birdnet_analysis.php">
-				<button type="submit" class="block">Restart BirdNET Analysis</button>
-			</form>
-			<form action="/scripts/restart_birdnet_recording.php">
-				<button type="submit" class="block">Restart Recording</button>
-			</form>
-			<form action="/scripts/restart_extraction.php">
-				<button type="submit" class="block">Restart Extraction</button>
-			</form>
-			<form action="/scripts/restart_caddy.php" onclick="return confirm('Restart Caddy? You will be disconnected for about 20 seconds.')">
-				<button type="submit" class="block">Restart Caddy</button>
-			</form>
-		</div>
-		<div class="column second">
 			<form >
 				<button type="submit" class="block"><a target="_content" href="/scripts/adminer.php">Database Maintenance</a></button>
 			</form>
@@ -94,6 +77,27 @@ a {
 			</form>
 			<form action="/scripts/clear_all_data.php" onclick="return confirm('Clear ALL Data? This cannot be undone.')">
 				<button style="color: red;" type="submit" class="block">Clear ALL data</button>
+			</form>	
+		</div>
+		<div class="column second">
+
+			<form action="/scripts/stop_core_services.php" onclick="return confirm('Stop core services?')">
+				<button type="submit" class="block">Stop Core Services</button>
+			</form>
+			<form action="/scripts/restart_services.php" onclick="return confirm('Restart ALL services?')">
+				<button type="submit" class="block">Restart ALL Services</button>
+			</form>
+			<form action="/scripts/restart_birdnet_analysis.php">
+				<button type="submit" class="block">Restart BirdNET Analysis</button>
+			</form>
+			<form action="/scripts/restart_birdnet_recording.php">
+				<button type="submit" class="block">Restart Recording</button>
+			</form>
+			<form action="/scripts/restart_extraction.php">
+				<button type="submit" class="block">Restart Extraction</button>
+			</form>
+			<form action="/scripts/restart_caddy.php" onclick="return confirm('Restart Caddy? You will be disconnected for about 20 seconds.')">
+				<button type="submit" class="block">Restart Caddy</button>
 			</form>
 		</div>
 	</div>
