@@ -33,14 +33,14 @@ RECS_DIR=/home/pi/BirdSongs
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## certain parts of the web interface
 
-CADDY_PWD=changeme
+CADDY_PWD=
 
 #-------------------------  MariaDB User Passwords  ---------------------------#
 #_____________The variable below sets the password for the_____________________# 
 #_______________________'birder' user on the MariaDB___________________________#
 
 ## DB_PWD is for the 'birder' user
-DB_PWD=changeme
+DB_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 
 #-------------------------  Live Audio Stream  --------------------------------#
 #_____________The variable below configures/enables the live___________________# 
@@ -51,7 +51,7 @@ DB_PWD=changeme
 ## trusted source for the stream. You will never need to enter this manually
 ## anywhere other than here.
 
-ICE_PWD=changeme
+ICE_PWD=birdnetpi
 
 #---------------------  BirdWeather Station Information -----------------------#
 #_____________The variable below can be set to have your BirdNET-Pi____________#

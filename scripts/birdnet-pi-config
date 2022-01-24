@@ -221,7 +221,6 @@ do_wifi_country() {
 
 get_labels_lang() {
   oIFS="$IFS"
-  #value=$(unzip -l ${birdnetpi_dir}/model/labels_l18n.zip | awk '{print $4}' | tail -n +4 | grep -ve '^$' | tr '\n' '/')
   value=$(cat ${birdnetpi_dir}/model/labels_lang.txt | tr ',' ' ' | tr '\n' ' ')
   IFS=" "
   get_lang=$(whiptail --menu "Select the file that corresponds to your language" 20 60 10 ${value} 3>&1 1>&2 2>&3)

@@ -71,10 +71,7 @@ and then close the Mouse Pad editing window to continue."
   echo "Installing the BirdNET-Pi configuration file."
   install_birdnet_config || exit 1
   echo "Installing BirdNET-Lite"
-  if ${my_dir}/scripts/install_birdnet.sh << EOF ; then
-
-n
-EOF
+  if ${my_dir}/scripts/install_birdnet.sh;then
 echo "The next time you power on the raspberry pi, all of the services will start up automatically. 
 
 The installation has finished. Press Enter to close this window."

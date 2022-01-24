@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Install BirdNET script
-#set -x # debugging
+set -x # debugging
 set -e # exit installation if anything fails
 my_dir=$(realpath $(dirname $0))
 trap '${my_dir}/dump_logs.sh && echo -e "\n\nExiting the installation. Goodbye!" && exit 1' SIGINT
@@ -20,8 +20,8 @@ fi
 sudo ./install_services.sh || exit 1
 source /etc/birdnet/birdnet.conf
 
-APT_DEPS=(swig ffmpeg wget unzip curl cmake make)
-LIBS_MODULES=(libjpeg-dev zlib1g-dev python3-dev python3-pip)
+APT_DEPS=(swig ffmpeg wget unzip curl cmake make bc)
+LIBS_MODULES=(libjpeg-dev zlib1g-dev python3-dev python3-pip python3-venv)
 
 install_deps() {
   echo "	Checking dependencies"
@@ -69,15 +69,6 @@ install_birdnet() {
   echo "Making sure everything else is installed"
   pip3 install -U -r /home/pi/BirdNET-Pi/requirements.txt
 }
-
-read -sp "\
-Be sure you have read the software license before installing. This is
-available in the BirdNET-Pi directory as "LICENSE"
-If you DO NOT want to install BirdNET and the birdnet_analysis.service, 
-press Ctrl+C to cancel. If you DO wish to install BirdNET and the 
-birdnet_analysis.service, press ENTER to continue with the installation."
-echo
-echo
 
 [ -d ${RECS_DIR} ] || mkdir -p ${RECS_DIR} &> /dev/null
 

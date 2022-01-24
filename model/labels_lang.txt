@@ -2,7 +2,6 @@ Afrikaans,labels_af.txt
 Catalan,labels_ca.txt
 Czech,labels_cs.txt
 Chinese,labels_zh.txt
-Chinese_(Traditional),not_available
 Croatian,labels_hr.txt
 Danish,labels_da.txt
 Dutch,labels_nl.txt
@@ -18,7 +17,6 @@ Italian,labels_it.txt
 Japanese,labels_ja.txt
 Latvian,labels_lv.txt
 Lithuania,labels_lt.txt
-Northern_Sami,not_available
 Norwegian,labels_no.txt
 Polish,labels_pl.txt
 Portugues,labels_pt.txt

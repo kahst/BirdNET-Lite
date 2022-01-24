@@ -5,6 +5,7 @@ set -e
 trap 'exit 1' SIGINT SIGHUP
 
 my_dir=$(realpath $(dirname $0))
+birdnetpi_dir=$(realpath $(dirname $my_dir))
 BIRDNET_CONF="$(dirname ${my_dir})/birdnet.conf"
 
 get_RECS_DIR() {
@@ -375,12 +376,19 @@ EOF
 # non-interactive installation. Otherwise,the installation is interactive.
 if [ -f ${BIRDNET_CONF} ];then
   source ${BIRDNET_CONF}
+  chmod g+w ${BIRDNET_CONF}
+  sed -i "s/LATITUDE=.*/LATITUDE=${LATITUDE}/g" ${BIRDNET_CONF}
+  sed -i "s/LONGITUDE=.*/LONGITUDE=${LONGITUDE}/g" ${BIRDNET_CONF}
+  sed -i "s/DB_PWD=.*/DB_PWD=${DB_PWD}/g" ${BIRDNET_CONF}
   #install_birdnet_conf
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf
+  grep -ve '^#' -e '^$' /etc/birdnet/birdnet.conf > ${birdnetpi_dir}/firstrun.ini
 else
   configure
   install_birdnet_conf
+  chmod g+w ${BIRDNET_CONF}
   [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
   sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf
+  grep -ve '^#' -e '^$' /etc/birdnet/birdnet.conf > ${birdnetpi_dir}/firstrun.ini
 fi

@@ -16,8 +16,11 @@ set_hostname() {
     echo "Setting hostname to 'birdnetpi'"
     hostnamectl set-hostname birdnetpi
     sed -i 's/raspberrypi/birdnetpi/g' /etc/hosts
-    sed -i 's/localhost$/localhost birdnetpi.local/g' /etc/hosts
   fi
+}
+
+update_system() {
+  apt update && apt -y upgrade
 }
 
 install_scripts() {
@@ -185,6 +188,16 @@ install_alsa() {
     apt install -qqy pulseaudio
     echo "PulseAudio installed"
   fi
+  if ! [ -d /etc/lightdm ];then
+    systemctl set-default multi-user.target
+    ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
+    cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin $USER --noclear %I \$TERM
+EOF
+  fi
+
 }
 
 install_recording_service() {
@@ -229,6 +242,7 @@ install_Caddyfile() {
     cp /etc/caddy/Caddyfile{,.original}
   fi
   php_version="$(awk -F'php' '{print $3}' <(ls -l $(which /etc/alternatives/php)))"
+  if ! [ -z ${CADDY_PWD} ];then
   HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   cat << EOF > /etc/caddy/Caddyfile
 http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
@@ -250,6 +264,17 @@ http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
   php_fastcgi unix//run/php/php${php_version}-fpm.sock
 }
 EOF
+  else
+    cat << EOF > /etc/caddy/Caddyfile
+http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
+  root * ${EXTRACTED}
+  file_server browse
+  reverse_proxy /stream localhost:8000
+  php_fastcgi unix//run/php/php${php_version}-fpm.sock
+}
+EOF
+  fi
+
   if [ ! -z ${EXTRACTIONLOG_URL} ];then
     cat << EOF >> /etc/caddy/Caddyfile
 
@@ -291,8 +316,9 @@ Requires=network-online.target
 
 [Service]
 Restart=always
+RestartSec=3
 Type=simple
-ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(avahi-resolve -4 -n %H.local | cut -f 2)"
+ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(hostname -I |cut -d' ' -f1)"
 
 [Install]
 WantedBy=multi-user.target
@@ -411,25 +437,6 @@ EOF
   fi 
 }
 
-install_edit_birdnet_conf() {
-  cat << EOF > /etc/systemd/system/edit_birdnet_conf.service
-[Unit]
-Description=Edit birdnet.conf
-
-[Service]
-Restart=on-failure
-RestartSec=3
-Type=simple
-User=pi
-Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -w -p 9898 --title-format "Edit birdnet.conf" nano /home/pi/BirdNET-Pi/birdnet.conf
-
-[Install]
-WantedBy=multi-user.target
-EOF
-}
-
-
 install_icecast() {
   if ! which icecast2;then
     echo "Installing IceCast2"
@@ -481,11 +488,13 @@ EOF
 }
 
 install_nomachine() {
-  if [ ! -d /usr/share/NX ];then
+  if [ ! -d /usr/share/NX ] && [ -d /etc/lightdm ];then
     echo "Installing NoMachine"
     curl -s -o ${HOME}/nomachine.deb -O "${nomachine_url}"
     apt install -y ${HOME}/nomachine.deb
     rm -f ${HOME}/nomachine.deb
+    echo "Enabling VNC"
+    systemctl enable --now vncserver-x11-serviced.service
   fi
 }
 
@@ -502,6 +511,7 @@ install_cleanup_cron() {
 
 install_selected_services() {
   set_hostname
+  update_system
   install_scripts
   install_birdnet_analysis
 
@@ -524,7 +534,6 @@ install_selected_services() {
     install_mariadb
     install_spectrogram_service
     install_chart_viewer_service
-    install_edit_birdnet_conf
     install_pushed_notifications
 
   if [ ! -z "${ICE_PWD}" ];then
