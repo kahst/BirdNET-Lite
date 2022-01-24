@@ -29,5 +29,18 @@ if(true){
    $_SESSION['success'] = 1;
    header("Location:config.php");
 }
+
+$language = $_POST["language"];
+if ($language != "none"){
+  $command = "sudo -upi set -x; sudo -upi mv /home/pi/BirdNET-Pi/model/labels.txt /home/pi/BirdNET-Pi/model/labels.txt.old && sudo -upi unzip /home/pi/BirdNET-Pi/model/labels_l18n.zip $language -d /home/pi/BirdNET-Pi/model && sudo -upi mv /home/pi/BirdNET-Pi/model/$language /home/pi/BirdNET-Pi/model/labels.txt";
+  $command_output = `$command`;
+  echo $command_output;
+  @session_start();
+  
+  if(true){
+     $_SESSION['success'] = 1;
+     header("Location:config.php");
+  }
+}
 ?>
 
