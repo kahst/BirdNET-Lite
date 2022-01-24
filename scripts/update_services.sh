@@ -19,6 +19,10 @@ set_hostname() {
   fi
 }
 
+update_system() {
+  apt update && apt -y upgrade
+}
+
 install_scripts() {
   echo "Installing BirdNET-Pi scripts to /usr/local/bin"
   ln -sf ${my_dir}/* /usr/local/bin/
@@ -507,6 +511,7 @@ install_cleanup_cron() {
 
 install_selected_services() {
   set_hostname
+  update_system
   install_scripts
   install_birdnet_analysis
 
