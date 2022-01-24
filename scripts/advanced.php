@@ -89,11 +89,11 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 } ?>
       <h3>Defaults</h3>
       <label for="full_disk">Full Disk Behavior: </label>
-      <input name="full_disk" type="text" value="<?php print($config['FULL_DISK']);?>" /><br>
+      <input name="full_disk" type="text" value="<?php print($config['FULL_DISK']);?>" required/><br>
       <label for="rec_card">Audio Card: </label>
-      <input name="rec_card" type="text" value="<?php print($config['REC_CARD']);?>" /><br>
+      <input name="rec_card" type="text" value="<?php print($config['REC_CARD']);?>" required/><br>
       <label for="channels">Audio Channels: </label>
-      <input name="channels" type="text" value="<?php print($config['CHANNELS']);?>" /><br>
+      <input name="channels" type="text" value="<?php print($config['CHANNELS']);?>" required/><br>
       <label for="recording_length">Recording Length: </label>
       <input name="recording_length" type="text" value="<?php print($config['RECORDING_LENGTH']);?>" /><br>
       <label for="extraction_length">Extraction Length: </label>
@@ -102,9 +102,9 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
       <label for="caddy_pwd">Webpage: </label>
       <input name="caddy_pwd" type="text" value="<?php print($config['CADDY_PWD']);?>" /><br>
       <label for="db_pwd">Database: </label>
-      <input name="db_pwd" type="text" value="<?php print($config['DB_PWD']);?>" /><br>
+      <input name="db_pwd" type="text" value="<?php print($config['DB_PWD']);?>" required/><br>
       <label for="ice_pwd">Live Audio Stream: </label>
-      <input name="ice_pwd" type="text" value="<?php print($config['ICE_PWD']);?>" /><br>
+      <input name="ice_pwd" type="text" value="<?php print($config['ICE_PWD']);?>" required/><br>
     </div>
     <div class="column first">
       <h3>Custom URLs</h3>
@@ -116,11 +116,11 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
       <input name="birdnetlog_url" type="text" value="<?php print($config['BIRDNETLOG_URL']);?>" /><br>
       <h3>BirdNET-Lite Settings</h3>
       <label for="overlap">Overlap: </label>
-      <input name="overlap" type="text" value="<?php print($config['OVERLAP']);?>" /><br>
+      <input name="overlap" type="text" value="<?php print($config['OVERLAP']);?>" required/><br>
       <label for="confidence">Minimum Confidence: </label>
-      <input name="confidence" type="text" value="<?php print($config['CONFIDENCE']);?>" /><br>
+      <input name="confidence" type="text" value="<?php print($config['CONFIDENCE']);?>" required/><br>
       <label for="sensitivity">Sigmoid Sensitivity: </label>
-      <input name="sensitivity" type="text" value="<?php print($config['SENSITIVITY']);?>" /><br>
+      <input name="sensitivity" type="text" value="<?php print($config['SENSITIVITY']);?>" required/><br>
       <br>
       <br>
       <input type="submit" value="<?php
