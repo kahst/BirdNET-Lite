@@ -42,6 +42,15 @@ a {
 	text-align: center;
 }
 
+select {
+  font-size:large;
+  width: 60%;
+}
+
+select option {
+  font-size:large;
+}
+
 form {
   text-align:left;
   margin-left:20px;
@@ -54,9 +63,12 @@ h3 {
   text-align:left;
 }
 label {
+  float:left;
+  width:40%;
   font-weight:bold;
 }
 input {
+  width:60%;
   text-align:center;
   font-size:large;
 }
@@ -97,7 +109,6 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
       <input name="pushed_app_key" type="text" value="<?php print($config['PUSHED_APP_KEY']);?>" /><br>
       <label for="pushed_app_secret">Pushed App Secret: </label>
       <input name="pushed_app_secret" type="text" value="<?php print($config['PUSHED_APP_SECRET']);?>" /><br>
-      <br>
       <label for"language">Database Language: </label>
       <select name="language">
         <option value="none">Select your language</option>
