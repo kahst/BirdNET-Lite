@@ -489,7 +489,7 @@ EOF
 }
 
 install_nomachine() {
-  if [ ! -d /usr/share/NX ];then
+  if [ ! -d /usr/share/NX ] && [ -d /etc/lightdm ];then
     echo "Installing NoMachine"
     curl -s -o ${HOME}/nomachine.deb -O "${nomachine_url}"
     apt install -y ${HOME}/nomachine.deb
