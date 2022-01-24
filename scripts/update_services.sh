@@ -489,6 +489,8 @@ install_nomachine() {
     curl -s -o ${HOME}/nomachine.deb -O "${nomachine_url}"
     apt install -y ${HOME}/nomachine.deb
     rm -f ${HOME}/nomachine.deb
+    echo "Enabling VNC"
+    systemctl enable --now vncserver-x11-serviced.service
   fi
 }
 
