@@ -55,9 +55,12 @@ h3 {
   text-align:left;
 }
 label {
+  float:left;
+  width: 40%;
   font-weight:bold;
 }
 input {
+  width: 60%;
   text-align:center;
   font-size:large;
 }
