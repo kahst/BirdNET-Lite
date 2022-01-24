@@ -1,6 +1,7 @@
 <?php
 header("refresh: 300;");
 $myDate = date('d-m-Y');
+$chart = "Combo-$myDate.png";
 $mysqli = mysqli_connect();
 $mysqli->select_db('birds');
 
@@ -64,7 +65,13 @@ table,th,td {
 </style>
 </head>
 
-<img src='/Charts/Combo-<?php echo $myDate;?>.png?nocache=<?php echo time();?>' class="center">
+<?php
+if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
+  echo "<img src=\"/Charts/$chart?nocache=$time()\" style=\"width: 100%;padding: 5px;margin-left: auto;margin-right: auto;display: block;\">";
+} else {
+    echo "<p style=\"text-align:center;margin-left:-150px;\">No Detections For Today</p>";
+}
+?>
 <body style="background-color: rgb(119, 196, 135);">
 
 	<section>
