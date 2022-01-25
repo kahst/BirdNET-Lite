@@ -142,6 +142,7 @@ if(isset($_SESSION['success'])){
       <button type="text"><a href="config.php">Basic Settings</a></button>
       <button type="text"><a href="edit_crontab.php">Edit the Crontab</a></button>
       <button type="text"><a href="list_scripts.php">Edit Scripts</a></button>
+      <button type="text"><a href="list_pages.php">Edit Webpages</a></button>
     </form>
 </div>
 </div>
