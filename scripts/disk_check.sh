@@ -13,3 +13,11 @@ if [ "${used//%}" -ge 95 ]; then
        /usr/local/bin/stop_core_services.sh;;
   esac
 fi
+sleep 1
+if [ "${used//%}" -ge 95 ]; then
+  case $FULL_DISK in
+    0) echo "Removing more data"
+       rm -rfv ${PROCESSED}/*
+    *) echo "Stopping Core Services"
+       /usr/local/bin/stop_core_services.sh;;
+  esac
