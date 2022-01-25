@@ -19,6 +19,12 @@ set_hostname() {
   fi
 }
 
+install_ftpd() {
+  if ! [ -f /etc/ftpuseres ];then
+    apt -y install ftpd
+  fi
+}
+
 update_system() {
   apt update && apt -y upgrade
 }
@@ -549,6 +555,7 @@ install_selected_services() {
   create_necessary_dirs
   generate_BirdDB
   install_cleanup_cron
+  install_ftpd
 }
 
 if [ -f ${config_file} ];then 
