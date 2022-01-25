@@ -5,6 +5,10 @@
     ' Calibri', 'Trebuchet MS', 'sans-serif';
   box-sizing: border-box;
 }
+button {
+  font-size: large;
+  padding: 5px;
+}
 /* Create two unequal columns that floats next to each other */
 .column {
 float: left;
@@ -80,7 +84,7 @@ width: 100%;
 </style>
 <div class="row">
 <div class="column first">
-<form action="edit_scripts.php" method="POST">
+<form action="edit_pages.php" method="POST" id="form1">
 <?php
 function printFoldersRecursive($dir) {
     $allfiles = array();
@@ -89,7 +93,7 @@ function printFoldersRecursive($dir) {
     if (is_dir($dir)){
         if ($dh = opendir($dir)){
             while (($file = readdir($dh)) !== false){
-                if($file != '.' && $file != '..' && $file != 'By_Date' && $file != 'By_Common_Name' && $file != 'By_Scientific_Name' && $file != 'Charts' && $file != 'Processed' && $file != '.git' && $file != '.github' && $file != 'phpsysinfo' && $file != '.DS_Store'){
+                if($file != '.' && $file != '..' && $file != 'By_Date' && $file != 'By_Common_Name' && $file != 'By_Scientific_Name' && $file != 'Charts' && $file != 'Processed' && $file != '.git' && $file != '.github' && $file != 'phpsysinfo' && $file != '.DS_Store' && $file != 'birdnet' && $file != 'scripts'){
                     $allfiles[] = $file;
                 }
             }
@@ -100,14 +104,14 @@ function printFoldersRecursive($dir) {
     sort($allfiles);
 
     foreach($allfiles as $file) {
-      echo "<input name=\"script\" type=\"submit\" value=\"$file\">";
+      echo "<button name=\"page\" type=\"submit\" form=\"form1\" value=\"$dir/$file\">$file</button><br>";
         if(is_dir($dir.'/'.$file)){
-            printFoldersRecursive($dir.'/'.$file);
+          printFoldersRecursive($dir.'/'.$file);
         }
     }
 }
 
-printFoldersRecursive('../../BirdSongs/Extracted');
+printFoldersRecursive('/home/pi/BirdNET-Pi');
 ?>
 </form>
 </div>
