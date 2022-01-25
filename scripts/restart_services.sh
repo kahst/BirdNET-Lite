@@ -7,7 +7,7 @@ sudo systemctl stop birdnet_recording.service
 sudo rm -rf ${RECS_DIR}/$(date +%B-%Y/%d-%A)/*
 sudo systemctl start birdnet_recording.service
 
-services=($(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort))
+services=($(awk '/systemctl/ && !/php/ && !/caddy/ && !/target/ {print $3}' <(sed -e 's/--now//g' ${my_dir}/update_services.sh) | sort | uniq ))
 
 for i in  "${services[@]}";do
 sudo systemctl restart "${i}"
