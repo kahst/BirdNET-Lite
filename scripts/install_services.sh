@@ -370,6 +370,8 @@ install_gotty_logs() {
   fi
   sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/gotty \
     ${HOME}/.gotty
+  sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/bashrc \
+    ${HOME}/.bashrc
   echo "Installing the birdnet_log.service"
   cat << EOF > /etc/systemd/system/birdnet_log.service
 [Unit]
