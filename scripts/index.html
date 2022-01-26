@@ -59,8 +59,11 @@ a {
 <body style="background-color: rgb(119, 196, 135);">
 	<div class="row">
 		<div class="column first">
-			<form >
-				<button type="submit" class="block"><a target="_content" href="/scripts/adminer.php">Database Maintenance</a></button>
+    	<form action="/scripts/filemanager/filemanager.php">
+    		<button type="submit" class="block">File Manager</button>
+    	</form>
+			<form action="/scripts/adminer.php">
+				<button type="submit" class="block">Database Maintenance</button>
 			</form>
 			<form action="/scripts/config.php">
 				<button type="submit" class="block">Settings</button>
@@ -80,7 +83,9 @@ a {
 			</form>	
 		</div>
 		<div class="column second">
-
+			<form action="http://birdnetpi.local:8888" target="top">
+				<button type="submit" class="block">Web Terminal</button>
+			</form>
 			<form action="/scripts/stop_core_services.php" onclick="return confirm('Stop core services?')">
 				<button type="submit" class="block">Stop Core Services</button>
 			</form>
@@ -100,5 +105,7 @@ a {
 				<button type="submit" class="block">Restart Caddy</button>
 			</form>
 		</div>
+		<div class="column first">
+
 	</div>
 </body>
