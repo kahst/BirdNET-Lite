@@ -19,7 +19,7 @@ EOF
 fi
 
 # Stage 2 restarts the services
-newservices=$(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort)
+newservices=($(awk '/systemctl/ && !/php/ && !/caddy/ && !/target/ {print $3}' <(sed -e 's/--now//g' ${my_dir}/update_services.sh) | sort | uniq ))
 for i in ${newservices[@]};do
   sudo systemctl restart ${i}
 done
