@@ -384,21 +384,21 @@ ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalct
 WantedBy=multi-user.target
 EOF
   systemctl enable birdnet_log.service
-  echo "Installing the extraction_log.service"
-  cat << EOF > /etc/systemd/system/extraction_log.service
+  echo "Installing the web_terminal.service"
+  cat << EOF > /etc/systemd/system/web_terminal.service
 [Unit]
-Description=BirdNET Extraction Log
+Description=BirdNET-Pi Web Terminal
 [Service]
 Restart=on-failure
 RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8888 --title-format "Extractions Log" journalctl -o cat -fu extraction.service
+ExecStart=/usr/local/bin/gotty -w -p 8888 --title-format "BirdNET-Pi Terminal" bash
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable extraction_log.service
+  systemctl enable web_terminal.service
 }
 
 install_sox() {
