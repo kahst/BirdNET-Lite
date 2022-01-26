@@ -416,7 +416,7 @@ install_php() {
   if ! which php &> /dev/null || ! which php-fpm || ! apt list --installed | grep php-xml;then
     echo "Installing PHP modules"
     apt -qq update
-    apt install -qqy php php-fpm php-mysql php-xml
+    apt install -qqy php php-fpm php-mysql php-xml php-zip
   else
     echo "PHP and PHP-FPM installed"
   fi
