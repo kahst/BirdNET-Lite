@@ -165,6 +165,7 @@ create_necessary_dirs() {
   echo "Setting Wttr.in URL to "${LATITUDE}", "${LONGITUDE}""
   sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
   chmod -R g+rw $(dirname ${my_dir})
+  chmod -R g+rw ${RECS_DIR}
 }
 
 generate_BirdDB() {
