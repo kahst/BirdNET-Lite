@@ -326,7 +326,7 @@ ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(hostname -I |cut -d' '
 [Install]
 WantedBy=multi-user.target
 EOF
-systemctl enable avahi-alias@$(hostname).local.service
+systemctl enable avahi-alias@"$(hostname)".local.service
 }
 
 install_spectrogram_service() {
