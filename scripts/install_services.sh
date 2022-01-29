@@ -127,28 +127,28 @@ create_necessary_dirs() {
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
   if [ ! -z ${BIRDNETLOG_URL} ];then
     BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
-    phpfiles="$(grep -l "birdnetpi.local:8080" ${my_dir}/*.php)"
+    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+    phpfiles="$(grep -l "$(hostname).local:8080" ${my_dir}/*.php)"
     for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" ${i}
+      sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" ${i}
     done
   fi
   if [ ! -z ${EXTRACTIONLOG_URL} ];then
     EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
-    phpfiles="$(grep -l "birdnetpi.local:8888" ${my_dir}/*.php)"
+    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${EXTRACTIONLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+    phpfiles="$(grep -l "$(hostname).local:8888" ${my_dir}/*.php)"
     for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" ${i}
+      sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${EXTRACTIONLOG_URL}"/g" ${i}
     done
   fi
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
   if [ ! -z ${BIRDNETPI_URL} ];then
     BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
-    phpfiles="$(grep -l birdnetpi.local ${my_dir}/*.php)"
+    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+    phpfiles="$(grep -l $(hostname).local ${my_dir}/*.php)"
     for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" ${i}
+      sudo -u${USER} sed -i "s/http:\/\/$(hostname).local/"${BIRDNETPI_URL}"/g" ${i}
     done
   fi
 
@@ -252,7 +252,7 @@ install_Caddyfile() {
   if ! [ -z ${CADDY_PWD} ];then
   HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   cat << EOF > /etc/caddy/Caddyfile
-http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
+http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   basicauth /Processed* {
@@ -273,7 +273,7 @@ http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
 EOF
   else
     cat << EOF > /etc/caddy/Caddyfile
-http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
+http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   reverse_proxy /stream localhost:8000
@@ -303,7 +303,7 @@ update_etc_hosts() {
   #BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
   #EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
   #BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-  sed -ie s/'birdnetpi.local'/"birdnetpi.local ${BIRDNETPI_URL//https:\/\/} ${EXTRACTIONLOG_URL//https:\/\/} ${BIRDNETLOG_URL//https:\/\/}"/g /etc/hosts
+  sed -ie s/'$(hostname).local'/"$(hostname).local ${BIRDNETPI_URL//https:\/\/} ${EXTRACTIONLOG_URL//https:\/\/} ${BIRDNETLOG_URL//https:\/\/}"/g /etc/hosts
 }
 
 install_avahi_aliases() {
