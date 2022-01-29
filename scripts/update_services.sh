@@ -11,22 +11,10 @@ nomachine_url="https://download.nomachine.com/download/7.7/Arm/nomachine_7.7.4_1
 gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_arm.tar.gz"
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
-set_hostname() {
-  if [ "$(hostname)" != "birdnetpi" ];then
-    echo "Setting hostname to 'birdnetpi'"
-    hostnamectl set-hostname birdnetpi
-    sed -i 's/raspberrypi/birdnetpi/g' /etc/hosts
-  fi
-}
-
 install_ftpd() {
   if ! [ -f /etc/ftpuseres ];then
     apt -y install ftpd
   fi
-}
-
-update_system() {
-  apt update && apt -y upgrade
 }
 
 install_scripts() {
@@ -331,7 +319,7 @@ ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(hostname -I |cut -d' '
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable avahi-alias@birdnetpi.local.service
+systemctl enable avahi-alias@$(hostname).local.service
 }
 
 install_spectrogram_service() {
@@ -514,8 +502,6 @@ install_cleanup_cron() {
 }
 
 install_selected_services() {
-  set_hostname
-  update_system
   install_scripts
   install_birdnet_analysis
 

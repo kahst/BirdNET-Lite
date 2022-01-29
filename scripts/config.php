@@ -52,6 +52,7 @@ form {
   text-align:left;
   margin-left:20px;
 }
+
 h2 {
   margin-bottom:0px;
 }
@@ -70,6 +71,9 @@ input {
   font-size:large;
 }
 @media screen and (max-width: 800px) {
+  select {
+    width:100%;
+  }
   h2 {
     margin-bottom:0px;
     text-align:center;
@@ -79,9 +83,12 @@ input {
     margin-left:0px;
   }	
   .column {
-		float: none;
-		width: 100%;
-	}
+    float: none;
+    width: 100%;
+  }
+  input, label  {
+    width:100%;
+  {
 }
   </style>
   </head>
@@ -106,7 +113,7 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
       <input name="pushed_app_key" type="text" value="<?php print($config['PUSHED_APP_KEY']);?>" /><br>
       <label for="pushed_app_secret">Pushed App Secret: </label>
       <input name="pushed_app_secret" type="text" value="<?php print($config['PUSHED_APP_SECRET']);?>" /><br>
-      <label for"language">Database Language: </label>
+      <label for="language">Database Language: </label>
       <select name="language">
         <option value="none">Select your language</option>
         <option value="labels_af.txt">Afrikaans</option>
@@ -150,10 +157,12 @@ if(isset($_SESSION['success'])){
   echo "Update Settings";
 }
 ?></button>
-      <br>
     </form>
-    <form action="advanced.php">
+    <form action="advanced.php" class="form2">
       <button type="submit" class="block">Advanced Settings</button>
+    </form>
+    <form action="index.html" class="form2">
+      <button type="submit" class="block">Tools</button>
     </form>
     </div>
   </div>

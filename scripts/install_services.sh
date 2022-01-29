@@ -12,7 +12,7 @@ gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_a
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
 set_hostname() {
-  if [ "$(hostname)" != "birdnetpi" ];then
+  if [ "$(hostname)" == "raspberrypi" ];then
     echo "Setting hostname to 'birdnetpi'"
     hostnamectl set-hostname birdnetpi
     sed -i 's/raspberrypi/birdnetpi/g' /etc/hosts
@@ -326,7 +326,7 @@ ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(hostname -I |cut -d' '
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable avahi-alias@birdnetpi.local.service
+systemctl enable avahi-alias@$(hostname).local.service
 }
 
 install_spectrogram_service() {

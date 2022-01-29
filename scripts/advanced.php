@@ -14,7 +14,7 @@
   width: calc(50% - 70px);
 }
 .second {
-  width: calc(50% - 30px);
+  width: calc(50% - 70px);
 }
 .
 /* Clear floats after the columns */
@@ -62,17 +62,19 @@ input {
   font-size:large;
 }
 @media screen and (max-width: 800px) {
-  h2 {
-    margin-bottom:0px;
+  h2,h3 {
     text-align:center;
-  }  form {
-    text-align:left;
-    margin-left:0px;
-  }    
+  }  
+  form {
+    margin:0;
+  }
   .column {
     float: none;
     width: 100%;
   }
+  input, label {
+    width: 100%;
+  {
 }
   </style>
   </head>
@@ -83,9 +85,9 @@ input {
     <form action="write_advanced.php" method="POST">
 <?php 
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
-  $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
+	$config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
 } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
-  $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
+	$config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
 } ?>
       <h3>Defaults</h3>
       <label for="full_disk">Full Disk Behavior: </label>
@@ -106,7 +108,7 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
       <label for="ice_pwd">Live Audio Stream: </label>
       <input name="ice_pwd" type="text" value="<?php print($config['ICE_PWD']);?>" required/><br>
     </div>
-    <div class="column first">
+    <div class="column second">
       <h3>Custom URLs</h3>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
       <input name="birdnetpi_url" type="text" value="<?php print($config['BIRDNETPI_URL']);?>" /><br>
@@ -123,19 +125,23 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
       <input name="sensitivity" type="text" value="<?php print($config['SENSITIVITY']);?>" required/><br>
       <br><br>
       <button type="submit" class="block"><?php
-  @session_start();
+	@session_start();
 
 if(isset($_SESSION['success'])){
-  echo "Success!";
-  unset($_SESSION['success']);
+	echo "Success!";
+	unset($_SESSION['success']);
 } else {
-  echo "Update Settings";
+	echo "Update Settings";
 }
 ?></button>
       <br>
     </form>
     <form action="config.php" style="margin:0;">
       <button type="submit" class="block">Basic Settings</button>
+    </form>
+      <br>
+    <form action="index.html" style="margin:0;">
+      <button type="submit" class="block">Tools</button>
     </form>
 </div>
 </div>
