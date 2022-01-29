@@ -12,7 +12,7 @@ $CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false,"hide_Cols":
 define('VERSION', '2.4.6');
 
 //Application Title
-define('APP_TITLE', 'Tiny File Manager');
+define('APP_TITLE', 'BirdNET-Pi Files');
 
 // --- EDIT BELOW CONFIGURATION CAREFULLY ---
 
@@ -3342,7 +3342,9 @@ function fm_show_nav_path($path)
     }
     ?>
     <nav class="navbar navbar-expand-lg <?php echo $getTheme; ?> mb-4 main-nav <?php echo $isStickyNavBar ?>">
-        <a class="navbar-brand" href=""> <?php echo lng('AppTitle') ?> </a>
+        <a class="navbar-brand" href="../../">BirdNET-Pi Homepage </a>
+	<a class="navbar-brand" href="../"><?php echo lng('Tools'); ?></a>
+	<a class="navbar-brand" href="http://birdnetpi.local:8888" target="_"><?php echo lng('WebTerminal'); ?></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -4010,7 +4012,8 @@ function lng($txt) {
     global $lang;
 
     // English Language
-    $tr['en']['AppName']        = 'Tiny File Manager';      $tr['en']['AppTitle']           = 'File Manager';
+    $tr['en']['AppName']        = 'BirdNET-Pi Files';       $tr['en']['AppTitle']           = 'BirdNET-Pi Files';
+    $tr['en']['Tools']		= 'Tools';		    $tr['en']['WebTerminal']        = 'Web Terminal';
     $tr['en']['Login']          = 'Sign in';                $tr['en']['Username']           = 'Username';
     $tr['en']['Password']       = 'Password';               $tr['en']['Logout']             = 'Sign Out';
     $tr['en']['Move']           = 'Move';                   $tr['en']['Copy']               = 'Copy';

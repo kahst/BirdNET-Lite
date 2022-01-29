@@ -511,9 +511,6 @@ install_nomachine() {
 install_cleanup_cron() {
   echo "Installing the cleanup.cron"
   cat $(dirname ${my_dir})/templates/cleanup.cron >> /etc/crontab
-  chown root:pi /etc/crontab
-  chmod g+rw /etc/crontab
-
 }
 
 install_selected_services() {

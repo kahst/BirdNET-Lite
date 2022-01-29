@@ -8,6 +8,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "Titlu aplicatie",
+        "Tools": "Instrumente",
         "Login": "Logare",
         "Username": "Nume utilizator",
         "Password": "Parola",
@@ -88,6 +89,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "Fájl kezelő",
+        "Tools": "Eszközök",
         "Login": "Bejelentkezés",
         "Username": "Felhasználói név",
         "Password": "Jelszó",
@@ -168,6 +170,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "Fil behandler",
+        "Tools": "Verktøy",
         "Login": "Logg inn",
         "Username": "Brukernavn",
         "Password": "Passord",
@@ -248,6 +251,7 @@
       "translation": {
         "Tiny File Manager": "مدیریت فایل کوچک",
         "File Manager": "مدیریت فایل",
+        "Tools": "ابزار",
         "Sign in": "ورود",
         "Username": "نام کاربری",
         "Password": "گذرواژه",
@@ -324,6 +328,7 @@
         "AdvancedEditor": "Улучшенный редактор",
         "AppName": "Файловый менеджер",
         "AppTitle": "Файловый менеджер",
+        "Tools": "Инструменты",
         "Back": "Вернуться",
         "BackUp": "Резервная копия",
         "Cancel": "Отмена",
@@ -389,6 +394,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "File Manager",
+        "Tools": "Utensili",
         "Login": "Connettiti",
         "Username": "Username",
         "Password": "Password",
@@ -465,6 +471,7 @@
         "AdvancedEditor": "Editeur avancé",
         "AppName": "Tiny File Manager",
         "AppTitle": "Gestionnaire de fichiers",
+        "Toosl": "Outils",
         "Back": "Retour",
         "BackUp": "Sauvegarder",
         "CalculateFolderSize": "Calculer la taille des dossiers",
@@ -536,6 +543,7 @@
       "translation": {
         "AppName": "Pequeño Administrador de Archivos",
         "AppTitle": "Administrador de Archivos",
+        "Tools": "Instrumentos",
         "Login": "Iniciar Sesión",
         "Username": "Nombre de Usuario",
         "Password": "Contraseña",
@@ -593,6 +601,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "Administrador d'Arxius",
+        "Tools": "Eines",
         "Login": "Iniciar Sessió",
         "Username": "Nom d'Usuari",
         "Password": "Contrasenya",
@@ -673,6 +682,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "Datei Manager",
+        "Tools": "Werkzeug",
         "Login": "Einloggen",
         "Username": "Benutzername",
         "Password": "Passwort",
@@ -733,6 +743,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "ตัวจัดการไฟล์",
+        "Tools": "เครื่องมือ",
         "Login": "เข้าสู่ระบบ",
         "Username": "ชื่อผู้ใช้งาน",
         "Password": "รหัสผ่าน",
@@ -790,6 +801,7 @@
       "translation": {
         "AppName": "文件管理器",
         "AppTitle": "文件管理器",
+        "Tools": "工具",
         "Login": "登录",
         "Username": "账号",
         "Password": "密码",
@@ -947,6 +959,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "Pengelola Berkas",
+        "Tools": "Peralatan",
         "Login": "Masuk",
         "Username": "Nama pengguna",
         "Password": "Kata sandi",
@@ -1030,6 +1043,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "File Manager",
+        "Tools": "Εργαλεία",
         "Login": "Είσοδος",
         "Username": "Username",
         "Password": "Password",
@@ -1089,6 +1103,7 @@
       "translation": {
         "AppName": "Gerenciador de arquivos Tiny",
         "AppTitle": "Gerenciador de arquivos",
+        "Tools": "Ferramentas",
         "Login": "Iniciar Sessão",
         "Username": "Nome de usuário",
         "Password": "Senha",
@@ -1214,6 +1229,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "Menedżer plików",
+        "Tools": "Narzędzia",
         "Login": "Login",
         "Username": "Nazwa Użytkownika",
         "Password": "Hasło",
@@ -1271,6 +1287,7 @@
       "translation": {
       "AppName": "Trình quản lí tệp Tiny",
       "AppTitle": "Quản lý tệp",
+      "Tools": "Công cụ",
       "Login": "Đăng nhập",
       "Username": "Tên đăng nhập",
       "Password": "Mật khẩu",
@@ -1396,6 +1413,7 @@
       "translation": {
         "AppName": "סייר קבצים - טיני",
         "AppTitle": "סייר קבצים",
+        "Tools": "כלים",
         "Login": "התחבר",
         "Username": "שם משתמש",
         "Password": "סיסמה",
@@ -1455,6 +1473,7 @@
       "translation": {
         "AppName": "مدير الملفات الصغير",
         "AppTitle": "مدير الملفات",
+        "Tools": "أدوات",
         "Login": "دخول",
         "Username": "اسم المستخدم",
         "Password": "كلمة المرور",
@@ -1525,6 +1544,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "File Manager",
+        "Tools": "Nástroje",
         "Login": "Přihlásit",
         "Username": "Přihlašovací jméno",
         "Password": "Heslo",
@@ -1603,6 +1623,7 @@
       "translation": {
         "Tiny File Manager": "Tiny Dosya Yöneticisi",
         "File Manager": "Dosya Yöneticisi",
+        "Tools": "Araçlar",
         "Sign in": "Giriş Yap",
         "Username": "Kullanıcı adı",
         "Password": "Parola",
@@ -1677,6 +1698,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "File Manager",
+        "Tools": "Nástroje",
         "Login": "Prihlásiť sa",
         "Username": "Prihlasovacie meno",
         "Password": "Heslo",
@@ -1742,6 +1764,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "Raziskovalec",
+        "Tools": "Orodja",
         "Login": "Prijava",
         "Username": "Uporabniško ime",
         "Password": "Geslo",
@@ -1802,6 +1825,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "File Manager",
+        "Tools": "Työkalut",
         "Login": "Kirjautuminen",
         "Username": "Käyttäjänimi",
         "Password": "Salasana",
@@ -1871,6 +1895,7 @@
       "translation": {
         "Tiny File Manager": "Tiny File Manager",
         "File Manager": "File Manager",
+        "Tools": "도구",
         "Sign in": "로그인",
         "Username": "아이디",
         "Password": "비밀번호",
@@ -1945,6 +1970,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "File Manager",
+        "Tools": "ツール",
         "Login": "ログイン",
         "Username": "Username",
         "Password": "Password",
@@ -2115,6 +2141,7 @@
       "translation": {
         "AppName": "Tiny File Manager",
         "AppTitle": "Bestand beheerder ",
+        "Tools": "Hulpmiddelen",
         "Login": "Inloggen",
         "Username": "Gebruikersnaam",
         "Password": "Wachtwoord",

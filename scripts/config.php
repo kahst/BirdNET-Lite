@@ -31,12 +31,9 @@ a {
 }
 .block {
 	display: block;
-	font-weight: bold;
-	width:100%;
+	width:50%;
 	border: none;
-	background-color: #04AA6D;
-	padding: 20px 20px;
-	color: white;
+	padding: 10px 10px;
 	font-size: medium;
 	cursor: pointer;
 	text-align: center;
@@ -143,7 +140,7 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
         <option value="labels_uk.txt">Ukrainian</option>
       </select>
       <br><br>
-      <input type="submit" value="<?php
+      <button type="submit" class="block"><?php
   @session_start();
 
 if(isset($_SESSION['success'])){
@@ -152,10 +149,11 @@ if(isset($_SESSION['success'])){
 } else {
   echo "Update Settings";
 }
-?>">      
+?></button>
       <br>
-      <br>
-      <button type="text"><a href="advanced.php">Advanced Settings</a></button>
+    </form>
+    <form action="advanced.php">
+      <button type="submit" class="block">Advanced Settings</button>
     </form>
     </div>
   </div>

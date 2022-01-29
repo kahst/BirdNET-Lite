@@ -32,12 +32,9 @@ a {
 }
 .block {
   display: block;
-  font-weight: bold;
-  width:100%;
+  width:50%;
   border: none;
-  background-color: #04AA6D;
-  padding: 20px 20px;
-  color: white;
+  padding: 10px 10px;
   font-size: medium;
   cursor: pointer;
   text-align: center;
@@ -124,9 +121,8 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
       <input name="confidence" type="text" value="<?php print($config['CONFIDENCE']);?>" required/><br>
       <label for="sensitivity">Sigmoid Sensitivity: </label>
       <input name="sensitivity" type="text" value="<?php print($config['SENSITIVITY']);?>" required/><br>
-      <br>
-      <br>
-      <input type="submit" value="<?php
+      <br><br>
+      <button type="submit" class="block"><?php
   @session_start();
 
 if(isset($_SESSION['success'])){
@@ -135,12 +131,11 @@ if(isset($_SESSION['success'])){
 } else {
   echo "Update Settings";
 }
-?>">
+?></button>
       <br>
-      <br>
-      <br>
-      <button type="text"><a href="config.php">Basic Settings</a></button>
-      <button type="text"><a href="edit_crontab.php">Edit the Crontab</a></button>
+    </form>
+    <form action="config.php" style="margin:0;">
+      <button type="submit" class="block">Basic Settings</button>
     </form>
 </div>
 </div>
