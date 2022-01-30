@@ -198,7 +198,7 @@ run_analysis() {
 --overlap "${OVERLAP}" \
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
---birdweather_id "${BIRDWEATHER_ID}""
+--birdweather_id "IN_USE""
       "${VENV}"/bin/python analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -220,7 +220,7 @@ run_analysis() {
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
 --include_list "${INCLUDE_LIST}" \
---birdweather_id "${BIRDWEATHER_ID}""
+--birdweather_id "IN_USE""
       "${VENV}"/bin/python analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -243,7 +243,7 @@ run_analysis() {
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
 --exclude_list "${EXCLUDE_LIST}" \
---birdweather_id "${BIRDWEATHER_ID}""
+--birdweather_id "IN_USE""
       "${VENV}"/bin/python analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
@@ -267,7 +267,7 @@ run_analysis() {
 --min_conf "${CONFIDENCE}" \
 --include_list "${INCLUDE_LIST}" \
 --exclude_list "${EXCLUDE_LIST}" \
---birdweather_id "${BIRDWEATHER_ID}""
+--birdweather_id "IN_USE""
       "${VENV}"/bin/python analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
