@@ -143,12 +143,18 @@ create_necessary_dirs() {
   fi
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
-  if [ ! -z ${BIRDNETPI_URL} ];then
+  if [ -z ${BIRDNETPI_URL} ];then
+    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/homepage/*.html
+    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.php
+    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*/*.php
+  else
     BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
-    phpfiles="$(grep -l $(hostname).local ${my_dir}/*.php)"
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+    phpfiles="$(grep -l birdnetpi.local ${my_dir}/*.php)"
     for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/$(hostname).local/"${BIRDNETPI_URL}"/g" ${i}
+      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" ${i}
     done
   fi
 
