@@ -17,10 +17,8 @@ import math
 import time
 from decimal import Decimal
 import json
-###############################################################################    
 import requests
 import mysql.connector
-###############################################################################
 import datetime
 import pytz
 from tzlocal import get_localzone
@@ -185,14 +183,15 @@ def writeResultsToFile(detections, min_conf, path):
         rfile.write('Start (s);End (s);Scientific name;Common name;Confidence\n')
         for d in detections:
             for entry in detections[d]:
-                if entry[1] >= min_conf and (entry[0] in WHITE_LIST or len(WHITE_LIST) == 0):
+                if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) ):
                     rfile.write(d + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + '\n')
                     rcnt += 1
     print('DONE! WROTE', rcnt, 'RESULTS.')
 
 def main():
 
-    global WHITE_LIST
+    global INCLUDE_LIST
+    global EXCLUDE_LIST
 
     # Parse passed arguments
     parser = argparse.ArgumentParser()
@@ -204,19 +203,25 @@ def main():
     parser.add_argument('--overlap', type=float, default=0.0, help='Overlap in seconds between extracted spectrograms. Values in [0.0, 2.9]. Defaults tp 0.0.')
     parser.add_argument('--sensitivity', type=float, default=1.0, help='Detection sensitivity; Higher values result in higher sensitivity. Values in [0.5, 1.5]. Defaults to 1.0.')
     parser.add_argument('--min_conf', type=float, default=0.1, help='Minimum confidence threshold. Values in [0.01, 0.99]. Defaults to 0.1.')   
-    parser.add_argument('--custom_list', default='', help='Path to text file containing a list of species. Not used if not provided.')
+    parser.add_argument('--include_list', default='', help='Path to text file containing a list of included species. Not used if not provided.')
+    parser.add_argument('--exclude_list', default='', help='Path to text file containing a list of excluded species. Not used if not provided.')
     parser.add_argument('--birdweather_id', default='99999', help='Private Station ID for BirdWeather.')    
 
     args = parser.parse_args()
 
     # Load model
     interpreter = loadModel()
-
-    # Load custom species list
-    if not args.custom_list == '':
-        WHITE_LIST = loadCustomSpeciesList(args.custom_list)
+ 
+    # Load custom species lists - INCLUDED and EXCLUDED
+    if not args.include_list == '':
+        INCLUDE_LIST = loadCustomSpeciesList(args.include_list)
     else:
-        WHITE_LIST = []
+        INCLUDE_LIST = []
+    
+    if not args.exclude_list == '':
+        EXCLUDE_LIST = loadCustomSpeciesList(args.exclude_list)
+    else:
+        EXCLUDE_LIST = []
 
     birdweather_id = args.birdweather_id
 
@@ -246,7 +251,6 @@ def main():
 
     # Process audio data and get detections
     detections = analyzeAudioData(audioData, args.lat, args.lon, week, sensitivity, args.overlap, interpreter)
-
     # Write detections to output file
     min_conf = max(0.01, min(args.min_conf, 0.99))
     writeResultsToFile(detections, min_conf, args.o)
@@ -351,3 +355,4 @@ if __name__ == '__main__':
     # Example calls
     # python3 analyze.py --i 'example/XC558716 - Soundscape.mp3' --lat 35.4244 --lon -120.7463 --week 18
     # python3 analyze.py --i 'example/XC563936 - Soundscape.mp3' --lat 47.6766 --lon -122.294 --week 11 --overlap 1.5 --min_conf 0.25 --sensitivity 1.25 --custom_list 'example/custom_species_list.txt'
+
