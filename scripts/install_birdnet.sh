@@ -51,7 +51,7 @@ install_birdnet() {
   python3 -m venv birdnet
   source ./birdnet/bin/activate
   echo "Upgrading pip, wheel, and setuptools"
-  pip3 install --upgrade pip wheel setuptools
+  pip3 install --upgrade pip~=21.0.0 wheel setuptools
   python_version="$(awk -F. '{print $2}' <(ls -l $(which /usr/bin/python3)))"
   echo "python_version=${python_version}"
   # TFLite Pre-built binaires from https://github.com/PINTO0309/TensorflowLite-bin
