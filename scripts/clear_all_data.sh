@@ -70,6 +70,16 @@ sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUD
 chmod -R g+rw $(dirname ${my_dir})
 chmod -R g+rw ${RECS_DIR}
 
+echo "Generating BirdDB.txt"
+if ! [ -f $(dirname ${my_dir})/BirdDB.txt ];then
+  sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
+  echo "Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap" | sudo -u ${USER} tee -a $(dirname ${my_dir})/BirdDB.txt
+elif ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
+  sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
+fi
+ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt &&
+  chown pi:pi ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
+
 
 echo "Dropping and re-creating database"
 sudo /home/pi/BirdNET-Pi/scripts/createdb_bullseye.sh

@@ -170,6 +170,8 @@ generate_BirdDB() {
   elif ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
     sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
   fi
+  ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt &&
+    chown pi:pi ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
 }
 
 install_alsa() {
