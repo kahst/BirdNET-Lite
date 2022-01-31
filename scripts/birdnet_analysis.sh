@@ -29,6 +29,12 @@ fi
 
 INCLUDE_LIST="/home/pi/BirdNET-Pi/include_species_list.txt"
 EXCLUDE_LIST="/home/pi/BirdNET-Pi/exclude_species_list.txt"
+if [ "$(du ${INCLUDE_LIST} | awk '{print $1}')" -lt 4 ];then
+	INCLUDE_LIST=null
+fi
+if [ "$(du ${EXCLUDE_LIST} | awk '{print $1}')" -lt 4 ];then
+	EXCLUDE_LIST=null
+fi
 
 # Create an array of the audio files
 # Takes one argument:
