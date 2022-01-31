@@ -1,5 +1,20 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors',1);
+?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 * {
   font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
   ' Calibri', 'Trebuchet MS', 'sans-serif';
@@ -84,14 +99,26 @@ input {
     <div class="column first">
     <form action="write_advanced.php" method="POST">
 <?php 
+
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 	$config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
 } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
 	$config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
 } ?>
       <h3>Defaults</h3>
-      <label for="full_disk">Full Disk Behavior: </label>
-      <input name="full_disk" type="text" value="<?php print($config['FULL_DISK']);?>" required/><br>
+      <label>Full Disk Behavior: </label>
+      <label style="width:30%;" for="purge">
+      <input style="width:15%;" name="full_disk" type="radio" id="purge" value="purge" 
+<?php
+if (strcmp($config['FULL_DISK'], "purge") == 0) {
+	echo "checked";
+}?>>Purge</label>
+      <label style="width:30%;" for="keep">
+      <input style="width:15%" name="full_disk" type="radio" id="keep" value="keep" 
+<?php
+if (strcmp($config['FULL_DISK'], "keep") == 0) {
+	echo "checked";
+}?>>Keep</label>
       <label for="rec_card">Audio Card: </label>
       <input name="rec_card" type="text" value="<?php print($config['REC_CARD']);?>" required/><br>
       <label for="channels">Audio Channels: </label>

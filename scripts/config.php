@@ -1,5 +1,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 * {
   font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
   ' Calibri', 'Trebuchet MS', 'sans-serif';
@@ -104,9 +115,9 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
 } ?>
       <label for="latitude">Latitude: </label>
-      <input name="latitude" type="text" value="<?php print($config['LATITUDE']);?>" required/><br>
+      <input name="latitude" type="number" max="90" min="-90" step="0.0001" value="<?php print($config['LATITUDE']);?>" required/><br>
       <label for="longitude">Longitude: </label>
-      <input name="longitude" type="text" value="<?php print($config['LONGITUDE']);?>" required/><br>
+      <input name="longitude" type="number" max="180" min="-180" step="0.0001" value="<?php print($config['LONGITUDE']);?>" required/><br>
       <label for="birdweather_id">BirdWeather ID: </label>
       <input name="birdweather_id" type="text" value="<?php print($config['BIRDWEATHER_ID']);?>" /><br>
       <label for="pushed_app_key">Pushed App Key: </label>
@@ -167,3 +178,4 @@ if(isset($_SESSION['success'])){
     </div>
   </div>
 </body>
+<input type="reset" form=">

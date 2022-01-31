@@ -11,10 +11,10 @@ if ! grep FULL_DISK ${birdnet_conf};then
  cat << EOF >> ${birdnet_conf}
 
 ## FULL_DISK can be set to configure how the system reacts to a full disk
-## 0 = Remove the oldest day's worth of recordings
-## 1 = Keep all data and `stop_core_services.sh`
+## purge = Remove the oldest day's worth of recordings
+## keep = Keep all data and `stop_core_services.sh`
 
-FULL_DISK=0
+FULL_DISK=purge
 EOF
 fi
 
