@@ -265,7 +265,6 @@ def main():
       print("\n", detections[i][0],"\n")
     with open('BirdDB.txt', 'a') as rfile:
         for d in detections:
-            print("\n", "Database Entry", "\n")
             for entry in detections[d]:
                 if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) ):
                     rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' \
