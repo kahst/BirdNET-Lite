@@ -39,6 +39,7 @@ if [ ! -z ${EXTRACTIONLOG_URL} ];then
   done
 fi
 
+sudo -u ${USER} ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}/
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
 if [ -z ${BIRDNETPI_URL} ];then
   sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/homepage/*.html
