@@ -29,6 +29,8 @@ fi
 
 INCLUDE_LIST="/home/pi/BirdNET-Pi/include_species_list.txt"
 EXCLUDE_LIST="/home/pi/BirdNET-Pi/exclude_species_list.txt"
+[ -f ${INCLUDE_LIST} ] || touch ${INCLUDE_LIST}
+[ -f ${EXCLUDE_LIST} ] || touch ${EXCLUDE_LIST}
 if [ "$(du ${INCLUDE_LIST} | awk '{print $1}')" -lt 4 ];then
 	INCLUDE_LIST=null
 fi
@@ -87,9 +89,9 @@ run_analysis() {
     WEEK="$(echo "${WEEK_OF_YEAR} + 4" |bc -l)"
   fi
 
-  cd ${HOME}/BirdNET-Pi || exit 1
+  cd ${HOME}/BirdNET-Pi/scripts || exit 1
   for i in "${files[@]}";do
-    echo "${1}/${i}" > ./analyzing_now.txt
+    echo "${1}/${i}" > ../analyzing_now.txt
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=15
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"

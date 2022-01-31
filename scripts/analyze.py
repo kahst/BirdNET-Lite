@@ -34,7 +34,7 @@ def loadModel():
     print('LOADING TF LITE MODEL...', end=' ')
 
     # Load TFLite model and allocate tensors.
-    interpreter = tflite.Interpreter(model_path='model/BirdNET_6K_GLOBAL_MODEL.tflite',num_threads=2)
+    interpreter = tflite.Interpreter(model_path='../model/BirdNET_6K_GLOBAL_MODEL.tflite',num_threads=2)
     interpreter.allocate_tensors()
 
     # Get input and output tensors.
@@ -48,7 +48,7 @@ def loadModel():
 
     # Load labels
     CLASSES = []
-    with open('model/labels.txt', 'r') as lfile:
+    with open('../model/labels.txt', 'r') as lfile:
         for line in lfile.readlines():
             CLASSES.append(line.replace('\n', ''))
 
