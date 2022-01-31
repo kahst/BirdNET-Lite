@@ -263,7 +263,7 @@ def main():
     # Write detections to Database
     for i in detections:
       print("\n", detections[i][0],"\n")
-    with open('BirdDB.txt', 'a') as rfile:
+    with open('../BirdDB.txt', 'a') as rfile:
         for d in detections:
             for entry in detections[d]:
                 if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) ):
