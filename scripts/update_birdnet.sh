@@ -50,6 +50,8 @@ remove_scripts() {
 remove_services
 remove_scripts
 
+# Backup labels.txt
+sudo -u${USER} cp -f ~/BirdNET-Pi/model/labels.txt{,.bak}
 # Stage 2 does a git pull to fetch new things
 sudo -u${USER} git -C ${HOME}/BirdNET-Pi checkout -f
 sudo -u${USER} git -C ${HOME}/BirdNET-Pi pull -f
