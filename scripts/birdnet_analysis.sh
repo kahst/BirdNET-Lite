@@ -29,7 +29,7 @@ fi
 
 INCLUDE_LIST="/home/pi/BirdNET-Pi/include_species_list.txt"
 EXCLUDE_LIST="/home/pi/BirdNET-Pi/exclude_species_list.txt"
-if [ !-f ${INCLUDE_LIST} ];then 
+if [ ! -f ${INCLUDE_LIST} ];then 
   touch ${INCLUDE_LIST} && 
     chmod g+rw ${INCLUDE_LIST}
 fi
