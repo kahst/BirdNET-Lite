@@ -122,11 +122,11 @@ if (strcmp($config['FULL_DISK'], "keep") == 0) {
       <label for="rec_card">Audio Card: </label>
       <input name="rec_card" type="text" value="<?php print($config['REC_CARD']);?>" required/><br>
       <label for="channels">Audio Channels: </label>
-      <input name="channels" type="text" value="<?php print($config['CHANNELS']);?>" required/><br>
+      <input name="channels" type="number" min="1" max="32" step="1" value="<?php print($config['CHANNELS']);?>" required/><br>
       <label for="recording_length">Recording Length: </label>
-      <input name="recording_length" type="text" value="<?php print($config['RECORDING_LENGTH']);?>" /><br>
+      <input name="recording_length" type="number" min="12" max="60" step="1" value="<?php print($config['RECORDING_LENGTH']);?>" /><br>
       <label for="extraction_length">Extraction Length: </label>
-      <input name="extraction_length" type="text" value="<?php print($config['EXTRACTION_LENGTH']);?>" /><br>
+      <input name="extraction_length" type="number" min="3" max="<?php print($config['RECORDING_LENGTH']);?>" value="<?php print($config['EXTRACTION_LENGTH']);?>" /><br>
       <h3>Passwords</h3>
       <label for="caddy_pwd">Webpage: </label>
       <input name="caddy_pwd" type="text" value="<?php print($config['CADDY_PWD']);?>" /><br>
@@ -145,11 +145,11 @@ if (strcmp($config['FULL_DISK'], "keep") == 0) {
       <input name="birdnetlog_url" type="text" value="<?php print($config['BIRDNETLOG_URL']);?>" /><br>
       <h3>BirdNET-Lite Settings</h3>
       <label for="overlap">Overlap: </label>
-      <input name="overlap" type="text" value="<?php print($config['OVERLAP']);?>" required/><br>
+      <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($config['OVERLAP']);?>" required/><br>
       <label for="confidence">Minimum Confidence: </label>
-      <input name="confidence" type="text" value="<?php print($config['CONFIDENCE']);?>" required/><br>
+      <input name="confidence" type="number" min="0.01" max="0.99" step="0.01" value="<?php print($config['CONFIDENCE']);?>" required/><br>
       <label for="sensitivity">Sigmoid Sensitivity: </label>
-      <input name="sensitivity" type="text" value="<?php print($config['SENSITIVITY']);?>" required/><br>
+      <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($config['SENSITIVITY']);?>" required/><br>
       <br><br>
       <button type="submit" class="block"><?php
 	@session_start();
