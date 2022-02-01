@@ -120,6 +120,7 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
       <input name="longitude" type="number" max="180" min="-180" step="0.0001" value="<?php print($config['LONGITUDE']);?>" required/><br>
       <label for="birdweather_id">BirdWeather ID: </label>
       <input name="birdweather_id" type="text" value="<?php print($config['BIRDWEATHER_ID']);?>" /><br>
+      <p><a href="mailto:tim@birdweather.com?subject=Request%20BirdWeather%20ID&body=<?php include('birdweather_request.php'); ?>" target="top">Email Tim</a> to request a BirdWeather ID</p>
       <label for="pushed_app_key">Pushed App Key: </label>
       <input name="pushed_app_key" type="text" value="<?php print($config['PUSHED_APP_KEY']);?>" /><br>
       <label for="pushed_app_secret">Pushed App Secret: </label>
@@ -179,3 +180,4 @@ if(isset($_SESSION['success'])){
   </div>
 </body>
 <input type="reset" form=">
+
