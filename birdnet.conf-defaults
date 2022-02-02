@@ -2,33 +2,26 @@
 #                    Configuration settings for BirdNET-Pi                     #
 ################################################################################
 
-############ CHANGE THE LATITUDE AND LONGITUDE TO STATIC VALUES ################
+#--------------------- Required: Latitude, and Longitude ----------------------#
 
+## The shell substitution below guesses these based on your network. THESE NEED
+## TO BE CHANGED TO STATIC VALUES
+## Please only go to 4 decimal places. Example:43.3984
 
-## LATITUDE and LONGITUDE are self-explanatroy. Find them easily at
-## maps.google.com. 
-##  Example: these coordinates would indicate the Eiffel Tower in Paris, France.
-##  LATITUDE=48.858
-##  LONGITUDE=2.294
-
-## These are input as shell substitutions so that this will work out of the box.
-## It guesses your latitude and longitude based off of your network information.
-## THESE SHOULD BE CHANGED TO STATIC NUMBERS!!!!
 LATITUDE="$(curl -s4 ifconfig.co/json | awk '/lat/ {print $2}' | tr -d ',')"
 LONGITUDE="$(curl -s4 ifconfig.co/json | awk '/lon/ {print $2}' | tr -d ',')"
 
-## RECS_DIR is the location birdnet_analysis.service will look for the data-set
-## it needs to analyze. Be sure this directory is readable and writable for
-## the BIRDNET_USER. If you are going to be accessing a remote data-set, you
-## still need to set this, as this will be where the remote directory gets
-## mounted locally. 
 
-RECS_DIR=/home/pi/BirdSongs
+#---------------------  BirdWeather Station Information -----------------------#
+#_____________The variable below can be set to have your BirdNET-Pi____________#
+#__________________also act as a BirdWeather listening station_________________#
+
+BIRDWEATHER_ID=
 
 #-----------------------  Web Interface User Password  ------------------------#
 #____________________The variable below sets the 'birdnet'_____________________# 
-#___________________user password for the live audio stream,___________________# 
-#_________________web tools, system info, and processed files__________________#
+#___________________user password for the Live Audio Stream,___________________# 
+#_________________Tools, System Links, and the Processed files ________________#
 
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## certain parts of the web interface
@@ -39,7 +32,8 @@ CADDY_PWD=
 #_____________The variable below sets the password for the_____________________# 
 #_______________________'birder' user on the MariaDB___________________________#
 
-## DB_PWD is for the 'birder' user
+## DB_PWD is for the 'birder' user. The shell substitution below sets a random
+## password for you during installation.
 DB_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 
 #-------------------------  Live Audio Stream  --------------------------------#
@@ -49,15 +43,9 @@ DB_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 
 ## ICE_PWD is the password that icecast2 will use to authenticate ffmpeg as a
 ## trusted source for the stream. You will never need to enter this manually
-## anywhere other than here.
+## anywhere other than here and it stays on 'localhost.'
 
 ICE_PWD=birdnetpi
-
-#---------------------  BirdWeather Station Information -----------------------#
-#_____________The variable below can be set to have your BirdNET-Pi____________#
-#__________________also act as a BirdWeather listening station_________________#
-
-BIRDWEATHER_ID=
 
 #-----------------------  Web-hosting/Caddy File-server -----------------------#
 #________The four variables below can be set to enable internet access_________#
@@ -90,19 +78,11 @@ PUSHED_APP_SECRET=
 #--------------------------------  Defaults  ----------------------------------#
 ################################################################################
 
-#-------------------------------  NoMachine  ----------------------------------#
-#_____________The variable below can be set include NoMachine__________________#
-#_________________remote desktop software to be installed._____________________#
+## RECS_DIR is the location birdnet_analysis.service will look for the data-set
+## it needs to analyze. Be sure this directory is readable and writable for
+## the BIRDNET_USER. 
 
-#            Keep this EMPTY if you do not want to install NoMachine.          #
-
-## INSTALL_NOMACHINE is simply a setting that can be enabled to install
-## NoMachine alongside the BirdNET-Pi for remote desktop access. This in-
-## staller assumes personal use. Please reference the LICENSE file included
-## in this repository for more information.
-## Set this to Y or y to install NoMachine alongside the BirdNET-Lite
-
-INSTALL_NOMACHINE=y
+RECS_DIR=/home/pi/BirdSongs
 
 #
 #------------------------------ Extraction Service  ---------------------------#
@@ -202,3 +182,18 @@ BIRDNET_USER=pi
 ## These are just for debugging
 LAST_RUN=
 THIS_RUN=
+
+## DEPRECATED 
+#-------------------------------  NoMachine  ----------------------------------#
+#_____________The variable below can be set include NoMachine__________________#
+#_________________remote desktop software to be installed._____________________#
+
+#            Keep this EMPTY if you do not want to install NoMachine.          #
+
+## INSTALL_NOMACHINE is simply a setting that can be enabled to install
+## NoMachine alongside the BirdNET-Pi for remote desktop access. This in-
+## staller assumes personal use. Please reference the LICENSE file included
+## in this repository for more information.
+## Set this to Y or y to install NoMachine alongside the BirdNET-Lite
+
+INSTALL_NOMACHINE=y
