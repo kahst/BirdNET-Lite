@@ -58,7 +58,6 @@ ICE_PWD=birdnetpi
 ## the BirdNET-Pi on your local network, keep this EMPTY.
 
 BIRDNETPI_URL=
-EXTRACTIONLOG_URL=
 BIRDNETLOG_URL=
 
 
