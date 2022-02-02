@@ -1,7 +1,3 @@
-<?php
-error_reporting(E_ALL);
-ini_set('display_errors',1);
-?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 /* Chrome, Safari, Edge, Opera */
@@ -141,6 +137,8 @@ if (strcmp($config['FULL_DISK'], "keep") == 0) {
       <input name="birdnetpi_url" type="text" value="<?php print($config['BIRDNETPI_URL']);?>" /><br>
       <label for="birdnetlog_url">BirdNET-Lite Log URL: </label>
       <input name="birdnetlog_url" type="text" value="<?php print($config['BIRDNETLOG_URL']);?>" /><br>
+      <label for="webterminal_url">Web Terminal URL: </label>
+      <input name="webterminal_url" type="text" value="<?php print($config['WEBTERMINAL_URL']);?>" /><br>
       <h3>BirdNET-Lite Settings</h3>
       <label for="overlap">Overlap: </label>
       <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($config['OVERLAP']);?>" required/><br>

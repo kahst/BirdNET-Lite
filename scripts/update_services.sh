@@ -121,12 +121,12 @@ create_necessary_dirs() {
       sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" ${i}
     done
   fi
-  if [ ! -z ${EXTRACTIONLOG_URL} ];then
-    EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${EXTRACTIONLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+  if [ ! -z ${WEBTERMINAL_URL} ];then
+    WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
+    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" $(dirname ${my_dir})/homepage/*.html
     phpfiles="$(grep -l "$(hostname).local:8888" ${my_dir}/*.php)"
     for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${EXTRACTIONLOG_URL}"/g" ${i}
+      sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" ${i}
     done
   fi
 
@@ -280,10 +280,13 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
 EOF
   fi
 
-  if [ ! -z ${EXTRACTIONLOG_URL} ];then
+  if [ ! -z ${WEBTERMINAL_URL} ];then
     cat << EOF >> /etc/caddy/Caddyfile
 
-${EXTRACTIONLOG_URL} {
+${WEBTERMINAL_URL} {
+  basicauth {
+    birdnet ${HASHWORD}
+  }
   reverse_proxy localhost:8888
 }
 EOF
@@ -301,9 +304,9 @@ EOF
 
 update_etc_hosts() {
   #BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
-  #EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
+  #WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
   #BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-  sed -ie s/'$(hostname).local'/"$(hostname).local ${BIRDNETPI_URL//https:\/\/} ${EXTRACTIONLOG_URL//https:\/\/} ${BIRDNETLOG_URL//https:\/\/}"/g /etc/hosts
+  sed -ie s/'$(hostname).local'/"$(hostname).local ${BIRDNETPI_URL//https:\/\/} ${WEBTERMINAL_URL//https:\/\/} ${BIRDNETLOG_URL//https:\/\/}"/g /etc/hosts
 }
 
 install_avahi_aliases() {

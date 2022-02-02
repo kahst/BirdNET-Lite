@@ -30,12 +30,12 @@ if [ ! -z ${BIRDNETLOG_URL} ];then
     sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" ${i}
   done
 fi
-if [ ! -z ${EXTRACTIONLOG_URL} ];then
-  EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-  sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${EXTRACTIONLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
+if [ ! -z ${WEBTERMINAL_URL} ];then
+  WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
+  sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" $(dirname ${my_dir})/homepage/*.html
   phpfiles="$(grep -l "$(hostname).local:8888" ${my_dir}/*.php)"
   for i in "${phpfiles[@]}";do
-    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${EXTRACTIONLOG_URL}"/g" ${i}
+    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" ${i}
   done
 fi
 
