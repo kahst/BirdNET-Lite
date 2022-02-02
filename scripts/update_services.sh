@@ -548,7 +548,6 @@ install_selected_services() {
   generate_BirdDB
   install_cleanup_cron
   install_ftpd
-  systemctl restart php${php_version}-fpm
 }
 
 if [ -f ${config_file} ];then 
