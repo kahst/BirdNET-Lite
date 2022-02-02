@@ -139,8 +139,6 @@ if (strcmp($config['FULL_DISK'], "keep") == 0) {
       <h3>Custom URLs</h3>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
       <input name="birdnetpi_url" type="text" value="<?php print($config['BIRDNETPI_URL']);?>" /><br>
-      <label for="extractionlog_url">Extraction Log URL: </label>
-      <input name="extractionlog_url" type="text" value="<?php print($config['EXTRACTIONLOG_URL']);?>" /><br>
       <label for="birdnetlog_url">BirdNET-Lite Log URL: </label>
       <input name="birdnetlog_url" type="text" value="<?php print($config['BIRDNETLOG_URL']);?>" /><br>
       <h3>BirdNET-Lite Settings</h3>
