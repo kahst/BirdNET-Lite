@@ -1,3 +1,9 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors',1);
+
+?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 /* Chrome, Safari, Edge, Opera */
@@ -107,7 +113,7 @@ input {
   <body style="background-color: rgb(119, 196, 135);">
   <div class="row">
     <div class="column first">
-    <form action="write_config.php" method="POST">
+    <form action="write_config.php" method="POST" name="normal">
 <?php 
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
@@ -159,9 +165,7 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
         <option value="labels_uk.txt">Ukrainian</option>
       </select>
       <br><br>
-      <button type="submit" class="block"><?php
-  @session_start();
-
+      <button type="submit" name="normal" class="block"><?php
 if(isset($_SESSION['success'])){
   echo "Success!";
   unset($_SESSION['success']);
@@ -179,5 +183,4 @@ if(isset($_SESSION['success'])){
     </div>
   </div>
 </body>
-<input type="reset" form=">
 

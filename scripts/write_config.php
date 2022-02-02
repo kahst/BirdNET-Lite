@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors',1);
+
 $latitude = $_POST["latitude"];
 $longitude = $_POST["longitude"];
 $birdweather_id = $_POST["birdweather_id"];
@@ -23,24 +26,25 @@ $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
 $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
 fwrite($fh, $contents);
 fwrite($fh2, $contents2);
-@session_start();
-
-if(true){
-   $_SESSION['success'] = 1;
-   header("Location:config.php");
+session_start();
+$_SESSION['success'] = 1;
+if(isset($_POST["normal"])){
+  header('Location:config.php');
+}else{
+  header('Location:../../');
 }
 
 $language = $_POST["language"];
 if ($language != "none"){
-  $command = "sudo -upi set -x; sudo -upi mv /home/pi/BirdNET-Pi/model/labels.txt /home/pi/BirdNET-Pi/model/labels.txt.old && sudo -upi unzip /home/pi/BirdNET-Pi/model/labels_l18n.zip $language -d /home/pi/BirdNET-Pi/model && sudo -upi mv /home/pi/BirdNET-Pi/model/$language /home/pi/BirdNET-Pi/model/labels.txt";
+  $command = "sudo -upi mv /home/pi/BirdNET-Pi/model/labels.txt /home/pi/BirdNET-Pi/model/labels.txt.old && sudo -upi unzip /home/pi/BirdNET-Pi/model/labels_l18n.zip $language -d /home/pi/BirdNET-Pi/model && sudo -upi mv /home/pi/BirdNET-Pi/model/$language /home/pi/BirdNET-Pi/model/labels.txt";
   $command_output = `$command`;
-  echo $command_output;
-  @session_start();
-  
-  if(true){
-     $_SESSION['success'] = 1;
-     header("Location:config.php");
-  }
+session_start();
+$_SESSION['success'] = 1;
+if(isset($_POST["normal"])){
+  header('Location:config.php');
+}else{
+  header('Location:../../');
+}
 }
 ?>
 
