@@ -93,7 +93,6 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 } ?>
 
 <h1 style="float:top;text-align:center;">Welcome!</h1>
-<img class="center" alt="Can't Load Logo" src="../images/red-cardinal.png"/>
 <body style="background-color: rgb(119, 196, 135);">
 	<form action="write_config.php" method="POST" name="firstboot">
 		<p style="font-size:large">Thank you for installing BirdNET-Pi!
