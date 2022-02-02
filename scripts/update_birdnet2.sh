@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Second stage of update
+USER=pi
 birdnet_conf=/home/pi/BirdNET-Pi/birdnet.conf
 my_dir=${HOME}/BirdNET-Pi/scripts
 
