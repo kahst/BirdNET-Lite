@@ -59,6 +59,7 @@ ICE_PWD=birdnetpi
 
 BIRDNETPI_URL=
 BIRDNETLOG_URL=
+WEBTERMINAL_URL=
 
 
 #-------------------  Mobile Notifications via Pushed.co  ---------------------#
