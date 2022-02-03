@@ -157,7 +157,7 @@ CHANNELS=2
 
 ## FULL_DISK can be set to configure how the system reacts to a full disk
 ## purge = Remove the oldest day's worth of recordings
-## keep = Keep all data and `stop_core_services.sh`
+## keep = Keep all data and 'stop_core_services.sh'
 
 FULL_DISK=purge
 
