@@ -37,6 +37,8 @@ If your installation isn't in one of the countries listed above, please let me k
 * 24/7 recording and BirdNET-Lite analysis
 * [BirdWeather](https://app.birdweather.com) integration (you will need to be issued a BirdWeather ID -- for now, request that from [@timsterc here](https://github.com/mcguirepr89/BirdNET-Pi/discussions/82))
 * Web interface access to all data and logs
+* Web Terminal
+* [Tiny File Manager](https://tinyfilemanager.github.io/)
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
 * MariaDB integration
@@ -47,13 +49,12 @@ If your installation isn't in one of the countries listed above, please let me k
 * Localization supported
 
 ## Requirements
-* A Raspberry Pi 4B
-* An SD Card with the 64-bit version of RaspiOS installed (please use Bullseye) [(download the latest here)](https://downloads.raspberrypi.org/raspios_arm64/images/)
+* A Raspberry Pi 4B or Raspberry Pi 3B[+] (must run on RaspiOS-ARM64-Lite)
+* An SD Card with the 64-bit version of RaspiOS installed (please use Bullseye) -- Lite is recommended, but the installation works on RaspiOS-ARM64-Full as well. [(Download the latest here)](https://downloads.raspberrypi.org/raspios_lite_arm64/images/)
 * A USB Microphone or Sound Card
 
 ## Installation
-Headless installation guide available [HERE](https://github.com/mcguirepr89/BirdNET-Pi/wiki/%22Headless%22-installation-using-VNC)<br>
-Pre-installeld beta image available for testing [HERE](https://github.com/mcguirepr89/BirdNET-Pi/discussions/11#discussioncomment-1751201)
+Installation guide coming soon.
 
 The system can be installed with:
 ```
@@ -63,10 +64,6 @@ curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/main/newinstall
 ## Access
 The BirdNET-Pi system can be accessed from any web browser on the same network:
 - http://birdnetpi.local
-
-#### Access Credentials:
-- Username:`birdnet`
-- Password: The "CADDY_PWD" password set during installation 
 
 ## Uninstallation
 ```
@@ -87,7 +84,7 @@ I hope that if you find BirdNET-Pi has been worth your time, you will share your
 ## ToDo, Notes, and Coming Soon 
 
 ### Internationalization:
-The bird names are in English by default, but other localized versions are available thanks to the wonderful efforts of [@patlevin](https://github.com/patlevin). Please unzip `model/labels_l18n.zip` and replace `model/labels.txt` with your corresponding language. For instance, if you want the Swedish labels, rename the current `labels.txt` to `labels_en.txt` and then rename `labels_sv.txt` to `labels.txt`. (I will make this more straightforward in the future.)
+The bird names are in English by default, but other localized versions are available thanks to the wonderful efforts of [@patlevin](https://github.com/patlevin). Use the web interface's "Tools" > "Settings" and select your "Database Language" to have the detections in your language.
 
 ### Realtime Analysis Predictions View
 The pre-built TFLite binaries for this project also support [the BirdNET-Demo](https://github.com/kahst/BirdNET-Demo), which I am currently testing for integration into the BirdNET-Pi. If you know anything about JavaScript and are willing to help, please let me know in the [Live Analysis discussion](https://github.com/mcguirepr89/BirdNET-Pi/discussions/24).
@@ -101,13 +98,12 @@ Expect FULL internationalization options during installation (and available post
 - French
 - Spanish
 
-and detection/database localization for the following languages:
+Current database languages include the list below:
 | Language | Missing Species out of 6,362 | Missing labels (%) |
 | -------- | ------- | ------ |
 | Afrikaans | 5774 | 90.76% |
 | Catalan | 544 | 8.55% |
 | Chinese | 264 | 4.15% |
-| Chinese (Traditional) | 295 | 4.64% |
 | Croatian | 370 | 5.82% |
 | Czech | 683 | 10.74% |
 | Danish | 460 | 7.23% |
@@ -123,7 +119,6 @@ and detection/database localization for the following languages:
 | Japanese | 640 | 10.06% |
 | Latvian | 4821 | 75.78% |
 | Lithuanian | 597 | 9.38% |
-| Northern Sami | 5605 | 88.10% |
 | Norwegian | 325 | 5.11% |
 | Polish | 265 | 4.17% |
 | Portuguese | 2742 | 43.10% |
