@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # This reinstalls the services
-#set -x # Uncomment to enable debugging
+set -x # Uncomment to enable debugging
 trap 'rm -f ${tmpfile}' EXIT
 trap 'exit 1' SIGINT SIGHUP
 USER=pi
@@ -303,9 +303,6 @@ EOF
 }
 
 update_etc_hosts() {
-  #BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
-  #WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
-  #BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
   sed -ie s/'$(hostname).local'/"$(hostname).local ${BIRDNETPI_URL//https:\/\/} ${WEBTERMINAL_URL//https:\/\/} ${BIRDNETLOG_URL//https:\/\/}"/g /etc/hosts
 }
 
