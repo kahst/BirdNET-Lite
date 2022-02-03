@@ -127,19 +127,20 @@ create_necessary_dirs() {
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
   if [ ! -z ${BIRDNETLOG_URL} ];then
     BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
-    phpfiles="$(grep -l "$(hostname).local:8080" ${my_dir}/*.php)"
-    for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" ${i}
-    done
-  fi
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/homepage/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.php
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
+
   if [ ! -z ${WEBTERMINAL_URL} ];then
     WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" $(dirname ${my_dir})/homepage/*.html
-    phpfiles="$(grep -l "$(hostname).local:8888" ${my_dir}/*.php)"
-    for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" ${i}
-    done
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/homepage/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.php
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
+
   fi
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}/
