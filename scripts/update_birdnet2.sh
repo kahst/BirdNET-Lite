@@ -23,7 +23,7 @@ fi
 sudo -u${USER} cp -f ~/BirdNET-Pi/model/labels.txt.bak ~/BirdNET-Pi/model/labels.txt
 
 # Stage 2 restarts the services
-newservices=($(awk '/systemctl/ && !/php/ && !/caddy/ && && !/avahi/ && !/target/ {print $3}' <(sed -e 's/--now//g' ${my_dir}/update_services.sh) | sort | uniq ))
+newservices=($(awk '/systemctl/ && !/php/ && !/caddy/ && !/avahi/ && !/target/ {print $3}' <(sed -e 's/--now//g' ${my_dir}/update_services.sh) | sort | uniq ))
 for i in ${newservices[@]};do
   sudo systemctl restart ${i}
 done
