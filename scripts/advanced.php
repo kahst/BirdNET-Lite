@@ -72,7 +72,7 @@ input {
   text-align:center;
   font-size:large;
 }
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1000px) {
   h2,h3 {
     text-align:center;
   }  
