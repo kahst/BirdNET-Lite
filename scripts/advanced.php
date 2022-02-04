@@ -120,7 +120,7 @@ if (strcmp($config['FULL_DISK'], "keep") == 0) {
       <label for="channels">Audio Channels: </label>
       <input name="channels" type="number" min="1" max="32" step="1" value="<?php print($config['CHANNELS']);?>" required/><br>
       <label for="recording_length">Recording Length: </label>
-      <input name="recording_length" type="number" min="12" max="60" step="1" value="<?php print($config['RECORDING_LENGTH']);?>" /><br>
+      <input name="recording_length" type="number" min="12" max="60" step="1" value="<?php print($config['RECORDING_LENGTH']);?>" required/><br>
       <label for="extraction_length">Extraction Length: </label>
       <input name="extraction_length" type="number" min="3" max="<?php print($config['RECORDING_LENGTH']);?>" value="<?php print($config['EXTRACTION_LENGTH']);?>" /><br>
       <h3>Passwords</h3>
