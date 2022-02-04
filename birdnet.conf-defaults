@@ -167,7 +167,7 @@ FULL_DISK=purge
 VENV=/home/pi/BirdNET-Pi/birdnet
 
 ## RECORDING_LENGTH sets the length of the recording that BirdNET-Lite will analyze.
-RECORDING_LENGTH=
+RECORDING_LENGTH=15
 
 ## EXTRACTION_LENGTH sets the length of the audio extractions that will be made
 ## from each BirdNET-Lite detection.
