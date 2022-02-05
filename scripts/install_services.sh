@@ -82,7 +82,7 @@ Restart=always
 Type=simple
 RestartSec=10
 User=${USER}
-ExecStart=/user/local/bin/server.py
+ExecStart=/usr/local/bin/server.py
 [Install]
 WantedBy=multi-user.target
 EOF
