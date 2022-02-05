@@ -43,9 +43,10 @@ install_birdnet_analysis() {
   cat << EOF > /etc/systemd/system/birdnet_analysis.service
 [Unit]
 Description=BirdNET Analysis
+After=birdnet_server.service
+Requires=birdnet_server.service
 [Service]
 Restart=always
-RuntimeMaxSec=10800
 Type=simple
 RestartSec=2
 User=${USER}
@@ -55,6 +56,25 @@ WantedBy=multi-user.target
 EOF
   systemctl enable birdnet_analysis.service
 }
+
+install_birdnet_server() {
+  echo "Installing the birdnet_server.service"
+  cat << EOF > /etc/systemd/system/birdnet_server.service
+[Unit]
+Description=BirdNET Analysis Server
+Before=birdnet_analysis.service
+[Service]
+Restart=always
+Type=simple
+RestartSec=2
+User=${USER}
+ExecStart=/usr/local/bin/server.py
+[Install]
+WantedBy=multi-user.target
+EOF
+  systemctl enable birdnet_server.service
+}
+
 
 install_extraction_service() {
   echo "Installing the extraction.service and extraction.timer"
@@ -386,7 +406,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalctl -o cat -fu birdnet_analysis.service
+ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalctl -o cat -fu birdnet_server.service
 
 [Install]
 WantedBy=multi-user.target
@@ -513,6 +533,7 @@ install_cleanup_cron() {
 install_selected_services() {
   install_scripts
   install_birdnet_analysis
+  install_birdnet_server
 
   if [[ "${DO_EXTRACTIONS}" =~ [Yy] ]];then
     install_extraction_service
