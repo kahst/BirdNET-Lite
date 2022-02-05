@@ -101,7 +101,7 @@ run_analysis() {
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=15
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"
-    [ -z $FILE_LENGTH ] && sleep 3 && continue
+    [ -z $FILE_LENGTH ] && sleep 2 && continue
     echo "RECORDING_LENGTH set to ${RECORDING_LENGTH}"
     a=1
     if [ "${RECORDING_LENGTH}" == "01:00" ];then
@@ -110,7 +110,13 @@ run_analysis() {
       	[ $a -ge 60 ] && sudo rm -f ${1}/${i} && break
       	a=$((a+1))
       done	
-    else 
+    elif [ "${RECORDING_LENGTH}" -lt 10 ];then
+      until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "00:0${RECORDING_LENGTH}" ];do
+        sleep 1
+      	[ $a -ge ${RECORDING_LENGTH} ] && sudo rm -f ${1}/${i} && break
+      	a=$((a+1))
+      done
+    else
       until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "00:${RECORDING_LENGTH}" ];do
         sleep 1
       	[ $a -ge ${RECORDING_LENGTH} ] && sudo rm -f ${1}/${i} && break
