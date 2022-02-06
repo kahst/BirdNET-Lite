@@ -53,7 +53,7 @@ def main():
     if args.exclude_list:
         sockParams += 'exclude_list=' + args.exclude_list + '||'
     if args.overlap:
-        sockParams += 'overlap=' + args.overlap + '||'
+        sockParams += 'overlap=' + str(args.overlap) + '||'
     if args.week:
         sockParams += 'week=' + str(args.week) + '||'
     if args.sensitivity:
