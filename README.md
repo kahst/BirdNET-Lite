@@ -58,7 +58,8 @@ Installation guide coming soon.
 
 The system can be installed with:
 ```
-curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/forms/newinstaller.sh | bash | tee -a installation.log 2>&1 && sudo reboot```
+curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/forms/newinstaller.sh | bash | tee -a installation.log 2>&1 && sudo reboot
+```
 
 ## Access
 The BirdNET-Pi system can be accessed from any web browser on the same network:
