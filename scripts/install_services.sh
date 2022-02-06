@@ -311,7 +311,7 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
 EOF
   fi
 
-  if [ ! -z ${WEBTERMINAL_URL} ];then
+  if [ ! -z ${WEBTERMINAL_URL} ] && [ -! z ${HASHWORD} ];then
     cat << EOF >> /etc/caddy/Caddyfile
 ${WEBTERMINAL_URL} {
   basicauth {
@@ -320,7 +320,14 @@ ${WEBTERMINAL_URL} {
   reverse_proxy localhost:8888
 }
 EOF
+  elif [ ! -z ${WEBTERMINAL_URL} ] && [ -z ${HASHWORD} ];then
+    cat << EOF >> /etc/caddy/Caddyfile
+${WEBTERMINAL_URL} {
+  reverse_proxy localhost:8888
+}
+EOF
   fi
+
   if [ ! -z ${BIRDNETLOG_URL} ];then
     cat << EOF >> /etc/caddy/Caddyfile
 ${BIRDNETLOG_URL} {
