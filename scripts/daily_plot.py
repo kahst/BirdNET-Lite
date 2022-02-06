@@ -2,6 +2,7 @@
 
 import mysql.connector as sql
 import os
+import configparser
 
 import pandas as pd
 import seaborn as sns
@@ -11,15 +12,17 @@ from matplotlib.colors import LogNorm
 from datetime import datetime
 import textwrap
 
-BIRD_DB_PWD=os.getenv('DB_PWD')
+#Extract DB_PWD from thisrun.txt
+with open('/home/pi/BirdNET-Pi/thisrun.txt', 'r') as f:
+     this_run = f.readlines()
+     db_pwd = str(str(str([i for i in this_run if i.startswith('DB_PWD')]).split('=')[1]).split('\\')[0])
 
-print(BIRD_DB_PWD)
 
 db_connection = sql.connect(host='localhost',
                  database='birds',
                  user='birder',
-                 password='forms')
-                 #password = BIRD_DB_PASSWORD)
+                 password=db_pwd)
+
                     
 db_cursor=db_connection.cursor(dictionary=True)
 
@@ -102,7 +105,7 @@ plt.suptitle("Last Updated: "+ str(now.strftime("%d %m %Y %H:%M")))
 #Save combined plot
 savename='/home/pi/BirdSongs/Extracted/Charts/Combo-'+str(now.strftime("%d-%m-%Y"))+'.png'
 plt.savefig(savename)
-#plt.show()
+# plt.show()
 plt.close()
 
 #Get bottom 10 today
