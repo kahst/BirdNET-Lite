@@ -311,7 +311,7 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
 EOF
   fi
 
-  if [ ! -z ${WEBTERMINAL_URL} ] && [ -! z ${HASHWORD} ];then
+  if [ ! -z ${WEBTERMINAL_URL} ] && [ ! -z ${HASHWORD} ];then
     cat << EOF >> /etc/caddy/Caddyfile
 ${WEBTERMINAL_URL} {
   basicauth {
