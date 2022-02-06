@@ -4,6 +4,7 @@
 
 services=(birdnet_recording.service
 birdnet_analysis.service
+birdnet_server.service
 chart_viewer.service
 extraction.timer
 spectrogram_viewer.service)
