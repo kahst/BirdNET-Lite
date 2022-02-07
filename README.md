@@ -61,6 +61,7 @@ The system can be installed with:
 ```
 curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/forms/newinstaller.sh | bash | tee -a installation.log 2>&1 && sudo reboot
 ```
+The installer takes care of any and all necessary updates, so you can run that as the very first command upon the first boot, if you'd like.
 
 The installation creates a log in `/home/pi/installation.log` that you can [email me](mailto:mcguirepr89@gmail.com) if you encounter any issues during installation.
 
