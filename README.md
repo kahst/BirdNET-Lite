@@ -39,6 +39,7 @@ If your installation isn't in one of the countries listed above, please let me k
 * Web interface access to all data and logs
 * Web Terminal
 * [Tiny File Manager](https://tinyfilemanager.github.io/)
+* FTP server included
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
 * MariaDB integration
@@ -60,6 +61,8 @@ The system can be installed with:
 ```
 curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/forms/newinstaller.sh | bash | tee -a installation.log 2>&1 && sudo reboot
 ```
+
+The installation creates a log in `/home/pi/installation.log` that you can [email me](mailto:mcguirepr89@gmail.com) if you encounter any issues during installation.
 
 ## Access
 The BirdNET-Pi system can be accessed from any web browser on the same network:
