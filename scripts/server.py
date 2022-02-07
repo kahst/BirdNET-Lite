@@ -41,8 +41,8 @@ server.bind(ADDR)
 
 # Open most recent Configuration and grab DB_PWD as a python variable
 with open('/home/pi/BirdNET-Pi/thisrun.txt', 'r') as f:
-     this_run = f.readlines()
-     db_pwd = str(str(str([i for i in this_run if i.startswith('DB_PWD')]).split('=')[1]).split('\\')[0])
+    this_run = f.readlines()
+    db_pwd = str(str(str([i for i in this_run if i.startswith('DB_PWD')]).split('=')[1]).split('\\')[0])
 
 
 def loadModel():
