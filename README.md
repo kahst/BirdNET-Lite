@@ -55,7 +55,7 @@ If your installation isn't in one of the countries listed above, please let me k
 * A USB Microphone or Sound Card
 
 ## Installation
-Installation guide coming soon.
+[An installation guide is available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Installation-Guide).
 
 The system can be installed with:
 ```
