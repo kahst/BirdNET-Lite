@@ -15,9 +15,11 @@ $sql = "SELECT * FROM detections
 $fulltable = $mysqli->query($sql);
 $totalcount=mysqli_num_rows($fulltable);
 
-$sql1 = "SELECT * FROM detections 
-  WHERE Date = CURDATE()	
-  ORDER BY Date DESC, Time DESC";
+$sql1 = "SELECT Date, Time, Sci_Name, Com_Name, MAX(Confidence) 
+  FROM detections 
+  WHERE Date = CURDATE() 
+  GROUP BY Date, Time, Sci_Name, Com_Name 
+  ORDER BY Time DESC";
 $mosttable = $mysqli->query($sql1);
 
 $sql2 = "SELECT * FROM detections 
@@ -87,18 +89,12 @@ $mysqli->close();
         <th>Scientific Name</th>
         <th>Common Name</th>
         <th>Confidence</th>
-        <th>Lat</th>
-        <th>Lon</th>
-        <th>Cutoff</th>
-        <th>Week</th>
-        <th>Sens</th>
-        <th>Overlap</th>
       </tr>
       <!-- PHP CODE TO FETCH DATA FROM ROWS-->
 <?php // LOOP TILL END OF DATA
 while($rows=$mosttable ->fetch_assoc())
 {
-  $Confidence = sprintf("%.1f%%", $rows['Confidence'] * 100);
+  $Confidence = sprintf("%.1f%%", $rows['MAX(Confidence)'] * 100);
 ?>
       <tr>
         <!--FETCHING DATA FROM EACH
@@ -107,12 +103,6 @@ while($rows=$mosttable ->fetch_assoc())
         <td><?php echo $rows['Sci_Name'];?></td>
         <td><?php echo $rows['Com_Name'];?></td>
         <td><?php echo $Confidence;?></td>
-        <td><?php echo $rows['Lat'];?></td>
-        <td><?php echo $rows['Lon'];?></td>
-        <td><?php echo $rows['Cutoff'];?></td>
-        <td><?php echo $rows['Week'];?></td>
-        <td><?php echo $rows['Sens'];?></td>
-        <td><?php echo $rows['Overlap'];?></td>
       </tr>
 <?php
 }
