@@ -1,5 +1,5 @@
 <h1 align="center">
-  BirdNET-Pi <img src="https://img.shields.io/badge/version-0.11-orange" />
+  BirdNET-Pi <img src="https://img.shields.io/badge/version-0.11.1-orange" />
 </h1>
 <p align="center">
 A realtime acoustic bird classification system for the Raspberry Pi 4B
@@ -39,6 +39,7 @@ If your installation isn't in one of the countries listed above, please let me k
 * Web interface access to all data and logs
 * Web Terminal
 * [Tiny File Manager](https://tinyfilemanager.github.io/)
+* FTP server included
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
 * MariaDB integration
@@ -54,12 +55,15 @@ If your installation isn't in one of the countries listed above, please let me k
 * A USB Microphone or Sound Card
 
 ## Installation
-Installation guide coming soon.
+[An installation guide is available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Installation-Guide).
 
 The system can be installed with:
 ```
 curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/forms/newinstaller.sh | bash | tee -a installation.log 2>&1 && sudo reboot
 ```
+The installer takes care of any and all necessary updates, so you can run that as the very first command upon the first boot, if you'd like.
+
+The installation creates a log in `/home/pi/installation.log` that you can [email me](mailto:mcguirepr89@gmail.com) if you encounter any issues during installation.
 
 ## Access
 The BirdNET-Pi system can be accessed from any web browser on the same network:
