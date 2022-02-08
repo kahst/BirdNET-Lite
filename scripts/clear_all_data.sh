@@ -85,4 +85,4 @@ ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt &&
 echo "Dropping and re-creating database"
 sudo /home/pi/BirdNET-Pi/scripts/createdb_bullseye.sh
 echo "Restarting services"
-sudo systemctl stop birdnet_recording.service
+sudo systemctl start birdnet_recording.service
