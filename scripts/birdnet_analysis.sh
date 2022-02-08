@@ -24,21 +24,6 @@ if ! diff ${LAST_RUN} ${THIS_RUN};then
   cat ${THIS_RUN} > ${LAST_RUN}
   sudo systemctl stop birdnet_recording.service
   sudo rm -rf ${RECS_DIR}/$(date +%B-%Y/%d-%A)/*
-  services=(web_terminal.service
-  spectrogram_viewer.service
-  pushed_notifications.service
-  livestream.service
-  icecast2.service
-  extraction.timer
-  extraction.service
-  chart_viewer.service
-  birdnet_recording.service
-  birdnet_log.service)
-
-  for i in  "${services[@]}";do
-  sudo systemctl restart "${i}"
-  done
-  
 fi
 
 INCLUDE_LIST="/home/pi/BirdNET-Pi/include_species_list.txt"
