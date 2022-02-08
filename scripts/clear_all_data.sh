@@ -8,7 +8,7 @@ HOME=/home/pi
 USER=pi
 my_dir=${HOME}/BirdNET-Pi/scripts
 echo "Stopping services"
-/usr/local/bin/stop_core_services.sh
+sudo systemctl stop birdnet_recording.service
 echo "Removing all data . . . "
 sudo rm -drf "${RECS_DIR}"
 sudo rm -f "${IDFILE}"
@@ -85,13 +85,4 @@ ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt &&
 echo "Dropping and re-creating database"
 sudo /home/pi/BirdNET-Pi/scripts/createdb_bullseye.sh
 echo "Restarting services"
-services=(birdnet_recording.service
-birdnet_analysis.service
-birdnet_server.service
-chart_viewer.service
-extraction.timer
-spectrogram_viewer.service)
-
-for i in  "${services[@]}";do
-  sudo systemctl start ${i}
-done
+sudo systemctl stop birdnet_recording.service
