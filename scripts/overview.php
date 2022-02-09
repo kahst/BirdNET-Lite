@@ -31,10 +31,12 @@ $sql3 = "SELECT COUNT(*) AS 'Total' FROM detections
   AND Time >= DATE_SUB(NOW(),INTERVAL 1 HOUR)";
 $lasthourcount = $mysqli->query($sql3);
 
-$sql4 = "SELECT COUNT(Com_Name) AS 'Total'
+$sql4 = "SELECT Com_Name
   FROM detections
-  WHERE Date = CURDATE()";
-$speciescount = $mysqli->query($sql4);
+  WHERE Date = CURDATE()
+  GROUP BY Com_Name";
+$specieslist = $mysqli->query($sql4);
+$speciescount = mysqli_num_rows($specieslist);
 
 $mysqli->close();
 ?>
@@ -110,7 +112,7 @@ while($rows=$mostrecent ->fetch_assoc())
     <table>
       <tr>
         <th>Species Detected Today</th>
-        <td><?php while ($row = $speciescount->fetch_assoc()) { echo $row['Total']; };?></td>
+        <td><?php echo $speciescount;?></td>
       </tr>
     </table>
   </div>
