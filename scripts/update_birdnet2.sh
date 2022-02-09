@@ -19,6 +19,8 @@ FULL_DISK=purge
 EOF
 fi
 
+sudo -u${USER} sed -i 's/EXTRACTIONLOG_URL/WEBTERMINAL_URL/g' ${birdnetconf}
+
 # Replace Backup labels.txt
 sudo -u${USER} cp -f ~/BirdNET-Pi/model/labels.txt.bak ~/BirdNET-Pi/model/labels.txt
 
