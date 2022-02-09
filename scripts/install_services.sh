@@ -12,10 +12,16 @@ gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_a
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
 set_hostname() {
-  if [ "$(hostname)" != "birdnetpi" ];then
+  if [ "$(hostname)" == "raspberrypi" ];then
     echo "Setting hostname to 'birdnetpi'"
     hostnamectl set-hostname birdnetpi
     sed -i 's/raspberrypi/birdnetpi/g' /etc/hosts
+  fi
+}
+
+install_ftpd() {
+  if ! [ -f /etc/ftpuseres ];then
+    apt -y install ftpd
   fi
 }
 
@@ -51,9 +57,10 @@ install_birdnet_analysis() {
   cat << EOF > /etc/systemd/system/birdnet_analysis.service
 [Unit]
 Description=BirdNET Analysis
+After=birdnet_server.service
+Requires=birdnet_server.service
 [Service]
 Restart=always
-RuntimeMaxSec=10800
 Type=simple
 RestartSec=2
 User=${USER}
@@ -62,6 +69,24 @@ ExecStart=/usr/local/bin/birdnet_analysis.sh
 WantedBy=multi-user.target
 EOF
   systemctl enable birdnet_analysis.service
+}
+
+install_birdnet_server() {
+  echo "Installing the birdnet_server.service"
+  cat << EOF > /etc/systemd/system/birdnet_server.service
+[Unit]
+Description=BirdNET Analysis Server
+Before=birdnet_analysis.service
+[Service]
+Restart=always
+Type=simple
+RestartSec=10
+User=${USER}
+ExecStart=/usr/local/bin/server.py
+[Install]
+WantedBy=multi-user.target
+EOF
+  systemctl enable birdnet_server.service
 }
 
 install_extraction_service() {
@@ -82,11 +107,9 @@ EOF
 [Unit]
 Description=BirdNET BirdSound Extraction Timer
 Requires=extraction.service
-
 [Timer]
 Unit=extraction.service
 OnCalendar=*:*:0/10
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -123,29 +146,37 @@ create_necessary_dirs() {
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
   if [ ! -z ${BIRDNETLOG_URL} ];then
     BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
-    phpfiles="$(grep -l "birdnetpi.local:8080" ${my_dir}/*.php)"
-    for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/"${BIRDNETLOG_URL}"/g" ${i}
-    done
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/homepage/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.php
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
   fi
-  if [ ! -z ${EXTRACTIONLOG_URL} ];then
-    EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" $(dirname ${my_dir})/homepage/*.html
-    phpfiles="$(grep -l "birdnetpi.local:8888" ${my_dir}/*.php)"
-    for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/"${EXTRACTIONLOG_URL}"/g" ${i}
-    done
+  if [ ! -z ${WEBTERMINAL_URL} ];then
+    WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/homepage/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.php
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
+
   fi
 
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}/
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
-  if [ ! -z ${BIRDNETPI_URL} ];then
+  if [ -z ${BIRDNETPI_URL} ];then
+    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/homepage/*.html
+    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.php
+    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*/*.php
+  else
     BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" $(dirname ${my_dir})/homepage/*.html
-    phpfiles="$(grep -l birdnetpi.local ${my_dir}/*.php)"
-    for i in "${phpfiles[@]}";do
-      sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/"${BIRDNETPI_URL}"/g" ${i}
-    done
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/homepage/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.html
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.php
+    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
   fi
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
@@ -160,7 +191,8 @@ create_necessary_dirs() {
 
   echo "Setting Wttr.in URL to "${LATITUDE}", "${LONGITUDE}""
   sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
-
+  chmod -R g+rw $(dirname ${my_dir})
+  chmod -R g+rw ${RECS_DIR}
 }
 
 generate_BirdDB() {
@@ -171,6 +203,8 @@ generate_BirdDB() {
   elif ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
     sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
   fi
+  ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt &&
+	  chown pi:pi ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
 }
 
 install_alsa() {
@@ -207,7 +241,6 @@ install_recording_service() {
   cat << EOF > /etc/systemd/system/birdnet_recording.service
 [Unit]
 Description=BirdNET Recording
-
 [Service]
 Environment=XDG_RUNTIME_DIR=/run/user/1000
 Restart=always
@@ -215,7 +248,6 @@ Type=simple
 RestartSec=3
 User=${USER}
 ExecStart=/usr/local/bin/birdnet_recording.sh
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -249,7 +281,7 @@ install_Caddyfile() {
   if ! [ -z ${CADDY_PWD} ];then
   HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   cat << EOF > /etc/caddy/Caddyfile
-http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
+http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   basicauth /Processed* {
@@ -270,7 +302,7 @@ http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
 EOF
   else
     cat << EOF > /etc/caddy/Caddyfile
-http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
+http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   reverse_proxy /stream localhost:8000
@@ -279,17 +311,25 @@ http://localhost http://birdnetpi.local ${BIRDNETPI_URL} {
 EOF
   fi
 
-  if [ ! -z ${EXTRACTIONLOG_URL} ];then
+  if [ ! -z ${WEBTERMINAL_URL} ] && [ ! -z ${HASHWORD} ];then
     cat << EOF >> /etc/caddy/Caddyfile
-
-${EXTRACTIONLOG_URL} {
+${WEBTERMINAL_URL} {
+  basicauth {
+    birdnet ${HASHWORD}
+  }
+  reverse_proxy localhost:8888
+}
+EOF
+  elif [ ! -z ${WEBTERMINAL_URL} ] && [ -z ${HASHWORD} ];then
+    cat << EOF >> /etc/caddy/Caddyfile
+${WEBTERMINAL_URL} {
   reverse_proxy localhost:8888
 }
 EOF
   fi
+
   if [ ! -z ${BIRDNETLOG_URL} ];then
     cat << EOF >> /etc/caddy/Caddyfile
-
 ${BIRDNETLOG_URL} {
   reverse_proxy localhost:8080
 }
@@ -299,10 +339,7 @@ EOF
 }
 
 update_etc_hosts() {
-  #BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
-  #EXTRACTIONLOG_URL="$(echo ${EXTRACTIONLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-  #BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-  sed -ie s/'birdnetpi.local'/"birdnetpi.local ${BIRDNETPI_URL//https:\/\/} ${EXTRACTIONLOG_URL//https:\/\/} ${BIRDNETLOG_URL//https:\/\/}"/g /etc/hosts
+  sed -ie s/'$(hostname).local'/"$(hostname).local ${BIRDNETPI_URL//https:\/\/} ${WEBTERMINAL_URL//https:\/\/} ${BIRDNETLOG_URL//https:\/\/}"/g /etc/hosts
 }
 
 install_avahi_aliases() {
@@ -317,17 +354,15 @@ install_avahi_aliases() {
 Description=Publish %I as alias for %H.local via mdns
 After=network.target network-online.target
 Requires=network-online.target
-
 [Service]
 Restart=always
 RestartSec=3
 Type=simple
 ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(hostname -I |cut -d' ' -f1)"
-
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable avahi-alias@birdnetpi.local.service
+systemctl enable avahi-alias@"$(hostname)".local.service
 }
 
 install_spectrogram_service() {
@@ -351,7 +386,6 @@ install_chart_viewer_service() {
   cat << EOF > /etc/systemd/system/chart_viewer.service
 [Unit]
 Description=BirdNET-Pi Chart Viewer Service
-
 [Service]
 Restart=always
 RestartSec=300
@@ -372,40 +406,38 @@ install_gotty_logs() {
   fi
   sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/gotty \
     ${HOME}/.gotty
+  sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/bashrc \
+    ${HOME}/.bashrc
   echo "Installing the birdnet_log.service"
   cat << EOF > /etc/systemd/system/birdnet_log.service
 [Unit]
 Description=BirdNET Analysis Log
-
 [Service]
 Restart=on-failure
 RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalctl -o cat -fu birdnet_analysis.service
-
+ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalctl -o cat -fu birdnet_server.service
 [Install]
 WantedBy=multi-user.target
 EOF
   systemctl enable birdnet_log.service
-  echo "Installing the extraction_log.service"
-  cat << EOF > /etc/systemd/system/extraction_log.service
+  echo "Installing the web_terminal.service"
+  cat << EOF > /etc/systemd/system/web_terminal.service
 [Unit]
-Description=BirdNET Extraction Log
-
+Description=BirdNET-Pi Web Terminal
 [Service]
 Restart=on-failure
 RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8888 --title-format "Extractions Log" journalctl -o cat -fu extraction.service
-
+ExecStart=/usr/local/bin/gotty -w -p 8888 --title-format "BirdNET-Pi Terminal" bash
 [Install]
 WantedBy=multi-user.target
 EOF
-  systemctl enable extraction_log.service
+  systemctl enable web_terminal.service
 }
 
 install_sox() {
@@ -423,7 +455,7 @@ install_php() {
   if ! which php &> /dev/null || ! which php-fpm || ! apt list --installed | grep php-xml;then
     echo "Installing PHP modules"
     apt -qq update
-    apt install -qqy php php-fpm php-mysql php-xml
+    apt install -qqy php php-fpm php-mysql php-xml php-zip
   else
     echo "PHP and PHP-FPM installed"
   fi
@@ -477,7 +509,6 @@ install_livestream_service() {
 Description=BirdNET-Pi Live Stream
 After=network-online.target
 Requires=network-online.target
-
 [Service]
 Environment=XDG_RUNTIME_DIR=/run/user/1000
 Restart=always
@@ -485,7 +516,6 @@ Type=simple
 RestartSec=3
 User=${USER}
 ExecStart=/usr/local/bin/livestream.sh
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -505,13 +535,7 @@ install_nomachine() {
 
 install_cleanup_cron() {
   echo "Installing the cleanup.cron"
-  if ! crontab -u ${USER} -l &> /dev/null;then
-    crontab -u ${USER} $(dirname ${my_dir})/templates/cleanup.cron &> /dev/null
-  else
-    crontab -u ${USER} -l > ${tmpfile}
-    cat $(dirname ${my_dir})/templates/cleanup.cron >> ${tmpfile}
-    crontab -u ${USER} "${tmpfile}" &> /dev/null
-  fi
+  cat $(dirname ${my_dir})/templates/cleanup.cron >> /etc/crontab
 }
 
 install_selected_services() {
@@ -519,6 +543,7 @@ install_selected_services() {
   update_system
   install_scripts
   install_birdnet_analysis
+  install_birdnet_server
 
   if [[ "${DO_EXTRACTIONS}" =~ [Yy] ]];then
     install_extraction_service
@@ -553,6 +578,7 @@ install_selected_services() {
   create_necessary_dirs
   generate_BirdDB
   install_cleanup_cron
+  install_ftpd
 }
 
 if [ -f ${config_file} ];then 

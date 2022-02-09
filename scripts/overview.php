@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 header("refresh: 300;");
 $myDate = date('d-m-Y');
 $chart = "Combo-$myDate.png";
@@ -12,31 +15,26 @@ if ($mysqli->connect_error) {
 }
 
 // SQL query to select data from database
-$sql0 = "SELECT * FROM detections";
-$fulltable = $mysqli->query($sql0);
-$totalcount = mysqli_num_rows($fulltable);
+$sql0 = "SELECT COUNT(*) AS 'Total' FROM detections";
+$totalcount = $mysqli->query($sql0);
 
 $sql1 = "SELECT Com_Name, Date, Time FROM detections 
   ORDER BY Date DESC, Time DESC LIMIT 1";
 $mostrecent = $mysqli->query($sql1);
 
-$sql2 = "SELECT * FROM detections 
+$sql2 = "SELECT COUNT(*) AS 'Total' FROM detections 
   WHERE Date = CURDATE()";
-$todaystable = $mysqli->query($sql2);
-$todayscount = mysqli_num_rows($todaystable);
+$todayscount = $mysqli->query($sql2);
 
-
-$sql3 = "SELECT * FROM detections 
+$sql3 = "SELECT COUNT(*) AS 'Total' FROM detections 
   WHERE Date = CURDATE() 
   AND Time >= DATE_SUB(NOW(),INTERVAL 1 HOUR)";
-$lasthourtable = $mysqli->query($sql3);
-$lasthourcount = mysqli_num_rows($lasthourtable);
+$lasthourcount = $mysqli->query($sql3);
 
-$sql4 = "SELECT Com_Name, Date, Time, MAX(Confidence) 
-  FROM detections 
-  WHERE Date = CURDATE()	
-  GROUP BY Com_Name 
-  ORDER BY MAX(Confidence) DESC";
+$sql4 = "SELECT Com_Name
+  FROM detections
+  WHERE Date = CURDATE()
+  GROUP BY Com_Name";
 $specieslist = $mysqli->query($sql4);
 $speciescount = mysqli_num_rows($specieslist);
 
@@ -104,9 +102,9 @@ while($rows=$mostrecent ->fetch_assoc())
       </tr>
       <tr>
         <th>Number of Detections</th>
-        <td><?php echo $totalcount;?></td>
-        <td><?php echo $todayscount;?></td>
-        <td><?php echo $lasthourcount;?></td>
+        <td><?php while ($row = $totalcount->fetch_assoc()) { echo $row['Total']; };?></td>
+        <td><?php while ($row = $todayscount->fetch_assoc()) { echo $row['Total']; };?></td>
+        <td><?php while ($row = $lasthourcount->fetch_assoc()) { echo $row['Total']; };?></td>
       </tr>
     </table>
   </div>
@@ -122,7 +120,7 @@ while($rows=$mostrecent ->fetch_assoc())
     <h2>Today's Top 10 Species</h2>
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
-  echo "<img src=\"/Charts/$chart?nocache=$time()\" style=\"width: 100%;padding: 5px;margin-left: auto;margin-right: auto;display: block;\">";
+  echo "<img src=\"/Charts/$chart?nocache=time()\" style=\"width: 100%;padding: 5px;margin-left: auto;margin-right: auto;display: block;\">";
 } else {
     echo "<p style=\"text-align:center;margin-left:-150px;\">No Detections For Today</p>";
 }

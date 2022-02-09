@@ -1,6 +1,6 @@
 <?php
 $timer=60;
-header( "refresh:$timer;url=/viewdb.php" );
+header( "refresh:$timer;url=/overview.php" );
 ?>
 <html lang="en">
 	<meta charset="UTF-8">

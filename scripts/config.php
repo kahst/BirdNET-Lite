@@ -1,5 +1,22 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors',1);
+
+?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 * {
   font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
   ' Calibri', 'Trebuchet MS', 'sans-serif';
@@ -31,12 +48,9 @@ a {
 }
 .block {
 	display: block;
-	font-weight: bold;
-	width:100%;
+	width:50%;
 	border: none;
-	background-color: #04AA6D;
-	padding: 20px 20px;
-	color: white;
+	padding: 10px 10px;
 	font-size: medium;
 	cursor: pointer;
 	text-align: center;
@@ -55,6 +69,7 @@ form {
   text-align:left;
   margin-left:20px;
 }
+
 h2 {
   margin-bottom:0px;
 }
@@ -73,6 +88,9 @@ input {
   font-size:large;
 }
 @media screen and (max-width: 800px) {
+  select {
+    width:100%;
+  }
   h2 {
     margin-bottom:0px;
     text-align:center;
@@ -82,9 +100,12 @@ input {
     margin-left:0px;
   }	
   .column {
-		float: none;
-		width: 100%;
-	}
+    float: none;
+    width: 100%;
+  }
+  input, label  {
+    width:100%;
+  {
 }
   </style>
   </head>
@@ -92,7 +113,7 @@ input {
   <body style="background-color: rgb(119, 196, 135);">
   <div class="row">
     <div class="column first">
-    <form action="write_config.php" method="POST">
+    <form action="write_config.php" method="POST" name="normal">
 <?php 
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
@@ -100,16 +121,17 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
 } ?>
       <label for="latitude">Latitude: </label>
-      <input name="latitude" type="text" value="<?php print($config['LATITUDE']);?>" required/><br>
+      <input name="latitude" type="number" max="90" min="-90" step="0.0001" value="<?php print($config['LATITUDE']);?>" required/><br>
       <label for="longitude">Longitude: </label>
-      <input name="longitude" type="text" value="<?php print($config['LONGITUDE']);?>" required/><br>
+      <input name="longitude" type="number" max="180" min="-180" step="0.0001" value="<?php print($config['LONGITUDE']);?>" required/><br>
       <label for="birdweather_id">BirdWeather ID: </label>
       <input name="birdweather_id" type="text" value="<?php print($config['BIRDWEATHER_ID']);?>" /><br>
+      <p><a href="mailto:tim@birdweather.com?subject=Request%20BirdWeather%20ID&body=<?php include('birdweather_request.php'); ?>" target="top">Email Tim</a> to request a BirdWeather ID</p>
       <label for="pushed_app_key">Pushed App Key: </label>
       <input name="pushed_app_key" type="text" value="<?php print($config['PUSHED_APP_KEY']);?>" /><br>
       <label for="pushed_app_secret">Pushed App Secret: </label>
       <input name="pushed_app_secret" type="text" value="<?php print($config['PUSHED_APP_SECRET']);?>" /><br>
-      <label for"language">Database Language: </label>
+      <label for="language">Database Language: </label>
       <select name="language">
         <option value="none">Select your language</option>
         <option value="labels_af.txt">Afrikaans</option>
@@ -143,20 +165,22 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
         <option value="labels_uk.txt">Ukrainian</option>
       </select>
       <br><br>
-      <input type="submit" value="<?php
-  @session_start();
-
+      <button type="submit" name="normal" class="block"><?php
 if(isset($_SESSION['success'])){
   echo "Success!";
   unset($_SESSION['success']);
 } else {
   echo "Update Settings";
 }
-?>">      
-      <br>
-      <br>
-      <button type="text"><a href="advanced.php">Advanced Settings</a></button>
+?></button>
+    </form>
+    <form action="advanced.php" class="form2">
+      <button type="submit" class="block">Advanced Settings</button>
+    </form>
+    <form action="index.html" class="form2">
+      <button type="submit" class="block">Tools</button>
     </form>
     </div>
   </div>
 </body>
+

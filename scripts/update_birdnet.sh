@@ -28,8 +28,7 @@ remove_services() {
 }
 
 remove_crons() {
-  crontab -u${USER} -l | sed -e '/birdnet/,+1d' > "${tmpfile}"
-  crontab -u${USER} "${tmpfile}"
+  sudo sed -i '/birdnet/,+1d' /etc/crontab
 }
 
 remove_icecast() {
@@ -51,6 +50,8 @@ remove_scripts() {
 remove_services
 remove_scripts
 
+# Backup labels.txt
+sudo -u${USER} cp -f ~/BirdNET-Pi/model/labels.txt{,.bak}
 # Stage 2 does a git pull to fetch new things
 sudo -u${USER} git -C ${HOME}/BirdNET-Pi checkout -f
 sudo -u${USER} git -C ${HOME}/BirdNET-Pi pull -f

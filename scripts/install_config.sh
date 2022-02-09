@@ -238,7 +238,7 @@ ICE_PWD=${ICE_PWD}
 ## the BirdNET-Pi on your local network, keep this EMPTY.
 
 BIRDNETPI_URL=${BIRDNETPI_URL}
-EXTRACTIONLOG_URL${EXTRACTIONLOG_URL}
+WEBTERMINAL_URL${WEBTERMINAL_URL}
 BIRDNETLOG_URL=${BIRDNETLOG_URL}
 
 
@@ -344,10 +344,10 @@ SENSITIVITY=${SENSITIVITY}
 CHANNELS=${CHANNELS}
 
 ## FULL_DISK can be set to configure how the system reacts to a full disk
-## 0 = Remove the oldest day's worth of recordings
-## 1 = Keep all data and 'stop_core_services.sh'
+## purge = Remove the oldest day's worth of recordings
+## keep = Keep all data and 'stop_core_services.sh'
 
-FULL_DISK=0
+FULL_DISK=purge
 
 ## VENV is the virtual environment where the the BirdNET python build is found,
 ## i.e, VENV is the virtual environment miniforge built for BirdNET.

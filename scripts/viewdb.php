@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header("refresh: 30;");
 $mysqli = mysqli_connect();
 $mysqli->select_db('birds');
@@ -10,36 +14,36 @@ if ($mysqli->connect_error) {
 }
 
 // SQL query to select data from database
-$sql = "SELECT * FROM detections
+$sql = "SELECT COUNT(*) AS 'Total' FROM detections
   ORDER BY Date DESC, Time DESC";
-$fulltable = $mysqli->query($sql);
-$totalcount=mysqli_num_rows($fulltable);
+$totalcount = $mysqli->query($sql);
 
-$sql1 = "SELECT * FROM detections 
-  WHERE Date = CURDATE()	
-  ORDER BY Date DESC, Time DESC";
+$sql1 = "SELECT Date, Time, Sci_Name, Com_Name, MAX(Confidence) 
+  FROM detections 
+  WHERE Date = CURDATE() 
+  GROUP BY Date, Time, Sci_Name, Com_Name 
+  ORDER BY Time DESC";
 $mosttable = $mysqli->query($sql1);
 
-$sql2 = "SELECT * FROM detections 
+$sql2 = "SELECT COUNT(*) AS 'Total' FROM detections 
   WHERE Date = CURDATE()";
-$todaystable = $mysqli->query($sql2);
-$todayscount=mysqli_num_rows($todaystable);
+$todayscount = $mysqli->query($sql2);
 
-$sql3 = "SELECT * FROM detections 
+$sql3 = "SELECT COUNT(*) AS 'Total' FROM detections 
   WHERE Date = CURDATE() 
   AND Time >= DATE_SUB(NOW(),INTERVAL 1 HOUR)";
-$lasthourtable = $mysqli->query($sql3);
-$lasthourcount=mysqli_num_rows($lasthourtable);
+$lasthourcount = $mysqli->query($sql3);
 
-$sql4 = "SELECT Com_Name, Date, Time, MAX(Confidence) 
-  FROM detections 
-  GROUP BY Com_Name 
+$sql4 = "SELECT Com_Name, Date, Time, MAX(Confidence)
+  FROM detections
+  WHERE Date = CURDATE()
+  GROUP BY Com_Name
   ORDER BY MAX(Confidence) DESC";
 $specieslist = $mysqli->query($sql4);
-$speciescount=mysqli_num_rows($specieslist);
+$speciescount = mysqli_num_rows($specieslist);
 
 $sql5 = "SELECT Com_Name,COUNT(*) 
-  AS Total 
+  AS 'Total'
   FROM detections 
   GROUP BY Com_Name
   ORDER BY Total DESC";
@@ -71,9 +75,9 @@ $mysqli->close();
         <th>Number of Unique Species</th>
       </tr>
       <tr>
-        <td><?php echo $totalcount;?></td>
-        <td><?php echo $todayscount;?></td>
-        <td><?php echo $lasthourcount;?></td>
+        <td><?php while ($row = $totalcount->fetch_assoc()) { echo $row['Total']; };?></td>
+        <td><?php while ($row = $todayscount->fetch_assoc()) { echo $row['Total']; };?></td>
+        <td><?php while ($row = $lasthourcount->fetch_assoc()) { echo $row['Total']; };?></td>
         <td><?php echo $speciescount;?></td>
       </tr>
     </table>
@@ -87,18 +91,12 @@ $mysqli->close();
         <th>Scientific Name</th>
         <th>Common Name</th>
         <th>Confidence</th>
-        <th>Lat</th>
-        <th>Lon</th>
-        <th>Cutoff</th>
-        <th>Week</th>
-        <th>Sens</th>
-        <th>Overlap</th>
       </tr>
       <!-- PHP CODE TO FETCH DATA FROM ROWS-->
 <?php // LOOP TILL END OF DATA
 while($rows=$mosttable ->fetch_assoc())
 {
-  $Confidence = sprintf("%.1f%%", $rows['Confidence'] * 100);
+  $Confidence = sprintf("%.1f%%", $rows['MAX(Confidence)'] * 100);
 ?>
       <tr>
         <!--FETCHING DATA FROM EACH
@@ -107,12 +105,6 @@ while($rows=$mosttable ->fetch_assoc())
         <td><?php echo $rows['Sci_Name'];?></td>
         <td><?php echo $rows['Com_Name'];?></td>
         <td><?php echo $Confidence;?></td>
-        <td><?php echo $rows['Lat'];?></td>
-        <td><?php echo $rows['Lon'];?></td>
-        <td><?php echo $rows['Cutoff'];?></td>
-        <td><?php echo $rows['Week'];?></td>
-        <td><?php echo $rows['Sens'];?></td>
-        <td><?php echo $rows['Overlap'];?></td>
       </tr>
 <?php
 }

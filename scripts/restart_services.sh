@@ -1,15 +1,25 @@
 #!/usr/bin/env bash
 # Restarts ALL services and removes ALL unprocessed audio
 source /etc/birdnet/birdnet.conf
+set -x
 my_dir=/home/pi/BirdNET-Pi/scripts
 
 sudo systemctl stop birdnet_recording.service
 sudo rm -rf ${RECS_DIR}/$(date +%B-%Y/%d-%A)/*
-sudo systemctl start birdnet_recording.service
+services=(web_terminal.service
+spectrogram_viewer.service
+pushed_notifications.service
+livestream.service
+icecast2.service
+extraction.timer
+extraction.service
+chart_viewer.service
+birdnet_recording.service
+birdnet_log.service
+birdnet_server.service
+birdnet_analysis.service)
 
-services=($(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort))
-
+sudo pkill server.py
 for i in  "${services[@]}";do
 sudo systemctl restart "${i}"
 done
-sudo systemctl restart extraction.timer

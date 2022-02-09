@@ -1,3 +1,18 @@
+# main v.11.1
+- `server.py` socket
+- Removed DB password from scripts
+- FTP included
+- WebGUI tools:
+  - Settings > Advanced Settings
+  - Include/Exclude Species List Editor
+  - Web Terminal
+- Removed Extraction Logging
+- Lowered minimum recording length
+- No longer requires CADDY_PWD
+- Auto-set random DB_PWD
+- New (but still changing) charts
+- Crontabs now in `/etc/crontab` instead of `pi` user
+
 # main v.11
 - New "Reconfigure System" GUI
 - labels.txt language support for 20+ languages

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Second stage of update
+USER=pi
 birdnet_conf=/home/pi/BirdNET-Pi/birdnet.conf
 my_dir=${HOME}/BirdNET-Pi/scripts
 
@@ -7,20 +8,38 @@ my_dir=${HOME}/BirdNET-Pi/scripts
 sudo ${my_dir}/update_services.sh
 
 # Stage 1.5: adding new birdnet.conf entries
-if ! grep FULL_DISK ${birdnet_conf};then
+if ! grep FULL_DISK ${birdnet_conf} &> /dev/null;then
  cat << EOF >> ${birdnet_conf}
 
 ## FULL_DISK can be set to configure how the system reacts to a full disk
-## 0 = Remove the oldest day's worth of recordings
-## 1 = Keep all data and `stop_core_services.sh`
+## purge = Remove the oldest day's worth of recordings
+## keep = Keep all data and `stop_core_services.sh`
 
-FULL_DISK=0
+FULL_DISK=purge
 EOF
 fi
 
+sudo -u${USER} sed -i 's/EXTRACTIONLOG_URL/WEBTERMINAL_URL/g' ${birdnetconf}
+
+# Replace Backup labels.txt
+sudo -u${USER} cp -f ~/BirdNET-Pi/model/labels.txt.bak ~/BirdNET-Pi/model/labels.txt
+
 # Stage 2 restarts the services
-newservices=$(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort)
-for i in ${newservices[@]};do
-  sudo systemctl restart ${i}
+sudo systemctl daemon-reload
+sudo systemctl stop birdnet_recording.service
+sudo rm -rf ${RECS_DIR}/$(date +%B-%Y/%d-%A)/*
+services=(web_terminal.service
+spectrogram_viewer.service
+pushed_notifications.service
+livestream.service
+icecast2.service
+extraction.timer
+extraction.service
+chart_viewer.service
+birdnet_recording.service
+birdnet_log.service)
+
+for i in  "${services[@]}";do
+sudo systemctl restart "${i}"
 done
-sudo systemctl restart extraction.timer
+

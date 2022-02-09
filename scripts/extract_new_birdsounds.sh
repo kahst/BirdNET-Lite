@@ -124,6 +124,11 @@ for h in "${SCAN_DIRS[@]}";do
     if (( $(echo "${START} < 1" | bc -l) ));then START=0;fi
     if (( $(echo "${END} > ${RECORDING_LENGTH}" | bc -l) ));then END=${RECORDING_LENGTH};fi
 
+    if [ "${RECORDING_LENGTH}" == "${EXTRACTION_LENGTH}" ];then
+      START=0
+      END=${RECORDING_LENGTH}
+    fi
+
     ffmpeg -hide_banner -loglevel error -nostdin -i "${h}/${OLDFILE}" \
       -acodec copy -ss "${START}" -to "${END}"\
         "${NEWSPECIES_BYDATE}/${NEWFILE}"

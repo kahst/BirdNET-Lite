@@ -1,6 +1,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 * {
+  font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
+  ' Calibri', 'Trebuchet MS', 'sans-serif';
+  box-sizing: border-box;
+
 	box-sizing: border-box;
 }
 
@@ -45,55 +49,41 @@ a {
 	cursor: pointer;
 	text-align: center;
 }
-	@media screen and (max-width: 800px) {
-		.column {
-			float: none;
-			width: 100%;
+		@media screen and (max-width: 1000px) {
+			.column {
+				float: none;
+				width: 100%;
+			}
 		}
-	}
 </style>
 <body style="background-color: rgb(119, 196, 135);">
 	<div class="row">
 		<div class="column first">
-
-			<form action="/scripts/stop_core_services.php" onclick="return confirm('Stop core services?')">
-				<button type="submit" class="block">Stop Core Services</button>
-			</form>
-			<form action="/scripts/restart_services.php" onclick="return confirm('Restart ALL services?')">
-				<button type="submit" class="block">Restart ALL Services</button>
-			</form>
-			<form action="/scripts/restart_birdnet_analysis.php">
-				<button type="submit" class="block">Restart BirdNET Analysis</button>
-			</form>
-			<form action="/scripts/restart_birdnet_recording.php">
-				<button type="submit" class="block">Restart Recording</button>
-			</form>
-			<form action="/scripts/restart_extraction.php">
-				<button type="submit" class="block">Restart Extraction</button>
-			</form>
-			<form action="/scripts/restart_caddy.php" onclick="return confirm('Restart Caddy? You will be disconnected for about 20 seconds.')">
-				<button type="submit" class="block">Restart Caddy</button>
-			</form>
-		</div>
-		<div class="column second">
-			<form >
-				<button type="submit" class="block"><a target="_content" href="/scripts/adminer.php">Database Maintenance</a></button>
+    	<form action="/scripts/filemanager/filemanager.php" target="_top">
+    		<button type="submit" class="block">File Manager</button>
+    	</form>
+			<form action="/scripts/adminer.php" target="_top">
+				<button type="submit" class="block">Database Maintenance</button>
 			</form>
 			<form action="/scripts/config.php">
 				<button type="submit" class="block">Settings</button>
 			</form>
+			<form action="/scripts/system_controls.php">
+				<button type="submit" class="block">System Controls</button>
 			</form>
-			<form action="/scripts/reboot_system.php" onclick="return confirm('Are you sure you want to reboot?')">
-				<button type="submit" class="block">Reboot</button>
+		</div>
+		<div class="column second">
+			<form action="http://birdnetpi.local:8888" target="top">
+				<button type="submit" class="block">Web Terminal</button>
 			</form>
-			<form action="/scripts/update_birdnet.php" onclick="return confirm('BE SURE TO STASH ANY LOCAL CHANGES YOU HAVE MADE TO THE SYSTEM BEFORE UPDATING!!!')">
-				<button style="color:blue;" type="submit" class="block">Update</button>
+			<form action="/scripts/service_controls.php">
+				<button type="submit" class="block">Manage Services</button>
 			</form>
-			<form action="/scripts/shutdown_system.php" onclick="return confirm('Are you sure you want to shutdown?')">
-				<button style="color: red;" type="submit" class="block">Shutdown</button>
+			<form action="/scripts/include_list.php">
+				<button type="submit" class="block">Included Species List</button>
 			</form>
-			<form action="/scripts/clear_all_data.php" onclick="return confirm('Clear ALL Data? This cannot be undone.')">
-				<button style="color: red;" type="submit" class="block">Clear ALL data</button>
+			<form action="/scripts/exclude_list.php">
+				<button type="submit" class="block">Excluded Species List</button>
 			</form>
 		</div>
 	</div>
