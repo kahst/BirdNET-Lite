@@ -152,7 +152,6 @@ fwrite($fh2, $contents2);
 @session_start();
 if(true){
    $_SESSION['success'] = 1;
-   header('Location:/scripts/update_settings_inprogress.php');
 }
 }
 ?>
@@ -274,37 +273,51 @@ if (strcmp($newconfig['FULL_DISK'], "purge") == 0) {
 if (strcmp($newconfig['FULL_DISK'], "keep") == 0) {
 	echo "checked";
 }?>>Keep</label>
+      <p>When the disk becomes full, you can choose to 'purge' old files to make room for new ones or 'keep' your data and stop all services instead.</p>
       <label for="rec_card">Audio Card: </label>
       <input name="rec_card" type="text" value="<?php print($newconfig['REC_CARD']);?>" required/><br>
+      <p>Set Audio Card to 'default' to use PulseAudio (always recommended), or an ALSA recognized sound card device from the output of `aplay -L`.</p>
       <label for="channels">Audio Channels: </label>
       <input name="channels" type="number" min="1" max="32" step="1" value="<?php print($newconfig['CHANNELS']);?>" required/><br>
+      <p>Set Channels to the number of channels supported by your sound card. 32 max.</p>
       <label for="recording_length">Recording Length: </label>
       <input name="recording_length" type="number" min="3" max="60" step="1" value="<?php print($newconfig['RECORDING_LENGTH']);?>" required/><br>
+	<p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
       <label for="extraction_length">Extraction Length: </label>
       <input name="extraction_length" type="number" min="3" max="<?php print($newconfig['RECORDING_LENGTH']);?>" value="<?php print($newconfig['EXTRACTION_LENGTH']);?>" /><br>
+      <p>Set Extraction Length to something less than your Recording Length above. Min=3 Max=Recording Length
       <h3>Passwords</h3>
       <label for="caddy_pwd">Webpage: </label>
       <input name="caddy_pwd" type="text" value="<?php print($newconfig['CADDY_PWD']);?>" /><br>
+      <p>This password protects the Live Audio Stream, the Processed extractions, phpSysInfo, your Tools, and WebTerminal. When you update this value, the web server will reload, so wait about 30 seconds and then reload the page.</p>
       <label for="db_pwd">Database: </label>
       <input name="db_pwd" type="text" value="<?php print($newconfig['DB_PWD']);?>" required/><br>
+      <p>This password protects the database. When you update this value, it will be updated automatically.</p>
       <label for="ice_pwd">Live Audio Stream: </label>
       <input name="ice_pwd" type="text" value="<?php print($newconfig['ICE_PWD']);?>" required/><br>
     </div>
     <div class="column second">
       <h3>Custom URLs</h3>
+      <p>When you update any of the URL settings below, the web server will reload, so be sure to wait at least 30 seconds and then reload the page.</p>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
       <input name="birdnetpi_url" type="url" value="<?php print($newconfig['BIRDNETPI_URL']);?>" /><br>
+      <p>This URL is how the main page will be reached. If you want your installation to respond to an IP address, place that here, but be sure to indicate `http://`.<br>Example for IP:http://192.168.0.109<br>Example if you own your own domain:https://birdnetpi.pmcgui.xyz</p>
       <label for="birdnetlog_url">BirdNET-Lite Log URL: </label>
       <input name="birdnetlog_url" type="url" value="<?php print($newconfig['BIRDNETLOG_URL']);?>" /><br>
+      <p>This URL is how the log will be reached. Only use this variable if you own your own domain.</p>
       <label for="webterminal_url">Web Terminal URL: </label>
       <input name="webterminal_url" type="url" value="<?php print($newconfig['WEBTERMINAL_URL']);?>" /><br>
+      <p>This URL is how the Web browser terminal will be reached. Only use this variable if you own your own domain.</p>
       <h3>BirdNET-Lite Settings</h3>
       <label for="overlap">Overlap: </label>
       <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($newconfig['OVERLAP']);?>" required/><br>
+      <p>Min=0.0, Max=2.9</p>
       <label for="confidence">Minimum Confidence: </label>
       <input name="confidence" type="number" min="0.01" max="0.99" step="0.01" value="<?php print($newconfig['CONFIDENCE']);?>" required/><br>
+      <p>Min=0.01, Max=0.99</p>
       <label for="sensitivity">Sigmoid Sensitivity: </label>
       <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($newconfig['SENSITIVITY']);?>" required/><br>
+      <p>Min=0.5, Max=1.5</p>
       <br><br>
       <button type="submit" name="submit" class="block"><?php
 
