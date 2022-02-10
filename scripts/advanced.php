@@ -42,19 +42,6 @@ if(isset($_POST['submit'])) {
     }
   }
 
-  if(isset($_POST["birdnetpi_url"])) {
-    $birdnetpi_url = $_POST["birdnetpi_url"];
-    if(strcmp($birdnetpi_url,$config['BIRDNETPI_URL']) !== 0) {
-      $contents = preg_replace("/BIRDNETPI_URL=.*/", "BIRDNETPI_URL=$birdnetpi_url", $contents);
-      $contents2 = preg_replace("/BIRDNETPI_URL=.*/", "BIRDNETPI_URL=$birdnetpi_url", $contents2);
-      $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
-      $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
-      fwrite($fh, $contents);
-      fwrite($fh2, $contents2);
-      exec('sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &');
-    }
-  }
-
   if(isset($_POST["webterminal_url"])) {
     $webterminal_url = $_POST["webterminal_url"];
     if(strcmp($webterminal_url,$config['WEBTERMINAL_URL']) !== 0) {
@@ -73,6 +60,19 @@ if(isset($_POST['submit'])) {
     if(strcmp($birdnetlog_url,$config['BIRDNETLOG_URL']) !== 0) {
       $contents = preg_replace("/BIRDNETLOG_URL=.*/", "BIRDNETLOG_URL=$birdnetlog_url", $contents);
       $contents2 = preg_replace("/BIRDNETLOG_URL=.*/", "BIRDNETLOG_URL=$birdnetlog_url", $contents2);
+      $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
+      $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
+      fwrite($fh, $contents);
+      fwrite($fh2, $contents2);
+      exec('sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &');
+    }
+  }
+
+  if(isset($_POST["birdnetpi_url"])) {
+    $birdnetpi_url = $_POST["birdnetpi_url"];
+    if(strcmp($birdnetpi_url,$config['BIRDNETPI_URL']) !== 0) {
+      $contents = preg_replace("/BIRDNETPI_URL=.*/", "BIRDNETPI_URL=$birdnetpi_url", $contents);
+      $contents2 = preg_replace("/BIRDNETPI_URL=.*/", "BIRDNETPI_URL=$birdnetpi_url", $contents2);
       $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
       $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
       fwrite($fh, $contents);
