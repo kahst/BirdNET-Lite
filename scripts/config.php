@@ -124,13 +124,15 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
       <input name="latitude" type="number" max="90" min="-90" step="0.0001" value="<?php print($config['LATITUDE']);?>" required/><br>
       <label for="longitude">Longitude: </label>
       <input name="longitude" type="number" max="180" min="-180" step="0.0001" value="<?php print($config['LONGITUDE']);?>" required/><br>
+      <p>Set your Latitude and Longitude to 4 decimal places. Get your coordinates <a href="https://latlong.net">here</a>.</p>
       <label for="birdweather_id">BirdWeather ID: </label>
       <input name="birdweather_id" type="text" value="<?php print($config['BIRDWEATHER_ID']);?>" /><br>
-      <p><a href="mailto:tim@birdweather.com?subject=Request%20BirdWeather%20ID&body=<?php include('birdweather_request.php'); ?>" target="top">Email Tim</a> to request a BirdWeather ID</p>
+      <p><a href="https://app.birdweather.com">BirdWeather.com</a> is a weather map for bird sounds. Stations around the world supply audio and video streams to BirdWeather where they are then analyzed by BirdNET and compared to eBird Grid data. BirdWeather catalogues the bird audio and spectrogram visualizations so that you can listen to, view, and read about birds throughout the world. <a href="mailto:tim@birdweather.com?subject=Request%20BirdWeather%20ID&body=<?php include('birdweather_request.php'); ?>" target="top">Email Tim</a> to request a BirdWeather ID</p>
       <label for="pushed_app_key">Pushed App Key: </label>
       <input name="pushed_app_key" type="text" value="<?php print($config['PUSHED_APP_KEY']);?>" /><br>
       <label for="pushed_app_secret">Pushed App Secret: </label>
       <input name="pushed_app_secret" type="text" value="<?php print($config['PUSHED_APP_SECRET']);?>" /><br>
+      <p><a href="https://pushed.co/quick-start-guide">Pushed iOS Notifications</a> can be setup and enabled for New Species notifications. Sorry, Android users, this only works on iOS.</p>
       <label for="language">Database Language: </label>
       <select name="language">
         <option value="none">Select your language</option>
