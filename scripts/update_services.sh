@@ -33,7 +33,12 @@ install_mariadb() {
   if [[ "${VERSION_CODENAME}" == "buster" ]];then
     USER=${USER} ${my_dir}/update_db_pwd_buster.sh
   elif [[ "${VERSION_CODENAME}" == "bullseye" ]];then
-    USER=${USER} ${my_dir}/update_db_pwd_bullseye.sh
+    mysql -e "
+    SET PASSWORD FOR 'birder'@'localhost' = PASSWORD('${DB_PWD}');
+    FLUSH PRIVILEGES";
+    sed -i "s/mysqli.default_host =.*/mysqli.default_host = localhost/g" /etc/php/7.4/fpm/php.ini
+    sed -i "s/mysqli.default_user =.*/mysqli.default_user = birder/g" /etc/php/7.4/fpm/php.ini
+    sed -i "s/mysqli.default_pw =.*/mysqli.default_pw = ${DB_PWD}/g" /etc/php/7.4/fpm/php.ini
   fi
 }
 
