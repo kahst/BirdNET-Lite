@@ -72,19 +72,25 @@ sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f scripts/*
 sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f scripts/*/*
 if [ ! -z ${BIRDNETLOG_URL} ];then
   BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-  sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/  phpfiles="$(grep -l "$(hostname).local:8080" ${my_dir}/*.php)"
-  for i in "${phpfiles[@]}";do
-    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" ${i}
-  done
+else
+  BIRDNETLOG_URL="$(echo \"http://$(hostname).local:8080\" | sed 's/\/\//\\\/\\\//g')"
 fi
+sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/  phpfiles="$(grep -l "$(hostname).local:8080" ${my_dir}/*.php)"
+for i in "${phpfiles[@]}";do
+  sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" ${i}
+done
+
 if [ ! -z ${WEBTERMINAL_URL} ];then
   WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
-  sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" $(dirname ${my_dir})/homepage
-  phpfiles="$(grep -l "$(hostname).local:8888" ${my_dir}/*.php)"
-  for i in "${phpfiles[@]}";do
-    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" ${i}
-  done
+else
+  WEBTERMINAL_URL="$(echo \"http://$(hostname).local:8888\" | sed 's/\/\//\\\/\\\//g')"
 fi
+sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" $(dirname ${my_dir})/homepage
+phpfiles="$(grep -l "$(hostname).local:8888" ${my_dir}/*.php)"
+for i in "${phpfiles[@]}";do
+  sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" ${i}
+done
+
 
 if [ -z ${BIRDNETPI_URL} ];then
   sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/homepage/*.html
