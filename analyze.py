@@ -234,16 +234,17 @@ def main():
 
     if len(dataset) == 1:
         try:
-            datafile = dataset
+            datafile = dataset[0]
+            print(datafile)
             audioData = readAudioData(datafile, args.overlap)
             detections = analyzeAudioData(audioData, args.lat, args.lon, week, sensitivity, args.overlap, interpreter)
-            directory, filename = datafile.rsplit('/', 1)
+            directory, filename = datafile.rsplit(os.path.sep, 1)
             if args.o == 'result.csv':
                 if not os.path.exists(directory):
                     os.makedirs(directory)
                 output_file = '.'.join((datafile.rsplit('.', 1)[0], 'csv'))
             else:
-                output_file = '{}/{}.csv'.format(args.o.strip('/', 1), filename.rsplit('.', 1)[0])
+                output_file = '{}{}{}.csv'.format(args.o.strip(os.path.sep, 1), os.path.sep, filename.rsplit('.', 1)[0])
             writeResultsToFile(detections, min_conf, output_file)
         except:
             print("Error processing file: {}".format(datafile)) 	
@@ -255,17 +256,17 @@ def main():
             
                 detections = analyzeAudioData(audioData, args.lat, args.lon, week, sensitivity, args.overlap, interpreter)
             
-                directory, filename = datafile.rsplit('/', 1)
+                directory, filename = datafile.rsplit(os.path.sep, 1)
                 if args.o == 'result.csv':
                     if not os.path.exists(directory):
                         os.makedirs(directory)
                     output_file = '.'.join((datafile.rsplit('.', 1)[0], 'csv'))
                 else:
-                    root_folder = args.i.strip('/').rsplit('/', 1)[-1]
-                    output_directory = '{}/{}/{}'.format(args.o.rstrip('/'), root_folder.strip('/'), directory.split(root_folder)[-1].strip('/'))
+                    root_folder = args.i.strip(os.path.sep).rsplit(os.path.sep, 1)[-1]
+                    output_directory = '{}{}{}{}{}'.format(args.o.rstrip(os.path.sep), os.path.sep, root_folder.strip(os.path.sep), os.path.sep, directory.split(root_folder)[-1].strip(os.path.sep))
                     if not os.path.exists(output_directory): 
                         os.makedirs(output_directory)
-                    output_file = '{}/{}.{}'.format(output_directory.rstrip('/'), filename.split('.')[0], 'csv')
+                    output_file = '{}{}{}.{}'.format(output_directory.rstrip(os.path.sep), os.path.sep, filename.split('.')[0], 'csv')
 		
                 writeResultsToFile(detections, min_conf, output_file)
             except:
