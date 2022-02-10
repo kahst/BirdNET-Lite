@@ -285,7 +285,7 @@ if (strcmp($newconfig['FULL_DISK'], "purge") == 0) {
   <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
       <label for="extraction_length">Extraction Length: </label>
       <input name="extraction_length" type="number" min="3" max="<?php print($newconfig['RECORDING_LENGTH']);?>" value="<?php print($newconfig['EXTRACTION_LENGTH']);?>" /><br>
-      <p>Set Extraction Length to something less than your Recording Length above. Min=3 Max=Recording Length
+      <p>Set Extraction Length to something less than your Recording Length. Min=3 Max=Recording Length
       <h3>Passwords</h3>
       <label for="caddy_pwd">Webpage: </label>
       <input name="caddy_pwd" type="text" value="<?php print($newconfig['CADDY_PWD']);?>" /><br>
