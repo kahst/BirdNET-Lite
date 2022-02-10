@@ -39,6 +39,7 @@ chart_viewer.service
 birdnet_recording.service
 birdnet_log.service)
 
+sudo systemctl reload caddy
 for i in  "${services[@]}";do
 sudo systemctl restart "${i}"
 done
