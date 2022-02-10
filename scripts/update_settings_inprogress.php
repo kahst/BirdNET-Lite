@@ -21,8 +21,6 @@ function countDown(secs,elem) {
 
 		element.innerHTML = '<h4>Let\'s see</h4>';
 
-		element.innerHTML += '<a href="https://birdnetpi.pmcgui.xyz"></a>';
-
 	}
 
 	secs--;
