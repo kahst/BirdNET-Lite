@@ -75,7 +75,8 @@ if [ ! -z ${BIRDNETLOG_URL} ];then
 else
   BIRDNETLOG_URL="$(echo \"http://$(hostname).local:8080\" | sed 's/\/\//\\\/\\\//g')"
 fi
-sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*  phpfiles="$(grep -l "$(hostname).local:8080" ${my_dir}/*.php)"
+sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/*
+phpfiles="$(grep -l "$(hostname).local:8080" ${my_dir}/*.php)"
 for i in "${phpfiles[@]}";do
   sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" ${i}
 done
