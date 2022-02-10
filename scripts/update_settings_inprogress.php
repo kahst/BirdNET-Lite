@@ -1,6 +1,6 @@
 <?php
-$timer=60;
-header( "refresh:$timer;url=/overview.php" );
+$timer=30;
+header( "refresh:$timer;url=/advanced.php" );
 ?>
 <html lang="en">
 	<meta charset="UTF-8">
@@ -13,7 +13,7 @@ function countDown(secs,elem) {
 
 	var element = document.getElementById(elem);
 
-	element.innerHTML = "Update in progress. Please allow another "+secs+" seconds for it to complete.";
+	element.innerHTML = "Updating settings... Please allow another "+secs+" seconds for it to complete.";
 
 	if(secs < 1) {
 

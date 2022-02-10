@@ -42,4 +42,5 @@ birdnet_log.service)
 for i in  "${services[@]}";do
 sudo systemctl restart "${i}"
 done
-
+sudo systemctl reload caddy
+sudo systemctl restart php7.4-fpm.service

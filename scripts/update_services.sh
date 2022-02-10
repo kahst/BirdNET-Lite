@@ -26,7 +26,6 @@ install_scripts() {
 install_mariadb() {
   if ! which mysql &> /dev/null;then
     echo "Installing MariaDB Server"
-    apt -qqy update
     apt -qqy install mariadb-server
     echo "MariaDB Installed"
   fi
@@ -34,7 +33,12 @@ install_mariadb() {
   if [[ "${VERSION_CODENAME}" == "buster" ]];then
     USER=${USER} ${my_dir}/update_db_pwd_buster.sh
   elif [[ "${VERSION_CODENAME}" == "bullseye" ]];then
-    USER=${USER} ${my_dir}/update_db_pwd_bullseye.sh
+    mysql -e "
+    SET PASSWORD FOR 'birder'@'localhost' = PASSWORD('${DB_PWD}');
+    FLUSH PRIVILEGES";
+    sed -i "s/mysqli.default_host =.*/mysqli.default_host = localhost/g" /etc/php/7.4/fpm/php.ini
+    sed -i "s/mysqli.default_user =.*/mysqli.default_user = birder/g" /etc/php/7.4/fpm/php.ini
+    sed -i "s/mysqli.default_pw =.*/mysqli.default_pw = ${DB_PWD}/g" /etc/php/7.4/fpm/php.ini
   fi
 }
 
@@ -201,7 +205,6 @@ install_alsa() {
     echo "alsa-utils installed"
   else
     echo "Installing alsa-utils"
-    apt -qqq update 
     apt install -qqy alsa-utils
     echo "alsa-utils installed"
   fi
@@ -209,7 +212,6 @@ install_alsa() {
     echo "PulseAudio installed"
   else
     echo "Installing pulseaudio"
-    apt -qqq update
     apt install -qqy pulseaudio
     echo "PulseAudio installed"
   fi
@@ -251,7 +253,6 @@ install_caddy() {
     curl -1sLf \
       'https://dl.cloudsmith.io/public/caddy/stable/setup.deb.sh' \
         | sudo -E bash
-    apt -qq update
     apt install -qqy caddy=2.4.5
     systemctl enable --now caddy
   else
@@ -324,7 +325,6 @@ ${BIRDNETLOG_URL} {
 }
 EOF
   fi
-  systemctl reload caddy
 }
 
 update_etc_hosts() {
@@ -441,7 +441,6 @@ install_sox() {
     echo "Sox is installed"
   else
     echo "Installing sox"
-    apt -qq update
     apt install -y sox
     echo "Sox installed"
   fi
@@ -450,7 +449,6 @@ install_sox() {
 install_php() {
   if ! which php &> /dev/null || ! which php-fpm || ! apt list --installed | grep php-xml;then
     echo "Installing PHP modules"
-    apt -qq update
     apt install -qqy php php-fpm php-mysql php-xml php-zip
   else
     echo "PHP and PHP-FPM installed"
@@ -472,7 +470,6 @@ EOF
 install_icecast() {
   if ! which icecast2;then
     echo "Installing IceCast2"
-    apt -qq update
     echo "icecast2 icecast2/icecast-setup boolean false" | debconf-set-selections
     apt install -qqy icecast2 
     config_icecast
@@ -536,6 +533,7 @@ install_cleanup_cron() {
 }
 
 install_selected_services() {
+  sudo apt -qqqq update
   install_scripts
   install_birdnet_analysis
   install_birdnet_server
