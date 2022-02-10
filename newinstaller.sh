@@ -2,7 +2,7 @@
 # Simple new installer
 HOME=/home/pi
 USER=pi
-branch=main
+branch=forms
 if ! which git &> /dev/null;then
   sudo apt update
   sudo apt -y install git
