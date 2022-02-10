@@ -73,7 +73,7 @@ sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f scripts/*/*
 if [ ! -z ${BIRDNETLOG_URL} ];then
   BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
 else
-  BIRDNETLOG_URL="$(echo \"http://$(hostname).local:8080\" | sed 's/\/\//\\\/\\\//g')"
+  BIRDNETLOG_URL="$(echo http://$(hostname).local:8080 | sed 's/\/\//\\\/\\\//g')"
 fi
 sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/homepage/*.html
 sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.html
@@ -84,7 +84,7 @@ sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(di
 if [ ! -z ${WEBTERMINAL_URL} ];then
   WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
 else
-  WEBTERMINAL_URL="$(echo \"http://$(hostname).local:8888\" | sed 's/\/\//\\\/\\\//g')"
+  WEBTERMINAL_URL="$(echo http://$(hostname).local:8888 | sed 's/\/\//\\\/\\\//g')"
 fi
 sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/homepage/*.html
 sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.html
