@@ -70,6 +70,8 @@ fi
 sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f homepage/*
 sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f scripts/*
 sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f scripts/*/*
+sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
+
 if [ ! -z ${BIRDNETLOG_URL} ];then
   BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
 else
