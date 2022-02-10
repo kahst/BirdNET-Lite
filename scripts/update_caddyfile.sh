@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 source /etc/birdnet/birdnet.conf
+USER=pi
+HOME=/home/pi
 set -x
 [ -d /etc/caddy ] || mkdir /etc/caddy
 if [ -f /etc/caddy/Caddyfile ];then
@@ -54,6 +56,7 @@ ${WEBTERMINAL_URL} {
 }
 EOF
 fi
+
 if [ ! -z ${BIRDNETLOG_URL} ];then
   cat << EOF >> /etc/caddy/Caddyfile
 
@@ -62,5 +65,38 @@ ${BIRDNETLOG_URL} {
 }
 EOF
 fi
+################################################################################
+if [ ! -z ${BIRDNETLOG_URL} ];then
+  sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f homepage/*
+  sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f scripts/*
+  BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
+  sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/  phpfiles="$(grep -l "$(hostname).local:8080" ${my_dir}/*.php)"
+  for i in "${phpfiles[@]}";do
+    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" ${i}
+  done
+fi
+if [ ! -z ${WEBTERMINAL_URL} ];then
+  WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
+  sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" $(dirname ${my_dir})/homepage
+  phpfiles="$(grep -l "$(hostname).local:8888" ${my_dir}/*.php)"
+  for i in "${phpfiles[@]}";do
+    sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8888/"${WEBTERMINAL_URL}"/g" ${i}
+  done
+fi
 
-( systemctl reload caddy ) &
+if [ -z ${BIRDNETPI_URL} ];then
+  sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/homepage/*.html
+  sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.html
+  sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.html
+  sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.php
+  sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*/*.php
+else
+  BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
+  sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/homepage/*.html
+  sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.html
+  sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.html
+  sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.php
+  sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
+fi
+
+systemctl reload caddy
