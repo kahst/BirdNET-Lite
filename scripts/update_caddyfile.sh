@@ -69,6 +69,7 @@ fi
 ################################################################################
 sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f homepage/*
 sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f scripts/*
+sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f scripts/*/*
 if [ ! -z ${BIRDNETLOG_URL} ];then
   BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
   sudo -u${USER} sed -i "s/http:\/\/$(hostname).local:8080/"${BIRDNETLOG_URL}"/g" $(dirname ${my_dir})/homepage/  phpfiles="$(grep -l "$(hostname).local:8080" ${my_dir}/*.php)"
