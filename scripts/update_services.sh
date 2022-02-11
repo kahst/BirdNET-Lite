@@ -411,7 +411,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalctl -o short -fu birdnet_server.service -u birdnet_analysis.service
+ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalctl --no-hostname -o short -fu birdnet_server.service -u birdnet_analysis.service
 
 [Install]
 WantedBy=multi-user.target
