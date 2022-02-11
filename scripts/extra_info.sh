@@ -33,6 +33,9 @@ if echo $binary | grep 1 ;then
   if [ ${revbinary:18:1} -eq 1 ];then
     echo "Throttling has occurred"
   fi
+  if [ ${revbinary:19:1} -eq 1 ];then
+    echo "Soft temperature limit has occurred"
+  fi
 fi
 echo "....................................Clock Speeds................................"
 for i in arm core h264 isp v3d uart pwm emmc pixel vec hdmi dpi;do
