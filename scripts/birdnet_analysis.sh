@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Runs BirdNET-Lite
-set -x
+#set -x
 source /etc/birdnet/birdnet.conf
 # Document this run's birdnet.conf settings
 # Make a temporary file to compare the current birdnet.conf with
