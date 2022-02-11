@@ -12,27 +12,27 @@ echo "Binary: $binary";
 revbinary=$(echo $binary|rev)
 if echo $binary | grep 1 ;then
   echo "ISSUES DETECTED"
-fi
-if [ ${revbinary:0:1} -eq 1 ];then
-  echo "Under-voltage detected"
-fi
-if [ ${revbinary:1:1} -eq 1 ];then
-  echo "Arm frequency capped"
-fi
-if [ ${revbinary:2:1} -eq 1 ];then
-  echo "Currently Throttled"
-fi
-if [ ${revbinary:3:1} -eq 1 ];then
-  echo "Soft temperatue limit active"
-fi
-if [ ${revbinary:16:1} -eq 1 ];then
-  echo "Under-voltage has occurred"
-fi
-if [ ${revbinary:17:1} -eq 1 ];then
-  echo "Arm frequency capping has occurred"
-fi
-if [ ${revbinary:18:1} -eq 1 ];then
-  echo "Throttling has occurred"
+  if [ ${revbinary:0:1} -eq 1 ];then
+    echo "Under-voltage detected"
+  fi
+  if [ ${revbinary:1:1} -eq 1 ];then
+    echo "Arm frequency capped"
+  fi
+  if [ ${revbinary:2:1} -eq 1 ];then
+    echo "Currently Throttled"
+  fi
+  if [ ${revbinary:3:1} -eq 1 ];then
+    echo "Soft temperatue limit active"
+  fi
+  if [ ${revbinary:16:1} -eq 1 ];then
+    echo "Under-voltage has occurred"
+  fi
+  if [ ${revbinary:17:1} -eq 1 ];then
+    echo "Arm frequency capping has occurred"
+  fi
+  if [ ${revbinary:18:1} -eq 1 ];then
+    echo "Throttling has occurred"
+  fi
 fi
 
 Bit   Meaning
