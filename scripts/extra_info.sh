@@ -34,19 +34,6 @@ if echo $binary | grep 1 ;then
     echo "Throttling has occurred"
   fi
 fi
-
-Bit   Meaning
-────  ────────────────────────────────────
- 0    Under-voltage detected
- 1    Arm frequency capped
- 2    Currently throttled
- 3    Soft temperature limit active
-16    Under-voltage has occurred
-17    Arm frequency capping has occurred
-18    Throttling has occurred
-19    Soft temperature limit has occurred
-
-
 echo "....................................Clock Speeds................................"
 for i in arm core h264 isp v3d uart pwm emmc pixel vec hdmi dpi;do
   echo -e "${i}:\t$(sudo -upi vcgencmd measure_clock ${i})"
