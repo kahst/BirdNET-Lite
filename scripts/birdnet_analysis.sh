@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Runs BirdNET-Lite
-set -x
+#set -x
 source /etc/birdnet/birdnet.conf
 # Document this run's birdnet.conf settings
 # Make a temporary file to compare the current birdnet.conf with
@@ -124,6 +124,12 @@ run_analysis() {
       done
     fi
 
+    if ! grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;then
+      echo "Waiting for socket"
+      until grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;do
+        sleep 1
+      done
+    fi
     if [ -f ${1}/${i} ] && [ ! -f ${INCLUDE_LIST} ] && [ ! -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
       echo "python3 analyze.py \
 --i "${1}/${i}" \
