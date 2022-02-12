@@ -36,7 +36,6 @@ $lasthourcount = $mysqli->query($sql3);
 
 $sql4 = "SELECT Com_Name, Date, Time, MAX(Confidence)
   FROM detections
-  WHERE Date = CURDATE()
   GROUP BY Com_Name
   ORDER BY MAX(Confidence) DESC";
 $specieslist = $mysqli->query($sql4);
