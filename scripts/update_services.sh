@@ -411,7 +411,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" journalctl -o cat -fu birdnet_server.service
+ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" birdnet_log.sh
 
 [Install]
 WantedBy=multi-user.target
