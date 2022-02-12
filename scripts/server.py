@@ -23,6 +23,7 @@ import requests
 import mysql.connector
 ###############################################################################
 import datetime
+from time import sleep
 import pytz
 from tzlocal import get_localzone
 from pathlib import Path
@@ -36,7 +37,12 @@ FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
+try:
+    server.bind(ADDR)
+except:
+    print("Waiting on socket")
+    time.sleep(5)
+    
 
 
 # Open most recent Configuration and grab DB_PWD as a python variable
