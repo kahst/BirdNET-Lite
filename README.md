@@ -46,6 +46,7 @@ If your installation isn't in one of the countries listed above, please let me k
 * MariaDB integration
 * NoMachine remote desktop (for personal use only)
 * Live audio stream
+* Adminer database maintenance
 * Integrated phpSysInfo
 * New species mobile notifications from Pushed.co (for iOS users only)
 * Localization supported
