@@ -231,7 +231,7 @@ while($rows = $specificstats->fetch_assoc()) {
   <td>";echo "<a href=\"../By_Scientific_Name/$dbsciname\"/>";echo $rows['Sci_Name']; echo "</a></td>
   <td>";echo $rows['COUNT(*)'];echo "</td>
   <td>";echo $rows['MAX(Confidence)'];echo "</td>
-  <td><a href=\"https://wikipedia.org/wiki/$dbname\" target=\"top\"/>Wikipedia</a>, <a href=\"https://wikipedia.org/wiki/$dbname\" target=\"top\"/>All About Birds</a></td>
+  <td><a href=\"https://wikipedia.org/wiki/$dbname\" target=\"top\"/>Wikipedia</a>, <a href=\"https://allaboutbirds.org/guide/$dbname\" target=\"top\"/>All About Birds</a></td>
   </tr>";
 }}
 ?>
