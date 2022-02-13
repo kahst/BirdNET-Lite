@@ -221,6 +221,7 @@ while($rows=$stats ->fetch_assoc())
 	<th>Scientific Name</th>
 	<th>Occurrences</th>
 	<th>Highest Confidence Score</th>
+	<th>Wikipedia Link</th>
       </tr>";
 while($rows = $specificstats->fetch_assoc()) {
   $dbname = preg_replace('/ /', '_', $rows['Com_Name']);
@@ -230,6 +231,7 @@ while($rows = $specificstats->fetch_assoc()) {
   <td>";echo "<a href=\"../By_Scientific_Name/$dbsciname\"/>";echo $rows['Sci_Name']; echo "</a></td>
   <td>";echo $rows['COUNT(*)'];echo "</td>
   <td>";echo $rows['MAX(Confidence)'];echo "</td>
+  <td><a href=\"https://wikipedia.org/wiki/$dbname\" target=\"top\"/>link</a></td>
   </tr>";
 }}
 ?>
