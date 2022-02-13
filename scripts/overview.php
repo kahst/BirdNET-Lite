@@ -88,6 +88,7 @@ while($rows=$mostrecent ->fetch_assoc())
 	<td><a href="/By_Common_Name/<?php echo $dbname;?>"><?php echo $rows['Com_Name'];?></a></td>
 	<td><a href="/By_Date/<?php echo $rows['Date'];?>"/><?php echo $rows['Date'];?></a></td>
         <td><?php echo $rows['Time'];?></td>
+	<td><a href="https://allaboutbirds.org/guide/<?php echo $dbname;?>" target="top"/>More Info</a></td>
       </tr>
     </table>
   </div>
