@@ -53,6 +53,10 @@ $mysqli->close();
 
 
 <style>
+a {
+  text-decoration: none;
+  color:black;
+}
 .center {
   display: block;
   margin-left: 5px;
@@ -76,11 +80,12 @@ $mysqli->close();
 <?php // LOOP TILL END OF DATA
 while($rows=$mostrecent ->fetch_assoc())
 {
+  $dbname = preg_replace('/ /', '_', $rows['Com_Name']);
 ?>
     <table>
       <tr>
         <th>Most Recent Detection</th>
-        <td><?php echo $rows['Com_Name'];?></td>
+	<td><a href="/By_Common_Name/<?php echo $dbname;?>"><?php echo $rows['Com_Name'];?></a></td>
         <td><?php echo $rows['Date'];?></td>
         <td><?php echo $rows['Time'];?></td>
       </tr>
