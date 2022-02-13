@@ -86,7 +86,7 @@ while($rows=$mostrecent ->fetch_assoc())
       <tr>
         <th>Most Recent Detection</th>
 	<td><a href="/By_Common_Name/<?php echo $dbname;?>"><?php echo $rows['Com_Name'];?></a></td>
-        <td><?php echo $rows['Date'];?></td>
+	<td><a href="/By_Date/<?php echo $rows['Date'];?>"/><?php echo $rows['Date'];?></a></td>
         <td><?php echo $rows['Time'];?></td>
       </tr>
     </table>
