@@ -96,6 +96,7 @@ a {
 	<th>Scientific Name</th>
 	<th>Common Name</th>
 	<th>Confidence</th>
+	<th>Wikipedia</th>
       </tr>
       <!-- PHP CODE TO FETCH DATA FROM ROWS-->
 <?php // LOOP TILL END OF DATA
@@ -112,6 +113,7 @@ while($rows=$mosttable ->fetch_assoc())
 	<td><a href="/By_Scientific_Name/<?php echo $dbsciname;?>"/><?php echo $rows['Sci_Name'];?></a></td>
 	<td><a href="/By_Common_Name/<?php echo $dbname;?>"/><?php echo $rows['Com_Name'];?></a></td>
 	<td><?php echo $Confidence;?></td>
+	<td><a href="https://wikipedia.org/wiki/<?php echo $dbname;?>" target="top"><?php echo $rows['Com_Name'];?></td>
       </tr>
 <?php
 }
