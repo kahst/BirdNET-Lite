@@ -48,7 +48,7 @@ DB_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 ICE_PWD=birdnetpi
 
 #-----------------------  Web-hosting/Caddy File-server -----------------------#
-#________The four variables below can be set to enable internet access_________#
+#_______The three variables below can be set to enable internet access_________#
 #____________to your data,(e.g., extractions, raw data, live___________________#
 #______________audio stream, BirdNET.selection.txt files)______________________#
 
@@ -84,7 +84,7 @@ PUSHED_APP_SECRET=
 
 RECS_DIR=/home/pi/BirdSongs
 
-#
+
 #------------------------------ Extraction Service  ---------------------------#
 
 ## DO_EXTRACTIONS is simply a setting for enabling the extraction.service.
@@ -103,14 +103,8 @@ DO_EXTRACTIONS=y
 DO_RECORDING=y
 
 ## REC_CARD is the sound card you would want the birdnet_recording.service to 
-## use. This setting is irrelevant if you are not planning on doing data 
-## collection via recording on this machine. The command substitution below 
-## looks for a USB microphone's dsnoop alsa device. The dsnoop device lets
-## birdnet_recording.service and livestream.service share the raw audio stream
-## from the microphone. If you would like to use a different microphone than
-## what this produces, or if your microphone does not support creating a
-## dsnoop device, you can set this explicitly from a list of the available
-## devices from the output of running 'aplay -L'
+## use. Leave this as "default" to use PulseAudio (recommended), or use
+## the output from "aplay -L" to specify an ALSA device.
 
 REC_CARD=default
 
@@ -125,13 +119,8 @@ PROCESSED=${RECS_DIR}/Processed
 EXTRACTED=${RECS_DIR}/Extracted
 
 ## IDFILE is the file that keeps a complete list of every spececies that
-## BirdNET has identified from your data-set. It is persistent across
-## data-sets, so would need to be whiped clean through deleting or renaming
-## it. A backup is automatically made from this variable each time it is 
-## updated (structure: ${IDFILE}.bak), and would also need to be removed
-## or renamed to start a new file between data-sets. Alternately, you can
-## change this variable between data-sets to preserve records of disparate
-## data-sets according to name.
+## BirdNET has identified from your data-set. It is a relic and not really
+## used anymore.
 
 IDFILE=${HOME}/BirdNET-Pi/IdentifiedSoFar.txt
 
@@ -150,7 +139,7 @@ CONFIDENCE=0.7
 
 SENSITIVITY=1.25
 
-## CHANNELS holds the variabel that corresponds to the number of channels the
+## CHANNELS holds the variable that corresponds to the number of channels the
 ## sound card supports.
 
 CHANNELS=2
@@ -161,23 +150,25 @@ CHANNELS=2
 
 FULL_DISK=purge
 
-## VENV is the virtual environment where the the BirdNET python build is found,
-## i.e, VENV is the virtual environment miniforge built for BirdNET.
+## VENV is the python virtual environment wherein all modules and site-packages
+## have been installed.
 
 VENV=/home/pi/BirdNET-Pi/birdnet
 
 ## RECORDING_LENGTH sets the length of the recording that BirdNET-Lite will analyze.
+
 RECORDING_LENGTH=15
 
 ## EXTRACTION_LENGTH sets the length of the audio extractions that will be made
-## from each BirdNET-Lite detection.
+## from each BirdNET-Lite detection. An empty value will use the default of 6
+## seconds.
+
 EXTRACTION_LENGTH=
 
 ## BIRDNET_USER should be the non-root user systemd should use to execute each 
 ## service.
 
 BIRDNET_USER=pi
-
 
 ## These are just for debugging
 LAST_RUN=
