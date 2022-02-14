@@ -438,11 +438,11 @@ EOF
 }
 
 install_sox() {
-  if which sox &> /dev/null;then
+  if which sox | grep mp3 &> /dev/null;then
     echo "Sox is installed"
   else
     echo "Installing sox"
-    apt install -y sox
+    apt install -y sox libsox-fmt-mp3
     echo "Sox installed"
   fi
 }
