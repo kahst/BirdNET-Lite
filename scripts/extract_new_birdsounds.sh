@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Exit when any command fails
-#set -x
+set -x
 set -e
 # Keep track of the last executed command
 #trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
@@ -64,7 +64,8 @@ for h in "${SCAN_DIRS[@]}";do
 	    | awk -F\; '{print $5}' \
 	    | cut -d'.' -f2)""
     CONFIDENCE_SCORE="${CONFIDENCE:0:2}%"
-    NEWFILE="${COMMON_NAME// /_}-${CONFIDENCE_SCORE}-${OLDFILE}"
+    NEWFILE="${COMMON_NAME// /_}-${CONFIDENCE_SCORE}-${OLDFILE//.wav/.${AUDIOFMT}}"
+    echo "NEWFILE=$NEWFILE"
     NEWSPECIES_BYDATE="${EXTRACTED}/By_Date/${DATE}/${COMMON_NAME// /_}"
     NEWSPECIES_BY_COMMON="${EXTRACTED}/By_Common_Name/${COMMON_NAME// /_}"
     NEWSPECIES_BY_SCIENCE="${EXTRACTED}/By_Scientific_Name/${SCIENTIFIC_NAME// /_}"
@@ -102,7 +103,6 @@ for h in "${SCAN_DIRS[@]}";do
    #   ls -1t . | tail -n +20 | xargs -r rm -vv
    # fi   
 
-    echo "Extracting audio . . . "
     # If the above tests have passed, then the extraction happens.
     # After creating the extracted files by-date, and a directory tree 
     # structured by-species, symbolic links are made to populate the new 
@@ -129,9 +129,11 @@ for h in "${SCAN_DIRS[@]}";do
       END=${RECORDING_LENGTH}
     fi
 
-    ffmpeg -hide_banner -loglevel error -nostdin -i "${h}/${OLDFILE}" \
-      -acodec copy -ss "${START}" -to "${END}"\
-        "${NEWSPECIES_BYDATE}/${NEWFILE}"
+    sox "${h}/${OLDFILE}" "${NEWSPECIES_BYDATE}/${NEWFILE}" \
+      trim "${START}" "${END}"
+    #ffmpeg -hide_banner -loglevel error -nostdin -i "${h}/${OLDFILE}" \
+    #  -acodec copy -ss "${START}" -to "${END}"\
+    #    "${NEWSPECIES_BYDATE}/${NEWFILE}"
 
     # Create spectrogram for extraction
     sox "${NEWSPECIES_BYDATE}/${NEWFILE}" -n remix 1 rate 24k spectrogram \
@@ -183,7 +185,6 @@ for h in "${SCAN_DIRS[@]}";do
 
   done < "${TMPFILE}"
   
-  echo -e "\n\n\nFINISHED!!! Processed extractions for ${h:19}"
   # Once each line of the TMPFILE has been processed, the TMPFILE is emptied
   # for the next iteration of the for loop.
   >"${TMPFILE}"
@@ -201,8 +202,3 @@ echo "Linking Processed files to "${EXTRACTED}/Processed" web directory"
 if [[ ! -L ${EXTRACTED}/Processed ]] || [[ ! -e ${EXTRACTED}/Processed ]];then
   ln -sf ${PROCESSED} ${EXTRACTED}/Processed
 fi
-  
-
-
-# That's all!
-echo "Finished -- the extracted sections are in ${EXTRACTED}"

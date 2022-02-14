@@ -1,12 +1,12 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
 } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
 }
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 if(isset($_POST['submit'])) {
   $contents = file_get_contents("/home/pi/BirdNET-Pi/birdnet.conf");
@@ -145,6 +145,14 @@ if(isset($_POST['submit'])) {
     }
   }
 
+  if(isset($_POST["audiofmt"])) {
+    $audiofmt = $_POST["audiofmt"];
+    if(strcmp($audiofmt,$config['AUDIOFMT']) !== 0) {
+      $contents = preg_replace("/AUDIOFMT=.*/", "AUDIOFMT=$audiofmt", $contents);
+      $contents2 = preg_replace("/AUDIOFMT=.*/", "AUDIOFMT=$audiofmt", $contents2);
+    }
+  }
+
   $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
   $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
   fwrite($fh, $contents);
@@ -225,7 +233,7 @@ label {
   width: 40%;
   font-weight:bold;
 }
-input {
+input,select {
   width: 60%;
   text-align:center;
   font-size:large;
@@ -285,7 +293,17 @@ if (strcmp($newconfig['FULL_DISK'], "purge") == 0) {
   <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
       <label for="extraction_length">Extraction Length: </label>
       <input name="extraction_length" type="number" min="3" max="<?php print($newconfig['RECORDING_LENGTH']);?>" value="<?php print($newconfig['EXTRACTION_LENGTH']);?>" /><br>
-      <p>Set Extraction Length to something less than your Recording Length. Min=3 Max=Recording Length
+      <p>Set Extraction Length to something less than your Recording Length. Min=3 Max=Recording Length</p>
+      <label for="audiofmt">Extractions Audio Format</label>
+      <select name="audiofmt">
+      <option selected="<?php print($newconfig['AUDIOFMT']);?>"><?php print($newconfig['AUDIOFMT']);?></option>
+<?php
+  $formats = array("8svx", "aif", "aifc", "aiff", "aiffc", "al", "amb", "amr-nb", "amr-wb", "anb", "au", "avr", "awb", "caf", "cdda", "cdr", "cvs", "cvsd", "cvu", "dat", "dvms", "f32", "f4", "f64", "f8", "fap", "flac", "fssd", "gsm", "gsrt", "hcom", "htk", "ima", "ircam", "la", "lpc", "lpc10", "lu", "mat", "mat4", "mat5", "maud", "mp2", "mp3", "nist", "ogg", "paf", "prc", "pvf", "raw", "s1", "s16", "s2", "s24", "s3", "s32", "s4", "s8", "sb", "sd2", "sds", "sf", "sl", "sln", "smp", "snd", "sndfile", "sndr", "sndt", "sou", "sox", "sph", "sw", "txw", "u1", "u16", "u2", "u24", "u3", "u32", "u4", "u8", "ub", "ul", "uw", "vms", "voc", "vorbis", "vox", "w64", "wav", "wavpcm", "wv", "wve", "xa", "xi");
+foreach($formats as $format){
+  echo "<option value='$format'>$format</option>";
+}
+?>
+      </select>
       <h3>Passwords</h3>
       <label for="caddy_pwd">Webpage: </label>
       <input name="caddy_pwd" type="text" value="<?php print($newconfig['CADDY_PWD']);?>" /><br>
@@ -321,12 +339,12 @@ if (strcmp($newconfig['FULL_DISK'], "purge") == 0) {
       <br><br>
       <button type="submit" name="submit" class="block"><?php
 
-  if(isset($_SESSION['success'])){
-    echo "Success!";
-    unset($_SESSION['success']);
-  } else {
-    echo "Update Settings";
-  }
+if(isset($_SESSION['success'])){
+  echo "Success!";
+  unset($_SESSION['success']);
+} else {
+  echo "Update Settings";
+}
 ?></button>
       <br>
     </form>
