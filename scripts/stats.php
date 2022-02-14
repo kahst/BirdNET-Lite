@@ -119,6 +119,7 @@ a {
 	text-align: center;
 }
 
+
 img {
 	width:75%;
 }
@@ -253,6 +254,7 @@ while($rows = $specificstats->fetch_assoc()) {
 </div>";
 }}
 ?>
+
   </section>
 </html>
 
