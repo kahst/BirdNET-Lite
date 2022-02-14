@@ -19,6 +19,12 @@ set_hostname() {
   fi
 }
 
+install_lynx() {
+  if ! which lynx &> /dev/null;then
+    apt -y install lynx
+  fi
+}
+
 install_ftpd() {
   if ! [ -f /etc/ftpuseres ];then
     apt -y install ftpd
@@ -580,6 +586,7 @@ install_selected_services() {
   generate_BirdDB
   install_cleanup_cron
   install_ftpd
+  install_lynx
 }
 
 if [ -f ${config_file} ];then 
