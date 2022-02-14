@@ -17,6 +17,12 @@ install_ftpd() {
   fi
 }
 
+install_lynx() {
+  if ! which lynx &> /dev/null;then
+    apt -y install lynx
+  fi
+}
+
 install_scripts() {
   echo "Installing BirdNET-Pi scripts to /usr/local/bin"
   ln -sf ${my_dir}/* /usr/local/bin/
@@ -573,6 +579,7 @@ install_selected_services() {
   generate_BirdDB
   install_cleanup_cron
   install_ftpd
+  install_lynx
 }
 
 if [ -f ${config_file} ];then 
