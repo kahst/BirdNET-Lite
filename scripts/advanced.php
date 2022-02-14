@@ -51,7 +51,6 @@ if(isset($_POST['submit'])) {
       $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
       fwrite($fh, $contents);
       fwrite($fh2, $contents2);
-      exec('sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &');
     }
   }
 
@@ -64,7 +63,6 @@ if(isset($_POST['submit'])) {
       $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
       fwrite($fh, $contents);
       fwrite($fh2, $contents2);
-      exec('sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &');
     }
   }
 
