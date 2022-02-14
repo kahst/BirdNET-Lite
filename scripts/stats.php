@@ -119,6 +119,16 @@ a {
 	text-align: center;
 }
 
+img {
+	width:75%;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 select {
   font-size:large;
   width: 60%;
@@ -148,7 +158,7 @@ form {
     float: none;
     width: 100%;
   }
-  input, label  {
+  input, label, img  {
     width:100%;
   {
 }
@@ -226,19 +236,23 @@ while($rows=$stats ->fetch_assoc())
 while($rows = $specificstats->fetch_assoc()) {
   $dbname = preg_replace('/ /', '_', $rows['Com_Name']);
   $dbsciname = preg_replace('/ /', '_', $rows['Sci_Name']);
+  $imagelink = shell_exec("/home/pi/BirdNET-Pi/scripts/get_image.sh $dbname");
+  $imagecitation = shell_exec("/home/pi/BirdNET-Pi/scripts/get_citation.sh $dbname");
   echo "<tr>
   <td>";echo "<a href=\"../By_Common_Name/$dbname\"/>";echo $rows['Com_Name']; echo "</a></td>
   <td>";echo "<a href=\"../By_Scientific_Name/$dbsciname\"/>";echo $rows['Sci_Name']; echo "</a></td>
   <td>";echo $rows['COUNT(*)'];echo "</td>
   <td>";echo $rows['MAX(Confidence)'];echo "</td>
-  <td><a href=\"https://wikipedia.org/wiki/$dbname\" target=\"top\"/>Wikipedia</a>, <a href=\"https://allaboutbirds.org/guide/$dbname\" target=\"top\"/>All About Birds</a></td>
-  </tr>";
-}}
-?>
+  <td><a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/>Wikipedia</a>, <a href=\"https://allaboutbirds.org/guide/$dbname\" target=\"top\"/>All About Birds</a>
+  </tr>
     </table>
+  <img class=\"center\" src=\"$imagelink\">
+  <pre>";echo $imagecitation;echo "</pre></td>
   </div>  
 </div>
-</div>
+</div>";
+}}
+?>
   </section>
 </html>
 

@@ -114,7 +114,7 @@ while($rows=$mosttable ->fetch_assoc())
 	<td><a href="/By_Scientific_Name/<?php echo $dbsciname;?>"/><?php echo $rows['Sci_Name'];?></a></td>
 	<td><a href="/By_Common_Name/<?php echo $dbname;?>"/><?php echo $rows['Com_Name'];?></a></td>
 	<td><?php echo $Confidence;?></td>
-	<td><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $dbname;?>" target="top">All About Birds</a>, <a class="a2" href="https://wikipedia.org/wiki/<?php echo $dbname;?>" target="top">Wikipedia</a></td>
+	<td><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $dbname;?>" target="top">All About Birds</a>, <a class="a2" href="https://wikipedia.org/wiki/<?php echo $dbsciname;?>" target="top">Wikipedia</a></td>
       </tr>
 <?php
 }
