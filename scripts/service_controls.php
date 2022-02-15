@@ -59,24 +59,39 @@ a {
 <body style="background-color: rgb(119, 196, 135);">
 	<div class="row">
 		<div class="column first">
-			<form action="/scripts/stop_core_services.php" onclick="return confirm('Stop core services?')">
+			<form action="" method="POST" onclick="return confirm('Stop core services?')">
+				<input type="hidden" name="submit" value="stop_core_services.sh">
 				<button type="submit" class="block">Stop Core Services</button>
 			</form>
-			<form action="/scripts/restart_services.php" onclick="return confirm('Restart ALL services?')">
+			<form action="" method="POST" onclick="return confirm('Restart ALL services?')">
+				<input type="hidden" name="submit" value="restart_services.sh">
 				<button type="submit" class="block">Restart ALL Services</button>
 			</form>
-			<form action="/scripts/restart_birdnet_analysis.php">
+			<form action="" method="POST">
+				<input type="hidden" name="submit" value="sudo systemctl restart birdnet_analysis.service">
 				<button type="submit" class="block">Restart BirdNET Analysis</button>
 			</form>
-			<form action="/scripts/restart_birdnet_recording.php">
+			<form action="" method="POST">
+				<input type="hidden" name="submit" value="sudo systemctl restart birdnet_recording.service">
 				<button type="submit" class="block">Restart Recording</button>
 			</form>
-			<form action="/scripts/restart_extraction.php">
-				<button type="submit" class="block">Restart Extraction</button>
-			</form>
-			<form action="/scripts/restart_caddy.php" onclick="return confirm('Restart Caddy? You will be disconnected for about 20 seconds.')">
+			<form action="" method="POST" onclick="return confirm('Restart Caddy? You will be disconnected for about 20 seconds.')">
+				<input type="hidden" name="submit" value="sudo systemctl restart caddy">
 				<button type="submit" class="block">Restart Caddy</button>
 			</form>
+		</div>
+		<div class="column second">
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+if(isset($_POST['submit'])){
+$command = $_POST['submit'];
+echo "<h3>Executed $command</h3>";
+shell_exec("$command");
+}
+?>
 		</div>
 	</div>
 </body>

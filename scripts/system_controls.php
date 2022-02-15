@@ -59,17 +59,30 @@ a {
 <body style="background-color: rgb(119, 196, 135);">
 	<div class="row">
 		<div class="column first">
-			<form action="/scripts/reboot_system.php" onclick="return confirm('Are you sure you want to reboot?')">
+			<form action="" method="POST" onclick="return confirm('Are you sure you want to reboot?')">
+				<input type="hidden" name="submit" value="sudo reboot">
 				<button type="submit" class="block">Reboot</button>
 			</form>
-			<form action="/scripts/update_birdnet.php" onclick="return confirm('BE SURE TO STASH ANY LOCAL CHANGES YOU HAVE MADE TO THE SYSTEM BEFORE UPDATING!!!')">
+			<form action="" method="POST" onclick="return confirm('BE SURE TO STASH ANY LOCAL CHANGES YOU HAVE MADE TO THE SYSTEM BEFORE UPDATING!!!')">
+				<input type="hidden" name="submit" value="update_birdnet.sh">
 				<button style="color:blue;" type="submit" class="block">Update</button>
 			</form>
-			<form action="/scripts/shutdown_system.php" onclick="return confirm('Are you sure you want to shutdown?')">
+			<form action="" method="POST" onclick="return confirm('Are you sure you want to shutdown?')">
+				<input type="hidden" name="submit" value="sudo shutdown now">
 				<button style="color: red;" type="submit" class="block">Shutdown</button>
 			</form>
-			<form action="/scripts/clear_all_data.php" onclick="return confirm('Clear ALL Data? This cannot be undone.')">
+			<form action="" method="POST" onclick="return confirm('Clear ALL Data? This cannot be undone.')">
+				<input type="hidden" name="submit" value="clear_all_data.sh">
 				<button style="color: red;" type="submit" class="block">Clear ALL data</button>
 			</form>	
+		</div>
+		<div class="column second">
+<?php
+if(isset($_POST['submit'])){
+  $command = $_POST['submit'];
+  echo "<h3>Executing $command</h3>";
+  shell_exec("$command");
+}
+?>
 		</div>
 </body>
