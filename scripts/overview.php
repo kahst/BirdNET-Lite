@@ -81,6 +81,7 @@ a {
 while($rows=$mostrecent ->fetch_assoc())
 {
   $dbname = preg_replace('/ /', '_', $rows['Com_Name']);
+  $dbname = preg_replace('/\'/', '', $dbname);
 ?>
     <table>
       <tr>
