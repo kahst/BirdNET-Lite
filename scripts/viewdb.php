@@ -105,6 +105,7 @@ while($rows=$mosttable ->fetch_assoc())
 {
 	$Confidence = sprintf("%.1f%%", $rows['MAX(Confidence)'] * 100);
 	$dbname = preg_replace('/ /', '_', $rows['Com_Name']);
+	$dbname = preg_replace('/\'/', '', $dbname);
 	$dbsciname = preg_replace('/ /', '_', $rows['Sci_Name']);
 ?>
       <tr>
