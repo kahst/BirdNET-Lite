@@ -237,8 +237,8 @@ while($rows=$stats ->fetch_assoc())
 while($rows = $specificstats->fetch_assoc()) {
   $dbname = preg_replace('/ /', '_', $rows['Com_Name']);
   $dbsciname = preg_replace('/ /', '_', $rows['Sci_Name']);
-  $imagelink = shell_exec("/home/pi/BirdNET-Pi/scripts/get_image.sh $dbname");
-  $imagecitation = shell_exec("/home/pi/BirdNET-Pi/scripts/get_citation.sh $dbname");
+  $imagelink = shell_exec("/home/pi/BirdNET-Pi/scripts/get_image.sh $dbsciname");
+  $imagecitation = shell_exec("/home/pi/BirdNET-Pi/scripts/get_citation.sh $dbsciname");
   echo "<tr>
   <td>";echo "<a href=\"../By_Common_Name/$dbname\"/>";echo $rows['Com_Name']; echo "</a></td>
   <td>";echo "<a href=\"../By_Scientific_Name/$dbsciname\"/>";echo $rows['Sci_Name']; echo "</a></td>
