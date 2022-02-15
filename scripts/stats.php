@@ -216,7 +216,7 @@ while($rows=$stats ->fetch_assoc())
       <?php
         while($row = $result->fetch_assoc()) {
       ?>
-      <option value='<?php echo $row['Com_Name'];?>'><?php echo $row['Com_Name'];?></option>"
+      <option value="<?php echo $row['Com_Name'];?>"><?php echo $row['Com_Name'];?></option>"
 <?php
 }
 ?>
