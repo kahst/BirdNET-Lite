@@ -195,10 +195,12 @@ form {
 <?php // LOOP TILL END OF DATA
 while($rows=$stats ->fetch_assoc())
 {
-	$MAX = sprintf("%.1f%%", $rows['MAX(Confidence)'] * 100)
+	$MAX = sprintf("%.1f%%", $rows['MAX(Confidence)'] * 100);
+	$links = preg_replace('/ /', '_', $rows['Com_Name']);
+	$links = preg_replace('/\'/', '', $links);
 ?>
       <tr>
-	<td><a href="../By_Common_Name/<?php echo preg_replace('/ /', '_', $rows['Com_Name']);?>"><?php echo $rows['Com_Name'];?></a></td>
+	<td><a href="../By_Common_Name/<?php echo $links;?>"><?php echo $rows['Com_Name'];?></a></td>
 	<td><?php echo $rows['COUNT(*)'];?></td>
 	<td><?php echo $MAX;?></td>
 
@@ -236,6 +238,7 @@ while($rows=$stats ->fetch_assoc())
       </tr>";
 while($rows = $specificstats->fetch_assoc()) {
   $dbname = preg_replace('/ /', '_', $rows['Com_Name']);
+  $dbname = preg_replace('/\'/', '', $dbname);
   $dbsciname = preg_replace('/ /', '_', $rows['Sci_Name']);
   $imagelink = shell_exec("/home/pi/BirdNET-Pi/scripts/get_image.sh $dbsciname");
   $imagecitation = shell_exec("/home/pi/BirdNET-Pi/scripts/get_citation.sh $dbsciname");
