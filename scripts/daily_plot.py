@@ -58,8 +58,7 @@ pal = "Greens"
 
 #Set up plot axes and titles
 # f, axs = plt.subplots(1, 3, figsize = (10, 4), gridspec_kw=dict(width_ratios=[3, 2, 5]))
-
-f, axs = plt.subplots(1, 2, figsize = (10, 4), gridspec_kw=dict(width_ratios=[3, 6]))
+f, axs = plt.subplots(1, 2, figsize = (10, 4), gridspec_kw=dict(width_ratios=[3, 6]), facecolor='#77C487')
 plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0, hspace=0)
 
 #generate y-axis order for all figures based on frequency
