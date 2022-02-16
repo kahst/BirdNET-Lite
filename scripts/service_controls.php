@@ -88,9 +88,19 @@ error_reporting(E_ALL);
 
 if(isset($_POST['submit'])){
 $command = $_POST['submit'];
-$results = shell_exec("$command");
-echo "$results";
+if($command == 'restart_services.sh'){
+  $str= "<h3>Restarting Services</h3>
+        <p>Please wait 60 seconds</p>";
+  echo str_pad($str, 4096);
+  ob_flush();
+  flush();
 }
+if(isset($command)){
+$results = shell_exec("$command 2>&1");
+echo "<pre>$results</pre>";
+}
+}
+ob_end_flush();
 ?>
 		</div>
 	</div>
