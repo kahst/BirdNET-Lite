@@ -227,7 +227,8 @@ while($rows=$stats ->fetch_assoc())
   <button type="submit" class="block"/>Show Species Statistics</button>
 </form>
 <?php if(isset($_POST['species'])){
-  echo "<h3>";echo $_POST['species'];echo "</h3>
+  $species = $_POST['species'];
+  $str = "<h3>$species</h3>
     <table>
       <tr>
 	<th>Common Name</th>
@@ -236,22 +237,33 @@ while($rows=$stats ->fetch_assoc())
 	<th>Highest Confidence Score</th>
 	<th>Links</th>
       </tr>";
+  echo str_pad($str, 4096);
+  ob_flush();
+  flush();
+   
 while($rows = $specificstats->fetch_assoc()) {
+  $count = $rows['COUNT(*)'];
+  $maxconf = $rows['MAX(Confidence)'];
+  $name = $rows['Com_Name'];
+  $sciname = $rows['Sci_Name'];
   $dbname = preg_replace('/ /', '_', $rows['Com_Name']);
   $dbname = preg_replace('/\'/', '', $dbname);
   $dbsciname = preg_replace('/ /', '_', $rows['Sci_Name']);
   $imagelink = shell_exec("/home/pi/BirdNET-Pi/scripts/get_image.sh $dbsciname");
   $imagecitation = shell_exec("/home/pi/BirdNET-Pi/scripts/get_citation.sh $dbsciname");
-  echo "<tr>
-  <td>";echo "<a href=\"../By_Common_Name/$dbname\"/>";echo $rows['Com_Name']; echo "</a></td>
-  <td>";echo "<a href=\"../By_Scientific_Name/$dbsciname\"/>";echo $rows['Sci_Name']; echo "</a></td>
-  <td>";echo $rows['COUNT(*)'];echo "</td>
-  <td>";echo $rows['MAX(Confidence)'];echo "</td>
+  $str= "<tr>
+  <td><a href=\"../By_Common_Name/$dbname\"/>$name</a></td>
+  <td><a href=\"../By_Scientific_Name/$dbsciname\"/>$sciname</a></td>
+  <td>$count</td>
+  <td>$maxconf</td>
   <td><a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/>Wikipedia</a>, <a href=\"https://allaboutbirds.org/guide/$dbname\" target=\"top\"/>All About Birds</a>
   </tr>
-    </table>
-  <img class=\"center\" src=\"$imagelink\">
-  <pre>";echo $imagecitation;echo "</pre></td>
+    </table>";
+  echo str_pad($str, 4096);
+  ob_flush();
+  flush();
+  echo "<img class=\"center\" src=\"$imagelink\">
+  <pre>$imagecitation</pre></td>
   </div>  
 </div>
 </div>";
