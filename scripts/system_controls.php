@@ -78,11 +78,26 @@ a {
 		</div>
 		<div class="column second">
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if(isset($_POST['submit'])){
-  $command = $_POST['submit'];
-  echo "<h3>Executing $command</h3>";
-  shell_exec("$command");
+$command = $_POST['submit'];
+if($command == 'update_birdnet.sh'){
+  $str= "<h3>Updating . . . </h3>
+        <p>Please wait 60 seconds</p>";
+  echo str_pad($str, 4096);
+  ob_flush();
+  flush();
 }
+if(isset($command)){
+$results = shell_exec("$command 2>&1");
+echo "<pre>$results</pre>";
+}
+}
+ob_end_flush();
 ?>
 		</div>
+	</div>
 </body>
