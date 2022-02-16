@@ -18,7 +18,7 @@ if ($mysqli->connect_error) {
 $sql0 = "SELECT COUNT(*) AS 'Total' FROM detections";
 $totalcount = $mysqli->query($sql0);
 
-$sql1 = "SELECT Com_Name, Date, Time FROM detections 
+$sql1 = "SELECT Com_Name, Sci_Name, Date, Time FROM detections 
   ORDER BY Date DESC, Time DESC LIMIT 1";
 $mostrecent = $mysqli->query($sql1);
 
@@ -82,6 +82,7 @@ while($rows=$mostrecent ->fetch_assoc())
 {
   $dbname = preg_replace('/ /', '_', $rows['Com_Name']);
   $dbname = preg_replace('/\'/', '', $dbname);
+  $dbsciname = preg_replace('/ /', '_', $rows['Sci_Name']);
 ?>
     <table>
       <tr>
@@ -89,7 +90,7 @@ while($rows=$mostrecent ->fetch_assoc())
 	<td><a href="/By_Common_Name/<?php echo $dbname;?>"><?php echo $rows['Com_Name'];?></a></td>
 	<td><a href="/By_Date/<?php echo $rows['Date'];?>"/><?php echo $rows['Date'];?></a></td>
         <td><?php echo $rows['Time'];?></td>
-	<td><a href="https://allaboutbirds.org/guide/<?php echo $dbname;?>" target="top"/>More Info</a></td>
+	<td><a href="https://wikipedia.org/wiki/<?php echo $dbsciname;?>" target="top"/>More Info</a></td>
       </tr>
     </table>
   </div>
