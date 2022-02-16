@@ -93,11 +93,11 @@ if($command == 'update_birdnet.sh'){
 }
 if(isset($command)){
 $results = shell_exec("$command 2>&1");
-echo "<pre>$results</pre>";
+echo "</div>
+	</div>
+<pre>$results</pre>";
 }
 }
 ob_end_flush();
 ?>
-		</div>
-	</div>
 </body>
