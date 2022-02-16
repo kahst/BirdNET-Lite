@@ -90,7 +90,7 @@ if(isset($_POST['submit'])){
 $command = $_POST['submit'];
 if($command == 'restart_services.sh'){
   $str= "<h3>Restarting Services</h3>
-        <p>Please wait 60 seconds</p>";
+        <p>Please wait 60-90 seconds</p>";
   echo str_pad($str, 4096);
   ob_flush();
   flush();
