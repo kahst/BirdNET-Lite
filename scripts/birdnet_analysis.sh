@@ -320,7 +320,9 @@ run_birdnet() {
   run_analysis "${1}"
 }
 
-date
+until grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;do
+  sleep 1
+done
 
 if [ $(find ${RECS_DIR} -maxdepth 1 -name '*wav' | wc -l) -gt 0 ];then
   run_birdnet "${RECS_DIR}"

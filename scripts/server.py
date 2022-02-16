@@ -328,8 +328,7 @@ def handle_client(conn, addr):
                 # Write detections to Database
                 myReturn = ''
                 for i in detections:
-                  print("\n", detections[i][0],"\n")
-                  myReturn += str(detections[i][0]) + '||'
+                  myReturn += str(i) + '-' + str(detections[i][0]) + '\n'
                 
                 
 
@@ -414,7 +413,7 @@ def handle_client(conn, addr):
                                     print("Detection POST Response Status - ", response.status_code)
 
                 
-                conn.send("Msg received".encode(FORMAT))
+                conn.send(myReturn.encode(FORMAT))
 
                                 #time.sleep(3)
 
