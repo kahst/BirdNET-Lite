@@ -11,6 +11,11 @@ nomachine_url="https://download.nomachine.com/download/7.7/Arm/nomachine_7.7.4_1
 gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_arm.tar.gz"
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
+
+update_system() {
+  apt update && apt -y upgrade
+}
+
 set_hostname() {
   if [ "$(hostname)" == "raspberrypi" ];then
     echo "Setting hostname to 'birdnetpi'"
@@ -31,10 +36,6 @@ install_ftpd() {
   fi
 }
 
-update_system() {
-  apt update && apt -y upgrade
-}
-
 install_scripts() {
   echo "Installing BirdNET-Pi scripts to /usr/local/bin"
   ln -sf ${my_dir}/* /usr/local/bin/
@@ -42,20 +43,13 @@ install_scripts() {
 }
 
 install_mariadb() {
-  if ! which mysql &> /dev/null;then
-    echo "Installing MariaDB Server"
-    apt -qqy update
-    apt -qqy install mariadb-server
-    echo "MariaDB Installed"
+  if ! which sqlite3 &> /dev/null;then
+    echo "Installing SQLite3"
+    apt -qqy install sqlite3 php-sqlite3
+    echo "SQLite Installed"
   fi
   echo "Initializing the database"
-  source /etc/os-release
-  if [[ "${VERSION_CODENAME}" == "buster" ]];then
-    USER=${USER} ${my_dir}/createdb_buster.sh
-  elif [[ "${VERSION_CODENAME}" == "bullseye" ]];then
-    USER=${USER} ${my_dir}/createdb_bullseye.sh
-  fi
-  systemctl restart php${php_version}-fpm
+  ${my_dir}/createdb.sh
 }
 
 install_birdnet_analysis() {
@@ -186,7 +180,6 @@ create_necessary_dirs() {
   fi
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewday.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/stats.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
@@ -212,7 +205,7 @@ generate_BirdDB() {
     sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
   fi
   ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt &&
-	  chown pi:pi ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
+  chown pi:pi ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
 }
 
 install_alsa() {
@@ -221,7 +214,6 @@ install_alsa() {
     echo "alsa-utils installed"
   else
     echo "Installing alsa-utils"
-    apt -qqq update 
     apt install -qqy alsa-utils
     echo "alsa-utils installed"
   fi
@@ -229,7 +221,6 @@ install_alsa() {
     echo "PulseAudio installed"
   else
     echo "Installing pulseaudio"
-    apt -qqq update
     apt install -qqy pulseaudio
     echo "PulseAudio installed"
   fi
@@ -285,7 +276,6 @@ install_Caddyfile() {
   if [ -f /etc/caddy/Caddyfile ];then
     cp /etc/caddy/Caddyfile{,.original}
   fi
-  php_version="$(awk -F'php' '{print $3}' <(ls -l $(which /etc/alternatives/php)))"
   if ! [ -z ${CADDY_PWD} ];then
   HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
   cat << EOF > /etc/caddy/Caddyfile
@@ -305,7 +295,7 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
     birdnet ${HASHWORD}
   }
   reverse_proxy /stream localhost:8000
-  php_fastcgi unix//run/php/php${php_version}-fpm.sock
+  php_fastcgi unix//run/php/php7.4-fpm.sock
 }
 EOF
   else
@@ -314,7 +304,7 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   reverse_proxy /stream localhost:8000
-  php_fastcgi unix//run/php/php${php_version}-fpm.sock
+  php_fastcgi unix//run/php/php7.4-fpm.sock
 }
 EOF
   fi
@@ -453,7 +443,6 @@ install_sox() {
     echo "Sox is installed"
   else
     echo "Installing sox"
-    apt -qq update
     apt install -y sox libsox-fmt-mp3
     echo "Sox installed"
   fi
@@ -485,7 +474,6 @@ EOF
 install_icecast() {
   if ! which icecast2;then
     echo "Installing IceCast2"
-    apt -qq update
     echo "icecast2 icecast2/icecast-setup boolean false" | debconf-set-selections
     apt install -qqy icecast2 
     config_icecast
@@ -530,17 +518,6 @@ EOF
   systemctl enable livestream.service
 }
 
-install_nomachine() {
-  if [ ! -d /usr/share/NX ] && [ -d /etc/lightdm ];then
-    echo "Installing NoMachine"
-    curl -s -o ${HOME}/nomachine.deb -O "${nomachine_url}"
-    apt install -y ${HOME}/nomachine.deb
-    rm -f ${HOME}/nomachine.deb
-    echo "Enabling VNC"
-    systemctl enable --now vncserver-x11-serviced.service
-  fi
-}
-
 install_cleanup_cron() {
   echo "Installing the cleanup.cron"
   cat $(dirname ${my_dir})/templates/cleanup.cron >> /etc/crontab
@@ -552,37 +529,22 @@ install_selected_services() {
   install_scripts
   install_birdnet_analysis
   install_birdnet_server
-
-  if [[ "${DO_EXTRACTIONS}" =~ [Yy] ]];then
-    install_extraction_service
-  fi
-
-  if [[ "${DO_RECORDING}" =~ [Yy] ]];then
-    install_alsa
-    install_recording_service
-  fi
-
-    install_php
-    install_caddy
-    install_Caddyfile
-    update_etc_hosts
-    install_avahi_aliases
-    install_gotty_logs
-    install_sox
-    install_mariadb
-    install_spectrogram_service
-    install_chart_viewer_service
-    install_pushed_notifications
-
-  if [ ! -z "${ICE_PWD}" ];then
-    install_icecast
-    install_livestream_service
-  fi
-
-  if [[ "${INSTALL_NOMACHINE}" =~ [Yy] ]];then
-    install_nomachine
-  fi
-
+  install_extraction_service
+  install_alsa
+  install_recording_service
+  install_php
+  install_caddy
+  install_Caddyfile
+  update_etc_hosts
+  install_avahi_aliases
+  install_gotty_logs
+  install_sox
+  install_mariadb
+  install_spectrogram_service
+  install_chart_viewer_service
+  install_pushed_notifications
+  install_icecast
+  install_livestream_service
   create_necessary_dirs
   generate_BirdDB
   install_cleanup_cron
