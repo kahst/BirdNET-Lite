@@ -7,22 +7,7 @@
 # If using this script to re-initialize (DROP then CREATE)
 # the DB, be sure to run this as root or with sudo
 source /etc/birdnet/birdnet.conf
-mysql_secure_installation << EOF
-
-y
-n
-y
-y
-y
-y
-EOF
-
-mysql << EOF
-DROP DATABASE IF EXISTS birds;
-CREATE DATABASE IF NOT EXISTS birds;
-
-USE birds;
-
+sqlite3 /home/pi/BirdNET-Pi/scripts/birds.db << EOF
 CREATE TABLE IF NOT EXISTS detections (
   Date DATE,
   Time TIME,
@@ -34,13 +19,6 @@ CREATE TABLE IF NOT EXISTS detections (
   Cutoff FLOAT,
   Week INT,
   Sens FLOAT,
-  Overlap FLOAT);
-GRANT ALL ON birds.* TO 'birder'@'localhost' IDENTIFIED BY '${DB_PWD}' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
-exit
+  Overlap FLOAT,
+  File_Name VARCHAR(100) NOT NULL);
 EOF
-sudo -u${USER} sed -i "s/databasepassword/${DB_PWD}/g" /home/pi/BirdNET-Pi/scripts/server.py
-sed -i "s/mysqli.default_host =.*/mysqli.default_host = localhost/g" /etc/php/7.4/fpm/php.ini
-sed -i "s/mysqli.default_user =.*/mysqli.default_user = birder/g" /etc/php/7.4/fpm/php.ini
-sed -i "s/mysqli.default_pw =.*/mysqli.default_pw = ${DB_PWD}/g" /etc/php/7.4/fpm/php.ini
-
