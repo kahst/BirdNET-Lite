@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 header("refresh: 300;");
-$myDate = date('d-m-Y');
+$myDate = date('Y-m-d');
 $chart = "Combo-$myDate.png";
 $mysqli = mysqli_connect();
 $mysqli->select_db('birds');
@@ -125,7 +125,6 @@ while($rows=$mostrecent ->fetch_assoc())
     </table>
   </div>
 </div>
-    <h2>Today's Top 10 Species</h2>
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
   echo "<img src=\"/Charts/$chart?nocache=time()\" style=\"width: 100%;padding: 5px;margin-left: auto;margin-right: auto;display: block;\">";

@@ -6,7 +6,6 @@ import configparser
 
 import pandas as pd
 import seaborn as sns
-# import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from datetime import datetime
@@ -57,7 +56,6 @@ df_plt_top10_today = df_plt_today[df_plt_today.Com_Name.isin(plt_top10_today.ind
 pal = "Greens"
 
 #Set up plot axes and titles
-# f, axs = plt.subplots(1, 3, figsize = (10, 4), gridspec_kw=dict(width_ratios=[3, 2, 5]))
 f, axs = plt.subplots(1, 2, figsize = (10, 4), gridspec_kw=dict(width_ratios=[3, 6]), facecolor='#77C487')
 plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0, hspace=0)
 
@@ -80,15 +78,10 @@ plot=sns.countplot(y='Com_Name', data = df_plt_top10_today, palette = colors,  o
 
 
 #Try plot grid lines between bars - problem at the moment plots grid lines on bars - want between bars
-# plot.grid(True, axis='y')
 z=plot.get_ymajorticklabels()
 plot.set_yticklabels(['\n'.join(textwrap.wrap(ticklabel.get_text(),15)) for ticklabel in plot.get_yticklabels()], fontsize = 10)
 plot.set(ylabel=None)
 plot.set(xlabel="Detections")
-
-# huw=df_plt_top10_today.groupby('Com_Name')['Confidence'].mean()
-# plot = sns.boxenplot(x=df_plt_top10_today['Confidence']*100,color='Green',  y=df_plt_top10_today['Com_Name'], ax=axs[1],order=freq_order)
-# plot.set(xlabel="Confidence", ylabel=None,yticklabels=[])
 
 
 #Generate crosstab matrix for heatmap plot
@@ -114,14 +107,13 @@ for _, spine in plot.spines.items():
 plot.set(ylabel=None)
 plot.set(xlabel="Hour of Day")
 #Set combined plot layout and titles
-# plt.tight_layout()
 f.subplots_adjust(top=0.9)
-plt.suptitle("Last Updated: "+ str(now.strftime("%d-%m-%Y %H:%M")))
+plt.suptitle("Top 10 Last Updated: "+ str(now.strftime("%Y-%m-%d %H:%M")))
 
 #Save combined plot
-savename='/home/pi/BirdSongs/Extracted/Charts/Combo-'+str(now.strftime("%d-%m-%Y"))+'.png'
+savename='/home/pi/BirdSongs/Extracted/Charts/Combo-'+str(now.strftime("%Y-%m-%d"))+'.png'
 plt.savefig(savename)
-#plt.show()
+plt.show()
 plt.close()
 
 
@@ -133,9 +125,8 @@ df_plt_Bot10_today = df_plt_today[df_plt_today.Com_Name.isin(plt_Bot10_today.ind
 pal = "Reds"
 
 #Set up plot axes and titles
-# f, axs = plt.subplots(1, 3, figsize = (10, 4), gridspec_kw=dict(width_ratios=[3, 2, 5]))
 
-f, axs = plt.subplots(1, 2, figsize = (10, 4), gridspec_kw=dict(width_ratios=[3, 6]))
+f, axs = plt.subplots(1, 2, figsize = (10, 4), gridspec_kw=dict(width_ratios=[3, 6]), facecolor='#77C487')
 plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0, hspace=0)
 
 #generate y-axis order for all figures based on frequency
@@ -156,16 +147,10 @@ plot=sns.countplot(y='Com_Name', data = df_plt_Bot10_today, palette = colors,  o
 
 
 #Try plot grid lines between bars - problem at the moment plots grid lines on bars - want between bars
-# plot.grid(True, axis='y')
 z=plot.get_ymajorticklabels()
 plot.set_yticklabels(['\n'.join(textwrap.wrap(ticklabel.get_text(),15)) for ticklabel in plot.get_yticklabels()], fontsize = 10)
 plot.set(ylabel=None)
 plot.set(xlabel="Detections")
-
-# huw=df_plt_Bot10_today.groupby('Com_Name')['Confidence'].mean()
-# plot = sns.boxenplot(x=df_plt_Bot10_today['Confidence']*100,color='Green',  y=df_plt_Bot10_today['Com_Name'], ax=axs[1],order=freq_order)
-# plot.set(xlabel="Confidence", ylabel=None,yticklabels=[])
-
 
 #Generate crosstab matrix for heatmap plot
 
@@ -190,12 +175,11 @@ for _, spine in plot.spines.items():
 plot.set(ylabel=None)
 plot.set(xlabel="Hour of Day")
 #Set combined plot layout and titles
-# plt.tight_layout()
 f.subplots_adjust(top=0.9)
-plt.suptitle("Last Updated: "+ str(now.strftime("%d-%m-%Y %H:%M")))
+plt.suptitle("Bottom 10 Last Updated: "+ str(now.strftime("%Y-%m-%d %H:%M")))
 
 #Save combined plot
-savename='/home/pi/BirdSongs/Extracted/Charts/Combo2-'+str(now.strftime("%d-%m-%Y"))+'.png'
+savename='/home/pi/BirdSongs/Extracted/Charts/Combo2-'+str(now.strftime("%Y-%m-%d"))+'.png'
 plt.savefig(savename)
-# plt.show()
+plt.show()
 plt.close()
