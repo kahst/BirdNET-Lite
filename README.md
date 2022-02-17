@@ -53,8 +53,8 @@ If your installation isn't in one of the countries listed above, please let me k
 * Localization supported
 
 ## Requirements
-* A Raspberry Pi 4B or Raspberry Pi 3B[+] (must run on RaspiOS-ARM64-Lite)
-* An SD Card with the 64-bit version of RaspiOS installed (please use Bullseye) -- Lite is recommended, but the installation works on RaspiOS-ARM64-Full as well. [(Download the latest here)](https://downloads.raspberrypi.org/raspios_lite_arm64/images/)
+* A Raspberry Pi 4B or Raspberry Pi 3B+ (The 3B+ must run on RaspiOS-ARM64-**Lite**)
+* An SD Card with the **_64-bit version of RaspiOS_** installed (please use Bullseye) -- Lite is recommended, but the installation works on RaspiOS-ARM64-Full as well. [(Download the latest here)](https://downloads.raspberrypi.org/raspios_lite_arm64/images/)
 * A USB Microphone or Sound Card
 
 ## Installation
@@ -93,18 +93,6 @@ I hope that if you find BirdNET-Pi has been worth your time, you will share your
 ### Internationalization:
 The bird names are in English by default, but other localized versions are available thanks to the wonderful efforts of [@patlevin](https://github.com/patlevin). Use the web interface's "Tools" > "Settings" and select your "Database Language" to have the detections in your language.
 
-### Realtime Analysis Predictions View
-The pre-built TFLite binaries for this project also support [the BirdNET-Demo](https://github.com/kahst/BirdNET-Demo), which I am currently testing for integration into the BirdNET-Pi. If you know anything about JavaScript and are willing to help, please let me know in the [Live Analysis discussion](https://github.com/mcguirepr89/BirdNET-Pi/discussions/24).
-
-### Tips and Coming Soon:
-For some reason, the system seems to run more efficiently and the birds sound better when you [![Star on GitHub](https://img.shields.io/github/stars/mcguirepr89/BirdNET-Pi.svg?style=social)](https://github.com/mcguirepr89/BirdNET-Pi/stargazers) the project :)
-
-Expect FULL internationalization options during installation (and available post-installation) for the following languages:
-- German
-- Swedish
-- French
-- Spanish
-
 Current database languages include the list below:
 | Language | Missing Species out of 6,362 | Missing labels (%) |
 | -------- | ------- | ------ |
@@ -136,3 +124,12 @@ Current database languages include the list below:
 | Swedish | 264 | 4.15% |
 | Thai | 5580 | 87.71% |
 | Ukrainian | 646 | 10.15% |
+
+### Tips and Coming Soon:
+For some reason, the system seems to run more efficiently and the birds sound better when you [![Star on GitHub](https://img.shields.io/github/stars/mcguirepr89/BirdNET-Pi.svg?style=social)](https://github.com/mcguirepr89/BirdNET-Pi/stargazers) the project :)
+
+Expect FULL internationalization options post-installation for the following languages:
+- German
+- Swedish
+- French
+- Spanish
