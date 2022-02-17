@@ -93,15 +93,6 @@ I hope that if you find BirdNET-Pi has been worth your time, you will share your
 ### Internationalization:
 The bird names are in English by default, but other localized versions are available thanks to the wonderful efforts of [@patlevin](https://github.com/patlevin). Use the web interface's "Tools" > "Settings" and select your "Database Language" to have the detections in your language.
 
-### Tips and Coming Soon:
-For some reason, the system seems to run more efficiently and the birds sound better when you [![Star on GitHub](https://img.shields.io/github/stars/mcguirepr89/BirdNET-Pi.svg?style=social)](https://github.com/mcguirepr89/BirdNET-Pi/stargazers) the project :)
-
-Expect FULL internationalization options post-installation for the following languages:
-- German
-- Swedish
-- French
-- Spanish
-
 Current database languages include the list below:
 | Language | Missing Species out of 6,362 | Missing labels (%) |
 | -------- | ------- | ------ |
@@ -133,3 +124,12 @@ Current database languages include the list below:
 | Swedish | 264 | 4.15% |
 | Thai | 5580 | 87.71% |
 | Ukrainian | 646 | 10.15% |
+
+### Tips and Coming Soon:
+For some reason, the system seems to run more efficiently and the birds sound better when you [![Star on GitHub](https://img.shields.io/github/stars/mcguirepr89/BirdNET-Pi.svg?style=social)](https://github.com/mcguirepr89/BirdNET-Pi/stargazers) the project :)
+
+Expect FULL internationalization options post-installation for the following languages:
+- German
+- Swedish
+- French
+- Spanish
