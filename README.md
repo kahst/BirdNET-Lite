@@ -53,7 +53,7 @@ If your installation isn't in one of the countries listed above, please let me k
 * Localization supported
 
 ## Requirements
-* A Raspberry Pi 4B or Raspberry Pi 3B[+] (must run on RaspiOS-ARM64-Lite)
+* A Raspberry Pi 4B or Raspberry Pi 3B+ (The 3B+ must run on RaspiOS-ARM64-**Lite**)
 * An SD Card with the **_64-bit version of RaspiOS_** installed (please use Bullseye) -- Lite is recommended, but the installation works on RaspiOS-ARM64-Full as well. [(Download the latest here)](https://downloads.raspberrypi.org/raspios_lite_arm64/images/)
 * A USB Microphone or Sound Card
 
