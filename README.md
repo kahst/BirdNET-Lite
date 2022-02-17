@@ -96,7 +96,7 @@ The bird names are in English by default, but other localized versions are avail
 ### Tips and Coming Soon:
 For some reason, the system seems to run more efficiently and the birds sound better when you [![Star on GitHub](https://img.shields.io/github/stars/mcguirepr89/BirdNET-Pi.svg?style=social)](https://github.com/mcguirepr89/BirdNET-Pi/stargazers) the project :)
 
-Expect FULL internationalization options during installation (and available post-installation) for the following languages:
+Expect FULL internationalization options post-installation for the following languages:
 - German
 - Swedish
 - French
