@@ -28,14 +28,6 @@ BIRDWEATHER_ID=
 
 CADDY_PWD=
 
-#-------------------------  MariaDB User Passwords  ---------------------------#
-#_____________The variable below sets the password for the_____________________# 
-#_______________________'birder' user on the MariaDB___________________________#
-
-## DB_PWD is for the 'birder' user. The shell substitution below sets a random
-## password for you during installation.
-DB_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
-
 #-------------------------  Live Audio Stream  --------------------------------#
 #_____________The variable below configures/enables the live___________________# 
 #_____________________________audio stream.____________________________________#
