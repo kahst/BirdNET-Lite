@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Simple new installer
-exec > >(tee -ia installation.log)
-exec 2> >(tee -ia installation.log >&2)
+exec > >(tee -i logfile.txt)
+exec 2>&1
+
 HOME=/home/pi
 USER=pi
 branch=sqlite
