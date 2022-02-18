@@ -20,9 +20,8 @@ install_config() {
 ## TO BE CHANGED TO STATIC VALUES
 ## Please only go to 4 decimal places. Example:43.3984
 
-LATITUDE="$(curl -s4 ifconfig.co/json | awk '/lat/ {print $2}' | tr -d ',')"
-LONGITUDE="$(curl -s4 ifconfig.co/json | awk '/lon/ {print $2}' | tr -d ',')"
-
+LATITUDE=$(curl -s4 ifconfig.co/json | awk '/lat/ {print $2}' | tr -d ',')
+LONGITUDE=$(curl -s4 ifconfig.co/json | awk '/lon/ {print $2}' | tr -d ',')
 
 #---------------------  BirdWeather Station Information -----------------------#
 #_____________The variable below can be set to have your BirdNET-Pi____________#
@@ -88,24 +87,6 @@ PUSHED_APP_SECRET=
 
 RECS_DIR=/home/pi/BirdSongs
 
-
-#------------------------------ Extraction Service  ---------------------------#
-
-## DO_EXTRACTIONS is simply a setting for enabling the extraction.service.
-## Set this to Y or y to enable extractions.
-
-DO_EXTRACTIONS=y
-
-#-----------------------------  Recording Service  ----------------------------#
-#____________________The variable below can be set to enable __________________#
-#________________________the birdnet_recording.service ________________________#
-
-## DO_RECORDING is simply a setting for enabling the 24/7
-## birdnet_recording.service.
-## Set this to Y or y to enable recording.
-
-DO_RECORDING=y
-
 ## REC_CARD is the sound card you would want the birdnet_recording.service to
 ## use. Leave this as "default" to use PulseAudio (recommended), or use
 ## the output from "aplay -L" to specify an ALSA device.
@@ -116,17 +97,11 @@ REC_CARD=default
 ## after extractions have been made from them. This includes both WAVE and
 ## BirdNET.selection.txt files.
 
-PROCESSED=${RECS_DIR}/Processed
+PROCESSED=/home/pi/BirdSongs/Processed
 
 ## EXTRACTED is the directory where the extracted audio selections are moved.
 
-EXTRACTED=${RECS_DIR}/Extracted
-
-## IDFILE is the file that keeps a complete list of every spececies that
-## BirdNET has identified from your data-set. It is a relic and not really
-## used anymore.
-
-IDFILE=${HOME}/BirdNET-Pi/IdentifiedSoFar.txt
+EXTRACTED=/home/pi/BirdSongs/Extracted
 
 ## OVERLAP is the value in seconds which BirdNET should use when analyzing
 ## the data. The values must be between 0.0-2.9.
@@ -153,11 +128,6 @@ CHANNELS=2
 ## keep = Keep all data and 'stop_core_services.sh'
 
 FULL_DISK=purge
-
-## VENV is the python virtual environment wherein all modules and site-packages
-## have been installed.
-
-VENV=/home/pi/BirdNET-Pi/birdnet
 
 ## RECORDING_LENGTH sets the length of the recording that BirdNET-Lite will
 ## analyze.
