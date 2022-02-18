@@ -61,7 +61,5 @@ install_birdnet() {
 [ -d ${RECS_DIR} ] || mkdir -p ${RECS_DIR} &> /dev/null
 
 install_deps
-if [ ! -d ${VENV} ];then
-  install_birdnet 
-fi
+install_birdnet 
 exit 0
