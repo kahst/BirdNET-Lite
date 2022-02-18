@@ -93,7 +93,7 @@ input[type=number] {
 	width: calc(50% - 70px);
 }
 .second {
-	width: 50%;
+	width: calc(50% + 70px);
 }
 .
 /* Clear floats after the columns */
@@ -111,11 +111,10 @@ a {
 }
 .block {
 	display: block;
-	width:50%;
-	margin-right:auto;
+	width:40%;
 	margin-left:auto;
 	border: none;
-	padding: 10px 10px;
+	padding: 5px 5px;
 	font-size: medium;
 	cursor: pointer;
 	text-align: center;
@@ -133,27 +132,18 @@ img {
 }
 
 select option {
-  text-align:center;
   font-size:large;
 }
 
 select {
+  float:left;
   display:block;
-  width:80%;
   margin-right:auto;
-  margin-left:auto;
   font-size:large;
-  width: 60%;
-}
-
-form {
-  margin-left:20px;
+  width: 50%;
 }
 
 @media screen and (max-width: 800px) {
-  select {
-    width:100%;
-  }
   h3 {
     margin-bottom:0px;
     text-align:center;
@@ -161,6 +151,7 @@ form {
   form {
     text-align:left;
     margin-left:0px;
+    width:100%;
   }
   .column {
     float: none;
@@ -230,7 +221,6 @@ while($rows=$stats ->fetch_assoc())
 }
 ?>
     </select>
-  </p>
   <button type="submit" class="block"/>Show Species Statistics</button>
 </form>
 <?php if(isset($_POST['species'])){
