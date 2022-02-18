@@ -31,6 +31,5 @@ install_birdnet() {
 
 [ -d ${RECS_DIR} ] || mkdir -p ${RECS_DIR} &> /dev/null
 
-install_deps
 install_birdnet 
 exit 0
