@@ -409,7 +409,6 @@ install_services() {
   set_hostname
   update_etc_hosts
   set_login
-  create_necessary_dirs
 
   install_depends
   install_scripts
@@ -427,6 +426,7 @@ install_services() {
   install_livestream_service
   install_cleanup_cron
 
+  create_necessary_dirs
   generate_BirdDB
   configure_caddy_php
   config_icecast
