@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Simple new installer
-exec >  >(tee -ia installation.log)
+exec > >(tee -ia installation.log)
 exec 2> >(tee -ia installation.log >&2)
 HOME=/home/pi
 USER=pi
