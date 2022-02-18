@@ -6,6 +6,29 @@ header("refresh: 300;");
 $myDate = date('Y-m-d');
 $chart = "Combo-$myDate.png";
 
+$db = new SQLite3('/home/pi/BirdNET-Pi/scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+
+$statement = $db->prepare('SELECT COUNT(*) FROM detections');
+$result = $statement->execute();
+$totalcount = $result->fetchArray(SQLITE3_ASSOC);
+
+$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\')');
+$result2 = $statement2->execute();
+$todaycount = $result2->fetchArray(SQLITE3_ASSOC);
+
+$statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE TIME >= TIME(\'now\', \'localtime\', \'-1 hour\')');
+$result3 = $statement3->execute();
+$hourcount = $result3->fetchArray(SQLITE3_ASSOC);
+
+$statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Time, Confidence FROM detections LIMIT 1');
+$result4 = $statement4->execute();
+$mostrecent = $result4->fetchArray(SQLITE3_ASSOC);
+$comlink = preg_replace('/ /', '_', $mostrecent['Com_Name']);
+$scilink = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
+
+$statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date == Date(\'now\')');
+$result5 = $statement5->execute();
+$speciestally = $result5->fetchArray(SQLITE3_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -47,10 +70,10 @@ a {
     <table>
       <tr>
         <th>Most Recent Detection</th>
-	<td><a href="/By_Common_Name/"></a></td>
-	<td><a href="/By_Date/"/></a></td>
-        <td></td>
-	<td><a href="https://wikipedia.org/wiki/" target="top"/>More Info</a></td>
+	<td><a href="/By_Date/<?php echo $myDate."/".$comlink;?>"><?php echo $mostrecent['Com_Name'];?></a></td>
+	<td><a href="/By_Date/<?php echo$myDate;?>"/><?php echo $mostrecent['Time'];?></a></td>
+	<td><?php echo $mostrecent['Confidence'];?></td>
+	<td><a href="https://wikipedia.org/wiki/<?php echo $scilink;?>" target="top"/>More Info</a></td>
       </tr>
     </table>
   </div>
@@ -67,9 +90,9 @@ a {
       </tr>
       <tr>
         <th>Number of Detections</th>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td><?php echo $totalcount['COUNT(*)'];?></td>
+        <td><?php echo $todaycount['COUNT(*)'];?></td>
+        <td><?php echo $hourcount['COUNT(*)'];?></td>
       </tr>
     </table>
   </div>
@@ -77,7 +100,7 @@ a {
     <table>
       <tr>
         <th>Species Detected Today</th>
-        <td></td>
+	<td><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></td>
       </tr>
     </table>
   </div>
