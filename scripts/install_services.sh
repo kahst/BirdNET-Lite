@@ -18,7 +18,8 @@ install_depends() {
   echo "icecast2 icecast2/icecast-setup boolean false" | debconf-set-selections
   apt install -qqy caddy lynx ftpd sqlite3 php-sqlite3 alsa-utils \
     pulseaudio avahi-utils sox libsox-fmt-mp3 php php-fpm php-mysql php-xml \
-    php-zip icecast2 
+    php-zip icecast2 swig ffmpeg wget unzip curl cmake make bc libjpeg-dev \
+    zlib1g-dev python3-dev python3-pip python3-venv
   wget -c ${gotty_url} -O - |  tar -xz -C /usr/local/bin/
 }
 
