@@ -4,7 +4,6 @@ setuptools
 tflite_runtime-2.6.0-cp39-none-linux_aarch64.whl
 colorama==0.4.4
 librosa
-mysql-connector-python
 pytz
 tzlocal
 pandas
