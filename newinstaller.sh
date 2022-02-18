@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Simple new installer
+set -x
 exec > >(tee -i logfile.txt)
 exec 2>&1
 
