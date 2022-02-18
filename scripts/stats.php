@@ -93,7 +93,7 @@ input[type=number] {
 	width: calc(50% - 70px);
 }
 .second {
-	width: calc(50% - 30px);
+	width: 50%;
 }
 .
 /* Clear floats after the columns */
@@ -112,6 +112,8 @@ a {
 .block {
 	display: block;
 	width:50%;
+	margin-right:auto;
+	margin-left:auto;
 	border: none;
 	padding: 10px 10px;
 	font-size: medium;
@@ -130,13 +132,18 @@ img {
   margin-right: auto;
 }
 
-select {
+select option {
+  text-align:center;
   font-size:large;
-  width: 60%;
 }
 
-select option {
+select {
+  display:block;
+  width:80%;
+  margin-right:auto;
+  margin-left:auto;
   font-size:large;
+  width: 60%;
 }
 
 form {
@@ -210,8 +217,8 @@ while($rows=$stats ->fetch_assoc())
 ?>
     </table>
   </div>  
- <div class="column">
-<form action="stats.php" method="POST">
+ <div class="column second">
+<form style="margin:0;width:100%;" action="stats.php" method="POST">
   <h3>Species Stats</h3>
     <select name="species" >
     <option value="<?php if(isset($_POST['species'])){echo $selection;}?>"><?php if(isset($_POST['species'])){echo $selection;}else{echo "--Choose Species--";}?></option>
