@@ -44,7 +44,7 @@ If your installation isn't in one of the countries listed above, please let me k
 * FTP server included
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
-* MariaDB integration
+* SQLite3 Database
 * NoMachine remote desktop (for personal use only)
 * Live audio stream
 * Adminer database maintenance
