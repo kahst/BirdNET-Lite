@@ -430,6 +430,7 @@ install_services() {
   generate_BirdDB
   configure_caddy_php
   config_icecast
+  ${my_dir}/createdb.sh
 }
 
 if [ -f ${config_file} ];then 
