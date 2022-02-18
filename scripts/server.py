@@ -18,10 +18,8 @@ import math
 import time
 from decimal import Decimal
 import json
-###############################################################################    
 import requests
-import mysql.connector
-###############################################################################
+import sqlite3
 import datetime
 from time import sleep
 import pytz
@@ -331,48 +329,37 @@ def handle_client(conn, addr):
                   myReturn += str(i) + '-' + str(detections[i][0]) + '\n'
                 
                 
-
-                
                 with open('/home/pi/BirdNET-Pi/BirdDB.txt', 'a') as rfile:
                     for d in detections:
                         for entry in detections[d]:
                             if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) ):
                                 rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' \
                                 + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' \
-                                + str(sensitivity) +';' + str(args.overlap) + '\n')
-
-                                def insert_variables_into_table(Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap):
-                                    try:
-                                        connection = mysql.connector.connect(host='localhost',
-                                                                             database='birds',
-                                                                             user='birder',
-                                                                             password=db_pwd)
-                                        cursor = connection.cursor()
-                                        mySql_insert_query = """INSERT INTO detections (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
-                                                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
+                                + str(args.sensitivity) +';' + str(args.overlap) + '\n')
                                 
-                                        record = (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
-
-                                        cursor.execute(mySql_insert_query, record)
-                                        connection.commit()
-                                        print("Record inserted successfully into detections table")
-
-                                
-                                    except mysql.connector.Error as error:
-                                        print("Failed to insert record into detections table {}".format(error))
-                                    
-                                    finally:
-                                        if connection.is_connected():
-                                            connection.close()
-                                            print("MySQL connection is closed")
-
+                                Date = str(current_date)
+                                Time = str(current_time)
                                 species = entry[0]
-                                sci_name,com_name = species.split('_')
-                                insert_variables_into_table(str(current_date), str(current_time), sci_name, com_name, \
-                                str(entry[1]), str(args.lat), str(args.lon), str(min_conf), str(week), \
-                                str(args.sensitivity), str(args.overlap))
+                                Sci_Name,Com_Name = species.split('_')
+                                score = entry[1]
+                                Confidence = "{:.0%}".format(score)
+                                Lat = str(args.lat)
+                                Lon = str(args.lon)
+                                Cutoff = str(args.min_conf)
+                                Week = str(args.week)
+                                Sens = str(args.sensitivity)
+                                Overlap = str(args.overlap)
+                                File_Name = Com_Name.replace(" ", "_") + '-' + Confidence + '-' + \
+                                        Date.replace("/", "-") + '-birdnet-' + Time + '.mp3'
 
-                                print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + '\n')
+                                #Connect to SQLite Database
+                                con = sqlite3.connect('/home/pi/BirdNET-Pi/scripts/birds2.db')
+                                cur = con.cursor()
+                                cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Date, Time, Sci_Name, Com_Name, str(score), Lat, Lon, Cutoff, Week, Sens, Overlap, File_Name))
+
+                                con.commit()
+                                con.close()
+                                print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + ';' + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + Com_Name.replace(" ", "_") + '-' + str(score) + '-' + str(current_date) + '-birdnet-' + str(current_time) + '.mp3' + '\n')
 
                                 if birdweather_id != "99999":
 
