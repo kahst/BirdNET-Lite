@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Simple new installer
 set -x
-exec > >(tee -i logfile.txt) 2>&1
+exec > >(tee -i installation$(date +%F).txt) 2>&1
 
 HOME=/home/pi
 USER=pi
