@@ -12,28 +12,28 @@ echo "Binary: $binary";
 revbinary=$(echo $binary|rev)
 if echo $binary | grep 1 ;then
   echo "ISSUES DETECTED"
-  if [ ${revbinary:0:1} -eq 1 ];then
+  if [ ${revbinary:0:1} -eq 1 &>/dev/null ];then
     echo "Under-voltage detected"
   fi
-  if [ ${revbinary:1:1} -eq 1 ];then
+  if [ ${revbinary:1:1} -eq 1 &>/dev/null ];then
     echo "Arm frequency capped"
   fi
-  if [ ${revbinary:2:1} -eq 1 ];then
+  if [ ${revbinary:2:1} -eq 1 &>/dev/null ];then
     echo "Currently Throttled"
   fi
-  if [ ${revbinary:3:1} -eq 1 ];then
+  if [ ${revbinary:3:1} -eq 1 &>/dev/null ];then
     echo "Soft temperatue limit active"
   fi
-  if [ ${revbinary:16:1} -eq 1 ];then
+  if [ ${revbinary:16:1} -eq 1 &>/dev/null ];then
     echo "Under-voltage has occurred"
   fi
-  if [ ${revbinary:17:1} -eq 1 ];then
+  if [ ${revbinary:17:1} -eq 1 &>/dev/null ];then
     echo "Arm frequency capping has occurred"
   fi
-  if [ ${revbinary:18:1} -eq 1 ];then
+  if [ ${revbinary:18:1} -eq 1 &>/dev/null ];then
     echo "Throttling has occurred"
   fi
-  if [ ${revbinary:19:1} -eq 1 ];then
+  if [ ${revbinary:19:1} -eq 1 &>/dev/null ];then
     echo "Soft temperature limit has occurred"
   fi
 fi
