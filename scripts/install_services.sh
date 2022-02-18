@@ -7,14 +7,21 @@ USER=pi
 HOME=/home/pi
 my_dir=${HOME}/BirdNET-Pi/scripts
 tmpfile=$(mktemp)
-nomachine_url="https://download.nomachine.com/download/7.7/Arm/nomachine_7.7.4_1_arm64.deb"
 gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_arm.tar.gz"
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
-
-update_system() {
-  apt update && apt -y upgrade
+install_depends() {
+  curl -1sLf \
+    'https://dl.cloudsmith.io/public/caddy/stable/setup.deb.sh' \
+      | sudo -E bash
+  apt -qqq update && apt -qqy upgrade
+  echo "icecast2 icecast2/icecast-setup boolean false" | debconf-set-selections
+  apt install -qqy caddy lynx ftpd sqlite3 php-sqlite3 alsa-utils \
+    pulseaudio avahi-utils sox libsox-fmt-mp3 php php-fpm php-mysql php-xml \
+    php-zip icecast2 
+  wget -c ${gotty_url} -O - |  tar -xz -C /usr/local/bin/
 }
+
 
 set_hostname() {
   if [ "$(hostname)" == "raspberrypi" ];then
@@ -23,22 +30,13 @@ set_hostname() {
   fi
 }
 
-install_lynx() {
-    apt -y install lynx
-}
-
-install_ftpd() {
-    apt -y install ftpd
+update_etc_hosts() {
+  sed -ie s/'$(hostname).local'/"$(hostname).local ${BIRDNETPI_URL//https:\/\/} ${WEBTERMINAL_URL//https:\/\/} ${BIRDNETLOG_URL//https:\/\/}"/g /etc/hosts
 }
 
 install_scripts() {
   ln -sf ${my_dir}/* /usr/local/bin/
   rm /usr/local/bin/index.html
-}
-
-install_mariadb() {
-  apt -qqy install sqlite3 php-sqlite3
-  ${my_dir}/createdb.sh
 }
 
 install_birdnet_analysis() {
@@ -175,22 +173,7 @@ generate_BirdDB() {
   chown pi:pi ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
 }
 
-install_alsa() {
-  echo "Checking for alsa-utils and pulseaudio"
-  if which arecord &> /dev/null ;then
-    echo "alsa-utils installed"
-  else
-    echo "Installing alsa-utils"
-    apt install -qqy alsa-utils
-    echo "alsa-utils installed"
-  fi
-  if which pulseaudio &> /dev/null;then
-    echo "PulseAudio installed"
-  else
-    echo "Installing pulseaudio"
-    apt install -qqy pulseaudio
-    echo "PulseAudio installed"
-  fi
+set_login() {
   if ! [ -d /etc/lightdm ];then
     systemctl set-default multi-user.target
     ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
@@ -220,25 +203,7 @@ EOF
   systemctl enable birdnet_recording.service
 }
 
-install_caddy() {
-  if ! which caddy &> /dev/null ;then
-    echo "Installing Caddy"
-    curl -1sLf \
-      'https://dl.cloudsmith.io/public/caddy/stable/setup.deb.sh' \
-        | sudo -E bash
-    apt -qq update
-    apt install -qqy caddy=2.4.5 && apt-mark hold caddy
-    systemctl enable --now caddy
-    usermod -aG pi caddy
-  else
-    echo "Caddy is installed"
-    systemctl enable --now caddy
-    usermod -aG pi caddy
-  fi
-}
-
 install_Caddyfile() {
-  echo "Installing the Caddyfile"
   [ -d /etc/caddy ] || mkdir /etc/caddy
   if [ -f /etc/caddy/Caddyfile ];then
     cp /etc/caddy/Caddyfile{,.original}
@@ -300,20 +265,11 @@ ${BIRDNETLOG_URL} {
 }
 EOF
   fi
-  systemctl reload caddy
-}
-
-update_etc_hosts() {
-  sed -ie s/'$(hostname).local'/"$(hostname).local ${BIRDNETPI_URL//https:\/\/} ${WEBTERMINAL_URL//https:\/\/} ${BIRDNETLOG_URL//https:\/\/}"/g /etc/hosts
+  systemctl enable caddy
+  usermod -aG pi caddy
 }
 
 install_avahi_aliases() {
-  echo "Installing Avahi Services"
-  if ! which avahi-publish &> /dev/null; then
-    echo "Installing avahi-utils"
-    apt install -y avahi-utils &> /dev/null
-  fi
-  echo "Installing avahi-alias service"
   cat << 'EOF' > /etc/systemd/system/avahi-alias@.service
 [Unit]
 Description=Publish %I as alias for %H.local via mdns
@@ -343,7 +299,7 @@ ExecStart=/usr/local/bin/spectrogram.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-   systemctl enable spectrogram_viewer.service
+  systemctl enable spectrogram_viewer.service
 }
 
 install_chart_viewer_service() {
@@ -364,16 +320,10 @@ EOF
 }
 
 install_gotty_logs() {
-  echo "Installing GoTTY logging"
-  if ! which gotty &> /dev/null;then
-    echo "Installing GoTTY binary"
-    wget -c ${gotty_url} -O - |  tar -xz -C /usr/local/bin/
-  fi
   sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/gotty \
     ${HOME}/.gotty
   sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/bashrc \
     ${HOME}/.bashrc
-  echo "Installing the birdnet_log.service"
   cat << EOF > /etc/systemd/system/birdnet_log.service
 [Unit]
 Description=BirdNET Analysis Log
@@ -388,7 +338,6 @@ ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" birdnet_l
 WantedBy=multi-user.target
 EOF
   systemctl enable birdnet_log.service
-  echo "Installing the web_terminal.service"
   cat << EOF > /etc/systemd/system/web_terminal.service
 [Unit]
 Description=BirdNET-Pi Web Terminal
@@ -405,52 +354,20 @@ EOF
   systemctl enable web_terminal.service
 }
 
-install_sox() {
-  if which sox | grep mp3 &> /dev/null;then
-    echo "Sox is installed"
-  else
-    echo "Installing sox"
-    apt install -y sox libsox-fmt-mp3
-    echo "Sox installed"
-  fi
-}
-
-install_php() {
-  if ! which php &> /dev/null || ! which php-fpm || ! apt list --installed | grep php-xml;then
-    echo "Installing PHP modules"
-    apt install -qqy php php-fpm php-mysql php-xml php-zip
-  else
-    echo "PHP and PHP-FPM installed"
-  fi
-    echo "Configuring PHP for Caddy"
-    sed -i 's/www-data/caddy/g' /etc/php/*/fpm/pool.d/www.conf
-    systemctl restart php7\*-fpm.service
-    echo "Adding Caddy sudoers rule"
-    cat << EOF > /etc/sudoers.d/010_caddy-nopasswd
+configure_caddy_php() {
+  echo "Configuring PHP for Caddy"
+  sed -i 's/www-data/caddy/g' /etc/php/*/fpm/pool.d/www.conf
+  systemctl restart php7\*-fpm.service
+  echo "Adding Caddy sudoers rule"
+  cat << EOF > /etc/sudoers.d/010_caddy-nopasswd
 caddy ALL=(ALL) NOPASSWD: ALL
 EOF
-    chmod 0440 /etc/sudoers.d/010_caddy-nopasswd
-  if [ ! -d ${HOME}/phpsysinfo ];then
-    echo "Fetching phpSysInfo"
-    sudo -u ${USER} git clone https://github.com/phpsysinfo/phpsysinfo.git \
-      ${HOME}/phpsysinfo
-  fi 
+  chmod 0440 /etc/sudoers.d/010_caddy-nopasswd
 }
 
-install_icecast() {
-  if ! which icecast2;then
-    echo "Installing IceCast2"
-    echo "icecast2 icecast2/icecast-setup boolean false" | debconf-set-selections
-    apt install -qqy icecast2 
-    config_icecast
-    systemctl enable icecast2.service
-    /etc/init.d/icecast2 start
-  else
-    echo "Icecast2 is installed"
-    config_icecast
-    systemctl enable icecast2.service
-    /etc/init.d/icecast2 start
-  fi
+install_phpsysinfo() {
+  sudo -u ${USER} git clone https://github.com/phpsysinfo/phpsysinfo.git \
+    ${HOME}/phpsysinfo
 }
 
 config_icecast() {
@@ -462,10 +379,10 @@ config_icecast() {
   for i in "${passwords[@]}";do
   sed -i "s/<${i}password>.*<\/${i}password>/<${i}password>${ICE_PWD}<\/${i}password>/g" /etc/icecast2/icecast.xml
   done
+  systemctl enable icecast2.service
 }
 
 install_livestream_service() {
-  echo "Installing Live Stream service"
   cat << EOF > /etc/systemd/system/livestream.service
 [Unit]
 Description=BirdNET-Pi Live Stream
@@ -485,42 +402,39 @@ EOF
 }
 
 install_cleanup_cron() {
-  echo "Installing the cleanup.cron"
   cat $(dirname ${my_dir})/templates/cleanup.cron >> /etc/crontab
 }
 
-install_selected_services() {
+install_services() {
   set_hostname
-  update_system
+  update_etc_hosts
+  set_login
+  create_necessary_dirs
+
+  install_depends
   install_scripts
+  install_Caddyfile
+  install_avahi_aliases
   install_birdnet_analysis
   install_birdnet_server
-  install_extraction_service
-  install_alsa
   install_recording_service
-  install_php
-  install_caddy
-  install_Caddyfile
-  update_etc_hosts
-  install_avahi_aliases
-  install_gotty_logs
-  install_sox
-  install_mariadb
+  install_extraction_service
+  install_pushed_notifications
   install_spectrogram_service
   install_chart_viewer_service
-  install_pushed_notifications
-  install_icecast
+  install_gotty_logs
+  install_phpsysinfo
   install_livestream_service
-  create_necessary_dirs
-  generate_BirdDB
   install_cleanup_cron
-  install_ftpd
-  install_lynx
+
+  generate_BirdDB
+  configure_caddy_php
+  config_icecast
 }
 
 if [ -f ${config_file} ];then 
   source ${config_file}
-  install_selected_services
+  install_services
 else
   echo "Unable to find a configuration file. Please make sure that $config_file exists."
 fi
