@@ -3,60 +3,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$mysqli = mysqli_connect();
-$mysqli->select_db('birds');
-
-if ($mysqli->connect_error) {
-	die('Connect Error (' .
-		$mysqli->connect_errno . ') '.
-		$mysqli->connect_error);
-}
-
-// SQL query to select data from database
-$sql = "SELECT COUNT(*) AS 'Total' FROM detections
-	ORDER BY Date DESC, Time DESC";
-$totalcount = $mysqli->query($sql);
-
-$sql1 = "SELECT Com_Name, COUNT(*), MAX(Confidence)
-	FROM detections
-	GROUP BY Com_Name
-	ORDER BY COUNT(*) DESC";
-$stats = $mysqli->query($sql1);
-
-$sql2 = "SELECT COUNT(*) AS 'Total' FROM detections 
-	WHERE Date = CURDATE()";
-$todayscount = $mysqli->query($sql2);
-
-$sql3 = "SELECT COUNT(*) AS 'Total' FROM detections 
-	WHERE Date = CURDATE() 
-	AND Time >= DATE_SUB(NOW(),INTERVAL 1 HOUR)";
-$lasthourcount = $mysqli->query($sql3);
-
-$sql4 = "SELECT Com_Name, Date, Time, MAX(Confidence)
-	FROM detections
-	GROUP BY Com_Name
-	ORDER BY MAX(Confidence) DESC";
-$specieslist = $mysqli->query($sql4);
-$speciescount = mysqli_num_rows($specieslist);
-
-$sql5 = "SELECT Com_Name,COUNT(*) 
-	AS 'Total'
-	FROM detections 
-	GROUP BY Com_Name
-	ORDER BY Total DESC";
-$speciestally = $mysqli->query($sql5);
-
-$getspecies = "SELECT Com_Name from detections
-  GROUP BY Com_Name";
-$result = $mysqli->query($getspecies);
-
-if(isset($_POST['species'])){
-  $selection = $_POST['species'];
-  $specificspecies = "SELECT Com_Name, Sci_Name, COUNT(*), MAX(Confidence) from detections
-    WHERE Com_Name = \"$selection\"";
-  $specificstats = $mysqli->query($specificspecies);}
-
-$mysqli->close();
 ?>
 
 <!DOCTYPE html>
@@ -179,10 +125,10 @@ form {
 	<th>Number of Unique Species</th>
       </tr>
       <tr>
-	<td><?php while ($row = $totalcount->fetch_assoc()) { echo $row['Total']; };?></td>
-	<td><?php while ($row = $todayscount->fetch_assoc()) { echo $row['Total']; };?></td>
-	<td><?php while ($row = $lasthourcount->fetch_assoc()) { echo $row['Total']; };?></td>
-	<td><?php echo $speciescount;?></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
       </tr>
     </table>
     <h3>Summary</h3>
@@ -192,36 +138,20 @@ form {
 	<th>Occurrences</th>
 	<th>Max Confidence Score</th>
       </tr>
-<?php // LOOP TILL END OF DATA
-while($rows=$stats ->fetch_assoc())
-{
-	$MAX = sprintf("%.1f%%", $rows['MAX(Confidence)'] * 100);
-	$links = preg_replace('/ /', '_', $rows['Com_Name']);
-	$links = preg_replace('/\'/', '', $links);
-?>
       <tr>
-	<td><a href="../By_Common_Name/<?php echo $links;?>"><?php echo $rows['Com_Name'];?></a></td>
-	<td><?php echo $rows['COUNT(*)'];?></td>
-	<td><?php echo $MAX;?></td>
+	<td><a href="../By_Common_Name/"></a></td>
+	<td></td>
+	<td></td>
 
       </tr>
-<?php
-}
-?>
     </table>
   </div>  
  <div class="column">
 <form action="stats.php" method="POST">
   <h3>Species Stats</h3>
     <select name="species" >
-    <option value="<?php if(isset($_POST['species'])){echo $selection;}?>"><?php if(isset($_POST['species'])){echo $selection;}else{echo "--Choose Species--";}?></option>
-      <?php
-        while($row = $result->fetch_assoc()) {
-      ?>
-      <option value="<?php echo $row['Com_Name'];?>"><?php echo $row['Com_Name'];?></option>"
-<?php
-}
-?>
+    <option value=""></option>
+      <option value=""></option>"
     </select>
   </p>
   <button type="submit" class="block"/>Show Species Statistics</button>

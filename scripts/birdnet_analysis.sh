@@ -95,9 +95,8 @@ run_analysis() {
     WEEK="$(echo "${WEEK_OF_YEAR} + 4" |bc -l)"
   fi
 
-  cd ${HOME}/BirdNET-Pi/scripts || exit 1
   for i in "${files[@]}";do
-    echo "${1}/${i}" > ../analyzing_now.txt
+    echo "${1}/${i}" > /home/pi/BirdNET-Pi/analyzing_now.txt
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=15
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"
@@ -131,7 +130,7 @@ run_analysis() {
       done
     fi
     if [ -f ${1}/${i} ] && [ ! -f ${INCLUDE_LIST} ] && [ ! -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
-      echo "python3 analyze.py \
+      echo "analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat "${LATITUDE}" \
@@ -140,7 +139,7 @@ run_analysis() {
 --overlap "${OVERLAP}" \
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}""
-      "${VENV}"/bin/python analyze.py \
+      analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
         --lat "${LATITUDE}" \
@@ -150,7 +149,7 @@ run_analysis() {
         --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}"
     elif [ -f ${1}/${i} ] && [ -f ${INCLUDELIST} ] && [ ! -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
-      echo "python3 analyze.py \
+      echo "analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat "${LATITUDE}" \
@@ -160,7 +159,7 @@ run_analysis() {
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
 --include_list "${INCLUDE_LIST}""
-      "${VENV}"/bin/python analyze.py \
+      analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
         --lat "${LATITUDE}" \
@@ -171,7 +170,7 @@ run_analysis() {
         --min_conf "${CONFIDENCE}" \
 	--include_list "${INCLUDE_LIST}"
     elif [ -f ${1}/${i} ] && [ ! -f ${INCLUDE_LIST} ] && [ -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
-      echo "python3 analyze.py \
+      echo "analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat "${LATITUDE}" \
@@ -181,7 +180,7 @@ run_analysis() {
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
 --exclude_list "${EXCLUDE_LIST}""
-      "${VENV}"/bin/python analyze.py \
+      analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
         --lat "${LATITUDE}" \
@@ -192,7 +191,7 @@ run_analysis() {
         --min_conf "${CONFIDENCE}" \
 	--exclude_list "${EXCLUDE_LIST}"
     elif [ -f ${1}/${i} ] && [ -f ${INCLUDE_LIST} ] && [ -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
-      echo "python3 analyze.py \
+      echo "analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat "${LATITUDE}" \
@@ -203,7 +202,7 @@ run_analysis() {
 --min_conf "${CONFIDENCE}" \
 --include_list "${INCLUDE_LIST}" \
 --exclude_list "${EXCLUDE_LIST}""
-      "${VENV}"/bin/python analyze.py \
+      analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
         --lat "${LATITUDE}" \
@@ -215,7 +214,7 @@ run_analysis() {
         --include_list "${INCLUDE_LIST}" \
         --exclude_list "${EXCLUDE_LIST}" 
     elif [ -f ${1}/${i} ] && [ ! -f ${INCLUDE_LIST} ] && [ ! -f ${EXCLUDE_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
-      echo "python3 analyze.py \
+      echo "analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat "${LATITUDE}" \
@@ -225,7 +224,7 @@ run_analysis() {
 --sensitivity "${SENSITIVITY}" \
 --min_conf "${CONFIDENCE}" \
 --birdweather_id "IN_USE""
-      "${VENV}"/bin/python analyze.py \
+      analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
         --lat "${LATITUDE}" \
@@ -236,7 +235,7 @@ run_analysis() {
         --min_conf "${CONFIDENCE}" \
         --birdweather_id "${BIRDWEATHER_ID}" 
     elif [ -f ${1}/${i} ] && [ -f ${INCLUDE_LIST} ] && [ ! -f ${EXCLUDE_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
-      echo "python3 analyze.py \
+      echo "analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat "${LATITUDE}" \
@@ -247,7 +246,7 @@ run_analysis() {
 --min_conf "${CONFIDENCE}" \
 --include_list "${INCLUDE_LIST}" \
 --birdweather_id "IN_USE""
-      "${VENV}"/bin/python analyze.py \
+      analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
         --lat "${LATITUDE}" \
@@ -259,7 +258,7 @@ run_analysis() {
         --include_list "${INCLUDE_LIST}" \
         --birdweather_id "${BIRDWEATHER_ID}" 
     elif [ -f ${1}/${i} ] && [ ! -f ${INCLUDE_LIST} ] && [ -f ${EXCLUDE_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
-      echo "python3 analyze.py \
+      echo "analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat "${LATITUDE}" \
@@ -270,7 +269,7 @@ run_analysis() {
 --min_conf "${CONFIDENCE}" \
 --exclude_list "${EXCLUDE_LIST}" \
 --birdweather_id "IN_USE""
-      "${VENV}"/bin/python analyze.py \
+      analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
         --lat "${LATITUDE}" \
@@ -282,7 +281,7 @@ run_analysis() {
         --exclude_list "${EXCLUDE_LIST}" \
         --birdweather_id "${BIRDWEATHER_ID}" 
     elif [ -f ${1}/${i} ] && [ -f ${INCLUDE_LIST} ] && [ -f ${EXCLUDE_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
-      echo "python3 analyze.py \
+      echo "analyze.py \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat "${LATITUDE}" \
@@ -294,7 +293,7 @@ run_analysis() {
 --include_list "${INCLUDE_LIST}" \
 --exclude_list "${EXCLUDE_LIST}" \
 --birdweather_id "IN_USE""
-      "${VENV}"/bin/python analyze.py \
+      analyze.py \
         --i "${1}/${i}" \
         --o "${1}/${i}.csv" \
         --lat "${LATITUDE}" \

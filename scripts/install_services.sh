@@ -18,42 +18,30 @@ update_system() {
 
 set_hostname() {
   if [ "$(hostname)" == "raspberrypi" ];then
-    echo "Setting hostname to 'birdnetpi'"
     hostnamectl set-hostname birdnetpi
     sed -i 's/raspberrypi/birdnetpi/g' /etc/hosts
   fi
 }
 
 install_lynx() {
-  if ! which lynx &> /dev/null;then
     apt -y install lynx
-  fi
 }
 
 install_ftpd() {
-  if ! [ -f /etc/ftpuseres ];then
     apt -y install ftpd
-  fi
 }
 
 install_scripts() {
-  echo "Installing BirdNET-Pi scripts to /usr/local/bin"
   ln -sf ${my_dir}/* /usr/local/bin/
   rm /usr/local/bin/index.html
 }
 
 install_mariadb() {
-  if ! which sqlite3 &> /dev/null;then
-    echo "Installing SQLite3"
-    apt -qqy install sqlite3 php-sqlite3
-    echo "SQLite Installed"
-  fi
-  echo "Initializing the database"
+  apt -qqy install sqlite3 php-sqlite3
   ${my_dir}/createdb.sh
 }
 
 install_birdnet_analysis() {
-  echo "Installing the birdnet_analysis.service"
   cat << EOF > /etc/systemd/system/birdnet_analysis.service
 [Unit]
 Description=BirdNET Analysis
@@ -72,7 +60,6 @@ EOF
 }
 
 install_birdnet_server() {
-  echo "Installing the birdnet_server.service"
   cat << EOF > /etc/systemd/system/birdnet_server.service
 [Unit]
 Description=BirdNET Analysis Server
@@ -90,7 +77,6 @@ EOF
 }
 
 install_extraction_service() {
-  echo "Installing the extraction.service and extraction.timer"
   cat << EOF > /etc/systemd/system/extraction.service
 [Unit]
 Description=BirdNET BirdSound Extraction
@@ -99,26 +85,14 @@ Restart=on-failure
 RestartSec=3
 Type=simple
 User=${USER}
-ExecStart=/usr/local/bin/extract_new_birdsounds.sh
+ExecStart=/usr/bin/env bash -c 'while true;do extract_new_birdsounds.sh;sleep ${RECORDING_LENGTH};done'
 [Install]
 WantedBy=multi-user.target
 EOF
-  cat << EOF > /etc/systemd/system/extraction.timer
-[Unit]
-Description=BirdNET BirdSound Extraction Timer
-Requires=extraction.service
-[Timer]
-Unit=extraction.service
-OnCalendar=*:*:0/10
-[Install]
-WantedBy=multi-user.target
-EOF
-  systemctl enable extraction.timer
   systemctl enable extraction.service
 }
 
 install_pushed_notifications() {
-  echo "Installing Pushed.co mobile notifications"
   cat << EOF > /etc/systemd/system/pushed_notifications.service
 [Unit]
 Description=BirdNET-Pi Pushed.co Notifications
@@ -138,8 +112,6 @@ create_necessary_dirs() {
   echo "Creating necessary directories"
   [ -d ${EXTRACTED} ] || sudo -u ${USER} mkdir -p ${EXTRACTED}
   [ -d ${EXTRACTED}/By_Date ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Date
-  [ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
-  [ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
   [ -d ${EXTRACTED}/Charts ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
@@ -148,7 +120,6 @@ create_necessary_dirs() {
     BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/homepage/*.html
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.html
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.html
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.php
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
   fi
@@ -156,10 +127,8 @@ create_necessary_dirs() {
     WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/homepage/*.html
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.html
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.html
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.php
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
-
   fi
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}/
@@ -167,13 +136,11 @@ create_necessary_dirs() {
   if [ -z ${BIRDNETPI_URL} ];then
     sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/homepage/*.html
     sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.html
-    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.html
     sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.php
     sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*/*.php
   else
     BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/homepage/*.html
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.html
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.html
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.php
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*/*.php

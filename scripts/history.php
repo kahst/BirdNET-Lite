@@ -10,23 +10,6 @@ $theDate = date('Y-m-d');
 }
 $chart = "Combo-$theDate.png";
 $chart2 = "Combo2-$theDate.png";
-$mysqli = mysqli_connect();
-$mysqli->select_db('birds');
-
-if ($mysqli->connect_error) {
-	die('Connect Error (' .
-		$mysqli->connect_errno . ') '.
-		$mysqli->connect_error);
-}
-
-// SQL query to select data from database
-
-$sql1 = "SELECT COUNT(*)
-	FROM detections
-	WHERE DATE = \"$theDate\"";
-$dayscount = $mysqli->query($sql1);
-
-$mysqli->close();
 ?>
 
 <head>
@@ -69,12 +52,7 @@ hr {
 		<table>
 			<tr>
 				<th>Total Detections For The Day</th>
-<?php
-while($row=$dayscount->fetch_assoc()){
-?>
-				<td><?php echo $row['COUNT(*)'];?></td>
-<?php
-}?>
+				<td></td>
 			</tr>
 		</table>
 </div>

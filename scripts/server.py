@@ -46,7 +46,7 @@ except:
 # Open most recent Configuration and grab DB_PWD as a python variable
 with open('/home/pi/BirdNET-Pi/thisrun.txt', 'r') as f:
     this_run = f.readlines()
-    db_pwd = str(str(str([i for i in this_run if i.startswith('DB_PWD')]).split('=')[1]).split('\\')[0])
+    audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
 
 
 def loadModel():
@@ -350,16 +350,16 @@ def handle_client(conn, addr):
                                 Sens = str(args.sensitivity)
                                 Overlap = str(args.overlap)
                                 File_Name = Com_Name.replace(" ", "_") + '-' + Confidence + '-' + \
-                                        Date.replace("/", "-") + '-birdnet-' + Time + '.mp3'
+                                        Date.replace("/", "-") + '-birdnet-' + Time + audiofmt
 
                                 #Connect to SQLite Database
-                                con = sqlite3.connect('/home/pi/BirdNET-Pi/scripts/birds2.db')
+                                con = sqlite3.connect('/home/pi/BirdNET-Pi/scripts/birds.db')
                                 cur = con.cursor()
                                 cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Date, Time, Sci_Name, Com_Name, str(score), Lat, Lon, Cutoff, Week, Sens, Overlap, File_Name))
 
                                 con.commit()
                                 con.close()
-                                print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + ';' + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + Com_Name.replace(" ", "_") + '-' + str(score) + '-' + str(current_date) + '-birdnet-' + str(current_time) + '.mp3' + '\n')
+                                print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + ';' + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + Com_Name.replace(" ", "_") + '-' + str(score) + '-' + str(current_date) + '-birdnet-' + str(current_time) + audiofmt  + '\n')
 
                                 if birdweather_id != "99999":
 

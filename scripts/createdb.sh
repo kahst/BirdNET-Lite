@@ -22,3 +22,5 @@ CREATE TABLE IF NOT EXISTS detections (
   Overlap FLOAT,
   File_Name VARCHAR(100) NOT NULL);
 EOF
+sudo chown pi:pi /home/pi/BirdNET-Pi/scripts/birds.db
+sudo chmod g+w /home/pi/BirdNET-Pi/scripts/birds.db
