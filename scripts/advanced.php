@@ -25,15 +25,6 @@ if(isset($_POST['submit'])) {
     }
   }
 
-  if(isset($_POST["db_pwd"])) {
-    $db_pwd = $_POST["db_pwd"];
-    if(strcmp($db_pwd,$config['DB_PWD']) !== 0) {
-      shell_exec('sudo /usr/local/bin/update_db_pwd_bullseye.sh');
-      $contents = preg_replace("/DB_PWD=.*/", "DB_PWD=$db_pwd", $contents);
-      $contents2 = preg_replace("/DB_PWD=.*/", "DB_PWD=$db_pwd", $contents2);
-    }
-  }
-
   if(isset($_POST["ice_pwd"])) {
     $ice_pwd = $_POST["ice_pwd"];
     if(strcmp($ice_pwd,$config['ICE_PWD']) !== 0) {
@@ -306,9 +297,6 @@ foreach($formats as $format){
       <label for="caddy_pwd">Webpage: </label>
       <input name="caddy_pwd" type="text" value="<?php print($newconfig['CADDY_PWD']);?>" /><br>
       <p>This password protects the Live Audio Stream, the Processed extractions, phpSysInfo, your Tools, and WebTerminal. When you update this value, the web server will reload, so wait about 30 seconds and then reload the page.</p>
-      <label for="db_pwd">Database: </label>
-      <input name="db_pwd" type="text" value="<?php print($newconfig['DB_PWD']);?>" required/><br>
-      <p>This password protects the database. When you update this value, it will be updated automatically.</p>
       <label for="ice_pwd">Live Audio Stream: </label>
       <input name="ice_pwd" type="text" value="<?php print($newconfig['ICE_PWD']);?>" required/><br>
     </div>
