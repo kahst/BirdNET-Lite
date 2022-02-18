@@ -45,11 +45,10 @@ If your installation isn't in one of the countries listed above, please let me k
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
 * SQLite3 Database
-* NoMachine remote desktop (for personal use only)
 * Live audio stream
 * Adminer database maintenance
-* Integrated phpSysInfo
-* New species mobile notifications from Pushed.co (for iOS users only)
+* [phpSysInfo](https://github.com/phpsysinfo/phpsysinfo)
+* New species mobile notifications from [Pushed.co](https://pushed.co/quick-start-guide) (for iOS users only)
 * Localization supported
 
 ## Requirements
