@@ -53,7 +53,7 @@ input[type=number] {
 	width: calc(50% - 70px);
 }
 .second {
-	width: calc(50% - 30px);
+	width: calc(50% + 70px);
 }
 .
 /* Clear floats after the columns */
@@ -71,9 +71,10 @@ a {
 }
 .block {
 	display: block;
-	width:50%;
+	width:40%;
+	margin-left:auto;
 	border: none;
-	padding: 10px 10px;
+	padding: 5px 5px;
 	font-size: medium;
 	cursor: pointer;
 	text-align: center;
@@ -90,23 +91,19 @@ img {
   margin-right: auto;
 }
 
-select {
-  font-size:large;
-  width: 60%;
-}
-
 select option {
   font-size:large;
 }
 
-form {
-  margin-left:20px;
+select {
+  float:left;
+  display:block;
+  margin-right:auto;
+  font-size:large;
+  width: 50%;
 }
 
 @media screen and (max-width: 800px) {
-  select {
-    width:100%;
-  }
   h3 {
     margin-bottom:0px;
     text-align:center;
@@ -114,6 +111,7 @@ form {
   form {
     text-align:left;
     margin-left:0px;
+    width:100%;
   }
   .column {
     float: none;
@@ -154,8 +152,8 @@ $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
 ?>
     </table>
   </div>  
- <div class="column">
-<form action="stats.php" method="POST">
+ <div class="column second">
+<form style="margin:0;width:100%;" action="stats.php" method="POST">
   <h3>Species Stats</h3>
     <select name="species" >
     <option value="<?php if(isset($_POST['species'])){echo $selection;}?>"><?php if(isset($_POST['species'])){echo $selection;}else{echo "--Choose Species--";}?></option>
