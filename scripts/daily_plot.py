@@ -1,9 +1,8 @@
 #!/home/pi/BirdNET-Pi/birdnet/bin/python3
 
-import mysql.connector as sql
+import sqlite3
 import os
 import configparser
-
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -11,25 +10,14 @@ from matplotlib.colors import LogNorm
 from datetime import datetime
 import textwrap
 
-#Extract DB_PWD from thisrun.txt
-with open('/home/pi/BirdNET-Pi/thisrun.txt', 'r') as f:
-     this_run = f.readlines()
-     db_pwd = str(str(str([i for i in this_run if i.startswith('DB_PWD')]).split('=')[1]).split('\\')[0])
+conn = sqlite3.connect('/home/pi/BirdNET-Pi/scripts/birds.db')
+df = pd.read_sql_query("SELECT * from detections", conn)
+cursor = conn.cursor()
+cursor.execute('SELECT * FROM detections')
 
+table_rows = cursor.fetchall()
 
-db_connection = sql.connect(host='localhost',
-                 database='birds',
-                 user='birder',
-                 password=db_pwd)
-
-                    
-db_cursor=db_connection.cursor(dictionary=True)
-
-db_cursor.execute('SELECT * FROM detections')
-
-table_rows = db_cursor.fetchall()
-
-df=pd.DataFrame(table_rows)
+#df=pd.DataFrame(table_rows)
 
 #Convert Date and Time Fields to Panda's format
 df['Date']=pd.to_datetime(df['Date'])

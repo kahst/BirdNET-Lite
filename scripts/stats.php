@@ -3,6 +3,20 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+$db = new SQLite3('/home/pi/BirdNET-Pi/scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+
+$statement = $db->prepare('SELECT Com_Name, COUNT(*), MAX(Confidence), Sci_Name FROM detections GROUP BY Com_Name ORDER BY COUNT(*) DESC');
+$result = $statement->execute();
+
+$statement2 = $db->prepare('SELECT Com_Name FROM detections GROUP BY Com_Name ORDER BY Com_Name ASC');
+$result2 = $statement2->execute();
+
+if(isset($_POST['species'])){
+  $selection = $_POST['species'];
+  $statement3 = $db->prepare("SELECT Com_Name, Sci_Name, COUNT(*), MAX(Confidence) from detections
+    WHERE Com_Name = '$selection'");
+  $result3 = $statement3->execute();
+}
 ?>
 
 <!DOCTYPE html>
@@ -116,21 +130,6 @@ form {
   <section>
 <div class="row">
  <div class="column first">
-    <h3>Number of Detections</h3>
-    <table>
-      <tr>
-	<th>Total</th>
-	<th>Today</th>
-	<th>Last Hour</th>
-	<th>Number of Unique Species</th>
-      </tr>
-      <tr>
-	<td></td>
-	<td></td>
-	<td></td>
-	<td></td>
-      </tr>
-    </table>
     <h3>Summary</h3>
     <table>
       <tr>
@@ -138,22 +137,40 @@ form {
 	<th>Occurrences</th>
 	<th>Max Confidence Score</th>
       </tr>
+<?php
+while($results=$result->fetchArray(SQLITE3_ASSOC))
+{
+$comname = preg_replace('/ /', '_', $results['Com_Name']);
+$comlink = "/By_Date/".date('Y-m-d')."/".$comname;
+$sciname = preg_replace('/ /', '_', $results['Sci_Name']);
+?>
       <tr>
-	<td><a href="../By_Common_Name/"></a></td>
-	<td></td>
-	<td></td>
-
+      <td><?php echo $results['Com_Name'];?></td>
+      <td><?php echo $results['COUNT(*)'];?></td>
+      <td><?php echo $results['MAX(Confidence)'];?></td>
       </tr>
+<?php
+}
+?>
     </table>
   </div>  
  <div class="column">
 <form action="stats.php" method="POST">
   <h3>Species Stats</h3>
     <select name="species" >
-    <option value=""></option>
-      <option value=""></option>"
+    <option value="<?php if(isset($_POST['species'])){echo $selection;}?>"><?php if(isset($_POST['species'])){echo $selection;}else{echo "--Choose Species--";}?></option>
+<?php
+while($results=$result2->fetchArray(SQLITE3_ASSOC))
+{
+$comname = preg_replace('/ /', '_', $results['Com_Name']);
+$comlink = "/By_Date/".date('Y-m-d')."/".$comname;
+$sciname = preg_replace('/ /', '_', $results['Sci_Name']);
+?>
+    <option value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></option>
+<?php
+}
+?>
     </select>
-  </p>
   <button type="submit" class="block"/>Show Species Statistics</button>
 </form>
 <?php if(isset($_POST['species'])){
@@ -171,22 +188,22 @@ form {
   ob_flush();
   flush();
    
-while($rows = $specificstats->fetch_assoc()) {
-  $count = $rows['COUNT(*)'];
-  $maxconf = $rows['MAX(Confidence)'];
-  $name = $rows['Com_Name'];
-  $sciname = $rows['Sci_Name'];
-  $dbname = preg_replace('/ /', '_', $rows['Com_Name']);
+while($results=$result3->fetchArray(SQLITE3_ASSOC)){
+  $count = $results['COUNT(*)'];
+  $maxconf = $results['MAX(Confidence)'];
+  $name = $results['Com_Name'];
+  $sciname = $results['Sci_Name'];
+  $dbname = preg_replace('/ /', '_', $results['Com_Name']);
   $dbname = preg_replace('/\'/', '', $dbname);
-  $dbsciname = preg_replace('/ /', '_', $rows['Sci_Name']);
+  $dbsciname = preg_replace('/ /', '_', $results['Sci_Name']);
   $imagelink = shell_exec("/home/pi/BirdNET-Pi/scripts/get_image.sh $dbsciname");
   $imagecitation = shell_exec("/home/pi/BirdNET-Pi/scripts/get_citation.sh $dbsciname");
   $str= "<tr>
-  <td><a href=\"../By_Common_Name/$dbname\"/>$name</a></td>
-  <td><a href=\"../By_Scientific_Name/$dbsciname\"/>$sciname</a></td>
+  <td>$name</td>
+  <td><a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/>$sciname</a></td>
   <td>$count</td>
   <td>$maxconf</td>
-  <td><a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/>Wikipedia</a>, <a href=\"https://allaboutbirds.org/guide/$dbname\" target=\"top\"/>All About Birds</a>
+  <td><a href=\"https://allaboutbirds.org/guide/$dbname\" target=\"top\"/>All About Birds</a>
   </tr>
     </table>";
   echo str_pad($str, 4096);

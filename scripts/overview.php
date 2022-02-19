@@ -20,10 +20,10 @@ $statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE TIME >= TIME(\
 $result3 = $statement3->execute();
 $hourcount = $result3->fetchArray(SQLITE3_ASSOC);
 
-$statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Time, Confidence FROM detections LIMIT 1');
+$statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Time ASC LIMIT 1');
 $result4 = $statement4->execute();
 $mostrecent = $result4->fetchArray(SQLITE3_ASSOC);
-$comlink = preg_replace('/ /', '_', $mostrecent['Com_Name']);
+$comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
 $scilink = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
 
 $statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date == Date(\'now\')');
@@ -70,8 +70,8 @@ a {
     <table>
       <tr>
         <th>Most Recent Detection</th>
-	<td><a href="/By_Date/<?php echo $myDate."/".$comlink;?>"><?php echo $mostrecent['Com_Name'];?></a></td>
-	<td><a href="/By_Date/<?php echo$myDate;?>"/><?php echo $mostrecent['Time'];?></a></td>
+	<td><a href="/By_Date/<?php echo $myDate."/".$comname;?>"><?php echo $mostrecent['Com_Name'];?></a></td>
+	<td><a href="/By_Date/<?php echo$myDate."/".$comname."/".$mostrecent['File_Name'];?>" target="footer"/><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></a></td>
 	<td><?php echo $mostrecent['Confidence'];?></td>
 	<td><a href="https://wikipedia.org/wiki/<?php echo $scilink;?>" target="top"/>More Info</a></td>
       </tr>
@@ -91,7 +91,7 @@ a {
       <tr>
         <th>Number of Detections</th>
         <td><?php echo $totalcount['COUNT(*)'];?></td>
-        <td><?php echo $todaycount['COUNT(*)'];?></td>
+	<td><a href="/By_Date/<?php echo date('Y-m-d');?>"/><?php echo $todaycount['COUNT(*)'];?></a></td>
         <td><?php echo $hourcount['COUNT(*)'];?></td>
       </tr>
     </table>
@@ -100,7 +100,7 @@ a {
     <table>
       <tr>
         <th>Species Detected Today</th>
-	<td><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></td>
+	<td><a href="/stats.php"/><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></a></td>
       </tr>
     </table>
   </div>

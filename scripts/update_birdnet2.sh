@@ -48,7 +48,6 @@ spectrogram_viewer.service
 pushed_notifications.service
 livestream.service
 icecast2.service
-extraction.timer
 extraction.service
 chart_viewer.service
 birdnet_recording.service

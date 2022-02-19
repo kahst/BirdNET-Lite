@@ -61,14 +61,13 @@ for h in "${SCAN_DIRS[@]}";do
     SCIENTIFIC_NAME=""$(echo ${line} \
             | awk -F\; '!/birdnet/{print $3}')""
     CONFIDENCE=""$(echo ${line} \
-	    | awk -F\; '{print $5}' \
-	    | cut -d'.' -f2)""
-    CONFIDENCE_SCORE="${CONFIDENCE:0:2}%"
+	    | awk -F\; '{print $5}')""
+	    
+    #CONFIDENCE_SCORE="${CONFIDENCE:0:2}%"
+    CONFIDENCE_SCORE="$(printf %.0f $(echo "scale=2; ${CONFIDENCE} * 100" | bc))"
     NEWFILE="${COMMON_NAME// /_}-${CONFIDENCE_SCORE}-${OLDFILE//.wav/.${AUDIOFMT}}"
     echo "NEWFILE=$NEWFILE"
     NEWSPECIES_BYDATE="${EXTRACTED}/By_Date/${DATE}/${COMMON_NAME// /_}"
-    NEWSPECIES_BY_COMMON="${EXTRACTED}/By_Common_Name/${COMMON_NAME// /_}"
-    NEWSPECIES_BY_SCIENCE="${EXTRACTED}/By_Scientific_Name/${SCIENTIFIC_NAME// /_}"
 
     # If the extracted file already exists, move on
     if [[ -f "${NEWSPECIES_BYDATE}/${NEWFILE}" ]];then
@@ -84,16 +83,6 @@ for h in "${SCAN_DIRS[@]}";do
     # If a directory does not already exist for the species (by date),
     # it is created
     [[ -d "${NEWSPECIES_BYDATE}" ]] || mkdir -p "${NEWSPECIES_BYDATE}"
-
-
-    # If a directory does not already exist for the species (by-species),
-    # it is created.
-    [[ -d "${NEWSPECIES_BY_COMMON}" ]] || mkdir -p "${NEWSPECIES_BY_COMMON}"
-
-    # If a directory does not already exist for the species (by-species),
-    # it is created.
-    [[ -d "${NEWSPECIES_BY_SCIENCE}" ]] || mkdir -p "${NEWSPECIES_BY_SCIENCE}"
-
 
     # If there are already 20 extracted entries for a given species
     # for today, remove the oldest file and create the new one.
@@ -131,9 +120,6 @@ for h in "${SCAN_DIRS[@]}";do
 
     sox "${h}/${OLDFILE}" "${NEWSPECIES_BYDATE}/${NEWFILE}" \
       trim "${START}" "${END}"
-    #ffmpeg -hide_banner -loglevel error -nostdin -i "${h}/${OLDFILE}" \
-    #  -acodec copy -ss "${START}" -to "${END}"\
-    #    "${NEWSPECIES_BYDATE}/${NEWFILE}"
 
     # Create spectrogram for extraction
     sox "${NEWSPECIES_BYDATE}/${NEWFILE}" -n remix 1 rate 24k spectrogram \
@@ -141,48 +127,6 @@ for h in "${SCAN_DIRS[@]}";do
       -c "${NEWSPECIES_BYDATE}/${NEWFILE}" \
       -o "${NEWSPECIES_BYDATE}/${NEWFILE}.png"
     
-    # Remove the oldest symbolic links that would make the directory have more
-    # than 20 entries.
-    if [[ "$(find ${NEWSPECIES_BY_COMMON} | wc -l)" -ge 40 ]];then
-      echo "20 ${SPECIES}s, already! Removing the oldest by-species and making a new one"
-      cd ${NEWSPECIES_BY_COMMON} || exit 1
-      ls -1t . | tail -n +40 | xargs -r rm -vv
-      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}"\
-        "${NEWSPECIES_BY_COMMON}/${NEWFILE}"
-      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}.png"\
-        "${NEWSPECIES_BY_COMMON}/${NEWFILE}.png"
-      echo "Success! New extraction for ${COMMON_NAME}"
-    else
-    # Make symbolic link of the extraction to add to By_Common_Name
-      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}"\
-        "${NEWSPECIES_BY_COMMON}/${NEWFILE}"
-      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}.png"\
-        "${NEWSPECIES_BY_COMMON}/${NEWFILE}.png"
-    fi   
-
-    # Remove the oldest symbolic links that would made the directory have more
-    # than 20 entries.
-    if [[ "$(find ${NEWSPECIES_BY_SCIENCE} | wc -l)" -ge 40 ]];then
-      echo "20 ${SPECIES}s, already! Removing the oldest by-species and making a new one"
-      cd ${NEWSPECIES_BY_SCIENCE} || exit 1
-      ls -1t . | tail -n +40 | xargs -r rm -vv
-      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}"\
-        "${NEWSPECIES_BY_SCIENCE}/${NEWFILE}"
-      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}.png"\
-        "${NEWSPECIES_BY_SCIENCE}/${NEWFILE}.png"
-      echo "Success! New extraction for ${COMMON_NAME}"
-    else
-      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}"\
-        "${NEWSPECIES_BY_SCIENCE}/${NEWFILE}"
-      ln -fs "${NEWSPECIES_BYDATE}/${NEWFILE}.png"\
-        "${NEWSPECIES_BY_SCIENCE}/${NEWFILE}.png"
-    fi   
-
-
-    # Finally, 'a' is incremented by one to allow multiple extractions per
-    # species per minute.
-    #a=$((a + 1))
-
   done < "${TMPFILE}"
   
   # Once each line of the TMPFILE has been processed, the TMPFILE is emptied
@@ -192,11 +136,11 @@ for h in "${SCAN_DIRS[@]}";do
   # Rename files that have been processed so that they are not processed on the
   # next extraction.
   [[ -d "${PROCESSED}" ]] || mkdir "${PROCESSED}"
-  echo "Moving processed files to ${PROCESSED}"
+  #echo "Moving processed files to ${PROCESSED}"
   mv ${h}/* ${PROCESSED} &> /dev/null || continue
 done
 
-echo "Linking Processed files to "${EXTRACTED}/Processed" web directory"
+#echo "Linking Processed files to "${EXTRACTED}/Processed" web directory"
 # After all audio extractions have taken place, a directory is created to house
 # the original WAVE and .txt files used for this extraction processs.
 if [[ ! -L ${EXTRACTED}/Processed ]] || [[ ! -e ${EXTRACTED}/Processed ]];then

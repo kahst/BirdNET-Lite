@@ -10,6 +10,14 @@ $theDate = date('Y-m-d');
 }
 $chart = "Combo-$theDate.png";
 $chart2 = "Combo2-$theDate.png";
+
+$db = new SQLite3('/home/pi/BirdNET-Pi/scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+
+$statement1 = $db->prepare("SELECT COUNT(*) FROM detections
+	WHERE Date == \"$theDate\"");
+$result1 = $statement1->execute();
+$totalcount = $result1->fetchArray(SQLITE3_ASSOC);
+
 ?>
 
 <head>
@@ -52,7 +60,7 @@ hr {
 		<table>
 			<tr>
 				<th>Total Detections For The Day</th>
-				<td></td>
+				<td><?php echo $totalcount['COUNT(*)'];?></td>
 			</tr>
 		</table>
 </div>

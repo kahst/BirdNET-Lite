@@ -302,7 +302,7 @@ def handle_client(conn, addr):
                 #print('Time:', date_time_obj.time())
                 print('Date-time:', date_time_obj)
                 now = date_time_obj
-                current_date = now.strftime("%Y/%m/%d")
+                current_date = now.strftime("%Y-%m-%d")
                 current_time = now.strftime("%H:%M:%S")
                 current_iso8601 = now.astimezone(get_localzone()).isoformat()
                 
@@ -342,7 +342,7 @@ def handle_client(conn, addr):
                                 species = entry[0]
                                 Sci_Name,Com_Name = species.split('_')
                                 score = entry[1]
-                                Confidence = "{:.0%}".format(score)
+                                Confidence = str(round(score*100))
                                 Lat = str(args.lat)
                                 Lon = str(args.lon)
                                 Cutoff = str(args.min_conf)
