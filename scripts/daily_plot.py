@@ -153,7 +153,7 @@ heat_frame = pd.DataFrame(data=0, index=heat.index, columns = hours_in_day)
 heat=(heat+heat_frame).fillna(0)
 
 #Generatie heatmap plot
-plot = sns.heatmap(heat, norm=LogNorm(),  annot=True,  annot_kws={"fontsize":7}, cmap = pal , square = False, cbar=False, linewidths = 0.5, linecolor = "Grey", ax=axs[1], yticklabels = False)
+plot = sns.heatmap(heat, norm=LogNorm(),  annot=True, fmt="g",  annot_kws={"fontsize":7}, cmap = pal , square = False, cbar=False, linewidths = 0.5, linecolor = "Grey", ax=axs[1], yticklabels = False)
 plot.set_xticklabels(plot.get_xticklabels(), rotation = 0, size = 7)
 
 # Set heatmap border

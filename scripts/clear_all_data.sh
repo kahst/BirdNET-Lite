@@ -16,8 +16,6 @@ sudo rm -f $(dirname ${my_dir})/BirdDB.txt
 echo "Creating necessary directories"
 [ -d ${EXTRACTED} ] || sudo -u ${USER} mkdir -p ${EXTRACTED}
 [ -d ${EXTRACTED}/By_Date ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Date
-[ -d ${EXTRACTED}/By_Common_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Common_Name
-[ -d ${EXTRACTED}/By_Scientific_Name ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Scientific_Name
 [ -d ${EXTRACTED}/Charts ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
 [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
@@ -70,8 +68,8 @@ sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME
 
 echo "Setting Wttr.in URL to "${LATITUDE}", "${LONGITUDE}""
 sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
-chmod -R g+rw $(dirname ${my_dir})
-chmod -R g+rw ${RECS_DIR}
+sudo chmod -R g+rw $(dirname ${my_dir})
+sudo chmod -R g+rw ${RECS_DIR}
 
 echo "Generating BirdDB.txt"
 if ! [ -f $(dirname ${my_dir})/BirdDB.txt ];then
@@ -81,10 +79,10 @@ elif ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
   sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
 fi
 ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt &&
-  chown pi:pi ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
+sudo chown pi:pi ${my_dir}/BirdDB.txt && sudo chmod g+rw ${my_dir}/BirdDB.txt
 
 
 echo "Dropping and re-creating database"
-sudo /home/pi/BirdNET-Pi/scripts/createdb_bullseye.sh
+sudo /home/pi/BirdNET-Pi/scripts/createdb.sh
 echo "Restarting services"
 sudo systemctl start birdnet_recording.service

@@ -76,7 +76,6 @@ a {
 	<th>Scientific Name</th>
 	<th>Common Name</th>
 	<th>Confidence</th>
-	<th>Links</th>
       </tr>
 <?php
 while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
@@ -87,10 +86,9 @@ $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
 ?>
       <tr>
       <td><a href="<?php echo $comlink;?>" target="footer"/><?php echo $todaytable['Time'];?></a></td>
-      <td><?php echo $todaytable['Sci_Name'];?></td>
-      <td><?php echo $todaytable['Com_Name'];?></td>
+      <td><a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><?php echo $todaytable['Sci_Name'];?></a></td>
+      <td><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></td>
       <td><?php echo $todaytable['Confidence'];?></td>
-      <td><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top">All About Birds</a>, <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top">Wikipedia</a></td>
 <?php }?>
       </tr>
     </table>

@@ -47,6 +47,13 @@ a {
   text-decoration: none;
   color:black;
 }
+table, th {
+  background-color: rgb(119, 196, 135);
+  border:none;
+}
+th {
+  padding: 0 5px;
+}
 .center {
   display: block;
   margin-left: 5px;
@@ -64,47 +71,42 @@ a {
 </style>
 </head>
 <body style="background-color: rgb(119, 196, 135);">
-    <h2>Overview</h2>
-<div class="row">
- <div class="column2">
-    <table>
-      <tr>
-        <th>Most Recent Detection</th>
-	<td><a href="/By_Date/<?php echo $myDate."/".$comname;?>"><?php echo $mostrecent['Com_Name'];?></a></td>
-	<td><a href="/By_Date/<?php echo$myDate."/".$comname."/".$mostrecent['File_Name'];?>" target="footer"/><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></a></td>
-	<td><?php echo $mostrecent['Confidence'];?></td>
-	<td><a href="https://wikipedia.org/wiki/<?php echo $scilink;?>" target="top"/>More Info</a></td>
-      </tr>
-    </table>
+ <div>
   </div>
-</div>
-
-<div class="row">
- <div class="column">
-    <table>
+    <table style="padding-bottom:3%;display:block;width:50%;margin-left:auto;margin-right:auto;">
       <tr>
-        <th></th>
         <th>Total</th>
         <th>Today</th>
         <th>Last Hour</th>
+        <th>Species Detected Today</th>
       </tr>
       <tr>
-        <th>Number of Detections</th>
         <td><?php echo $totalcount['COUNT(*)'];?></td>
 	<td><a href="/By_Date/<?php echo date('Y-m-d');?>"/><?php echo $todaycount['COUNT(*)'];?></a></td>
         <td><?php echo $hourcount['COUNT(*)'];?></td>
-      </tr>
-    </table>
-  </div>
- <div class="column">
-    <table>
-      <tr>
-        <th>Species Detected Today</th>
 	<td><a href="/stats.php"/><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></a></td>
       </tr>
     </table>
-  </div>
 </div>
+ <div>
+
+    <table style="padding-bottom:3%;display:block;width:90%;margin-left:auto;margin-right:auto;">
+      <tr>
+	<th style="border:none;background-color: rgb(119, 196, 135);"></th>
+	<th style="border:none;">Scientific Name</th>
+	<th style="border:none;">Common Name</th>
+	<th style="border:none;">Listen</th>
+	<th style="border:none;">Confidence</th>
+      </tr>
+      <tr>
+        <th>Most Recent Detection</th>
+	<td><a href="https://wikipedia.org/wiki/<?php echo $scilink;?>" target="top"/><?php echo $mostrecent['Sci_Name'];?></a></td>
+	<td><a href="/By_Date/<?php echo $mostrecent['Date']."/".$comname;?>"><?php echo $mostrecent['Com_Name'];?></a></td>
+	<td><a href="/By_Date/<?php echo$myDate."/".$comname."/".$mostrecent['File_Name'];?>" target="footer"/><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></a></td>
+	<td><?php echo $mostrecent['Confidence'];?></td>
+      </tr>
+    </table>
+  </div>
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
   echo "<img src=\"/Charts/$chart?nocache=time()\" style=\"width: 100%;padding: 5px;margin-left: auto;margin-right: auto;display: block;\">";
