@@ -7,26 +7,50 @@ $myDate = date('Y-m-d');
 $chart = "Combo-$myDate.png";
 
 $db = new SQLite3('/home/pi/BirdNET-Pi/scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+if($db == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 
 $statement = $db->prepare('SELECT COUNT(*) FROM detections');
+if($statement == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result = $statement->execute();
 $totalcount = $result->fetchArray(SQLITE3_ASSOC);
 
 $statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\')');
+if($statement2 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result2 = $statement2->execute();
 $todaycount = $result2->fetchArray(SQLITE3_ASSOC);
 
 $statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE TIME >= TIME(\'now\', \'localtime\', \'-1 hour\')');
+if($statement3 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result3 = $statement3->execute();
 $hourcount = $result3->fetchArray(SQLITE3_ASSOC);
 
-$statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Time ASC LIMIT 1');
+$statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 1');
+if($statement4 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result4 = $statement4->execute();
 $mostrecent = $result4->fetchArray(SQLITE3_ASSOC);
 $comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
 $scilink = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
 
 $statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date == Date(\'now\')');
+if($statement5 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result5 = $statement5->execute();
 $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
 ?>
@@ -53,6 +77,12 @@ table, th {
 }
 th {
   padding: 0 5px;
+}
+button {
+  background-color: rgb(219, 295, 235);
+  border:none;
+  font-size:large;
+  cursor:pointer;
 }
 .center {
   display: block;
@@ -101,7 +131,8 @@ th {
       <tr>
         <th>Most Recent Detection</th>
 	<td><a href="https://wikipedia.org/wiki/<?php echo $scilink;?>" target="top"/><?php echo $mostrecent['Sci_Name'];?></a></td>
-	<td><a href="/By_Date/<?php echo $mostrecent['Date']."/".$comname;?>"><?php echo $mostrecent['Com_Name'];?></a></td>
+        <form action="/stats.php" name="species" method="POST">
+	<td><button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button></td></form>
 	<td><a href="/By_Date/<?php echo$myDate."/".$comname."/".$mostrecent['File_Name'];?>" target="footer"/><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></a></td>
 	<td><?php echo $mostrecent['Confidence'];?></td>
       </tr>

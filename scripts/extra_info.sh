@@ -13,28 +13,44 @@ revbinary=$(echo $binary|rev)
 if echo $binary | grep 1 ;then
   echo "ISSUES DETECTED"
   if [ ${revbinary:0:1} -eq 1 &> /dev/null ];then
-    echo "Under-voltage detected"
+    message="Under-voltage detected"
+    echo "$message"
+    dmesg -H | grep -i voltage
   fi
   if [ ${revbinary:1:1} -eq 1 &> /dev/null ];then
-    echo "Arm frequency capped"
+    message="Arm frequency capped"
+    echo "$message"
+    dmesg -H | grep -i frequen
   fi
   if [ ${revbinary:2:1} -eq 1 &> /dev/null ];then
-    echo "Currently Throttled"
+    message="Currently Throttled"
+    echo "$message"
+    dmesg -H | grep -i throttl
   fi
   if [ ${revbinary:3:1} -eq 1 &> /dev/null ];then
-    echo "Soft temperatue limit active"
+    message="Soft temperatue limit active"
+    echo "$message"
+    dmesg -H | grep -i temperature 
   fi
   if [ ${revbinary:16:1} -eq 1 &> /dev/null ];then
-    echo "Under-voltage has occurred"
+    message="Under-voltage has occurred"
+    echo "$message"
+    dmesg -H | grep -i voltage
   fi
   if [ ${revbinary:17:1} -eq 1 &> /dev/null ];then
-    echo "Arm frequency capping has occurred"
+    message="Arm frequency capping has occurred"
+    echo "$message"
+    dmesg -H | grep -i frequen
   fi
   if [ ${revbinary:18:1} -eq 1 &> /dev/null ];then
-    echo "Throttling has occurred"
+    message="Throttling has occurred"
+    echo "$message"
+    dmesg -H | grep -i throttl
   fi
   if [ ${revbinary:19:1} -eq 1 &> /dev/null ];then
-    echo "Soft temperature limit has occurred"
+    message="Soft temperature limit has occurred"
+    echo "$message"
+    dmesg -H | grep -i temperature 
   fi
 fi
 echo "....................................Clock Speeds................................"

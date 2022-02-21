@@ -6,29 +6,58 @@ error_reporting(E_ALL);
 header("refresh: 30;");
 
 $db = new SQLite3('/home/pi/BirdNET-Pi/scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+if($db == False){
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 
 $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\') ORDER BY Time DESC');
+if($statement0 == False){
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result0 = $statement0->execute();
 
 $statement1 = $db->prepare('SELECT COUNT(*) FROM detections');
+if($statement1 == False){
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result1 = $statement1->execute();
 $totalcount = $result1->fetchArray(SQLITE3_ASSOC);
 
 $statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\')');
+if($statement2 == False){
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result2 = $statement2->execute();
 $todaycount = $result2->fetchArray(SQLITE3_ASSOC);
 
 $statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE TIME >= TIME(\'now\', \'localtime\', \'-1 hour\')');
+if($statement3 == False){
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result3 = $statement3->execute();
 $hourcount = $result3->fetchArray(SQLITE3_ASSOC);
 
 $statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Time, Confidence FROM detections LIMIT 1');
+if($statement4 == False){
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result4 = $statement4->execute();
 $mostrecent = $result4->fetchArray(SQLITE3_ASSOC);
 
 $statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections');
+if($statement4 == False){
+  echo "Database is busy";
+  header("refresh: 0;");
+}
 $result5 = $statement5->execute();
 $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
+
 ?>
 
 <!DOCTYPE html>

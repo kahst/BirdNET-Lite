@@ -4,17 +4,33 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $db = new SQLite3('/home/pi/BirdNET-Pi/scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
-
+if($db == False) {
+	echo "Database busy";
+	header("refresh: 0;");
+}
 $statement = $db->prepare('SELECT Com_Name, COUNT(*), MAX(Confidence), Sci_Name FROM detections GROUP BY Com_Name ORDER BY COUNT(*) DESC');
+if($statement == False) {
+	echo "Database busy";
+	header("refresh: 0;");
+}
 $result = $statement->execute();
 
+
 $statement2 = $db->prepare('SELECT Com_Name FROM detections GROUP BY Com_Name ORDER BY Com_Name ASC');
+if($statement2 == False) {
+	echo "Database busy";
+	header("refresh: 0;");
+}
 $result2 = $statement2->execute();
 
 if(isset($_POST['species'])){
   $selection = $_POST['species'];
   $statement3 = $db->prepare("SELECT Com_Name, Sci_Name, COUNT(*), MAX(Confidence) from detections
     WHERE Com_Name = '$selection'");
+  if($statement3 == False) {
+  	echo "Database busy";
+  	header("refresh: 0;");
+  }
   $result3 = $statement3->execute();
 }
 ?>
@@ -80,6 +96,12 @@ a {
 	text-align: center;
 }
 
+button {
+  background-color: rgb(219, 295, 235);
+  border:none;
+  font-size:large;
+  cursor:pointer;
+}
 
 img {
 	width:75%;
@@ -143,7 +165,8 @@ $comlink = "/By_Date/".date('Y-m-d')."/".$comname;
 $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
 ?>
       <tr>
-      <td><?php echo $results['Com_Name'];?></td>
+      <form action="stats.php" method="POST">
+      <td><button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button></td></form>
       <td><?php echo $results['COUNT(*)'];?></td>
       <td><?php echo $results['MAX(Confidence)'];?></td>
       </tr>

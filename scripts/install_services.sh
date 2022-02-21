@@ -84,7 +84,7 @@ Restart=on-failure
 RestartSec=3
 Type=simple
 User=${USER}
-ExecStart=/usr/bin/env bash -c 'while true;do extract_new_birdsounds.sh;sleep ${RECORDING_LENGTH};done'
+ExecStart=/usr/bin/env bash -c 'while true;do extract_new_birdsounds.sh;sleep 3;done'
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -152,9 +152,9 @@ create_necessary_dirs() {
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/history.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/images/favicon.ico ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
-  sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
-  sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
-  sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
 
   echo "Setting Wttr.in URL to "${LATITUDE}", "${LONGITUDE}""
   sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
