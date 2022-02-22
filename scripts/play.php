@@ -27,13 +27,13 @@ $result = $statement->execute();
     </style>
   </head>
 <body>
+<div class="column left">
 <?php
 while($results=$result->fetchArray(SQLITE3_ASSOC))
 {
 	$comname = preg_replace('/ /', '_', $results['Com_Name']);
 	$comlink = "/By_Date/".date('Y-m-d')."/".$comname;
 ?>
-<div class="column">
 <table>
   <tr>
     <form action="" method="POST">
@@ -43,9 +43,10 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
     </form>
   </tr>
 </table>
-</div>
 <?php
 }?>
+</div>
+<div class="column right">
 <?php
 	if(isset($_POST['species'])){
 		$name = $_POST['species'];
@@ -83,5 +84,7 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
 					</tr>";
 
 			}echo "</table>";}?>
+</div>
+</div>
 </body>
 </html>

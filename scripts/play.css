@@ -15,12 +15,20 @@ body {
 
 .column {
   display:block;
-  float:top;
   width:33%;
-  margin-left:0;
+  margin-left:auto;
   margin-right:auto;
 }
 
+.left {
+  float:left;
+}
+
+.right {
+  float:right;
+  width:66%;
+}
+  
 table {
   background-color: rgb(219, 255, 235);
   margin: 0 auto;
