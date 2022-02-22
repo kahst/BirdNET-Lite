@@ -9,12 +9,23 @@ if($db == False){
   header("refresh: 0;");
 }
 
+if(isset($_POST['bydate'])){
+$statement = $db->prepare('SELECT DISTINCT(Date), Com_Name from detections GROUP BY Date');
+if($statement == False){
+  echo "Database is busy";
+  header("refresh: 0;");
+}
+$result = $statement->execute();
+$view = "bydate";
+} else {
 $statement = $db->prepare('SELECT DISTINCT(Com_Name) from detections ORDER BY Com_Name');
 if($statement == False){
   echo "Database is busy";
   header("refresh: 0;");
 }
 $result = $statement->execute();
+$view = "byspecies";
+}
 
 ?>
 
@@ -38,7 +49,13 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
   <tr>
     <form action="" method="POST">
     <td>
-      <button action="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button>
+<?php
+if($view == "bydate"){
+	$date = $results['Date'];
+      echo "<button action=\"submit\" name=\"date\" value=\"$date\">$date</button>";}
+else {
+	$name = $results['Com_Name'];
+	echo "<button action=\"submit\" name=\"species\" value=\"$name\">$name</button>";}?>
     </td>
     </form>
   </tr>
