@@ -16,6 +16,11 @@ body {
   text-align: left;
   padding-bottom: 30px;
 }
+form {
+  padding:0;
+  margin:0;
+}
+
 h3 {
   margin: 0px 0px -15px 0px;
   text-align: center;
@@ -32,6 +37,11 @@ footer {
   bottom: 0;
   width:100%;
 }
+button {
+  background-color: transparent;
+  text-size:large;
+  border:none;
+}
 hr {
   border-bottom: 1px solid black;
 }
@@ -43,9 +53,12 @@ body::-webkit-scrollbar {
   <body>
 
     <h5>Extractions</h5>
-    - <a href="/By_Date/" target="content">By Date</a><br>
-    - <a href="/By_Common_Name/" target="content">By Common Name</a><br>
-    - <a href="/By_Scientific_Name/" target="content">By Scientific Name</a><br>
+    <form action="/play.php" method="POST" target="content">
+    - <button type="submit" name="bydate" value="bydate">By Date</button>
+    </form>
+    <form action="/play.php" method="POST" target="content">
+    - <button type="submit" name="byspecies" value="byspecies">By Species</button>
+    </form>
     - <a href="/Processed/" target="content">Processed</a><br>
 
     <hr class="solid">
