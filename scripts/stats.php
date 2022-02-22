@@ -150,7 +150,9 @@ select {
   <section>
 <div class="row">
  <div class="column first">
-    <h3>Summary</h3>
+<?php if(!isset($_POST['species'])){
+    echo "<p style=\"text-align:center;font-size:large;\">Choose a species below to show statistics.</p>";
+};?>
     <table>
       <tr>
 	<th>Common Name</th>
@@ -175,31 +177,13 @@ $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
 ?>
     </table>
   </div>  
- <div class="column second">
-<form style="margin:0;width:100%;" action="stats.php" method="POST">
-  <h3>Species Stats</h3>
-    <select name="species" >
-    <option value="<?php if(isset($_POST['species'])){echo $selection;}?>"><?php if(isset($_POST['species'])){echo $selection;}else{echo "--Choose Species--";}?></option>
-<?php
-while($results=$result2->fetchArray(SQLITE3_ASSOC))
-{
-$comname = preg_replace('/ /', '_', $results['Com_Name']);
-$comlink = "/By_Date/".date('Y-m-d')."/".$comname;
-$sciname = preg_replace('/ /', '_', $results['Sci_Name']);
-?>
-    <option value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></option>
-<?php
-}
-?>
-    </select>
-  <button type="submit" class="block"/>Show Species Statistics</button>
-</form>
 <?php if(isset($_POST['species'])){
   $species = $_POST['species'];
-  $str = "<h3>$species</h3>
+  $str = "<div class=\"column second\">
+   <h3>$species</h3>
+   <h3>Species Stats</h3>
     <table>
       <tr>
-	<th>Common Name</th>
 	<th>Scientific Name</th>
 	<th>Occurrences</th>
 	<th>Highest Confidence Score</th>
@@ -220,7 +204,6 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   $imagelink = shell_exec("/home/pi/BirdNET-Pi/scripts/get_image.sh $dbsciname");
   $imagecitation = shell_exec("/home/pi/BirdNET-Pi/scripts/get_citation.sh $dbsciname");
   $str= "<tr>
-  <td>$name</td>
   <td><a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/>$sciname</a></td>
   <td>$count</td>
   <td>$maxconf</td>
