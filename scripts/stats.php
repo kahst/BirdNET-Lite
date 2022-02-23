@@ -25,7 +25,7 @@ $result2 = $statement2->execute();
 
 if(isset($_POST['species'])){
   $selection = $_POST['species'];
-  $statement3 = $db->prepare("SELECT Com_Name, Sci_Name, COUNT(*), MAX(Confidence) from detections
+  $statement3 = $db->prepare("SELECT Com_Name, Sci_Name, COUNT(*), MAX(Confidence), File_Name, Date from detections
     WHERE Com_Name = \"$selection\"");
   if($statement3 == False) {
   	echo "Database busy";
@@ -187,6 +187,7 @@ $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
 	<th>Scientific Name</th>
 	<th>Occurrences</th>
 	<th>Highest Confidence Score</th>
+	<th>Best Recording</th>
 	<th>Links</th>
       </tr>";
   echo str_pad($str, 4096);
@@ -196,18 +197,21 @@ $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
 while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   $count = $results['COUNT(*)'];
   $maxconf = $results['MAX(Confidence)'];
+  $date = $results['Date'];
   $name = $results['Com_Name'];
   $sciname = $results['Sci_Name'];
   $dbname = preg_replace('/ /', '_', $results['Com_Name']);
   $dbname = preg_replace('/\'/', '', $dbname);
   $dbsciname = preg_replace('/ /', '_', $results['Sci_Name']);
+  $filename = "/By_Date/".$date."/".$dbname."/".$results['File_Name'];
   $imagelink = shell_exec("/home/pi/BirdNET-Pi/scripts/get_image.sh $dbsciname");
   $imagecitation = shell_exec("/home/pi/BirdNET-Pi/scripts/get_citation.sh $dbsciname");
   $str= "<tr>
   <td><a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/>$sciname</a></td>
   <td>$count</td>
   <td>$maxconf</td>
-  <td><a href=\"https://allaboutbirds.org/guide/$dbname\" target=\"top\"/>All About Birds</a>
+  <td><a href=\"$filename\" target=\"footer\">Listen</a></td>
+  <td><a href=\"https://allaboutbirds.org/guide/$dbname\" target=\"top\"/>All About Birds</a></td>
   </tr>
     </table>";
   echo str_pad($str, 4096);
