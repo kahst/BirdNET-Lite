@@ -26,7 +26,7 @@ $result2 = $statement2->execute();
 if(isset($_POST['species'])){
   $selection = $_POST['species'];
   $statement3 = $db->prepare("SELECT Com_Name, Sci_Name, COUNT(*), MAX(Confidence) from detections
-    WHERE Com_Name = '$selection'");
+    WHERE Com_Name = \"$selection\"");
   if($statement3 == False) {
   	echo "Database busy";
   	header("refresh: 0;");
