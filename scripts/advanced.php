@@ -155,93 +155,6 @@ if(isset($_POST['submit'])) {
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-* {
-  font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
-  ' Calibri', 'Trebuchet MS', 'sans-serif';
-  box-sizing: border-box;
-}
-/* Create two unequal columns that floats next to each other */
-.column {
-  float: left;
-  padding: 10px;
-}
-.first {
-  width: calc(50% - 70px);
-}
-.second {
-  width: calc(50% - 70px);
-}
-.
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-body {
-  background-color: rgb(119, 196, 135);
-}
-a {
-  font-size:large;
-  text-decoration: none;
-}
-.block {
-  display: block;
-  width:50%;
-  border: none;
-  padding: 10px 10px;
-  font-size: medium;
-  cursor: pointer;
-  text-align: center;
-}
-
-form {
-  text-align:left;
-  margin-left:20px;
-}
-h2 {
-  margin-bottom:0px;
-}
-h3 {
-  margin-left: -10px;
-  text-align:left;
-}
-label {
-  float:left;
-  width: 40%;
-  font-weight:bold;
-}
-input,select {
-  width: 60%;
-  text-align:center;
-  font-size:large;
-}
-@media screen and (max-width: 1000px) {
-  h2,h3 {
-    text-align:center;
-  }  
-  form {
-    margin:0;
-  }
-  .column {
-    float: none;
-    width: 100%;
-  }
-  input, label {
-    width: 100%;
-  {
-}
   </style>
   </head>
 <?php
@@ -252,20 +165,20 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 }
 ?>
       <h2>Advanced Settings</h2>
-  <body style="background-color: rgb(119, 196, 135);">
+  <body>
   <div class="row">
     <div class="column first">
     <form action="advanced.php" method="POST">
       <h3>Defaults</h3>
       <label>Full Disk Behavior: </label>
-      <label style="width:30%;" for="purge">
-      <input style="width:15%;" name="full_disk" type="radio" id="purge" value="purge" 
+      <label for="purge">
+      <input name="full_disk" type="radio" id="purge" value="purge" 
 <?php
 if (strcmp($newconfig['FULL_DISK'], "purge") == 0) {
   echo "checked";
 }?>>Purge</label>
-      <label style="width:30%;" for="keep">
-      <input style="width:15%" name="full_disk" type="radio" id="keep" value="keep" 
+      <label for="keep">
+      <input name="full_disk" type="radio" id="keep" value="keep" 
 <?php
   if (strcmp($newconfig['FULL_DISK'], "keep") == 0) {
     echo "checked";
@@ -334,11 +247,11 @@ if(isset($_SESSION['success'])){
 ?></button>
       <br>
     </form>
-    <form action="config.php" style="margin:0;">
+    <form action="config.php">
       <button type="submit" class="block">Basic Settings</button>
     </form>
       <br>
-    <form action="index.html" style="margin:0;">
+    <form action="index.html">
       <button type="submit" class="block">Tools</button>
     </form>
 </div>

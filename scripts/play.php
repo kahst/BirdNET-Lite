@@ -53,13 +53,12 @@ if(isset($_POST['bydate'])){
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="play.css">
     <style>
     </style>
   </head>
 <body>
 <div class="column left">
-<table style="float:top;">
+<table>
 <?php
 if(!isset($_POST['species'])){
 while($results=$result->fetchArray(SQLITE3_ASSOC))

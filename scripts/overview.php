@@ -20,7 +20,7 @@ if($statement == False) {
 $result = $statement->execute();
 $totalcount = $result->fetchArray(SQLITE3_ASSOC);
 
-$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\')');
+$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\', \'localtime\')');
 if($statement2 == False) {
   echo "Database is busy";
   header("refresh: 0;");
@@ -44,9 +44,10 @@ if($statement4 == False) {
 $result4 = $statement4->execute();
 $mostrecent = $result4->fetchArray(SQLITE3_ASSOC);
 $comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
-$scilink = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
+$comname = preg_replace('/\'/', '', $comname);
+$filename = "/By_Date/".$mostrecent['Date']."/".$comname."/".$mostrecent['File_Name'];
 
-$statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date == Date(\'now\')');
+$statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date == Date(\'now\',\'localtime\')');
 if($statement5 == False) {
   echo "Database is busy";
   header("refresh: 0;");
@@ -62,48 +63,13 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Overview</title>
-  <!-- CSS FOR STYLING THE PAGE -->
-<link rel="stylesheet" href="style.css">
-
-
 <style>
-a {
-  text-decoration: none;
-  color:black;
-}
-table, th {
-  background-color: rgb(119, 196, 135);
-  border:none;
-}
-th {
-  padding: 0 5px;
-}
-button {
-  background-color: rgb(219, 295, 235);
-  border:none;
-  font-size:large;
-  cursor:pointer;
-}
-.center {
-  display: block;
-  margin-left: 5px;
-  margin-right: 5px;
-  width: 90%;
-  padding: 5px;
-}
-.center2 {
-  display: block;
-  margin-left: 5px;
-  margin-right: 5px;
-  width: 100%;
-  padding: 5px;
-}
 </style>
 </head>
-<body style="background-color: rgb(119, 196, 135);">
+<body>
  <div>
   </div>
-    <table style="padding-bottom:3%;display:block;width:50%;margin-left:auto;margin-right:auto;">
+    <table>
       <tr>
         <th>Total</th>
         <th>Today</th>
@@ -120,31 +86,31 @@ button {
 </div>
  <div>
 
-    <table style="padding-bottom:3%;display:block;width:90%;margin-left:auto;margin-right:auto;">
+    <table>
       <tr>
-	<th style="border:none;background-color: rgb(119, 196, 135);"></th>
-	<th style="border:none;">Scientific Name</th>
-	<th style="border:none;">Common Name</th>
-	<th style="border:none;">Listen</th>
-	<th style="border:none;">Confidence</th>
+	<th</th>
+	<th>Scientific Name</th>
+	<th>Common Name</th>
+	<th>Listen</th>
+	<th>Confidence</th>
       </tr>
       <tr>
         <th>Most Recent Detection</th>
 	<td><a href="https://wikipedia.org/wiki/<?php echo $scilink;?>" target="top"/><?php echo $mostrecent['Sci_Name'];?></a></td>
-        <form action="/stats.php" name="species" method="POST">
-	<td><button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button></td></form>
-	<td><a href="/By_Date/<?php echo$myDate."/".$comname."/".$mostrecent['File_Name'];?>" target="footer"/><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></a></td>
+        <form action="" method="POST">
+	<td><input type="hidden" name="view" value="Species Stats"><button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button></td></form>
+  <td><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?><br><audio controls><source src="<?php echo $filename;?>"></audio></td>
 	<td><?php echo $mostrecent['Confidence'];?></td>
       </tr>
     </table>
   </div>
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
-  echo "<img src=\"/Charts/$chart?nocache=time()\" style=\"width: 100%;padding: 5px;margin-left: auto;margin-right: auto;display: block;\">";
+  echo "<img src=\"/Charts/$chart?nocache=time()\">";
 } else {
-    echo "<p style=\"text-align:center;margin-left:-150px;\">No Detections For Today</p>";
+    echo "<p>No Detections For Today</p>";
 }
 ?>
     <h2>Currently Analyzing</h2>
-<img src='/spectrogram.png?nocache=<?php echo time();?>' style="width: 100%;padding: 5px;">
+<img src='/spectrogram.png?nocache=<?php echo time();?>' >
 </html>

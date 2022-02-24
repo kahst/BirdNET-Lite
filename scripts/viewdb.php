@@ -11,7 +11,7 @@ if($db == False){
   header("refresh: 0;");
 }
 
-$statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\') ORDER BY Time DESC');
+$statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC');
 if($statement0 == False){
   echo "Database is busy";
   header("refresh: 0;");
@@ -26,7 +26,7 @@ if($statement1 == False){
 $result1 = $statement1->execute();
 $totalcount = $result1->fetchArray(SQLITE3_ASSOC);
 
-$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\')');
+$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\', \'localtime\')');
 if($statement2 == False){
   echo "Database is busy";
   header("refresh: 0;");
@@ -67,21 +67,13 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BirdNET-Pi DB</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-a {
-  text-decoration:none;
-  color:black;
-}
-.a2 { color:blue;}
 </style>
 </head>
-<body style="background-color: rgb(119, 196, 135);">
+<body>
 
   <section>
     <h2>Number of Detections</h2>
-<div class="row">
- <div class="column2">
     <table>
       <tr>
 	<th>Total</th>
@@ -96,8 +88,6 @@ a {
       <td><a href="/stats.php"/><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></a></td>
       </tr>
     </table>
-</div>
-</div>
     <h2>Today's Detections</h2>
     <table>
       <tr>
