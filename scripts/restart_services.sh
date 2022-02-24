@@ -23,6 +23,6 @@ sudo systemctl restart "${i}"
 done
 until grep 5050 <(netstat -tulpn 2>&1);do
 sudo systemctl restart birdnet_server.service
-sleep 30
+sleep 45 
 done
 sudo systemctl restart birdnet_analysis.service

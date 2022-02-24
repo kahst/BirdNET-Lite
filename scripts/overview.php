@@ -28,7 +28,7 @@ if($statement2 == False) {
 $result2 = $statement2->execute();
 $todaycount = $result2->fetchArray(SQLITE3_ASSOC);
 
-$statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE TIME >= TIME(\'now\', \'localtime\', \'-1 hour\')');
+$statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == Date(\'now\', \'localtime\') AND TIME >= TIME(\'now\', \'localtime\', \'-1 hour\')');
 if($statement3 == False) {
   echo "Database is busy";
   header("refresh: 0;");
@@ -78,9 +78,13 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
       </tr>
       <tr>
         <td><?php echo $totalcount['COUNT(*)'];?></td>
-	<td><a href="/By_Date/<?php echo date('Y-m-d');?>"/><?php echo $todaycount['COUNT(*)'];?></a></td>
+        <form action="" method="POST">
+        <td><input type="hidden" name="view" value="Extractions"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button></td>
+        </form>
         <td><?php echo $hourcount['COUNT(*)'];?></td>
-	<td><a href="/stats.php"/><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></a></td>
+        <form action="" method="POST">
+        <td><button type="submit" name="view" value="Species Stats"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+        </form>
       </tr>
     </table>
 </div>
@@ -88,19 +92,23 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
 
     <table>
       <tr>
-	<th</th>
-	<th>Scientific Name</th>
-	<th>Common Name</th>
-	<th>Listen</th>
-	<th>Confidence</th>
+        <th>Most Recent Detection</th>
+        <th>Scientific Name</th>
+        <th>Common Name</th>
+        <th>Listen</th>
+        <th>Confidence</th>
       </tr>
       <tr>
-        <th>Most Recent Detection</th>
-	<td><a href="https://wikipedia.org/wiki/<?php echo $scilink;?>" target="top"/><?php echo $mostrecent['Sci_Name'];?></a></td>
+        <td><?php echo $mostrecent['Date']."<br>".$mostrecent['Time'];?></td>
+        <td><a href="https://wikipedia.org/wiki/<?php echo $scilink;?>" target="top"/><?php echo $mostrecent['Sci_Name'];?></a></td>
         <form action="" method="POST">
-	<td><input type="hidden" name="view" value="Species Stats"><button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button></td></form>
-  <td><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?><br><audio controls><source src="<?php echo $filename;?>"></audio></td>
-	<td><?php echo $mostrecent['Confidence'];?></td>
+          <td>
+            <input type="hidden" name="view" value="Species Stats">
+            <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button>
+          </td>
+        </form>
+        <td><audio controls><source src="<?php echo $filename;?>"></audio></td>
+        <td><?php echo $mostrecent['Confidence'];?></td>
       </tr>
     </table>
   </div>
@@ -108,7 +116,7 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
   echo "<img src=\"/Charts/$chart?nocache=time()\">";
 } else {
-    echo "<p>No Detections For Today</p>";
+  echo "<p>No Detections For Today</p>";
 }
 ?>
     <h2>Currently Analyzing</h2>

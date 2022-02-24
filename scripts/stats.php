@@ -76,7 +76,6 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
   $species = $_POST['species'];
   $str = "<div class=\"column second\">
    <h3>$species</h3>
-   <h3>Species Stats</h3>
     <table>
       <tr>
 	<th>Scientific Name</th>
@@ -96,27 +95,29 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   $time = $results['Time'];
   $name = $results['Com_Name'];
   $sciname = $results['Sci_Name'];
+  $dbsciname = preg_replace('/ /', '_', $sciname);
   $comname = preg_replace('/ /', '_', $results['Com_Name']);
   $comname = preg_replace('/\'/', '', $comname);
   $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
   $imagelink = shell_exec("/home/pi/BirdNET-Pi/scripts/get_image.sh $dbsciname");
   $imagecitation = shell_exec("/home/pi/BirdNET-Pi/scripts/get_citation.sh $dbsciname");
-  $str= "<tr>
+  echo str_pad("<tr>
   <td><a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/>$sciname</a></td>
   <td>$count</td>
   <td>$maxconf</td>
   <td>$date $time <audio controls><source src=\"$filename\"></audio></td>
   <td><a href=\"https://allaboutbirds.org/guide/$comname\" target=\"top\"/>All About Birds</a></td>
   </tr>
-    </table>";
-  echo str_pad($str, 4096);
+    </table>", '4096');
   ob_flush();
   flush();
-  echo "<img class=\"center\" src=\"$imagelink\">
+  echo str_pad("<img class=\"center\" src=\"$imagelink\">
   <pre>$imagecitation</pre></td>
   </div>  
 </div>
-</div>";
+</div>", '4096');
+  ob_flush();
+  flush();
 }}
 ?>
 

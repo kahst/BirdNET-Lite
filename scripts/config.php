@@ -12,7 +12,7 @@ ini_set('display_errors',1);
   <body>
   <div class="row">
     <div class="column first">
-    <form action="write_config.php" method="POST" name="normal">
+    <form action="" method="POST">
 <?php 
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
@@ -66,20 +66,16 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
         <option value="labels_uk.txt">Ukrainian</option>
       </select>
       <br><br>
-      <button type="submit" name="normal" class="block"><?php
-if(isset($_SESSION['success'])){
+      <button type="submit" name="view" value="Settings"><?php
+if(isset($_POST['status'])){
   echo "Success!";
-  unset($_SESSION['success']);
 } else {
   echo "Update Settings";
 }
 ?></button>
     </form>
-    <form action="advanced.php" class="form2">
-      <button type="submit" class="block">Advanced Settings</button>
-    </form>
-    <form action="index.html" class="form2">
-      <button type="submit" class="block">Tools</button>
+    <form action="" method="POST">
+      <button type="submit" name="view" value="Advanced">Advanced Settings</button>
     </form>
     </div>
   </div>

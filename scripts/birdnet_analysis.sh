@@ -166,9 +166,9 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
-	--sensitivity "${SENSITIVITY}" \
+      	--sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
-	--include_list "${INCLUDE_LIST}"
+	      --include_list "${INCLUDE_LIST}"
     elif [ -f ${1}/${i} ] && [ ! -f ${INCLUDE_LIST} ] && [ -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
       echo "analyze.py \
 --i "${1}/${i}" \
@@ -187,9 +187,9 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
-	--sensitivity "${SENSITIVITY}" \
+	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
-	--exclude_list "${EXCLUDE_LIST}"
+	      --exclude_list "${EXCLUDE_LIST}"
     elif [ -f ${1}/${i} ] && [ -f ${INCLUDE_LIST} ] && [ -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
       echo "analyze.py \
 --i "${1}/${i}" \
@@ -209,7 +209,7 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
-	--sensitivity "${SENSITIVITY}" \
+	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
         --include_list "${INCLUDE_LIST}" \
         --exclude_list "${EXCLUDE_LIST}" 
@@ -231,7 +231,7 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
-	--sensitivity "${SENSITIVITY}" \
+	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
         --birdweather_id "${BIRDWEATHER_ID}" 
     elif [ -f ${1}/${i} ] && [ -f ${INCLUDE_LIST} ] && [ ! -f ${EXCLUDE_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
@@ -253,7 +253,7 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
-	--sensitivity "${SENSITIVITY}" \
+	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
         --include_list "${INCLUDE_LIST}" \
         --birdweather_id "${BIRDWEATHER_ID}" 
@@ -276,7 +276,7 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
-	--sensitivity "${SENSITIVITY}" \
+	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
         --exclude_list "${EXCLUDE_LIST}" \
         --birdweather_id "${BIRDWEATHER_ID}" 
@@ -300,7 +300,7 @@ run_analysis() {
         --lon "${LONGITUDE}" \
         --week "${WEEK}" \
         --overlap "${OVERLAP}" \
-	    --sensitivity "${SENSITIVITY}" \
+	      --sensitivity "${SENSITIVITY}" \
         --min_conf "${CONFIDENCE}" \
         --include_list "${INCLUDE_LIST}" \
         --exclude_list "${EXCLUDE_LIST}" \
