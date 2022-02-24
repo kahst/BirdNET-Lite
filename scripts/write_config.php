@@ -2,6 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors',1);
 
+if(isset($_POST["latitude"])){
 $latitude = $_POST["latitude"];
 $longitude = $_POST["longitude"];
 $birdweather_id = $_POST["birdweather_id"];
@@ -31,6 +32,7 @@ $language = $_POST["language"];
 if ($language != "none"){
   $command = "sudo -upi mv /home/pi/BirdNET-Pi/model/labels.txt /home/pi/BirdNET-Pi/model/labels.txt.old && sudo -upi unzip /home/pi/BirdNET-Pi/model/labels_l18n.zip $language -d /home/pi/BirdNET-Pi/model && sudo -upi mv /home/pi/BirdNET-Pi/model/$language /home/pi/BirdNET-Pi/model/labels.txt";
   $command_output = `$command`;
+}
 }
 ?>
 

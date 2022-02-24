@@ -66,18 +66,20 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
         <option value="labels_uk.txt">Ukrainian</option>
       </select>
       <br><br>
-      <button type="submit" name="view" value="Settings"><?php
-if(isset($_POST['status'])){
+      <input type="hidden" name="submit" value="settings">
+      <button type="submit" name="view" value="Settings">
+<?php
+if(isset($_POST['submit'])){
   echo "Success!";
 } else {
   echo "Update Settings";
 }
-?></button>
-    </form>
-    <form action="" method="POST">
-      <button type="submit" name="view" value="Advanced">Advanced Settings</button>
-    </form>
+?>
+      </button>
+      </form>
+      <form action="" method="POST">
+        <button type="submit" name="view" value="Advanced">Advanced Settings</button>
+      </form>
     </div>
   </div>
 </body>
-

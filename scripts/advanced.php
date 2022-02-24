@@ -166,9 +166,7 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 ?>
       <h2>Advanced Settings</h2>
   <body>
-  <div class="row">
-    <div class="column first">
-    <form action="advanced.php" method="POST">
+    <form action="" method="POST">
       <h3>Defaults</h3>
       <label>Full Disk Behavior: </label>
       <label for="purge">
@@ -192,7 +190,7 @@ if (strcmp($newconfig['FULL_DISK'], "purge") == 0) {
       <p>Set Channels to the number of channels supported by your sound card. 32 max.</p>
       <label for="recording_length">Recording Length: </label>
       <input name="recording_length" type="number" min="3" max="60" step="1" value="<?php print($newconfig['RECORDING_LENGTH']);?>" required/><br>
-  <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
+      <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
       <label for="extraction_length">Extraction Length: </label>
       <input name="extraction_length" type="number" min="3" max="<?php print($newconfig['RECORDING_LENGTH']);?>" value="<?php print($newconfig['EXTRACTION_LENGTH']);?>" /><br>
       <p>Set Extraction Length to something less than your Recording Length. Min=3 Max=Recording Length</p>
@@ -212,8 +210,6 @@ foreach($formats as $format){
       <p>This password protects the Live Audio Stream, the Processed extractions, phpSysInfo, your Tools, and WebTerminal. When you update this value, the web server will reload, so wait about 30 seconds and then reload the page.</p>
       <label for="ice_pwd">Live Audio Stream: </label>
       <input name="ice_pwd" type="text" value="<?php print($newconfig['ICE_PWD']);?>" required/><br>
-    </div>
-    <div class="column second">
       <h3>Custom URLs</h3>
       <p>When you update any of the URL settings below, the web server will reload, so be sure to wait at least 30 seconds and then reload the page.</p>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
@@ -236,24 +232,18 @@ foreach($formats as $format){
       <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($newconfig['SENSITIVITY']);?>" required/><br>
       <p>Min=0.5, Max=1.5</p>
       <br><br>
-      <button type="submit" name="submit" class="block"><?php
-
+      <button type="submit" name="submit" value="advanced">
+<?php
 if(isset($_SESSION['success'])){
   echo "Success!";
   unset($_SESSION['success']);
 } else {
   echo "Update Settings";
 }
-?></button>
+?>    </button>
       <br>
-    </form>
-    <form action="config.php">
-      <button type="submit" class="block">Basic Settings</button>
-    </form>
-      <br>
-    <form action="index.html">
-      <button type="submit" class="block">Tools</button>
-    </form>
-</div>
-</div>
+      </form>
+      <form action="" method="POST">
+        <button type="submit" name="view" value="Settings">Basic Settings</button>
+      </form>
 </body>
