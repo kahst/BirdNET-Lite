@@ -25,13 +25,68 @@ foreach($pages as $page){
     echo $response;
   }
 if(isset($_POST['view'])){
+  if($_POST['view'] == "System"){header('location:phpsysinfo/index.php');}
+  if($_POST['view'] == "Spectrogram"){include('spectrogram.php');}
   if($_POST['view'] == "Overview"){include('overview.php');}
   if($_POST['view'] == "Database"){include('viewdb.php');}
+  if($_POST['view'] == "Included"){
+    if(isset($_POST['species']) && isset($_POST['add'])){
+      $file='/home/pi/BirdNET-Pi/include_species_list.txt';
+      $str=file_get_contents("$file");
+      $str = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $str);
+      file_put_contents("$file", "$str");
+      if(isset($_POST['species'])){
+        foreach ($_POST['species'] as $selectedOption)
+        file_put_contents("/home/pi/BirdNET-Pi/include_species_list.txt", $selectedOption."\n", FILE_APPEND);
+      }
+    } elseif(isset($_POST['species']) && isset($_POST['del'])){
+        $file = '/home/pi/BirdNET-Pi/include_species_list.txt';
+        $str = file_get_contents("$file");
+        $str = preg_replace('/^\h*\v+/m', '', $str);
+        file_put_contents("$file", "$str");
+        foreach($_POST['species'] as $selectedOption) {
+        $content = file_get_contents("/home/pi/BirdNET-Pi/include_species_list.txt");
+        $newcontent = str_replace($selectedOption, "", "$content");
+        file_put_contents("/home/pi/BirdNET-Pi/include_species_list.txt", "$newcontent");
+        }
+        $file = '/home/pi/BirdNET-Pi/include_species_list.txt';
+        $str = file_get_contents("$file");
+        $str = preg_replace('/^\h*\v+/m', '', $str);
+        file_put_contents("$file", "$str");
+    }
+    include('scripts/include_list.php');
+  }
+  if($_POST['view'] == "Excluded"){
+    if(isset($_POST['species']) && isset($_POST['add'])){
+      $file = '/home/pi/BirdNET-Pi/exclude_species_list.txt';
+      $str = file_get_contents("$file");
+      $str = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $str);
+      file_put_contents("$file", "$str");
+      foreach ($_POST['species'] as $selectedOption)
+        file_put_contents("/home/pi/BirdNET-Pi/exclude_species_list.txt", $selectedOption."\n", FILE_APPEND);
+    } elseif (isset($_POST['species']) && isset($_POST['del'])){
+      $file = '/home/pi/BirdNET-Pi/exclude_species_list.txt';
+      $str = file_get_contents("$file");
+      $str = preg_replace('/^\h*\v+/m', '', $str);
+      file_put_contents("$file", "$str");
+      foreach($_POST['species'] as $selectedOption) {
+        $content = file_get_contents("/home/pi/BirdNET-Pi/exclude_species_list.txt");
+        $newcontent = str_replace($selectedOption, "", "$content");
+        file_put_contents("/home/pi/BirdNET-Pi/exclude_species_list.txt", "$newcontent");
+      }
+      $file = '/home/pi/BirdNET-Pi/exclude_species_list.txt';
+      $str = file_get_contents("$file");
+      $str = preg_replace('/^\h*\v+/m', '', $str);
+      file_put_contents("$file", "$str");
+    }
+    include('scripts/exclude_list.php');
+  }
   if($_POST['view'] == "Species Stats"){
     include('stats.php');
     if(isset($_POST['species'])){
-    $data = [ 'species' => $_POST['species'] ];
-    httpPost('/stats.php', $data);}
+      $data = [ 'species' => $_POST['species'] ];
+      httpPost('/stats.php', $data);
+    }
   }
   if($_POST['view'] == "History"){
     include('history.php');
@@ -42,40 +97,32 @@ if(isset($_POST['view'])){
     echo "<form action=\"\" method=\"POST\">
       <button type=\"submit\" name=\"view\" value=\"Settings\">Settings</button>
       <button type=\"submit\" name=\"view\" value=\"System\">System Info</button>
-    </form>";
+      <button type=\"submit\" name=\"view\" value=\"Included\">Custom Species List</button>
+      <button type=\"submit\" name=\"view\" value=\"Excluded\">Excluded Species List</button>
+      </form>";
   }
   if($_POST['view'] == "Live Stream"){
-    echo "<div class=\"stream\"><audio controls autoplay><source src=\"/stream\" type=\"audio/mpeg\"></audio></div>";}
+    echo "<audio controls autoplay><source src=\"/stream\" type=\"audio/mpeg\"></audio>";}
   if($_POST['view'] == "Extractions"){
     include('play.php');
     $data = [];
     httpPost('/play.php', $data);}
-  while($_POST['view'] == "Spectrogram"){
-    ob_start();
-    $time = time();
-    echo str_pad("<img src=\"/spectrogram.png?nocache=$time\">", '4096');
-    ob_flush();
-    flush();
-    sleep($config['RECORDING_LENGTH']);
-    ob_clean();
-    ob_end_clean();
-    ob_end_flush();}
-  if($_POST['view'] == "Settings"){
-    if(isset($_POST['submit'])){
-      $data = [
-        'latitude' => $_POST["latitude"],
-        'longitude' => $_POST["longitude"],
-        'birdweather_id' => $_POST["birdweather_id"],
-        'pushed_app_key' => $_POST["pushed_app_key"],
-        'pushed_app_secret' => $_POST["pushed_app_secret"],
-        'language' => $_POST["language"],
-        'submit' => $_POST["submit"],
-      ];
-      $url = $_SERVER['HTTP_REFERER'];
-      httpPost("$url/scripts/update_config.php", $data);
-    }
-    include('scripts/config.php');
-  } 
+    if($_POST['view'] == "Settings"){
+      if(isset($_POST['submit'])){
+        $data = [
+          'latitude' => $_POST["latitude"],
+          'longitude' => $_POST["longitude"],
+          'birdweather_id' => $_POST["birdweather_id"],
+          'pushed_app_key' => $_POST["pushed_app_key"],
+          'pushed_app_secret' => $_POST["pushed_app_secret"],
+          'language' => $_POST["language"],
+          'submit' => $_POST["submit"],
+        ];
+        $url = $_SERVER['HTTP_REFERER'];
+        httpPost("$url/scripts/update_config.php", $data);
+      }
+      include('scripts/config.php');
+    } 
   if($_POST['view'] == "Advanced"){
     if(isset($_POST['submit'])){
       $data = [
@@ -100,7 +147,6 @@ if(isset($_POST['view'])){
     }
     include('scripts/advanced.php');
   }
-  if($_POST['view'] == "System"){header('location:phpsysinfo/index.php');}
   if($_POST['view'] == "Log"){
     $url = 'http://birdnetpi.local:8080';
     header("location: $url;");}

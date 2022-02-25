@@ -67,8 +67,6 @@ sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phps
 sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
 sudo -u ${USER} cp -f $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
 
-echo "Setting Wttr.in URL to "${LATITUDE}", "${LONGITUDE}""
-sudo -u${USER} sed -i "s/https:\/\/v2.wttr.in\//https:\/\/v2.wttr.in\/"${LATITUDE},${LONGITUDE}"/g" $(dirname ${my_dir})/homepage/menu.html
 sudo chmod -R g+rw $(dirname ${my_dir})
 sudo chmod -R g+rw ${RECS_DIR}
 
