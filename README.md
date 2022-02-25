@@ -16,7 +16,7 @@ BirdNET-Pi is built on the [TFLite version of BirdNET](https://github.com/kahst/
 
 Check out birds from around the world
 - [BirdWeather](https://app.birdweather.com)<br>
-- [My system in North Carolina, United States](https://birdnetpi.pmcgui.xyz)<br>
+- [My system in North Carolina, United States](https://birdnetpi.pmcgui.xyz)* **Currently down for testing**<br>
 - [NatureStation.net in Johannesburg, South Africa](https://birds.naturestation.net)<br>
 - [BirdNET-Pi in Öringe, Tyresö, Sweden](https://birdnet.svardsten.se)<br>
 - [Private Nature Garden, Grevenbroich, Germany](http://birdnetgv.ddnss.de)<br>
