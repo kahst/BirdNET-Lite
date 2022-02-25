@@ -27,7 +27,8 @@ foreach($eachlines as $lines){
       <button type="submit" name="view" value="Included" form="add">Add to list</button><br>
       <button type="submit" name="view" value="Included" form="del">Remove from list</button>
 
-        <h2>Included Species List</h2>
+        <h2>Custom Species List</h2>
+        <p>Warning!<br>If this list contains ANY species, the system will ONLY recognize those species. Keep this list EMPTY unless you are ONLY interested in detecting specific species.<br>You have been warned!</p>
         <form action="" method="POST" id="del">
 	<select name="species[]" id="value2" multiple size="30">
 	<option selected value="base">Please Select</option>

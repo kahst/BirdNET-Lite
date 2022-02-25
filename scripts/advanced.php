@@ -146,10 +146,6 @@ if(isset($_POST['submit'])) {
   $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
   fwrite($fh, $contents);
   fwrite($fh2, $contents2);
-  @session_start();
-  if(true){
-    $_SESSION['success'] = 1;
-  }
 }
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
