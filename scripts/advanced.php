@@ -152,7 +152,6 @@ if(isset($_POST['submit'])) {
   }
 }
 ?>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   </style>
@@ -232,15 +231,16 @@ foreach($formats as $format){
       <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($newconfig['SENSITIVITY']);?>" required/><br>
       <p>Min=0.5, Max=1.5</p>
       <br><br>
+      <input type="hidden" name="view" value="Advanced">
       <button type="submit" name="submit" value="advanced">
 <?php
-if(isset($_SESSION['success'])){
+if(isset($_POST['submit'])){
   echo "Success!";
-  unset($_SESSION['success']);
 } else {
   echo "Update Settings";
 }
-?>    </button>
+?>
+      </button>
       <br>
       </form>
       <form action="" method="POST">

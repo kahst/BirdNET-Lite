@@ -349,7 +349,7 @@ def handle_client(conn, addr):
                                 Week = str(args.week)
                                 Sens = str(args.sensitivity)
                                 Overlap = str(args.overlap)
-                                Com_Name = Com_Name.replate("'", "")
+                                Com_Name = Com_Name.replace("'", "")
                                 File_Name = Com_Name.replace(" ", "_") + '-' + Confidence + '-' + \
                                         Date.replace("/", "-") + '-birdnet-' + Time + audiofmt
 
