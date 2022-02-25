@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <div class="banner">
 <h1>BirdNET-Pi</h1>
 <form action="" method="POST">
