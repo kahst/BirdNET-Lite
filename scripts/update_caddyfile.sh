@@ -70,7 +70,6 @@ fi
 sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f homepage/*
 sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f scripts/*
 sudo -u${USER} git -C /home/pi/BirdNET-Pi checkout -f scripts/*/*
-sudo -u${USER} sed -i "s/wttr.in/wttr.in\/${LATITUDE},${LONGITUDE}/g" $(dirname ${my_dir})/homepage/menu.html
 
 if [ ! -z ${BIRDNETLOG_URL} ];then
   BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
@@ -88,7 +87,7 @@ sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(di
 if [ ! -z ${WEBTERMINAL_URL} ];then
   WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
 elif [ -z ${BIRDNETPI_URL} ];then
-  WEBTERMINAL_URL="http:\/\/$(hostname).local:8080"
+  WEBTERMINAL_URL="http:\/\/$(hostname).local:8888"
 else
   WEBTERMINAL_URL="${BIRDNETPI_URL}:8888"
 fi
