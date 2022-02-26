@@ -82,7 +82,7 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
       <tr>
       <td><?php echo $totalcount['COUNT(*)'];?></td>
       <form action="" method="POST">
-      <td><input type="hidden" name="view" value="Extractions"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button></td>
+      <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button></td>
       </form>
       <td><?php echo $hourcount['COUNT(*)'];?></td>
       <form action="" method="POST">

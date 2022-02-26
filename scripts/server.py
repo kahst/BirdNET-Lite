@@ -367,44 +367,45 @@ def handle_client(conn, addr):
                                 print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + ';' + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + Com_Name.replace(" ", "_") + '-' + str(score) + '-' + str(current_date) + '-birdnet-' + str(current_time) + audiofmt  + '\n')
 
                                 if birdweather_id != "99999":
+                                    try:
 
-                                    if soundscape_uploaded is False:
-                                        # POST soundscape to server
-                                        soundscape_url = "https://app.birdweather.com/api/v1/stations/" + birdweather_id +  "/soundscapes" + "?timestamp=" + current_iso8601
-
-                                        with open(args.i, 'rb') as f:
-                                            wav_data = f.read()
-                                        response = requests.post(url=soundscape_url, data=wav_data, headers={'Content-Type': 'application/octet-stream'})
-                                        print("Soundscape POST Response Status - ", response.status_code)
-                                        sdata = response.json()
-                                        soundscape_id = sdata['soundscape']['id']
-                                        soundscape_uploaded = True
-
-                                    # POST detection to server
-                                    detection_url = "https://app.birdweather.com/api/v1/stations/" + birdweather_id + "/detections"
-                                    start_time = d.split(';')[0]
-                                    end_time = d.split(';')[1]
-                                    post_begin = "{ "
-                                    now_p_start = now + datetime.timedelta(seconds=float(start_time))
-                                    current_iso8601 = now_p_start.astimezone(get_localzone()).isoformat()
-                                    post_timestamp =  "\"timestamp\": \"" + current_iso8601 + "\","
-                                    post_lat = "\"lat\": " + str(args.lat) + ","
-                                    post_lon = "\"lon\": " + str(args.lon) + ","
-                                    post_soundscape_id = "\"soundscapeId\": " + str(soundscape_id) + ","
-                                    post_soundscape_start_time = "\"soundscapeStartTime\": " + start_time + ","
-                                    post_soundscape_end_time = "\"soundscapeEndTime\": " + end_time + ","
-                                    post_commonName = "\"commonName\": \"" + entry[0].split('_')[1] + "\","
-                                    post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
-                                    post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
-                                    post_confidence = "\"confidence\": " + str(entry[1])
-                                    post_end = " }"
-
-                                    post_json = post_begin + post_timestamp + post_lat + post_lon + post_soundscape_id + post_soundscape_start_time + post_soundscape_end_time + post_commonName + post_scientificName + post_algorithm + post_confidence + post_end
-                                    print(post_json)
-                                    response = requests.post(detection_url, json=json.loads(post_json))
-                                    print("Detection POST Response Status - ", response.status_code)
-
-                
+                                        if soundscape_uploaded is False:
+                                            # POST soundscape to server
+                                            soundscape_url = "https://app.birdweather.com/api/v1/stations/" + birdweather_id +  "/soundscapes" + "?timestamp=" + current_iso8601
+    
+                                            with open(args.i, 'rb') as f:
+                                                wav_data = f.read()
+                                            response = requests.post(url=soundscape_url, data=wav_data, headers={'Content-Type': 'application/octet-stream'})
+                                            print("Soundscape POST Response Status - ", response.status_code)
+                                            sdata = response.json()
+                                            soundscape_id = sdata['soundscape']['id']
+                                            soundscape_uploaded = True
+    
+                                        # POST detection to server
+                                        detection_url = "https://app.birdweather.com/api/v1/stations/" + birdweather_id + "/detections"
+                                        start_time = d.split(';')[0]
+                                        end_time = d.split(';')[1]
+                                        post_begin = "{ "
+                                        now_p_start = now + datetime.timedelta(seconds=float(start_time))
+                                        current_iso8601 = now_p_start.astimezone(get_localzone()).isoformat()
+                                        post_timestamp =  "\"timestamp\": \"" + current_iso8601 + "\","
+                                        post_lat = "\"lat\": " + str(args.lat) + ","
+                                        post_lon = "\"lon\": " + str(args.lon) + ","
+                                        post_soundscape_id = "\"soundscapeId\": " + str(soundscape_id) + ","
+                                        post_soundscape_start_time = "\"soundscapeStartTime\": " + start_time + ","
+                                        post_soundscape_end_time = "\"soundscapeEndTime\": " + end_time + ","
+                                        post_commonName = "\"commonName\": \"" + entry[0].split('_')[1] + "\","
+                                        post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
+                                        post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
+                                        post_confidence = "\"confidence\": " + str(entry[1])
+                                        post_end = " }"
+    
+                                        post_json = post_begin + post_timestamp + post_lat + post_lon + post_soundscape_id + post_soundscape_start_time + post_soundscape_end_time + post_commonName + post_scientificName + post_algorithm + post_confidence + post_end
+                                        print(post_json)
+                                        response = requests.post(detection_url, json=json.loads(post_json))
+                                        print("Detection POST Response Status - ", response.status_code)
+                                    except:
+                                        print("Cannot POST right now")
                 conn.send(myReturn.encode(FORMAT))
 
                                 #time.sleep(3)

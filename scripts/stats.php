@@ -98,26 +98,31 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   $dbsciname = preg_replace('/ /', '_', $sciname);
   $comname = preg_replace('/ /', '_', $results['Com_Name']);
   $comname = preg_replace('/\'/', '', $comname);
+  $linkname = preg_replace('/_/', '+', $dbsciname);
   $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
-  $imagelink = shell_exec("/home/pi/BirdNET-Pi/scripts/get_image.sh $dbsciname");
-  $imagecitation = shell_exec("/home/pi/BirdNET-Pi/scripts/get_citation.sh $dbsciname");
   echo str_pad("<tr>
   <td><a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/>$sciname</a></td>
   <td>$count</td>
   <td>$maxconf</td>
-  <td>$date $time <audio controls><source src=\"$filename\"></audio></td>
+  <td>$date $time<br><audio controls><source src=\"$filename\"></audio></td>
   <td><a href=\"https://allaboutbirds.org/guide/$comname\" target=\"top\"/>All About Birds</a></td>
   </tr>
-    </table>", '4096');
+    </table>
+  <p>Loading Images from https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image</p>", '6096');
+  
   ob_flush();
   flush();
-  echo str_pad("<img class=\"center\" src=\"$imagelink\">
-  <pre>$imagecitation</pre></td>
-  </div>  
-</div>
-</div>", '4096');
-  ob_flush();
-  flush();
+  $imagelink = "https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image";
+  $homepage = file_get_contents($imagelink);
+  preg_match_all("{<img\\s*(.*?)src=('.*?'|\".*?\"|[^\\s]+)(.*?)\\s*/?>}ims", $homepage, $matches, PREG_SET_ORDER);
+  foreach ($matches as $val) {
+      $pos = strpos($val[2],"/");
+      $link = substr($val[2],1,-1);
+      if($pos == 1)
+          echo "http://domain.com" . $link;
+      elseif(strpos($link, "upload") == true)
+          echo "<img src=\"$link\">";
+  }
 }}
 ?>
 

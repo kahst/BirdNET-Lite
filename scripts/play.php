@@ -65,7 +65,7 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
   <tr>
     <form action="" method="POST">
     <td>
-    <input type="hidden" name="view" value="Extractions">
+    <input type="hidden" name="view" value="Recordings">
 <?php
   if($view == "bydate"){
     $date = $results['Date'];

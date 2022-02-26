@@ -44,6 +44,7 @@ if($statement4 == False) {
 $result4 = $statement4->execute();
 $mostrecent = $result4->fetchArray(SQLITE3_ASSOC);
 $comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
+$sciname = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
 $comname = preg_replace('/\'/', '', $comname);
 $filename = "/By_Date/".$mostrecent['Date']."/".$comname."/".$mostrecent['File_Name'];
 
@@ -79,7 +80,7 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
       <tr>
         <td><?php echo $totalcount['COUNT(*)'];?></td>
         <form action="" method="POST">
-        <td><input type="hidden" name="view" value="Extractions"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button></td>
+        <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button></td>
         </form>
         <td><?php echo $hourcount['COUNT(*)'];?></td>
         <form action="" method="POST">
@@ -100,7 +101,7 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
       </tr>
       <tr>
         <td><?php echo $mostrecent['Date']."<br>".$mostrecent['Time'];?></td>
-        <td><a href="https://wikipedia.org/wiki/<?php echo $scilink;?>" target="top"/><?php echo $mostrecent['Sci_Name'];?></a></td>
+        <td><a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><?php echo $mostrecent['Sci_Name'];?></a></td>
         <form action="" method="POST">
           <td>
             <input type="hidden" name="view" value="Species Stats">

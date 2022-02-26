@@ -1,96 +1,133 @@
-/* style sheet */
 * {
   font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
   ' Calibri', 'Trebuchet MS', 'sans-serif';
   box-sizing: border-box;
 }
 
-/* Create two equal columns that floats next to each other */
-.column2 {
+.banner {
+  height: auto;
+  text-align: center;
+}
+
+.banner h1 {
+  float: top;
+}
+
+.banner audio {
+  width: 120px;
   margin-left: auto;
   margin-right: auto;
-  width: 75%;
-  padding: 5px;
 }
 
-/* Create two equal columns that floats next to each other */
-.column {
+/* Add a black background color to the top navigation */
+.topnav {
+  overflow: hidden;
+  background-color: rgb(119, 196, 135);
+  width:100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Style the links inside the navigation bar */
+.topnav button {
   float: left;
-  width: 50%;
-  padding: 5px;
+  display: block;
+  text-align: center;
+  padding: 14px 16px;
 }
 
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
+/* Change the color of links on hover */
+.topnav button:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Add an active class to highlight the current page */
+.topnav button.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+/* Hide the link that should open and close the topnav on small screens */
+.topnav .icon {
+  display: none;
+}
+
+.topnav form {
+  float:left;
+}
+
+iframe {
+  border: none;
+  height: 85%;
+  width: 100%;
+}
+
+body {
+  background-color: rgb(119, 196, 135);
 }
 
 table {
-  background-color: rgb(219, 255, 235);
+  background-color: transparent;
   margin: 0 auto;
   font-size: large;
   border-collapse: collapse;
   border-spacing: 0;
   width: 100%;
-  border: 1px solid black;
-}
-
-h1 {
-  text-align: center;
-  color: black;
-  font-size: xx-large;
-}
-
-h2 {
-  margin-left: -150px;
-  text-align: center;
-  color: black;
-  font-size: large;
-}
-
-h3 {
-  text-align: center;
-  color: black;
-  font-size: large;
+/*  border: 1px solid black;*/
 }
 
 td {
   background-color: rgb(219, 255, 235);
   font-weight: lighter;
-  border: 1px solid black;
-  padding: 10px;
+  border: 2px solid black;
   text-align: center;
 }
 
 th {
-  background-color: rgb(219, 255, 235);
   font-weight: bold;
-  border: 1px solid black;
-  padding: 10px;
+  height: auto;
   text-align: center;
 }
 
-@media screen and (max-width: 600px) {
-  h2 {
-    margin-left: 0;
-    text-align: center;
-    color: black;
-    font-size: large;
-  }
-
-  .column {
-    width: 100%;
-  }
-  /* Create two equal columns that floats next to each other */
-  .column2 {
-    float: center;
-    width: 100%;
-    padding: 0px;
-  }
-
-
+audio {
+  width: 100%;
 }
+
+button {
+  font-size: large;
+  background-color: transparent;
+  border: none;
+  color: black;
+  cursor: pointer;
+}
+
+.spectrogrambutton, .logbutton, .navbuttons {
+  float: left;
+}
+
 body::-webkit-scrollbar {
   display:none
+}
+
+@media screen and (max-width: 1000px) {
+  .topnav button {display: none;}
+  .topnav form {float: none;}
+  /*.topnav button:not(:first-child) {display: none;}*/
+  .topnav button.icon {
+    display: block;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive button {
+    float: left;
+    display: block;
+    text-align: center;
+  }
+}
