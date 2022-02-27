@@ -30,16 +30,28 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
   echo "<h1>BirdNET-Pi</h1><form action=\"\" method=\"GET\"><button type=\"submit\" name=\"stream\" value=\"play\">Live Audio</button></form>";
 }
 echo "</div>";
-if(isset($_GET['log'])){
+if(isset($_GET['log'])) {
   if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
     $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
-    $logs = $config['BIRDNETLOG_URL'];
+    if(empty($config['BIRDNETLOG_URL']) !== true) {
+      $logs = $config['BIRDNETLOG_URL'];
+    } elseif(empty($config['BIRDNETPI_URL'] !== true)) {
+      $logs = $config['BIRDNETPI_URL'].":8080";
+    } else {
+      $logs = "http://birdnetpi.local:8080";
+    }
   } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
     $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
-    $logs = $config['BIRDNETLOG_URL'];
+    if(empty($config['BIRDNETLOG_URL']) !== true){
+      $logs = $config['BIRDNETLOG_URL'];
+    } elseif(empty($config['BIRDNETPI_URL'] !== true)) {
+      $logs = $config['BIRDNETPI_URL'].":8080";
+    } else {
+      $logs = "http://birdnetpi.local:8080";
+    }
   }
   header("Location: $logs");
-}elseif(isset($_GET['spectrogram'])){
+} elseif(isset($_GET['spectrogram'])){
   header("Location: /spectrogram.php");
 } else {
   echo "<iframe src=\"/views.php\" width=\"100%\" height=\"85%\">";

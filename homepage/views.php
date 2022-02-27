@@ -11,7 +11,7 @@
   <button type="submit" name="view" value="Recordings" id="views">Recordings</button>
 </form>
 <form action="index.php" method="GET" id="log">
-  <button type="submit" name="log" value="log" id="log">View Log</button>
+  <button type="submit" name="log" value="log" id="Log">View Log</button>
 </form>
 <form action="index.php" method="GET" id="spectrogram">
   <button style="float:none;"type="submit" name="spectrogram" value="view" id="spectrogram">Spectrogram</button>
@@ -61,10 +61,6 @@ if(isset($_POST['view'])){
   if($_POST['view'] == "Recordings"){include('play.php');}
   if($_POST['view'] == "Settings"){include('scripts/config.php');} 
   if($_POST['view'] == "Advanced"){include('scripts/advanced.php');}
-  if($_POST['view'] == "Log"){
-    $url = 'http://birdnetpi.local:8080';
-    header("location: $url;");
-  }
   if($_POST['view'] == "Included"){
     if(isset($_POST['species']) && isset($_POST['add'])){
       $file = '/home/pi/BirdNET-Pi/include_species_list.txt';
