@@ -32,23 +32,24 @@ if(isset($_POST['species'])){
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BirdNET-Pi DB</title>
+  <link rel="stylesheet" href="../style.css">
+
 <style>
-  </style>
+</style>
+
 </head>
 <body>
 
-  <section>
-<div class="row">
- <div class="column first">
 <?php if(!isset($_POST['species'])){
-    echo "<p style=\"text-align:center\">Choose a species below to load images from Wikimedia Commons.</p>";
+?><p class="centered">Choose a species below to load images from Wikimedia Commons.</p>
+<?php
 };?>
     <table>
       <tr>
-	<th>Common Name</th>
-	<th>Occurrences</th>
-	<th>Max Confidence Score</th>
-	<th>Best Recording</th>
+      	<th>Common Name</th>
+      	<th>Occurrences</th>
+      	<th>Max Confidence Score</th>
+      	<th>Best Recording</th>
       </tr>
 <?php
 while($results=$result->fetchArray(SQLITE3_ASSOC))
@@ -65,17 +66,15 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
       </form>
       <td><?php echo $results['COUNT(*)'];?></td>
       <td><?php echo $results['MAX(Confidence)'];?></td>
-      <td class="spectrogram"><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
+      <td style="width:50%"><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
       </tr>
 <?php
 }
 ?>
     </table>
-  </div>  
 <?php if(isset($_POST['species'])){
   $species = $_POST['species'];
-  $str = "<div class=\"column second\">
-   <h3>$species</h3>
+  $str = "<h3>$species</h3>
     <table>
       <tr>
 	<th>Scientific Name</th>
@@ -123,7 +122,6 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   }
 }}
 ?>
-
-  </section>
+</body>
 </html>
 

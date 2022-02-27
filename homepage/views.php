@@ -26,7 +26,7 @@ if(isset($_POST['view'])){
   if($_POST['view'] == "Spectrogram"){include('spectrogram.php');}
   if($_POST['view'] == "Overview"){include('overview.php');}
   if($_POST['view'] == "Today's Detections"){include('viewdb.php');}
-  if($_POST['view'] == "Species Stats"){include('stats.php');}
+  if($_POST['view'] == "Species Stats"){echo "<br><br>";include('stats.php');}
   if($_POST['view'] == "Daily Charts"){include('history.php');}
   if($_POST['view'] == "Tools"){
     if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {

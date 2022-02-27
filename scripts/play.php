@@ -56,6 +56,7 @@ if(isset($_POST['bydate'])){
     </style>
   </head>
 <body>
+<div class="play">
 <table>
 <?php
 if(!isset($_POST['species'])){
@@ -86,20 +87,20 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
     $comname = preg_replace('/\'/', '', $comname);
     $file = $results['File_Name'];
     $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
-    echo "<table>
+    echo "<table >
       <tr>
-      <th>$name</th>
-      <th>Max Confidence: $maxconf</th>
+      <th colspan=\"2\">$name</th>
+      <th></th>
       </tr>
       <tr>
-      <th>Most confident recording: </th>
-      <td class=\"spectrogram\"><video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
+      <td class=\"spectrogram\">Best Recording<br>$maxconf<br><video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
       </tr></table>";
     };};?>
     </td>
     </form>
   </tr>
 </table>
+</div>
 <?php
   if(isset($_POST['species'])){
     $name = $_POST['species'];
@@ -109,7 +110,7 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
       header("refresh: 0;");
     }
     $result2 = $statement2->execute();
-    echo "<table>
+    echo "<table >
       <tr>
       <th>When</th>
       <th>Listen</th>

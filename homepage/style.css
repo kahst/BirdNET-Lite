@@ -2,6 +2,7 @@
   font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
   ' Calibri', 'Trebuchet MS', 'sans-serif';
   box-sizing: border-box;
+  font-size: large;
 }
 
 .banner {
@@ -11,6 +12,7 @@
 
 .banner h1 {
   float: top;
+  font-size: x-large;
 }
 
 .banner audio {
@@ -27,7 +29,7 @@
 }
 
 .topnav {
-  background-color: rgb(119, 196, 135);
+  background-color: rgb( 159, 226, 155);
   display: block;
 }
 
@@ -54,6 +56,28 @@
   display: none;
 }
 
+.play table {
+  width:50%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.overview td {
+  width:20%;
+}
+
+.overview table {
+  width: 75%;
+}
+
+.stats table {
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+}
+
 h3 {
   text-align: center;
 }
@@ -71,7 +95,6 @@ body {
 table {
   background-color: transparent;
   margin: 0 auto;
-  font-size: large;
   border-collapse: collapse;
   border-spacing: 0;
   width: 100%;
@@ -79,6 +102,8 @@ table {
 }
 
 td {
+  padding: 10px;
+  vertical-align: top;
   background-color: rgb(219, 255, 235);
   font-weight: lighter;
   border: 2px solid black;
@@ -100,18 +125,26 @@ audio, video{
 }
 
 .centered {
+  text-align: center;
   display: block;
   width: auto;
   margin-left: auto;
   margin-right: auto;
 }
 
+.full {
+  width:100%;
+}
+
 button {
-  font-size: large;
   background-color: transparent;
   border: none;
   color: black;
   cursor: pointer;
+}
+
+button:hover {
+  color: blue;
 }
 
 .logbutton, .navbuttons {
@@ -140,15 +173,17 @@ body::-webkit-scrollbar {
 @media screen and (max-width: 1000px) {
   .topnav.responsive {position: relative;}
   .topnav.responsive button {
-    float: left;
     display: block;
     text-align: center;
   }
 }
 
 @media screen and (max-width: 600px) {
-  .top.nav button {
-  font-size: 16px;
+  .play table,.overview table {
+    width: 100%;
+  }
+  .topnav button { 
+    font-size: xx-large;
   }
   .topnav button {display: none;}
   /*.topnav button:not(:first-child) {display: none;}*/
@@ -161,13 +196,14 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 600px) {
+  .play table,.overview table {
+    width: 100%;
+  }
   .topnav button {
-  font-size: 16px;
+    font-size: x-large;
   }
   .topnav.responsive {position: relative;}
   .topnav.responsive button {
-    float: left;
     display: block;
     text-align: center;
-  }
-}
+  }}
