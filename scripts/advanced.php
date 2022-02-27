@@ -7,6 +7,23 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
 }
+$caddypwd = $config['CADDY_PWD'];
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+  header('WWW-Authenticate: Basic realm="My Realm"');
+  header('HTTP/1.0 401 Unauthorized');
+  echo 'You cannot edit the settings for this installation';
+  exit;
+} else {
+  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+  $submitteduser = $_SERVER['PHP_AUTH_USER'];
+  if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'You cannot edit the settings for this installation';
+    exit;
+  }
+}
+
 
 if(isset($_POST['submit'])) {
   $contents = file_get_contents("/home/pi/BirdNET-Pi/birdnet.conf");
