@@ -64,7 +64,7 @@ for h in "${SCAN_DIRS[@]}";do
 	    | awk -F\; '{print $5}')""
 	    
     #CONFIDENCE_SCORE="${CONFIDENCE:0:2}%"
-    CONFIDENCE_SCORE="$(printf %.0f $(echo "scale=2; ${CONFIDENCE} * 100" | bc))"
+    CONFIDENCE_SCORE="$(printf %.0f "$(echo "scale=2; ${CONFIDENCE} * 100" | bc)")"
     NEWFILE="${COMMON_NAME// /_}-${CONFIDENCE_SCORE}-${OLDFILE//.wav/.${AUDIOFMT}}"
     echo "NEWFILE=$NEWFILE"
     NEWSPECIES_BYDATE="${EXTRACTED}/By_Date/${DATE}/${COMMON_NAME// /_}"

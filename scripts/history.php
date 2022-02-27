@@ -28,7 +28,7 @@ $totalcount = $result1->fetchArray(SQLITE3_ASSOC);
 <body>
 <form action="" method="POST">
   <input type="date" name="date" value="<?php echo $theDate;?>">
-  <button type="submit" name="view" value="History">Submit Date</button>
+  <button type="submit" name="view" value="Daily Charts">Submit Date</button>
 </form>
 <div>
 		<table>

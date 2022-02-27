@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<div class="topbar">
 <div class="topnav" id="myTopnav">
 <form action="" method="POST" id="views">
   <button type="submit" name="view" value="Overview" id="views">Overview</button>
@@ -13,11 +14,12 @@
   <button type="submit" name="log" value="log" id="log">View Log</button>
 </form>
 <form action="index.php" method="GET" id="spectrogram">
-  <button type="submit" name="spectrogram" value="view" id="spectrogram">Spectrogram</button>
+  <button style="float:none;"type="submit" name="spectrogram" value="view" id="spectrogram">Spectrogram</button>
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>
-
+</div>
+</body>
 <?php
 if(isset($_POST['view'])){
   if($_POST['view'] == "System"){header('location:phpsysinfo/index.php');}
@@ -27,12 +29,34 @@ if(isset($_POST['view'])){
   if($_POST['view'] == "Species Stats"){include('stats.php');}
   if($_POST['view'] == "Daily Charts"){include('history.php');}
   if($_POST['view'] == "Tools"){
-    echo "<form action=\"\" method=\"POST\">
-      <button type=\"submit\" name=\"view\" value=\"Settings\">Settings</button>
-      <button type=\"submit\" name=\"view\" value=\"System\">System Info</button>
-      <button type=\"submit\" name=\"view\" value=\"Included\">Custom Species List</button>
-      <button type=\"submit\" name=\"view\" value=\"Excluded\">Excluded Species List</button>
-      </form>";
+    if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
+      $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
+    } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
+      $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
+    }
+    $caddypwd = $config['CADDY_PWD'];
+    if (!isset($_SERVER['PHP_AUTH_USER'])) {
+      header('WWW-Authenticate: Basic realm="My Realm"');
+      header('HTTP/1.0 401 Unauthorized');
+      echo 'You cannot edit the settings for this installation';
+      exit;
+    } else {
+      $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+      $submitteduser = $_SERVER['PHP_AUTH_USER'];
+      if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
+        echo "<form action=\"\" method=\"POST\">
+        <button type=\"submit\" name=\"view\" value=\"Settings\">Settings</button>
+        <button type=\"submit\" name=\"view\" value=\"System\">System Info</button>
+        <button type=\"submit\" name=\"view\" value=\"Included\">Custom Species List</button>
+        <button type=\"submit\" name=\"view\" value=\"Excluded\">Excluded Species List</button>
+        </form>";
+      } else {
+        header('WWW-Authenticate: Basic realm="My Realm"');
+        header('HTTP/1.0 401 Unauthorized');
+        echo 'You cannot edit the settings for this installation';
+        exit;
+      }
+    }
   }
   if($_POST['view'] == "Recordings"){include('play.php');}
   if($_POST['view'] == "Settings"){include('scripts/config.php');} 
@@ -106,4 +130,4 @@ function myFunction() {
   }
 }
 </script>
-
+</body>

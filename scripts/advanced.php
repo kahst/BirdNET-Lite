@@ -199,12 +199,9 @@ foreach($formats as $format){
 }
 ?>
       </select>
-      <h3>Passwords</h3>
+      <h3>BirdNET-Pi Password</h3>
       <label for="caddy_pwd">Webpage: </label>
       <input name="caddy_pwd" type="text" value="<?php print($newconfig['CADDY_PWD']);?>" /><br>
-      <p>This password protects the Live Audio Stream, the Processed extractions, phpSysInfo, your Tools, and WebTerminal. When you update this value, the web server will reload, so wait about 30 seconds and then reload the page.</p>
-      <label for="ice_pwd">Live Audio Stream: </label>
-      <input name="ice_pwd" type="text" value="<?php print($newconfig['ICE_PWD']);?>" required/><br>
       <h3>Custom URLs</h3>
       <p>When you update any of the URL settings below, the web server will reload, so be sure to wait at least 30 seconds and then reload the page.</p>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>

@@ -108,18 +108,18 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
             <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button>
           </td>
         </form>
-        <td><audio controls><source src="<?php echo $filename;?>"></audio></td>
+        <td class="spectrogram" ><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>"></video></td>
         <td><?php echo $mostrecent['Confidence'];?></td>
       </tr>
     </table>
   </div>
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
-  echo "<img src=\"/Charts/$chart?nocache=time()\">";
+  echo "<img class=\"centered\" src=\"/Charts/$chart?nocache=time()\">";
 } else {
   echo "<p>No Detections For Today</p>";
 }
 ?>
-    <h2>Currently Analyzing</h2>
-<img src='/spectrogram.png?nocache=<?php echo time();?>' >
+    <h3>Currently Analyzing</h3>
+<img class="centered" style="width:100%;" src='/spectrogram.png?nocache=<?php echo time();?>' >
 </html>

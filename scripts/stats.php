@@ -41,7 +41,7 @@ if(isset($_POST['species'])){
 <div class="row">
  <div class="column first">
 <?php if(!isset($_POST['species'])){
-    echo "<p>Choose a species below to show statistics.</p>";
+    echo "<p style=\"text-align:center\">Choose a species below to load images from Wikimedia Commons.</p>";
 };?>
     <table>
       <tr>
@@ -65,7 +65,7 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
       </form>
       <td><?php echo $results['COUNT(*)'];?></td>
       <td><?php echo $results['MAX(Confidence)'];?></td>
-      <td><audio controls><source src="<?php echo $filename;?>"></audio></td>
+      <td class="spectrogram"><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
       </tr>
 <?php
 }
@@ -104,11 +104,11 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   <td><a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/>$sciname</a></td>
   <td>$count</td>
   <td>$maxconf</td>
-  <td>$date $time<br><audio controls><source src=\"$filename\"></audio></td>
+  <td class=\"spectrogram\">$date $time<br><video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
   <td><a href=\"https://allaboutbirds.org/guide/$comname\" target=\"top\"/>All About Birds</a></td>
   </tr>
     </table>
-  <p>Loading Images from https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image</p>", '6096');
+  <p>Loading Images from <a href=\"https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image\" target=\"_blank\">Wikimedia Commons</a></p>", '6096');
   
   ob_flush();
   flush();
@@ -118,9 +118,7 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   foreach ($matches as $val) {
       $pos = strpos($val[2],"/");
       $link = substr($val[2],1,-1);
-      if($pos == 1)
-          echo "http://domain.com" . $link;
-      elseif(strpos($link, "upload") == true)
+      if($pos !== 1 && strpos($link, "upload") == true && strpos($link, "CentralAutoLogin") == false)
           echo "<img src=\"$link\">";
   }
 }}

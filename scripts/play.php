@@ -93,7 +93,7 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
       </tr>
       <tr>
       <th>Most confident recording: </th>
-      <td><audio controls><source src=\"$filename\"></audio></td>
+      <td class=\"spectrogram\"><video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
       </tr></table>";
     };};?>
     </td>
@@ -129,7 +129,7 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
         $confidence = $results['Confidence'];
         echo "<tr>
           <td>$date $time</td>
-          <td><audio controls><source src=\"$filename\"></audio></td>
+          <td class=\"spectrogram\"><video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
           <td><a href=\"https://wikipedia.org/wiki/$sciname\" target=\"top\">$sci_name</a></td>
           <form action=\"\" method=\"POST\"> 
           <td><input type=\"hidden\" name=\"view\" value=\"Species Stats\"><button type=\"submit\" name=\"species\" value=\"$name\">$name</button>

@@ -19,31 +19,31 @@
   margin-right: auto;
 }
 
-/* Add a black background color to the top navigation */
-.topnav {
-  overflow: hidden;
-  background-color: rgb(119, 196, 135);
-  width:100%;
+.topbar {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  width: auto;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 
-/* Style the links inside the navigation bar */
+.topnav {
+  background-color: rgb(119, 196, 135);
+  display: block;
+}
+
 .topnav button {
-  float: left;
+  background-color: transparent;
   display: block;
   text-align: center;
   padding: 14px 16px;
+  float:left;
 }
 
-/* Change the color of links on hover */
 .topnav button:hover {
   background-color: #ddd;
   color: black;
 }
 
-/* Add an active class to highlight the current page */
 .topnav button.active {
   background-color: #04AA6D;
   color: white;
@@ -54,8 +54,8 @@
   display: none;
 }
 
-.topnav form {
-  float:left;
+h3 {
+  text-align: center;
 }
 
 iframe {
@@ -91,8 +91,19 @@ th {
   text-align: center;
 }
 
-audio {
+audio, video{
   width: 100%;
+}
+
+.spectrogram {
+  width:33%
+}
+
+.centered {
+  display: block;
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 button {
@@ -103,8 +114,12 @@ button {
   cursor: pointer;
 }
 
-.spectrogrambutton, .logbutton, .navbuttons {
+.logbutton, .navbuttons {
   float: left;
+}
+
+.spectrogrambutton {
+  float:top;
 }
 
 body::-webkit-scrollbar {
@@ -113,7 +128,6 @@ body::-webkit-scrollbar {
 
 @media screen and (max-width: 1000px) {
   .topnav button {display: none;}
-  .topnav form {float: none;}
   /*.topnav button:not(:first-child) {display: none;}*/
   .topnav button.icon {
     display: block;
@@ -124,6 +138,32 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 1000px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive button {
+    float: left;
+    display: block;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .top.nav button {
+  font-size: 16px;
+  }
+  .topnav button {display: none;}
+  /*.topnav button:not(:first-child) {display: none;}*/
+  .topnav button.icon {
+    display: block;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .topnav button {
+  font-size: 16px;
+  }
   .topnav.responsive {position: relative;}
   .topnav.responsive button {
     float: left;

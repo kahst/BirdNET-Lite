@@ -109,7 +109,7 @@ $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
 ?>
       <tr>
       <td><?php echo $todaytable['Time'];?></td>
-      <td><audio controls><source src="<?php echo $filename;?>"></audio></td>
+      <td class="spectrogram"><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>"></video></td>
       <td><a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><?php echo $todaytable['Sci_Name'];?></a></td>
       <td><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></td>
       <td><?php echo $todaytable['Confidence'];?></td>
