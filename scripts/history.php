@@ -26,19 +26,17 @@ $totalcount = $result1->fetchArray(SQLITE3_ASSOC);
 </style>
 </head>
 <body>
+<div class="history centered">
 <form action="" method="POST">
   <input type="date" name="date" value="<?php echo $theDate;?>">
   <button type="submit" name="view" value="Daily Charts">Submit Date</button>
 </form>
-<div>
 		<table>
 			<tr>
 				<th>Total Detections For The Day</th>
 				<td><?php echo $totalcount['COUNT(*)'];?></td>
 			</tr>
 		</table>
-</div>
-
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
   echo "<img src=\"/Charts/$chart?nocache=time()\" >";
@@ -51,4 +49,5 @@ if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart2)) {
 } else {
   echo "<p>No Charts For $theDate</p>";
 }?>
+</div>
 </html>
