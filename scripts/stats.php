@@ -49,6 +49,8 @@ if(isset($_POST['species'])){
   $str = "<h3>$species</h3>
     <table>
       <tr>
+	<th>Scientific Name</th>
+  <th>Occurrences</th>
 	<th>Highest Confidence Score</th>
 	<th>Best Recording</th>
 	<th>Links</th>
