@@ -29,7 +29,7 @@ if(isset($_POST['bydate'])){
 } elseif(isset($_POST['species'])) {
   $species = $_POST['species'];
   $statement = $db->prepare("SELECT * FROM detections WHERE Com_Name == \"$species\" ORDER BY Com_Name");
-  $statement3 = $db->prepare("SELECT Date, Time, Com_Name, MAX(Confidence), File_Name FROM detections WHERE Com_Name == \"$species\" ORDER BY Com_Name");
+  $statement3 = $db->prepare("SELECT Date, Time, Sci_Name, MAX(Confidence), File_Name FROM detections WHERE Com_Name == \"$species\" ORDER BY Com_Name");
   if($statement == False || $statement3 == False){
     echo "Database is busy";
     header("refresh: 0;");
@@ -37,7 +37,7 @@ if(isset($_POST['bydate'])){
   $result = $statement->execute();
   $result3 = $statement3->execute();
   $view = "species";
-} else {
+} elseif(isset($_POST['byspecies'])) {
   $statement = $db->prepare('SELECT DISTINCT(Com_Name) FROM detections ORDER BY Com_Name');
   if($statement == False){
     echo "Database is busy";
@@ -45,7 +45,12 @@ if(isset($_POST['bydate'])){
   }
   $result = $statement->execute();
   $view = "byspecies";
+} else {
+  $statement = $db->prepare('SELECT DISTINCT(Date), Com_Name FROM detections GROUP BY Date');
+  $result = $statement->execute();
+  $view = "choose";
 }
+
 ?>
 
 <html>
@@ -60,43 +65,53 @@ if(isset($_POST['bydate'])){
 <table>
 <?php
 if(!isset($_POST['species'])){
-while($results=$result->fetchArray(SQLITE3_ASSOC))
-{
 ?>
   <tr>
     <form action="" method="POST">
-    <td>
-    <input type="hidden" name="view" value="Recordings">
 <?php
-  if($view == "bydate"){
+  if($view == "bydate") {
+    while($results=$result->fetchArray(SQLITE3_ASSOC)){
     $date = $results['Date'];
-    echo "<button action=\"submit\" name=\"date\" value=\"$date\">$date</button>";
+    echo "<td>
+    <input type=\"hidden\" name=\"view\" value=\"Recordings\">
+    <button action=\"submit\" name=\"date\" value=\"$date\">$date</button></td></tr>";}
   } elseif($view == "byspecies") {
+    while($results=$result->fetchArray(SQLITE3_ASSOC)){
     $name = $results['Com_Name'];
-    echo "<button action=\"submit\" name=\"species\" value=\"$name\">$name</button>";
+    echo "<td>
+    <input type=\"hidden\" name=\"view\" value=\"Recordings\">
+    <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";}
   } elseif($view == "date") {
+    while($results=$result->fetchArray(SQLITE3_ASSOC)){
     $name = $results['Com_Name'];
-    echo "<button action=\"submit\" name=\"species\" value=\"$name\">$name</button>";
-  }; };} else {
-    while($results=$result3->fetchArray(SQLITE3_ASSOC)){
+    echo "<td>
+    <input type=\"hidden\" name=\"view\" value=\"Recordings\">
+    <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";}
+  } elseif($view == "choose") {
+    $date = "By Date";
+    $species = "By Species";
+    echo "<td>
+    <input type=\"hidden\" name=\"view\" value=\"Recordings\">
+    <button action=\"submit\" name=\"byspecies\" value=\"byspecies\">$species</button></td></tr>
+    <td><button action=\"submit\" name=\"bydate\" value=\"bydate\">$date</button></td></tr>";
+  } else {
+    while($results=$result->fetchArray(SQLITE3_ASSOC)){
     $maxconf = $results['MAX(Confidence)'];
     $date = $results['Date'];
     $time = $results['Time'];
-    $name = $results['Com_Name'];
-    $comname = preg_replace('/ /', '_', $name);
+    $sciname = $results['Sci_Name'];
+    $sci_name = preg_replace('/ /', '_', $sciname);
+    $sci_name = preg_replace('/ /', '_', $sci_name);
+    $comname = preg_replace('/ /', '_', $species);
     $comname = preg_replace('/\'/', '', $comname);
     $file = $results['File_Name'];
     $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
-    echo "<table >
-      <tr>
-      <th colspan=\"2\">$name</th>
-      <th></th>
-      </tr>
-      <tr>
-      <td class=\"spectrogram\">Best Recording<br>$maxconf<br><video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
+    echo "<tr>
+      <th>$species</th>
+      <td style=\"vertical-align:middle;\"><a href=\"https://wikipedia.org/wiki/$sci_name\" target=\"top\"><i>$sciname</i></a></td>
+      <td class=\"spectrogram\">Best Recording<br>$date $time<br>$maxconf<br><video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
       </tr></table>";
-    };};?>
-    </td>
+    }}}?>
     </form>
   </tr>
 </table>
@@ -110,13 +125,9 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
       header("refresh: 0;");
     }
     $result2 = $statement2->execute();
-    echo "<table >
+    echo "<table style=\"width:75%\" >
       <tr>
-      <th>When</th>
       <th>Listen</th>
-      <th>Scientific Name</th>
-      <th>Common Name</th>
-      <th>Confidence</th>
       </tr>";
       while($results=$result2->fetchArray(SQLITE3_ASSOC))
       {
@@ -129,13 +140,8 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
         $time = $results['Time'];
         $confidence = $results['Confidence'];
         echo "<tr>
-          <td>$date $time</td>
-          <td class=\"spectrogram\"><video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
-          <td><a href=\"https://wikipedia.org/wiki/$sciname\" target=\"top\">$sci_name</a></td>
-          <form action=\"\" method=\"POST\"> 
-          <td><input type=\"hidden\" name=\"view\" value=\"Species Stats\"><button type=\"submit\" name=\"species\" value=\"$name\">$name</button>
-          </form></td>
-          <td>$confidence</td>
+          <td>$date $time<br>$confidence<br>
+          <video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
           </tr>";
 
       }echo "</table>";}?>
