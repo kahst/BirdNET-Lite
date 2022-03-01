@@ -39,46 +39,16 @@ if(isset($_POST['species'])){
 
 </head>
 <body>
-
+<div class="stats">
 <?php if(!isset($_POST['species'])){
 ?><p class="centered">Choose a species below to load images from Wikimedia Commons.</p>
 <?php
 };?>
-    <table>
-      <tr>
-      	<th>Common Name</th>
-      	<th>Occurrences</th>
-      	<th>Max Confidence Score</th>
-      	<th>Best Recording</th>
-      </tr>
-<?php
-while($results=$result->fetchArray(SQLITE3_ASSOC))
-{
-$comname = preg_replace('/ /', '_', $results['Com_Name']);
-$comname = preg_replace('/\'/', '', $comname);
-$filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
-?>
-      <tr>
-      <form action="" method="POST">
-      <td><input type="hidden" name="view" value="Species Stats">
-        <button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button>
-      </td>
-      </form>
-      <td><?php echo $results['COUNT(*)'];?></td>
-      <td><?php echo $results['MAX(Confidence)'];?></td>
-      <td style="width:50%"><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
-      </tr>
-<?php
-}
-?>
-    </table>
 <?php if(isset($_POST['species'])){
   $species = $_POST['species'];
   $str = "<h3>$species</h3>
     <table>
       <tr>
-	<th>Scientific Name</th>
-	<th>Occurrences</th>
 	<th>Highest Confidence Score</th>
 	<th>Best Recording</th>
 	<th>Links</th>
@@ -122,6 +92,36 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   }
 }}
 ?>
+<br><br><br>
+    <table>
+      <tr>
+      	<th>Common Name</th>
+      	<th>Occurrences</th>
+      	<th>Max Confidence Score</th>
+      	<th>Best Recording</th>
+      </tr>
+<?php
+while($results=$result->fetchArray(SQLITE3_ASSOC))
+{
+$comname = preg_replace('/ /', '_', $results['Com_Name']);
+$comname = preg_replace('/\'/', '', $comname);
+$filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
+?>
+      <tr>
+      <form action="" method="POST">
+      <td><input type="hidden" name="view" value="Species Stats">
+        <button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button>
+      </td>
+      </form>
+      <td><?php echo $results['COUNT(*)'];?></td>
+      <td><?php echo $results['MAX(Confidence)'];?></td>
+      <td style="width:50%"><?php echo $results['Date']." ".$results['Time'];?><br><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
+      </tr>
+<?php
+}
+?>
+    </table>
+</div>
 </body>
 </html>
 
