@@ -7,6 +7,6 @@ HOME=/home/pi
 my_dir=${HOME}/BirdNET-Pi/scripts
 
 sudo -u${USER} git -C /home/pi/BirdNET-Pi stash
-sudo -u${USER} git -C /home/pi/BirdNET-Pi pull
+sudo -u${USER} git -C /home/pi/BirdNET-Pi pull -f
 sudo systemctl daemon-reload
 sudo -u${USER} git -C /home/pi/BirdNET-Pi stash pop
