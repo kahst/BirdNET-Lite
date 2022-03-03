@@ -2,22 +2,79 @@
   font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
   ' Calibri', 'Trebuchet MS', 'sans-serif';
   box-sizing: border-box;
-  font-size: large;
+  font-size: medium;
 }
 
+a {
+  text-decoration: none;
+}
 
-.banner {
+h3 {
+  text-align: center;
+}
+
+iframe {
+  padding: 0;
+  margin: 0;
+  border: none;
+  height: 95%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: rgb(119, 196, 135);
+}
+
+table {
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+td {
+  padding: 10px;
+  vertical-align: top;
+  background-color: rgb(219, 255, 235);
+  font-weight: lighter;
+  border: 2px solid black;
+  text-align: center;
+}
+
+th {
+  font-weight: bold;
   height: auto;
   text-align: center;
 }
 
+audio, video{
+  width: 100%;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  color: black;
+  cursor: pointer;
+}
+
+button:hover {
+  color: blue;
+}
+
+.banner {
+  height: 5%;
+  text-align: center;
+}
+
 .banner h1 {
-  /*float: top;*/
   font-size: x-large;
 }
 
 .banner audio,.banner form {
-  float:right;
+  float: right;
   width: 120px;
   margin-left: -120px;
   margin-right: auto;
@@ -36,16 +93,17 @@
   font-size: x-large;
 }
 
-.topbar {
-  display: block;
-  width: auto;
-  margin-left: 10%;
-  margin-right: 10%;
-}
-
-.topnav {
+.topnav, .topnav form {
   background-color: rgb( 159, 226, 155);
   display: block;
+  width: 85%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.topnav form {
+  margin-left: auto;
+  margin-rigth: auto;
 }
 
 .topnav button {
@@ -90,7 +148,25 @@
   vertical-align: middle;
 }
 
+.stats table {
+  height: auto;
+}
 
+.column table {
+  width: auto;
+}
+
+.stats button:hover {
+  color: blue;
+}
+
+.center button{
+  color: blue;
+}
+
+.left {
+  float: left;
+}
 
 .history table,.history img {
   width: auto;
@@ -98,50 +174,6 @@
   margin-right: auto;
 }
 
-a {
-  text-decoration: none;
-}
-
-h3 {
-  text-align: center;
-}
-
-iframe {
-  border: none;
-  height: 100%;
-  width: 100%;
-}
-
-body {
-  background-color: rgb(119, 196, 135);
-}
-
-table {
-  background-color: transparent;
-  border-collapse: collapse;
-  border-spacing: 0;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-td {
-  padding: 10px;
-  vertical-align: top;
-  background-color: rgb(219, 255, 235);
-  font-weight: lighter;
-  border: 2px solid black;
-  text-align: center;
-}
-
-th {
-  font-weight: bold;
-  height: auto;
-  text-align: center;
-}
-
-audio, video{
-  width: 100%;
-}
 
 .spectrogram {
   width:50%
@@ -159,16 +191,6 @@ audio, video{
   width:100%;
 }
 
-button {
-  background-color: transparent;
-  border: none;
-  color: black;
-  cursor: pointer;
-}
-
-button:hover {
-  color: blue;
-}
 
 .logbutton, .navbuttons {
   float: left;
@@ -182,10 +204,16 @@ body::-webkit-scrollbar {
   display:none
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 700px) {
+  .topnav {
+    margin-left:auto;
+    margin-right:auto;
+  }
   .topnav button {display: none;}
   /*.topnav button:not(:first-child) {display: none;}*/
   .topnav button.icon {
+    padding: 0;
+    margin: 0;
     display: block;
     width: 100%;
     margin-left: auto;
@@ -194,14 +222,27 @@ body::-webkit-scrollbar {
   .overview img {
     width: 100%;
   }
+  .banner {
+    height: auto;
+  }
   .banner img {
+    display: none;
+  }
+  .logo img {
+    display: block;
     width: 60px;
     height: 60px;
+  }
+  .version {
+    display: none;
   }
   .topnav.responsive {position: relative;}
   .topnav.responsive button {
     display: block;
     text-align: center;
+  }
+  .left {
+    display: none;
   }
 }
 
@@ -214,18 +255,30 @@ body::-webkit-scrollbar {
   .viewdb table,.overview img {
     width: 100%
   }
+  .banner {
+    height: auto;
+  }
   .banner img {
+    display: none;
+  }
+  .logo img {
+    display: block;
     width: 60px;
     height: 60px;
   }
   .play table,.overview table,.stats table {
     width: 100%;
   }
+  .topnav {
+    margin-left:auto;
+    margin-right:auto;
+  }
   .topnav button { 
     font-size: large;
   }
   .topnav button {display: none;}
   .topnav button.icon {
+    margin: 0;
     padding: 0;
     display: block;
     width: 100%;
@@ -235,5 +288,8 @@ body::-webkit-scrollbar {
   .topnav.responsive {position: relative;}
   .topnav.responsive button {
     display: block;
+  }
+  .left {
+    display:none;
   }
 }

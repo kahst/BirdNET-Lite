@@ -1,25 +1,22 @@
 <link rel="stylesheet" href="style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<div class="topbar">
 <div class="topnav" id="myTopnav">
 <form action="" method="POST" id="views">
-  <button type="submit" name="view" value="Overview" id="views">Overview</button>
-  <button type="submit" name="view" value="Today's Detections" id="views">Today's Detections</button>
-  <button type="submit" name="view" value="Species Stats" id="views">Species Stats</button>
-  <button type="submit" name="view" value="Daily Charts" id="views">Daily Charts</button>
-  <button type="submit" name="view" value="Tools" id="views">Tools</button>
-  <button type="submit" name="view" value="Recordings" id="views">Recordings</button>
+  <button type="submit" name="view" value="Overview" form="views">Overview</button>
+  <button type="submit" name="view" value="Today's Detections" form="views">Today's Detections</button>
+  <button type="submit" name="view" value="Species Stats" form="views">Species Stats</button>
+  <button type="submit" name="view" value="Daily Charts" form="views">Daily Charts</button>
+  <button type="submit" name="view" value="Tools" form="views">Tools</button>
+  <button type="submit" name="view" value="Recordings" form="views">Recordings</button>
 </form>
-<form action="index.php" method="GET" id="log">
-  <button type="submit" name="log" value="log" id="Log">View Log</button>
+<form action="index.php" method="GET" id="Log">
+  <button type="submit" name="log" value="log" form="Log">View Log</button>
 </form>
 <form action="index.php" method="GET" id="spectrogram">
-  <button style="float:none;" type="submit" name="spectrogram" value="view" id="spectrogram">Spectrogram</button>
+  <button style="float:none;" type="submit" name="spectrogram" value="view" id="spectrogram" form="spectrogram">Spectrogram</button>
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>
-</div>
-</body>
 <?php
 if(isset($_POST['view'])){
   if($_POST['view'] == "System"){header('location:phpsysinfo/index.php');}
