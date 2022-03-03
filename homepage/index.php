@@ -1,5 +1,8 @@
 <link rel="stylesheet" href="style.css">
 <div class="banner">
+<div class="logo">
+<a href="https://github.com/mcguirepr89/BirdNET-Pi.git" target="_blank"><img src="images/bird.png"></a>
+</div>
 <?php
 echo "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
 if(isset($_GET['stream'])){
@@ -18,7 +21,8 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
   $submittedpwd = $_SERVER['PHP_AUTH_PW'];
   $submitteduser = $_SERVER['PHP_AUTH_USER'];
   if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
-    echo "<h1>BirdNET-Pi</h1><audio controls autoplay><source src=\"/stream\"></audio>";
+    echo "<audio controls autoplay><source src=\"/stream\"></audio>
+          <h1><a href=\"\">BirdNET-Pi</a></h1>";
   } else {
     header('WWW-Authenticate: Basic realm="My Realm"');
     header('HTTP/1.0 401 Unauthorized');
@@ -27,7 +31,10 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
   }
 }
 } else {
-  echo "<h1>BirdNET-Pi</h1><form action=\"\" method=\"GET\"><button type=\"submit\" name=\"stream\" value=\"play\">Live Audio</button></form>";
+  echo "<form action=\"\" method=\"GET\">
+          <button type=\"submit\" name=\"stream\" value=\"play\">Live Audio</button>
+        </form>";
+  echo "<h1><a href=\"\">BirdNET-Pi</a></h1>";
 }
 echo "</div>";
 if(isset($_GET['log'])) {
@@ -54,5 +61,5 @@ if(isset($_GET['log'])) {
 } elseif(isset($_GET['spectrogram'])){
   header("Location: /spectrogram.php");
 } else {
-  echo "<iframe src=\"/views.php\" width=\"100%\" height=\"85%\">";
+  echo "<iframe src=\"/views.php\">";
 }

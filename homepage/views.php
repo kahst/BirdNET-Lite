@@ -14,7 +14,7 @@
   <button type="submit" name="log" value="log" id="Log">View Log</button>
 </form>
 <form action="index.php" method="GET" id="spectrogram">
-  <button style="float:none;"type="submit" name="spectrogram" value="view" id="spectrogram">Spectrogram</button>
+  <button style="float:none;" type="submit" name="spectrogram" value="view" id="spectrogram">Spectrogram</button>
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>

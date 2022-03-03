@@ -68,10 +68,8 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
   <style>
 </style>
 </head>
-<body>
-
-  <section>
-    <h2>Number of Detections</h2>
+<div class="viewdb">
+    <h3>Number of Detections</h3>
     <table>
       <tr>
 	<th>Total</th>
@@ -90,15 +88,8 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
       </form>
       </tr>
     </table>
-    <h2>Today's Detections</h2>
+    <h3>Today's Detections</h3>
     <table>
-      <tr>
-	<th>Time</th>
-	<th>Listen</th>
-	<th>Scientific Name</th>
-	<th>Common Name</th>
-	<th>Confidence</th>
-      </tr>
 <?php
 while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
 {
@@ -108,11 +99,12 @@ $filename = "/By_Date/".date('Y-m-d')."/".$comname."/".$todaytable['File_Name'];
 $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
 ?>
       <tr>
-      <td><?php echo $todaytable['Time'];?></td>
-      <td class="spectrogram"><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>"></video></td>
-      <td><a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><?php echo $todaytable['Sci_Name'];?></a></td>
-      <td><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></td>
-      <td><?php echo $todaytable['Confidence'];?></td>
+      <td><?php echo $todaytable['Time'];?><br>
+      <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
+      <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
+      <?php echo $todaytable['Confidence'];?><br>
+      <video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>"></video></td>
 <?php }?>
       </tr>
     </table>
+</div>

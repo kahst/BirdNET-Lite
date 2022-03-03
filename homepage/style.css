@@ -5,19 +5,45 @@
   font-size: large;
 }
 
+/*table {
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}*/
+
+td {
+  padding: 10px;
+  vertical-align: top;
+  background-color: rgb(219, 255, 235);
+  font-weight: lighter;
+  border: 2px solid black;
+  text-align: center;
+}
+
+th {
+  font-weight: bold;
+  height: auto;
+  text-align: center;
+}
+
+audio, video{
+  width: 100%;
+}
 .banner {
   height: auto;
   text-align: center;
 }
 
 .banner h1 {
-  float: top;
+  /*float: top;*/
   font-size: x-large;
 }
 
-.banner audio {
+.banner audio,.banner form {
+  float:right;
   width: 120px;
-  margin-left: auto;
+  margin-left: -120px;
   margin-right: auto;
 }
 
@@ -70,10 +96,9 @@
 }
 
 .play table {
-  display: block;
-  width:50%;
-  margin-right: auto;
+  margin:0;
   margin-left: auto;
+  margin-right: auto;
 }
 
 .overview td {
@@ -81,11 +106,7 @@
   width:20%;
 }
 
-.overview table {
-  width: 75%;
-}
-
-.stats table {
+.overview table,.stats table,.viewdb table {
   width: 75%;
 }
 
@@ -109,7 +130,7 @@ h3 {
 
 iframe {
   border: none;
-  height: 85%;
+  height: 100%;
   width: 100%;
 }
 
@@ -117,35 +138,10 @@ body {
   background-color: rgb(119, 196, 135);
 }
 
-table {
-  background-color: transparent;
-  margin: 0 auto;
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 100%;
-}
 
-td {
-  padding: 10px;
-  vertical-align: top;
-  background-color: rgb(219, 255, 235);
-  font-weight: lighter;
-  border: 2px solid black;
-  text-align: center;
-}
-
-th {
-  font-weight: bold;
-  height: auto;
-  text-align: center;
-}
-
-audio, video{
-  width: 100%;
-}
 
 .spectrogram {
-  width:33%
+  width:50%
 }
 
 .centered {
@@ -192,9 +188,13 @@ body::-webkit-scrollbar {
     margin-left: auto;
     margin-right: auto;
   }
-}
-
-@media screen and (max-width: 1000px) {
+  .overview img {
+    width: 100%;
+  }
+  .banner img {
+    width: 60px;
+    height: 60px;
+  }
   .topnav.responsive {position: relative;}
   .topnav.responsive button {
     display: block;
@@ -203,31 +203,29 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 600px) {
+  .viewdb table,.overview img {
+    width: 100%
+  }
+  .banner img {
+    width: 60px;
+    height: 60px;
+  }
   .play table,.overview table,.stats table {
     width: 100%;
   }
   .topnav button { 
-    font-size: xx-large;
+    font-size: large;
   }
   .topnav button {display: none;}
-  /*.topnav button:not(:first-child) {display: none;}*/
   .topnav button.icon {
+    padding: 0;
     display: block;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
   }
-}
-
-@media screen and (max-width: 600px) {
-  .play table,.overview table,.stats table {
-    width: 100%;
-  }
-  .topnav button {
-    font-size: x-large;
-  }
   .topnav.responsive {position: relative;}
   .topnav.responsive button {
     display: block;
-    text-align: center;
-  }}
+  }
+}

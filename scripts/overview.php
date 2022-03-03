@@ -65,6 +65,9 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Overview</title>
 <style>
+button, a, form {
+padding: 0;
+}
 </style>
 </head>
 <body>
@@ -88,27 +91,18 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
       </tr>
     </table>
     <table>
+      <h3>Most Recent Detection</h3>
       <tr>
-        <th>Most Recent Detection</th>
-        <th>Scientific Name</th>
-        <th>Common Name</th>
-        <th>Listen</th>
-        <th>Confidence</th>
-      </tr>
-      <tr>
-        <td><?php echo $mostrecent['Date']."<br>".$mostrecent['Time'];?></td>
-        <td><a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><?php echo $mostrecent['Sci_Name'];?></a></td>
+        <td>
         <form action="" method="POST">
-          <td>
             <input type="hidden" name="view" value="Species Stats">
-            <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button>
-          </td>
-        </form>
-        <td class="spectrogram" ><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>"></video></td>
-        <td><?php echo $mostrecent['Confidence'];?></td>
+            <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?>: </button>
+        <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a><br>Confidence: <?php echo $mostrecent['Confidence'];?><br>
+        <?php echo $mostrecent['Date']." ".$mostrecent['Time'];?><br><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>"></video></td>
+        
       </tr>
     </table>
-</div>
+        </form>
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
   echo "<img class=\"centered\" src=\"/Charts/$chart?nocache=time()\">";
@@ -117,5 +111,6 @@ if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
 }
 ?>
     <h3 class="centered">Currently Analyzing</h3>
-<img class="full" src='/spectrogram.png?nocache=<?php echo time();?>' >
+<img class="centered" src='/spectrogram.png?nocache=<?php echo time();?>' >
+</div>
 </html>
