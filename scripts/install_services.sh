@@ -214,7 +214,12 @@ install_Caddyfile() {
   cat << EOF > /etc/caddy/Caddyfile
 http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
-  file_server browse
+  handle /By_Date/* {
+    file_server browse
+  }
+  handle /Charts/* {
+    file_server browse
+  }
   basicauth /Processed* {
     birdnet ${HASHWORD}
   }
@@ -235,7 +240,12 @@ EOF
     cat << EOF > /etc/caddy/Caddyfile
 http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
-  file_server browse
+  handle /By_Date/* {
+    file_server browse
+  }
+  handle /Charts/* {
+    file_server browse
+  }
   reverse_proxy /stream localhost:8000
   php_fastcgi unix//run/php/php7.4-fpm.sock
 }

@@ -5,31 +5,7 @@
   font-size: large;
 }
 
-/*table {
-  background-color: transparent;
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 100%;
-}*/
 
-td {
-  padding: 10px;
-  vertical-align: top;
-  background-color: rgb(219, 255, 235);
-  font-weight: lighter;
-  border: 2px solid black;
-  text-align: center;
-}
-
-th {
-  font-weight: bold;
-  height: auto;
-  text-align: center;
-}
-
-audio, video{
-  width: 100%;
-}
 .banner {
   height: auto;
   text-align: center;
@@ -138,7 +114,32 @@ body {
   background-color: rgb(119, 196, 135);
 }
 
+table {
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
 
+td {
+  padding: 10px;
+  vertical-align: top;
+  background-color: rgb(219, 255, 235);
+  font-weight: lighter;
+  border: 2px solid black;
+  text-align: center;
+}
+
+th {
+  font-weight: bold;
+  height: auto;
+  text-align: center;
+}
+
+audio, video{
+  width: 100%;
+}
 
 .spectrogram {
   width:50%
