@@ -40,7 +40,7 @@ install_scripts() {
 }
 
 install_birdnet_analysis() {
-  cat << EOF > /usr/lib/systemd/system/birdnet_analysis.service
+  cat << EOF > /home/pi/BirdNET-Pi/templates/birdnet_analysis.service
 [Unit]
 Description=BirdNET Analysis
 After=birdnet_server.service
@@ -54,11 +54,12 @@ ExecStart=/usr/local/bin/birdnet_analysis.sh
 [Install]
 WantedBy=multi-user.target
 EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_analysis.service /usr/lib/systemd/system
   systemctl enable birdnet_analysis.service
 }
 
 install_birdnet_server() {
-  cat << EOF > /usr/lib/systemd/system/birdnet_server.service
+  cat << EOF > /home/pi/BirdNET-Pi/templates/birdnet_server.service
 [Unit]
 Description=BirdNET Analysis Server
 Before=birdnet_analysis.service
@@ -71,11 +72,12 @@ ExecStart=/usr/local/bin/server.py
 [Install]
 WantedBy=multi-user.target
 EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_server.service /usr/lib/systemd/system
   systemctl enable birdnet_server.service
 }
 
 install_extraction_service() {
-  cat << EOF > /usr/lib/systemd/system/extraction.service
+  cat << EOF > /home/pi/BirdNET-Pi/templates/extraction.service
 [Unit]
 Description=BirdNET BirdSound Extraction
 [Service]
@@ -87,11 +89,12 @@ ExecStart=/usr/bin/env bash -c 'while true;do extract_new_birdsounds.sh;sleep 3;
 [Install]
 WantedBy=multi-user.target
 EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/extraction.service /usr/lib/systemd/system
   systemctl enable extraction.service
 }
 
 install_pushed_notifications() {
-  cat << EOF > /usr/lib/systemd/system/pushed_notifications.service
+  cat << EOF > /home/pi/BirdNET-Pi/templates/pushed_notifications.service
 [Unit]
 Description=BirdNET-Pi Pushed.co Notifications
 [Service]
@@ -103,6 +106,7 @@ ExecStart=/usr/local/bin/species_notifier.sh
 [Install]
 WantedBy=multi-user.target
 EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/pushed_notification.service /usr/lib/systemd/system
   systemctl enable pushed_notifications.service
 }
 
@@ -182,7 +186,7 @@ EOF
 
 install_recording_service() {
   echo "Installing birdnet_recording.service"
-  cat << EOF > /usr/lib/systemd/system/birdnet_recording.service
+  cat << EOF > /home/pi/BirdNET-Pi/templates/birdnet_recording.service
 [Unit]
 Description=BirdNET Recording
 [Service]
@@ -195,6 +199,7 @@ ExecStart=/usr/local/bin/birdnet_recording.sh
 [Install]
 WantedBy=multi-user.target
 EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_recording.service /usr/lib/systemd/system
   systemctl enable birdnet_recording.service
 }
 
@@ -275,7 +280,7 @@ EOF
 }
 
 install_avahi_aliases() {
-  cat << 'EOF' > /usr/lib/systemd/system/avahi-alias@.service
+  cat << 'EOF' > /home/pi/BirdNET-Pi/templates/avahi-alias@.service
 [Unit]
 Description=Publish %I as alias for %H.local via mdns
 After=network.target network-online.target
@@ -288,11 +293,12 @@ ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(hostname -I |cut -d' '
 [Install]
 WantedBy=multi-user.target
 EOF
-systemctl enable avahi-alias@"$(hostname)".local.service
+  ln -sf /home/pi/BirdNET-Pi/templates/avahi-aliase@.service /usr/lib/systemd/system
+  systemctl enable avahi-alias@"$(hostname)".local.service
 }
 
 install_spectrogram_service() {
-  cat << EOF > /usr/lib/systemd/system/spectrogram_viewer.service
+  cat << EOF > /home/pi/BirdNET-Pi/templates/spectrogram_viewer.service
 [Unit]
 Description=BirdNET-Pi Spectrogram Viewer
 [Service]
@@ -304,12 +310,13 @@ ExecStart=/usr/local/bin/spectrogram.sh
 [Install]
 WantedBy=multi-user.target
 EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/spectrogram_viewer.service /usr/lib/systemd/system
   systemctl enable spectrogram_viewer.service
 }
 
 install_chart_viewer_service() {
   echo "Installing the chart_viewer.service"
-  cat << EOF > /usr/lib/systemd/system/chart_viewer.service
+  cat << EOF > /home/pi/BirdNET-Pi/templates/chart_viewer.service
 [Unit]
 Description=BirdNET-Pi Chart Viewer Service
 [Service]
@@ -321,6 +328,7 @@ ExecStart=/usr/local/bin/daily_plot.py
 [Install]
 WantedBy=multi-user.target
 EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/chart_viewer.service /usr/lib/systemd/system
   systemctl enable chart_viewer.service
 }
 
@@ -329,7 +337,7 @@ install_gotty_logs() {
     ${HOME}/.gotty
   sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/bashrc \
     ${HOME}/.bashrc
-  cat << EOF > /usr/lib/systemd/system/birdnet_log.service
+  cat << EOF > /home/pi/BirdNET-Pi/templates/birdnet_log.service
 [Unit]
 Description=BirdNET Analysis Log
 [Service]
@@ -342,8 +350,9 @@ ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" birdnet_l
 [Install]
 WantedBy=multi-user.target
 EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_log.service /usr/lib/systemd/system
   systemctl enable birdnet_log.service
-  cat << EOF > /usr/lib/systemd/system/web_terminal.service
+  cat << EOF > /home/pi/BirdNET-Pi/templates/web_terminal.service
 [Unit]
 Description=BirdNET-Pi Web Terminal
 [Service]
@@ -356,6 +365,7 @@ ExecStart=/usr/local/bin/gotty -w -p 8888 --title-format "BirdNET-Pi Terminal" b
 [Install]
 WantedBy=multi-user.target
 EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/web_terminal.service /usr/lib/systemd/system
   systemctl enable web_terminal.service
 }
 
@@ -388,7 +398,7 @@ config_icecast() {
 }
 
 install_livestream_service() {
-  cat << EOF > /usr/lib/systemd/system/livestream.service
+  cat << EOF > /home/pi/BirdNET-Pi/templates/livestream.service
 [Unit]
 Description=BirdNET-Pi Live Stream
 After=network-online.target
@@ -403,6 +413,7 @@ ExecStart=/usr/local/bin/livestream.sh
 [Install]
 WantedBy=multi-user.target
 EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/livestream.service /usr/lib/systemd/system
   systemctl enable livestream.service
 }
 
