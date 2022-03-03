@@ -3,7 +3,7 @@
 
 HOME=/home/pi
 USER=pi
-branch=sqlite
+branch=newif
 if ! which git &> /dev/null;then
   sudo apt update
   sudo apt -y install git
