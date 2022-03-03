@@ -106,7 +106,6 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
     </table>
       </form>
 </div>
-</div>
 </body>
 </html>
 

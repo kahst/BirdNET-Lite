@@ -23,7 +23,7 @@
   margin-right: auto;
 }
 
-.banner img {
+.logo img {
   position: absolute;
   top: 0;
   left: 0;
@@ -89,6 +89,8 @@
 .stats td {
   vertical-align: middle;
 }
+
+
 
 .history table,.history img {
   width: auto;
@@ -204,6 +206,11 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 600px) {
+  .stats img {
+    width: 100%;
+    margin-left:auto;
+    margin-rigth:auto;
+  }
   .viewdb table,.overview img {
     width: 100%
   }

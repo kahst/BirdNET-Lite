@@ -47,6 +47,8 @@ if(isset($_POST['view'])){
         echo "<form action=\"\" method=\"POST\">
         <button type=\"submit\" name=\"view\" value=\"Settings\">Settings</button>
         <button type=\"submit\" name=\"view\" value=\"System\">System Info</button>
+        <button type=\"submit\" name=\"view\" value=\"File\">File Manager</button>
+        <button type=\"submit\" name=\"view\" value=\"Webterm\">Web Terminal</button>
         <button type=\"submit\" name=\"view\" value=\"Included\">Custom Species List</button>
         <button type=\"submit\" name=\"view\" value=\"Excluded\">Excluded Species List</button>
         </form>";
@@ -112,6 +114,42 @@ if(isset($_POST['view'])){
       file_put_contents("$file", "$str");
     }
     include('scripts/exclude_list.php');
+  }
+  if($_POST['view'] == "File"){
+    header('Location: scripts/filemanager/filemanager.php');
+  }
+  if($_POST['view'] == "Webterm"){
+    if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
+      $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
+    } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
+      $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
+    }
+    $caddypwd = $config['CADDY_PWD'];
+    if (!isset($_SERVER['PHP_AUTH_USER'])) {
+      header('WWW-Authenticate: Basic realm="My Realm"');
+      header('HTTP/1.0 401 Unauthorized');
+      echo 'You cannot access the web terminal';
+      exit;
+    } else {
+      $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+      $submitteduser = $_SERVER['PHP_AUTH_USER'];
+      if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
+        #ACCESS THE WEB TERMINAL
+        if(empty($config['BIRDNETLOG_URL']) == false) {
+          $webterm = $config['WEBTERMINAL_URL'];
+        } elseif(empty($config['BIRDNETPI_URL'] == false)) {
+          $webterm = $config['BIRDNETPI_URL'].":8888";
+        } else {
+          $webterm = "http://birdnetpi.local:8888";
+        }
+	header("Location: $webterm");
+      } else {
+        header('WWW-Authenticate: Basic realm="My Realm"');
+        header('HTTP/1.0 401 Unauthorized');
+        echo 'You cannot access the web terminal';
+        exit;
+      }
+    }
   }
 }else{
   include('overview.php');}

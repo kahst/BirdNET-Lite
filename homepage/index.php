@@ -36,7 +36,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
   <form action=\"\" method=\"GET\">
     <button type=\"submit\" name=\"stream\" value=\"play\">Live Audio</button>
   </form>
-  <h1><a href=\"\">BirdNET-Pi</a></h1>
+  <h1><a href=\"\">BirdNET-Pi</a><img src=\"images/version.svg\">&#127808;</h1<>
 </div>";
 }
 if(isset($_GET['log'])) {
