@@ -3344,7 +3344,7 @@ function fm_show_nav_path($path)
     <nav class="navbar navbar-expand-lg <?php echo $getTheme; ?> mb-4 main-nav <?php echo $isStickyNavBar ?>">
         <a class="navbar-brand" href="../../">BirdNET-Pi Homepage </a>
 	<a class="navbar-brand" href="../"><?php echo lng('Tools'); ?></a>
-	<a class="navbar-brand" href="https://webterminal.pmcgui.xyz" target="_"><?php echo lng('WebTerminal'); ?></a>
+	<a class="navbar-brand" href="http://birdnetpi.local:8888" target="_"><?php echo lng('WebTerminal'); ?></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
