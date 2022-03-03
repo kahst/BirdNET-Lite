@@ -213,6 +213,7 @@ install_Caddyfile() {
   cat << EOF > /etc/caddy/Caddyfile
 http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
+  file_server browse
   handle /By_Date/* {
     file_server browse
   }
@@ -239,6 +240,7 @@ EOF
     cat << EOF > /etc/caddy/Caddyfile
 http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
+  file_server browse
   handle /By_Date/* {
     file_server browse
   }
