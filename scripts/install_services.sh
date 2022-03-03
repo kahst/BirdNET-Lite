@@ -16,7 +16,7 @@ install_depends() {
       | sudo -E bash
   apt -qqq update && apt -qqy upgrade
   echo "icecast2 icecast2/icecast-setup boolean false" | debconf-set-selections
-  apt install -qqy caddy lynx ftpd sqlite3 php-sqlite3 alsa-utils \
+  apt install -qqy caddy ftpd sqlite3 php-sqlite3 alsa-utils \
     pulseaudio avahi-utils sox libsox-fmt-mp3 php php-fpm php-curl php-xml \
     php-zip icecast2 swig ffmpeg wget unzip curl cmake make bc libjpeg-dev \
     zlib1g-dev python3-dev python3-pip python3-venv
@@ -37,11 +37,10 @@ update_etc_hosts() {
 
 install_scripts() {
   ln -sf ${my_dir}/* /usr/local/bin/
-  rm /usr/local/bin/index.html
 }
 
 install_birdnet_analysis() {
-  cat << EOF > /etc/systemd/system/birdnet_analysis.service
+  cat << EOF > /usr/lib/systemd/system/birdnet_analysis.service
 [Unit]
 Description=BirdNET Analysis
 After=birdnet_server.service
@@ -59,7 +58,7 @@ EOF
 }
 
 install_birdnet_server() {
-  cat << EOF > /etc/systemd/system/birdnet_server.service
+  cat << EOF > /usr/lib/systemd/system/birdnet_server.service
 [Unit]
 Description=BirdNET Analysis Server
 Before=birdnet_analysis.service
@@ -76,7 +75,7 @@ EOF
 }
 
 install_extraction_service() {
-  cat << EOF > /etc/systemd/system/extraction.service
+  cat << EOF > /usr/lib/systemd/system/extraction.service
 [Unit]
 Description=BirdNET BirdSound Extraction
 [Service]
@@ -92,7 +91,7 @@ EOF
 }
 
 install_pushed_notifications() {
-  cat << EOF > /etc/systemd/system/pushed_notifications.service
+  cat << EOF > /usr/lib/systemd/system/pushed_notifications.service
 [Unit]
 Description=BirdNET-Pi Pushed.co Notifications
 [Service]
@@ -118,14 +117,12 @@ create_necessary_dirs() {
   if [ ! -z ${BIRDNETLOG_URL} ];then
     BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/homepage/*.html
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.html
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.php
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
   fi
   if [ ! -z ${WEBTERMINAL_URL} ];then
     WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/homepage/*.html
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.html
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.php
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
   fi
@@ -134,18 +131,15 @@ create_necessary_dirs() {
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
   if [ -z ${BIRDNETPI_URL} ];then
     sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/homepage/*.html
-    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.html
     sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.php
     sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*/*.php
   else
     BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/homepage/*.html
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.html
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.php
     sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
   fi
 
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/play.css ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/play.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
@@ -188,7 +182,7 @@ EOF
 
 install_recording_service() {
   echo "Installing birdnet_recording.service"
-  cat << EOF > /etc/systemd/system/birdnet_recording.service
+  cat << EOF > /usr/lib/systemd/system/birdnet_recording.service
 [Unit]
 Description=BirdNET Recording
 [Service]
@@ -281,7 +275,7 @@ EOF
 }
 
 install_avahi_aliases() {
-  cat << 'EOF' > /etc/systemd/system/avahi-alias@.service
+  cat << 'EOF' > /usr/lib/systemd/system/avahi-alias@.service
 [Unit]
 Description=Publish %I as alias for %H.local via mdns
 After=network.target network-online.target
@@ -298,7 +292,7 @@ systemctl enable avahi-alias@"$(hostname)".local.service
 }
 
 install_spectrogram_service() {
-  cat << EOF > /etc/systemd/system/spectrogram_viewer.service
+  cat << EOF > /usr/lib/systemd/system/spectrogram_viewer.service
 [Unit]
 Description=BirdNET-Pi Spectrogram Viewer
 [Service]
@@ -315,7 +309,7 @@ EOF
 
 install_chart_viewer_service() {
   echo "Installing the chart_viewer.service"
-  cat << EOF > /etc/systemd/system/chart_viewer.service
+  cat << EOF > /usr/lib/systemd/system/chart_viewer.service
 [Unit]
 Description=BirdNET-Pi Chart Viewer Service
 [Service]
@@ -335,7 +329,7 @@ install_gotty_logs() {
     ${HOME}/.gotty
   sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/bashrc \
     ${HOME}/.bashrc
-  cat << EOF > /etc/systemd/system/birdnet_log.service
+  cat << EOF > /usr/lib/systemd/system/birdnet_log.service
 [Unit]
 Description=BirdNET Analysis Log
 [Service]
@@ -349,7 +343,7 @@ ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" birdnet_l
 WantedBy=multi-user.target
 EOF
   systemctl enable birdnet_log.service
-  cat << EOF > /etc/systemd/system/web_terminal.service
+  cat << EOF > /usr/lib/systemd/system/web_terminal.service
 [Unit]
 Description=BirdNET-Pi Web Terminal
 [Service]
@@ -394,7 +388,7 @@ config_icecast() {
 }
 
 install_livestream_service() {
-  cat << EOF > /etc/systemd/system/livestream.service
+  cat << EOF > /usr/lib/systemd/system/livestream.service
 [Unit]
 Description=BirdNET-Pi Live Stream
 After=network-online.target

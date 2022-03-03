@@ -159,7 +159,7 @@ BIRDNET_USER=pi
 ## These are just for debugging
 LAST_RUN=
 THIS_RUN=
-
+IDFILE=/home/pi/BirdNET-Pi/IdentifiedSoFar.txt
 EOF
 }
 
