@@ -42,15 +42,16 @@ if(isset($_POST['view'])){
       $submittedpwd = $_SERVER['PHP_AUTH_PW'];
       $submitteduser = $_SERVER['PHP_AUTH_USER'];
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
+        $url = "https://".$_SERVER['SERVER_NAME']."/scripts/adminer.php";
         echo "<div class=\"centered\">
-	<form action=\"\" method=\"POST\">
-        <button type=\"submit\" name=\"view\" value=\"Settings\">Settings</button>
-        <button type=\"submit\" name=\"view\" value=\"System\">System Info</button>
-        <button type=\"submit\" name=\"view\" value=\"File\">File Manager</button>
-        <button type=\"submit\" name=\"view\" value=\"Database\">Database Maintenance</button>
-        <button type=\"submit\" name=\"view\" value=\"Webterm\">Web Terminal</button>
-        <button type=\"submit\" name=\"view\" value=\"Included\">Custom Species List</button>
-        <button type=\"submit\" name=\"view\" value=\"Excluded\">Excluded Species List</button>
+	<form action=\"\" method=\"POST\" id=\"views\">
+        <button type=\"submit\" name=\"view\" value=\"Settings\" form=\"views\">Settings</button>
+        <button type=\"submit\" name=\"view\" value=\"System\" form=\"views\">System Info</button>
+        <button type=\"submit\" name=\"view\" value=\"File\" form=\"views\">File Manager</button>
+	<a href=\"scripts/adminer.php\" target=\"_top\"><button type=\"submit\" form=\"\">Database Maintenanace</button></a>
+        <button type=\"submit\" name=\"view\" value=\"Webterm\" form=\"views\">Web Terminal</button>
+        <button type=\"submit\" name=\"view\" value=\"Included\" form=\"views\">Custom Species List</button>
+        <button type=\"submit\" name=\"view\" value=\"Excluded\" form=\"views\">Excluded Species List</button>
 	</form>
 	</div>";
       } else {
@@ -118,9 +119,6 @@ if(isset($_POST['view'])){
   }
   if($_POST['view'] == "File"){
     header('Location: scripts/filemanager/filemanager.php');
-  }
-  if($_POST['view'] == "Database"){
-    header('Location: scripts/adminer.php');
   }
   if($_POST['view'] == "Webterm"){
     if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
