@@ -53,6 +53,10 @@ audio, video{
   width: 100%;
 }
 
+label {
+  font-weight: bold;
+}
+
 button {
   background-color: transparent;
   border: none;
@@ -61,16 +65,18 @@ button {
 }
 
 button:hover {
+  font-weight: bold;
   color: blue;
 }
 
 .banner {
-  height: 5%;
+  padding-top: 1px;
+  height: 8%;
   text-align: center;
 }
 
 .banner h1 {
-  font-size: x-large;
+  letter-spacing: 5px;
 }
 
 .banner audio,.banner form {
@@ -80,17 +86,31 @@ button:hover {
   margin-right: auto;
 }
 
-.logo img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 10px;
+.banner button {
+  padding-top: 8px;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .banner a {
   text-decoration: none;
   color: black;
   font-size: x-large;
+}
+
+.italic {
+    -moz-transform: scale(1) rotate(0deg) translate(0px, 0px) skew(20deg, 0deg);
+    -webkit-transform: scale(1) rotate(0deg) translate(0px, 0px) skew(20deg, 0deg);
+    -o-transform: scale(1) rotate(0deg) translate(0px, 0px) skew(20deg, 0deg);
+    -ms-transform: scale(1) rotate(0deg) translate(0px, 0px) skew(20deg, 0deg);
+    transform: scale(1) rotate(0deg) translate(0px, 0px) skew(20deg, 0deg);
+}
+
+.logo img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px;
 }
 
 .topnav, .topnav form {
@@ -115,7 +135,7 @@ button:hover {
 }
 
 .topnav button:hover {
-  background-color: #ddd;
+  background-color: rgb(219, 295, 235);
   color: black;
 }
 
@@ -174,6 +194,35 @@ button:hover {
   margin-right: auto;
 }
 
+.views .centered button {
+  border: 2px solid black;
+  background-color: rgb(219, 255, 235);
+  padding: 12px;
+}
+
+.views .centered button:hover {
+  background-color: rgb(159, 226, 155);
+  color: black;
+}
+
+.settings {
+  padding: 12px;
+}
+
+.settings h3 {
+  text-align: left;
+}
+
+.settings button {
+  border: 2px solid black;
+  background-color: rgb(219, 255, 235);
+  padding: 12px;
+}
+
+.settings button:hover {
+  background-color: rgb(159, 226, 155);
+  color: black;
+}
 
 .spectrogram {
   width:50%

@@ -169,6 +169,7 @@ if(isset($_POST['submit'])) {
 <style>
   </style>
   </head>
+<div class="settings">
 <?php
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $newconfig = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
@@ -177,7 +178,6 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 }
 ?>
       <h2>Advanced Settings</h2>
-  <body>
     <form action="" method="POST">
       <h3>Defaults</h3>
       <label>Full Disk Behavior: </label>
@@ -256,4 +256,4 @@ if(isset($_POST['submit'])){
       <form action="" method="POST">
         <button type="submit" name="view" value="Settings">Basic Settings</button>
       </form>
-</body>
+</div>

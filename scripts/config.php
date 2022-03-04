@@ -41,10 +41,8 @@ if ($language != "none"){
 <style>
   </style>
   </head>
+<div class="settings">
       <h2>Basic Settings</h2>
-  <body>
-  <div class="row">
-    <div class="column first">
     <form action="" method="POST">
 <?php 
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
@@ -131,6 +129,4 @@ if(isset($_POST['status'])){
       <form action="" method="POST">
         <button type="submit" name="view" value="Advanced">Advanced Settings</button>
       </form>
-    </div>
-  </div>
-</body>
+</div>

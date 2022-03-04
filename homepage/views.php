@@ -17,6 +17,7 @@
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>
+<div class="views">
 <?php
 if(isset($_POST['view'])){
   if($_POST['view'] == "System"){header('location:phpsysinfo/index.php');}
@@ -41,14 +42,17 @@ if(isset($_POST['view'])){
       $submittedpwd = $_SERVER['PHP_AUTH_PW'];
       $submitteduser = $_SERVER['PHP_AUTH_USER'];
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
-        echo "<form action=\"\" method=\"POST\">
+        echo "<div class=\"centered\">
+	<form action=\"\" method=\"POST\">
         <button type=\"submit\" name=\"view\" value=\"Settings\">Settings</button>
         <button type=\"submit\" name=\"view\" value=\"System\">System Info</button>
         <button type=\"submit\" name=\"view\" value=\"File\">File Manager</button>
+        <button type=\"submit\" name=\"view\" value=\"Database\">Database Maintenance</button>
         <button type=\"submit\" name=\"view\" value=\"Webterm\">Web Terminal</button>
         <button type=\"submit\" name=\"view\" value=\"Included\">Custom Species List</button>
         <button type=\"submit\" name=\"view\" value=\"Excluded\">Excluded Species List</button>
-        </form>";
+	</form>
+	</div>";
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
@@ -115,6 +119,9 @@ if(isset($_POST['view'])){
   if($_POST['view'] == "File"){
     header('Location: scripts/filemanager/filemanager.php');
   }
+  if($_POST['view'] == "Database"){
+    header('Location: scripts/adminer.php');
+  }
   if($_POST['view'] == "Webterm"){
     if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
       $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
@@ -161,4 +168,5 @@ function myFunction() {
   }
 }
 </script>
+</div>
 </body>
