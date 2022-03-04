@@ -3,10 +3,20 @@
 <div class="topnav" id="myTopnav">
 <form action="" method="POST" id="views">
   <button type="submit" name="view" value="Overview" form="views">Overview</button>
+</form>
+<form action="" method="POST" id="views">
   <button type="submit" name="view" value="Today's Detections" form="views">Today's Detections</button>
+</form>
+<form action="" method="POST" id="views">
   <button type="submit" name="view" value="Species Stats" form="views">Species Stats</button>
+</form>
+<form action="" method="POST" id="views">
   <button type="submit" name="view" value="Daily Charts" form="views">Daily Charts</button>
+</form>
+<form action="" method="POST" id="views">
   <button type="submit" name="view" value="Tools" form="views">Tools</button>
+</form>
+<form action="" method="POST" id="views">
   <button type="submit" name="view" value="Recordings" form="views">Recordings</button>
 </form>
 <form action="index.php" method="GET" id="Log">
@@ -20,7 +30,8 @@
 <div class="views">
 <?php
 if(isset($_POST['view'])){
-  if($_POST['view'] == "System"){header('location:phpsysinfo/index.php');}
+  if($_POST['view'] == "System Info"){header('location:phpsysinfo/index.php');}
+  if($_POST['view'] == "System Controls"){include('scripts/system_controls.php');}
   if($_POST['view'] == "Spectrogram"){include('spectrogram.php');}
   if($_POST['view'] == "Overview"){include('overview.php');}
   if($_POST['view'] == "Today's Detections"){include('viewdb.php');}
@@ -46,7 +57,8 @@ if(isset($_POST['view'])){
         echo "<div class=\"centered\">
 	<form action=\"\" method=\"POST\" id=\"views\">
         <button type=\"submit\" name=\"view\" value=\"Settings\" form=\"views\">Settings</button>
-        <button type=\"submit\" name=\"view\" value=\"System\" form=\"views\">System Info</button>
+        <button type=\"submit\" name=\"view\" value=\"System Info\" form=\"views\">System Info</button>
+        <button type=\"submit\" name=\"view\" value=\"System Controls\" form=\"views\">System Controls</button>
         <button type=\"submit\" name=\"view\" value=\"File\" form=\"views\">File Manager</button>
 	<a href=\"scripts/adminer.php\" target=\"_top\"><button type=\"submit\" form=\"\">Database Maintenanace</button></a>
         <button type=\"submit\" name=\"view\" value=\"Webterm\" form=\"views\">Web Terminal</button>

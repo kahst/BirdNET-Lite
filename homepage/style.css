@@ -254,12 +254,7 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 700px) {
-  .topnav {
-    margin-left:auto;
-    margin-right:auto;
-  }
   .topnav button {display: none;}
-  /*.topnav button:not(:first-child) {display: none;}*/
   .topnav button.icon {
     padding: 0;
     margin: 0;
