@@ -53,7 +53,7 @@ if(isset($_POST['view'])){
       $submittedpwd = $_SERVER['PHP_AUTH_PW'];
       $submitteduser = $_SERVER['PHP_AUTH_USER'];
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
-        $url = "https://".$_SERVER['SERVER_NAME']."/scripts/adminer.php";
+        $url = $_SERVER['SERVER_NAME']."/scripts/adminer.php";
         echo "<div class=\"centered\">
 	<form action=\"\" method=\"POST\" id=\"views\">
         <button type=\"submit\" name=\"view\" value=\"Settings\" form=\"views\">Settings</button>
