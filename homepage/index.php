@@ -7,30 +7,31 @@
 <?php
 if(isset($_GET['stream'])){
   if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
-  $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
-} elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
-  $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
-}
-$caddypwd = $config['CADDY_PWD'];
-if (!isset($_SERVER['PHP_AUTH_USER'])) {
-  header('WWW-Authenticate: Basic realm="My Realm"');
-  header('HTTP/1.0 401 Unauthorized');
-  echo 'You cannot listen to the live audio stream';
-  exit;
-} else {
-  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
-  $submitteduser = $_SERVER['PHP_AUTH_USER'];
-  if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
-	  echo "
-  <audio controls autoplay><source src=\"/stream\"></audio>
-  <h1><a href=\"\">BirdNET-Pi</a></h1>";
-  } else {
+    $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
+  } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
+    $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
+  }
+  $caddypwd = $config['CADDY_PWD'];
+  if (!isset($_SERVER['PHP_AUTH_USER'])) {
     header('WWW-Authenticate: Basic realm="My Realm"');
     header('HTTP/1.0 401 Unauthorized');
     echo 'You cannot listen to the live audio stream';
     exit;
+  } else {
+    $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+    $submitteduser = $_SERVER['PHP_AUTH_USER'];
+    if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
+      echo "
+  <audio controls autoplay><source src=\"/stream\"></audio>
+  <h1><a href=\"\">BirdNET-Pi</a></h1>
+  </div>";
+    } else {
+      header('WWW-Authenticate: Basic realm="My Realm"');
+      header('HTTP/1.0 401 Unauthorized');
+      echo 'You cannot listen to the live audio stream';
+      exit;
+    }
   }
-}
 } else {
   echo "
   <form action=\"\" method=\"GET\">
@@ -63,6 +64,7 @@ if(isset($_GET['log'])) {
 } elseif(isset($_GET['spectrogram'])){
   header("Location: /spectrogram.php");
 } else {
-	echo "
-<iframe src=\"/views.php\">";
+  echo "
+<iframe src=\"/views.php\">
+</div>";
 }

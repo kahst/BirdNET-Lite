@@ -56,21 +56,11 @@ if($statement5 == False) {
 $result5 = $statement5->execute();
 $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Overview</title>
-<style>
-button, a, form {
-padding: 0;
-}
-</style>
 </head>
-<body>
 <div class="overview">
     <table>
       <tr>
@@ -99,10 +89,9 @@ padding: 0;
             <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?>: </button>
         <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a><br>Confidence: <?php echo $mostrecent['Confidence'];?><br>
         <?php echo $mostrecent['Date']." ".$mostrecent['Time'];?><br><video controls poster="<?php echo $filename.".png";?>"><source src="<?php echo $filename;?>"></video></td>
-        
+        </form>
       </tr>
     </table>
-        </form>
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
   echo "<img class=\"centered\" src=\"/Charts/$chart?nocache=time()\">";

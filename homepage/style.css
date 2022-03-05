@@ -9,6 +9,10 @@ a {
   text-decoration: none;
 }
 
+a:hover {
+  font-weight: bold;
+}
+
 h3 {
   text-align: center;
 }
