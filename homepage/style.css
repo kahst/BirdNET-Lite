@@ -54,7 +54,8 @@ th {
 }
 
 audio, video{
-  width: 100%;
+  max-height: 100%;
+  max-width: 100%;
 }
 
 label {
@@ -184,7 +185,8 @@ button:hover {
   color: blue;
 }
 
-.center button{
+.overview button, .center button{
+  font-weight: bold;
   color: blue;
 }
 
@@ -247,10 +249,6 @@ button:hover {
 
 .logbutton, .navbuttons {
   float: left;
-}
-
-.spectrogrambutton {
-  float:top;
 }
 
 body::-webkit-scrollbar {
@@ -337,6 +335,7 @@ body::-webkit-scrollbar {
   .topnav.responsive button {
     display: block;
   }
+  .version {display:none;}
   .left {
     display:none;
   }
