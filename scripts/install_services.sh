@@ -106,7 +106,7 @@ ExecStart=/usr/local/bin/species_notifier.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/pushed_notification.service /usr/lib/systemd/system
+  ln -sf /home/pi/BirdNET-Pi/templates/pushed_notifications.service /usr/lib/systemd/system
   systemctl enable pushed_notifications.service
 }
 
@@ -295,7 +295,7 @@ ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(hostname -I |cut -d' '
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/avahi-aliase@.service /usr/lib/systemd/system
+  ln -sf /home/pi/BirdNET-Pi/templates/avahi-alias@.service /usr/lib/systemd/system
   systemctl enable avahi-alias@"$(hostname)".local.service
 }
 
