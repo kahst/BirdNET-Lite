@@ -299,11 +299,11 @@ body::-webkit-scrollbar {
     margin-left: auto;
     margin-right: auto;
   }
-  .overview span{
+  .overview span {
     margin-right: auto;
     margin-left: auto;
   }
-  .overview span img,.overview span table {
+  .overview span img,.overview span table,.overview img {
     margin: 0;
     width: 100%;
   }
@@ -378,7 +378,7 @@ body::-webkit-scrollbar {
     margin-right: auto;
     margin-left: auto;
   }
-  .overview span img,.overview span table {
+  .overview span img,.overview span table,.overview img {
     margin: 0;
     width: 100%;
   }

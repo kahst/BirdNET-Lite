@@ -89,6 +89,13 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
 </td></tr></table>
 </div>
 <br><br>
+<?php
+if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
+  echo "<img src=\"/Charts/$chart?nocache=time()\">";
+} else {
+  echo "<p>No Detections For Today</p>";
+}
+?>
 <span>
     <table>
       <h3>Most Recent Detection: <span style="font-weight: normal;"><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></span></h3>
@@ -103,13 +110,6 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
         </form>
       </tr>
     </table>
-<?php
-if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
-  echo "<img src=\"/Charts/$chart?nocache=time()\">";
-} else {
-  echo "<p>No Detections For Today</p>";
-}
-?>
     <h3 class="centered">Currently Analyzing</h3>
 <img class="centered" src='/spectrogram.png?nocache=<?php echo time();?>' >
 </span>
