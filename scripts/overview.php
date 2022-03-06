@@ -62,24 +62,34 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
   <title>Overview</title>
 </head>
 <div class="overview">
+<div class="column left">
+<table style="height: 80%;"><tr><td style="background-color: transparent; border:none;vertical-align: middle;">
     <table>
       <tr>
         <th>Total</th>
-        <th>Today</th>
-        <th>Last Hour</th>
-        <th>Species Detected Today</th>
+        <td><?php echo $totalcount['COUNT(*)'];?></td>
       </tr>
       <tr>
-        <td><?php echo $totalcount['COUNT(*)'];?></td>
+        <th>Today</th>
         <form action="" method="POST">
         <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button></td>
         </form>
+      </tr>
+      <tr>
+        <th>Last Hour</th>
         <td><?php echo $hourcount['COUNT(*)'];?></td>
+      </tr>
+      <tr>
+        <th>Species Detected Today</th>
         <form action="" method="POST">
         <td><button type="submit" name="view" value="Species Stats"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
         </form>
       </tr>
     </table>
+</td></tr></table>
+</div>
+<br><br>
+<span>
     <table>
       <h3>Most Recent Detection: <span style="font-weight: normal;"><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></span></h3>
       <tr>
@@ -89,18 +99,18 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
 	    <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?>: </button>
 	    <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a>
             <br>Confidence: <?php echo $mostrecent['Confidence'];?><br>
-            <video controls poster="<?php echo $filename.".png";?>" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>"></video></td>
+            <video controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>"></video></td>
         </form>
       </tr>
     </table>
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
-  echo "<img class=\"centered\" src=\"/Charts/$chart?nocache=time()\">";
+  echo "<img src=\"/Charts/$chart?nocache=time()\">";
 } else {
   echo "<p>No Detections For Today</p>";
 }
 ?>
     <h3 class="centered">Currently Analyzing</h3>
 <img class="centered" src='/spectrogram.png?nocache=<?php echo time();?>' >
-</div>
+</span>
 </html>

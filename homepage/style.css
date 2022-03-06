@@ -155,18 +155,52 @@ button:hover {
 }
 
 .play table {
-  margin:0;
   margin-left: auto;
   margin-right: auto;
 }
 
-.overview td {
-  vertical-align:middle;
-  width:20%;
+.stats table,.viewdb table {
+  width: 75%;
 }
 
-.overview table,.stats table,.viewdb table {
-  width: 75%;
+.overview table {
+  width: 20%;
+}
+
+.overview th {
+  background-color: rgb(219, 255, 235);
+  border: 2px solid black;
+  text-align: center;
+  padding: 12px;
+}
+
+.overview td {
+  vertical-align: middle;
+}
+
+.overview span {
+  width: auto;
+  margin-right: 20%;
+  margin-left: auto;
+}
+
+.overview span video {
+  width: 100%;
+  padding: 0;
+}
+
+.overview span table {
+  width: 50%;
+  margin-right: 25%;
+}
+
+.overview span td {
+  padding: 1;
+}
+
+.overview span img {
+  margin-left: 15%;
+  margin-right: auto;
 }
 
 .stats td {
@@ -177,8 +211,9 @@ button:hover {
   height: auto;
 }
 
-.column table {
-  width: auto;
+.column {
+  width: 20%;
+  height: 100%;
 }
 
 .stats button:hover {
@@ -246,7 +281,6 @@ button:hover {
   width:100%;
 }
 
-
 .logbutton, .navbuttons {
   float: left;
 }
@@ -265,7 +299,12 @@ body::-webkit-scrollbar {
     margin-left: auto;
     margin-right: auto;
   }
-  .overview img {
+  .overview span{
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .overview span img,.overview span table {
+    margin: 0;
     width: 100%;
   }
   .banner {
@@ -334,6 +373,14 @@ body::-webkit-scrollbar {
   .topnav.responsive {position: relative;}
   .topnav.responsive button {
     display: block;
+  }
+  .overview span{
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .overview span img,.overview span table {
+    margin: 0;
+    width: 100%;
   }
   .version {display:none;}
   .left {
