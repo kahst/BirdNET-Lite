@@ -104,7 +104,7 @@ if(!isset($_POST['species'])){
     $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
     echo "<th>$species</th>
       <td style=\"vertical-align:middle;\"><a href=\"https://wikipedia.org/wiki/$sci_name\" target=\"top\"><i>$sciname</i></a></td>
-      <td class=\"spectrogram\">Best Recording<br>$date $time<br>$maxconf<br><video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
+      <td class=\"spectrogram\">Best Recording<br>$date $time<br>$maxconf<br><video controls poster=\"$filename.png\" preload=\"none\"><source src=\"$filename\"></video></td>
       </tr></table>";
     }}
      echo "</form>
@@ -135,7 +135,7 @@ if(!isset($_POST['species'])){
         $confidence = $results['Confidence'];
         echo "<tr>
           <td>$date $time<br>$confidence<br>
-          <video controls poster=\"$filename.png\"><source src=\"$filename\"></video></td>
+          <video controls poster=\"$filename.png\" preload=\"none\"><source src=\"$filename\"></video></td>
           </tr>";
 
       }echo "</table>";}?>
