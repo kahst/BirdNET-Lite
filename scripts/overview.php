@@ -88,7 +88,6 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
     </table>
 </td></tr></table>
 </div>
-<br><br>
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
   echo "<img src=\"/Charts/$chart?nocache=time()\">";

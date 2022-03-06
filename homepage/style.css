@@ -212,7 +212,7 @@ button:hover {
 }
 
 .column {
-  width: 20%;
+  width: auto;
   height: 100%;
 }
 
