@@ -42,4 +42,6 @@ sudo -u ${USER} chmod -R g+rw ${RECS_DIR}
 echo "Dropping and re-creating database"
 sudo /home/pi/BirdNET-Pi/scripts/createdb.sh
 echo "Restarting services"
+sudo systemctl start birdnet_server.service
+sudo systemctl start birdnet_analysis.service
 sudo systemctl start birdnet_recording.service
