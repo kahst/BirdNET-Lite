@@ -169,13 +169,6 @@ if(isset($_POST['view'])){
   }
 } elseif(isset($_POST['submit'])) {
   $command = $_POST['submit'];
-  if($command == 'update_birdnet.sh'){
-    $str= "<h3>Updating . . . </h3>
-      <p>Please wait 60 seconds</p>";
-    echo str_pad($str, 4096);
-    ob_flush();
-    flush();
-  }
   if(isset($command)){
     $results = shell_exec("$command 2>&1");
     echo "<pre>$results</pre>";
