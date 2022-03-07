@@ -352,9 +352,15 @@ body::-webkit-scrollbar {
   }
   .banner {
     height: auto;
+    margin-left: 60px;
   }
   .banner img {
     display: none;
+  }
+  .stream {
+    float: right;
+    display: block;
+    width: 60px;
   }
   .logo img {
     display: block;
