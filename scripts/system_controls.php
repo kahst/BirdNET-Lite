@@ -29,7 +29,7 @@ ob_end_flush();
     <button type="submit" name="submit" value="sudo reboot" onclick="return confirm('Are you sure you want to reboot?')">Reboot</button>
   </form>
   <form action="" method="POST">
-    <button type="submit" name="submit" value="update" onclick="return confirm('BE SURE TO STASH ANY LOCAL CHANGES YOU HAVE MADE TO THE SYSTEM BEFORE UPDATING!!!')" >Update</button>
+    <button type="submit" name="submit" value="update_birdnet.sh" onclick="return confirm('BE SURE TO STASH ANY LOCAL CHANGES YOU HAVE MADE TO THE SYSTEM BEFORE UPDATING!!!')" >Update</button>
   </form>
   <form action="" method="POST">
     <button type="submit" name="submit" value="sudo shutdown now" onclick="return confirm('Are you sure you want to shutdown?')">Shutdown</button>
