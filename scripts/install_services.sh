@@ -118,32 +118,6 @@ create_necessary_dirs() {
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
-  if [ ! -z ${BIRDNETLOG_URL} ];then
-    BIRDNETLOG_URL="$(echo ${BIRDNETLOG_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/homepage/*.html
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*.php
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8080/${BIRDNETLOG_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
-  fi
-  if [ ! -z ${WEBTERMINAL_URL} ];then
-    WEBTERMINAL_URL="$(echo ${WEBTERMINAL_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/homepage/*.html
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*.php
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local:8888/${WEBTERMINAL_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
-  fi
-
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}/
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
-  if [ -z ${BIRDNETPI_URL} ];then
-    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/homepage/*.html
-    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*.php
-    sudo -u${USER} sed -i "s/birdnetpi.local/$(hostname).local/g" $(dirname ${my_dir})/scripts/*/*.php
-  else
-    BIRDNETPI_URL="$(echo ${BIRDNETPI_URL} | sed 's/\/\//\\\/\\\//g')"
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/homepage/*.html
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*.php
-    sudo -u${USER} sed -i "s/http:\/\/birdnetpi.local/${BIRDNETPI_URL}/g" $(dirname ${my_dir})/scripts/*/*.php
-  fi
-
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/play.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
@@ -155,7 +129,6 @@ create_necessary_dirs() {
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
-
   chmod -R g+rw $(dirname ${my_dir})
   chmod -R g+rw ${RECS_DIR}
 }

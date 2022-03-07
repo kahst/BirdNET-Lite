@@ -285,6 +285,16 @@ button:hover {
   float: left;
 }
 
+.systemcontrols form {
+  text-align: center;
+}
+
+.systemcontrols button {
+  border: 2px solid black;
+  background-color: rgb(159, 226, 155);
+  width: 20%;
+}
+
 body::-webkit-scrollbar {
   display:none
 }

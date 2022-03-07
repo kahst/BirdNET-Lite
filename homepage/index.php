@@ -3,7 +3,11 @@
 <link rel="stylesheet" href="style.css">
 <div class="banner">
   <div class="logo">
-    <a href="https://github.com/mcguirepr89/BirdNET-Pi.git" target="_blank"><img src="images/bird.png"></a>
+<?php if(isset($_GET['logo'])) {
+echo "<a href=\"https://github.com/mcguirepr89/BirdNET-Pi.git\" target=\"_blank\"><img style=\"width:60;height:60;\" src=\"images/bird.png\"></a>";
+} else {
+echo "<a href=\"https://github.com/mcguirepr89/BirdNET-Pi.git\" target=\"_blank\"><img src=\"images/bird.png\"></a>";
+}?>
   </div>
 <?php
 if(isset($_GET['stream'])){
@@ -61,9 +65,9 @@ if(isset($_GET['log'])) {
       $logs = "http://birdnetpi.local:8080";
     }
   }
-  header("Location: $logs");
+  header("Location: $logs?logo=smaller");
 } elseif(isset($_GET['spectrogram'])){
-  header("Location: /spectrogram.php");
+  header("Location: /spectrogram.php?logo=smaller");
 } else {
   echo "
 <iframe src=\"/views.php\">

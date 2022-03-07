@@ -20,9 +20,11 @@
   <button type="submit" name="view" value="Recordings" form="views">Recordings</button>
 </form>
 <form action="index.php" method="GET" id="Log">
+  <input type="hidden" name="logo" value="smaller">
   <button type="submit" name="log" value="log" form="Log">View Log</button>
 </form>
 <form action="index.php" method="GET" id="spectrogram">
+  <input type="hidden" name="logo" value="smaller">
   <button style="float:none;" type="submit" name="spectrogram" value="view" id="spectrogram" form="spectrogram">Spectrogram</button>
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
@@ -156,7 +158,7 @@ if(isset($_POST['view'])){
         } else {
           $webterm = "http://birdnetpi.local:8888";
         }
-	header("Location: $webterm");
+      	header("Location: $webterm");
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
@@ -165,8 +167,21 @@ if(isset($_POST['view'])){
       }
     }
   }
-}else{
-  include('overview.php');}
+} elseif(isset($_POST['submit'])) {
+  $command = $_POST['submit'];
+  if($command == 'update_birdnet.sh'){
+    $str= "<h3>Updating . . . </h3>
+      <p>Please wait 60 seconds</p>";
+    echo str_pad($str, 4096);
+    ob_flush();
+    flush();
+  }
+  if(isset($command)){
+    $results = shell_exec("$command 2>&1");
+    echo "<pre>$results</pre>";
+  }
+  ob_end_flush();
+} else {include('overview.php');}
 ?>
 <script>
 function myFunction() {
