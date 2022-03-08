@@ -10,7 +10,7 @@ my_dir=${HOME}/BirdNET-Pi/scripts
 echo "Stopping services"
 sudo systemctl stop birdnet_recording.service
 sudo systemctl stop birdnet_analysis.service
-sudo systemctl stop birdnet_service.service
+sudo systemctl stop birdnet_server.service
 echo "Removing all data . . . "
 sudo rm -drf "${RECS_DIR}"
 sudo rm -f "${IDFILE}"
@@ -36,8 +36,8 @@ sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
-sudo -u ${USER} chmod -R g+rw $(dirname ${my_dir})
-sudo -u ${USER} chmod -R g+rw ${RECS_DIR}
+sudo chmod -R g+rw $(dirname ${my_dir})
+sudo chmod -R g+rw ${RECS_DIR}
 
 echo "Dropping and re-creating database"
 sudo /home/pi/BirdNET-Pi/scripts/createdb.sh
