@@ -266,6 +266,55 @@ button:hover {
   color: black;
 }
 
+.customlabels {
+  float:left;
+}
+
+.customlabels table {
+  height: 100%;
+}
+
+.customlabels td {
+  border:none;
+  background-color: transparent;
+  vertical-align: middle;
+}
+
+.customlabels button {
+  padding: 12px;
+  background-color: rgb(219, 255, 235);
+  border: 2px solid black;
+  width: 100%;
+}
+
+.column1, .column3 {
+  width: 45%;
+}
+
+.smaller {
+  width: 100%;
+  display: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.column2 {
+  text-align: center;
+  width: 10%;
+  height: 80%;
+}
+
+.column1 form,.column3 form {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.column1 select,.column3 select {
+  height: 80%;
+  width: 100%;
+}
+
 .spectrogram {
   width:50%
 }
@@ -305,7 +354,28 @@ body::-webkit-scrollbar {
   display:none
 }
 
+@media screen and (max-width: 1290px) {
+  .column1, .column3 {
+    height: 90%
+  }
+}
 @media screen and (max-width: 1000px) {
+  .customlabels form {
+    width: 95%;
+  }  
+  .column1, .column3 {
+    width: 50%;
+    height: 100%;
+  }
+  .column1 select,.column3 select {
+    height: 70%;
+  }
+  .column2 {
+    display: none;
+  }
+  .smaller{
+    display: block;
+  }
   .systemcontrols button,.servicecontrols button {
     width: 60%;
     padding: 12px;
@@ -354,6 +424,9 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 600px) {
+  .column1, .column3 {
+    width: 100%;
+  }
   .systemcontrols button,.servicecontrols button {
     width: 80%;
     padding: 12px;
