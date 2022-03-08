@@ -286,11 +286,11 @@ button:hover {
   float: left;
 }
 
-.systemcontrols form {
+.systemcontrols form,.servicecontrols form {
   text-align: center;
 }
 
-.systemcontrols button {
+.systemcontrols button,.servicecontrols button {
   border: 2px solid black;
   background-color: rgb(219, 255, 235);
   padding: 12px;
@@ -302,7 +302,7 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 1000px) {
-  .systemcontrols button{
+  .systemcontrols button,.servicecontrols button {
     width: 60%;
     padding: 12px;
     background-color: rgb(219, 255, 235);
@@ -350,7 +350,7 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 600px) {
-  .systemcontrols button{
+  .systemcontrols button,.servicecontrols button {
     width: 80%;
     padding: 12px;
     background-color: rgb(219, 255, 235);

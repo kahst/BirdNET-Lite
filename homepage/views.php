@@ -34,6 +34,7 @@
 if(isset($_POST['view'])){
   if($_POST['view'] == "System Info"){header('location:phpsysinfo/index.php');}
   if($_POST['view'] == "System Controls"){include('scripts/system_controls.php');}
+  if($_POST['view'] == "Services"){include('scripts/service_controls.php');}
   if($_POST['view'] == "Spectrogram"){include('spectrogram.php');}
   if($_POST['view'] == "Overview"){include('overview.php');}
   if($_POST['view'] == "Today's Detections"){include('viewdb.php');}
@@ -61,6 +62,7 @@ if(isset($_POST['view'])){
         <button type=\"submit\" name=\"view\" value=\"Settings\" form=\"views\">Settings</button>
         <button type=\"submit\" name=\"view\" value=\"System Info\" form=\"views\">System Info</button>
         <button type=\"submit\" name=\"view\" value=\"System Controls\" form=\"views\">System Controls</button>
+        <button type=\"submit\" name=\"view\" value=\"Services\" form=\"views\">Services</button>
         <button type=\"submit\" name=\"view\" value=\"File\" form=\"views\">File Manager</button>
 	<a href=\"scripts/adminer.php\" target=\"_top\"><button type=\"submit\" form=\"\">Database Maintenanace</button></a>
         <button type=\"submit\" name=\"view\" value=\"Webterm\" form=\"views\">Web Terminal</button>
