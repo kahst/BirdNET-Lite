@@ -136,7 +136,8 @@ button:hover {
   display: block;
   text-align: center;
   padding: 14px 16px;
-  float:left;
+  float: left;
+  width: auto;
 }
 
 .topnav button:hover {
@@ -291,16 +292,23 @@ button:hover {
 
 .systemcontrols button {
   border: 2px solid black;
-  background-color: rgb(159, 226, 155);
-  width: 20%;
+  background-color: rgb(219, 255, 235);
+  padding: 12px;
+  width: 50%;
 }
 
 body::-webkit-scrollbar {
   display:none
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 1000px) {
+  .systemcontrols button{
+    width: 60%;
+    padding: 12px;
+    background-color: rgb(219, 255, 235);
+  }
   .topnav button {display: none;}
+  .topnav button {width: 50%;}
   .topnav button.icon {
     padding: 0;
     margin: 0;
@@ -342,6 +350,11 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 600px) {
+  .systemcontrols button{
+    width: 80%;
+    padding: 12px;
+    background-color: rgb(219, 255, 235);
+  }
   .stats img {
     width: 100%;
     margin-left:auto;
@@ -376,6 +389,7 @@ body::-webkit-scrollbar {
   }
   .topnav button { 
     font-size: large;
+    width: 100%
   }
   .topnav button {display: none;}
   .topnav button.icon {
