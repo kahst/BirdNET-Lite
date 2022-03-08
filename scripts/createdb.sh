@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 source /etc/birdnet/birdnet.conf
 sqlite3 /home/pi/BirdNET-Pi/scripts/birds.db << EOF
 DROP TABLE IF EXISTS detections;
