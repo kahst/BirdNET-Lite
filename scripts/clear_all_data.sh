@@ -42,6 +42,4 @@ sudo chmod -R g+rw ${EXTRACTED}
 echo "Dropping and re-creating database"
 createdb.sh
 echo "Restarting services"
-sudo systemctl start birdnet_server.service
-sudo systemctl start birdnet_analysis.service
-sudo systemctl start birdnet_recording.service
+restart_services.sh
