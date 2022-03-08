@@ -297,6 +297,10 @@ button:hover {
   width: 50%;
 }
 
+.servicecontrols button {
+  width: 20%;
+}
+
 body::-webkit-scrollbar {
   display:none
 }
