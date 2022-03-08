@@ -24,7 +24,7 @@ echo "Creating necessary directories"
 
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}/
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
+sudo -u ${USER} ln -fs $(dirname ${my_dir}) ${EXTRACTED}
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/play.php ${EXTRACTED}
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
@@ -37,10 +37,10 @@ sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/php
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
 sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
 sudo chmod -R g+rw $(dirname ${my_dir})
-sudo chmod -R g+rw ${RECS_DIR}
+sudo chmod -R g+rw ${EXTRACTED}
 
 echo "Dropping and re-creating database"
-sudo /home/pi/BirdNET-Pi/scripts/createdb.sh
+createdb.sh
 echo "Restarting services"
 sudo systemctl start birdnet_server.service
 sudo systemctl start birdnet_analysis.service

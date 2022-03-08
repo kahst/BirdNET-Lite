@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
-# This script performs the mysql_secure_installation
-# Creates the birds database
-# Creates the detections table
-# Creates the birder user and grants them appropriate
-# permissions
-# If using this script to re-initialize (DROP then CREATE)
-# the DB, be sure to run this as root or with sudo
+set -x
 source /etc/birdnet/birdnet.conf
 sqlite3 /home/pi/BirdNET-Pi/scripts/birds.db << EOF
 DROP TABLE IF EXISTS detections;
