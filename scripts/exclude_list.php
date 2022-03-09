@@ -28,8 +28,8 @@
 
 <div class="customlabels column2">
   <table><td>
-  <button type="submit" name="view" value="Excluded" form="add">>>ADD>></button><br>
-  <br>
+  <button type="submit" name="view" value="Excluded" form="add">>>ADD>></button>
+  <br><br>
   <button type="submit" name="view" value="Excluded" form="del">REMOVE</button>
   </td></table>
 </div>

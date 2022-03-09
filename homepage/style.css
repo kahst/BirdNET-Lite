@@ -119,7 +119,7 @@ button:hover {
 }
 
 .topnav, .topnav form {
-  background-color: rgb( 159, 226, 155);
+  background-color: rgb(159, 226, 155);
   display: block;
   width: 85%;
   margin-left: auto;
@@ -266,7 +266,7 @@ button:hover {
   color: black;
 }
 
-.customlabels {
+.customlabels,.customlabels2 {
   float:left;
 }
 
@@ -274,13 +274,13 @@ button:hover {
   height: 100%;
 }
 
-.customlabels td {
+.customlabels td,.customlabels2 td {
   border:none;
   background-color: transparent;
   vertical-align: middle;
 }
 
-.customlabels button {
+.customlabels button,.customlabels2 button {
   padding: 12px;
   background-color: rgb(219, 255, 235);
   border: 2px solid black;
@@ -302,6 +302,12 @@ button:hover {
   text-align: center;
   width: 10%;
   height: 80%;
+}
+
+.column4 {
+  text-align: justify;
+  width: 10%;
+  height: 50%;
 }
 
 .column1 form,.column3 form {
@@ -355,12 +361,12 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 1290px) {
-  .column1, .column3 {
+  .column1,.column2,.column3,.column4 {
     height: 90%
   }
 }
 @media screen and (max-width: 1000px) {
-  .customlabels form {
+  .customlabels form,.customlabels2 form {
     width: 95%;
   }  
   .column1, .column3 {
@@ -370,7 +376,7 @@ body::-webkit-scrollbar {
   .column1 select,.column3 select {
     height: 70%;
   }
-  .column2 {
+  .column2,.column4 {
     display: none;
   }
   .smaller{
