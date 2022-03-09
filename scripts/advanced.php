@@ -226,10 +226,10 @@ foreach($formats as $format){
       <p>This URL is how the main page will be reached. If you want your installation to respond to an IP address, place that here, but be sure to indicate `http://`.<br>Example for IP:http://192.168.0.109<br>Example if you own your own domain:https://birdnetpi.pmcgui.xyz</p>
       <label for="birdnetlog_url">BirdNET-Lite Log URL: </label>
       <input name="birdnetlog_url" type="url" value="<?php print($newconfig['BIRDNETLOG_URL']);?>" /><br>
-      <p>This URL is how the log will be reached. Only use this variable if you own your own domain.</p>
+      <p>This URL is how the log will be reached. Only use this variable for Fully Qualified Domain Names.</p>
       <label for="webterminal_url">Web Terminal URL: </label>
       <input name="webterminal_url" type="url" value="<?php print($newconfig['WEBTERMINAL_URL']);?>" /><br>
-      <p>This URL is how the Web browser terminal will be reached. Only use this variable if you own your own domain.</p>
+      <p>This URL is how the Web browser terminal will be reached. Only use this variable for Fully Qualified Domain Names.</p>
       <h3>BirdNET-Lite Settings</h3>
       <label for="overlap">Overlap: </label>
       <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($newconfig['OVERLAP']);?>" required/><br>
