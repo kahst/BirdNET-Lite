@@ -32,8 +32,14 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   basicauth /phpsysinfo* {
     birdnet ${HASHWORD}
   }
+  basicauth /terminal* {
+    birdnet ${HASHWORD}
+  }
   reverse_proxy /stream localhost:8000
   php_fastcgi unix//run/php/php7.4-fpm.sock
+  reverse_proxy /log* localhost:8080
+  reverse_proxy /stats* localhost:8501
+  reverse_proxy /terminal* localhost:8888
 }
 EOF
 else
@@ -49,32 +55,9 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   }
   reverse_proxy /stream localhost:8000
   php_fastcgi unix//run/php/php7.4-fpm.sock
-}
-EOF
-fi
-
-if [ ! -z ${WEBTERMINAL_URL} ] && [ ! -z ${HASHWORD} ];then
-  cat << EOF >> /etc/caddy/Caddyfile
-${WEBTERMINAL_URL} {
-  basicauth {
-    birdnet ${HASHWORD}
-  }
-  reverse_proxy localhost:8888
-}
-EOF
-elif [ ! -z ${WEBTERMINAL_URL} ] && [ -z ${HASHWORD} ];then
-  cat << EOF >> /etc/caddy/Caddyfile
-${WEBTERMINAL_URL} {
-  reverse_proxy localhost:8888
-}
-EOF
-fi
-
-if [ ! -z ${BIRDNETLOG_URL} ];then
-  cat << EOF >> /etc/caddy/Caddyfile
-
-${BIRDNETLOG_URL} {
-  reverse_proxy localhost:8080
+  reverse_proxy /log* localhost:8080
+  reverse_proxy /stats* localhost:8501
+  reverse_proxy /terminal* localhost:8888
 }
 EOF
 fi

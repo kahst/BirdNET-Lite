@@ -17,29 +17,34 @@ sudo rm -f "${IDFILE}"
 sudo rm -f $(dirname ${my_dir})/BirdDB.txt
 
 echo "Creating necessary directories"
-[ -d ${EXTRACTED} ] || sudo -u ${USER} mkdir -p ${EXTRACTED}
-[ -d ${EXTRACTED}/By_Date ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/By_Date
-[ -d ${EXTRACTED}/Charts ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
-[ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
+[ -d ${EXTRACTED} ] || mkdir -p ${EXTRACTED}
+[ -d ${EXTRACTED}/By_Date ] || mkdir -p ${EXTRACTED}/By_Date
+[ -d ${EXTRACTED}/Charts ] || mkdir -p ${EXTRACTED}/Charts
+[ -d ${PROCESSED} ] || mkdir -p ${PROCESSED}
 
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}/
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/play.php ${EXTRACTED}
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/stats.php ${EXTRACTED}
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/history.php ${EXTRACTED}
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/images/favicon.ico ${EXTRACTED}
-sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
-sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
+ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}
+ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}/
+ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
+ln -fs $(dirname ${my_dir})/scripts/play.php ${EXTRACTED}
+ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
+ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
+ln -fs $(dirname ${my_dir})/scripts/stats.php ${EXTRACTED}
+ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
+ln -fs $(dirname ${my_dir})/scripts/history.php ${EXTRACTED}
+ln -fs $(dirname ${my_dir})/homepage/images/favicon.ico ${EXTRACTED}
+ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
+ln -fs $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
+ln -fs $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
+ln -fs $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
 sudo chmod -R g+rw $(dirname ${my_dir})
 sudo chmod -R g+rw ${EXTRACTED}
 
 echo "Dropping and re-creating database"
 createdb.sh
+echo "Generating BirdDB.txt"
+touch $(dirname ${my_dir})/BirdDB.txt
+echo "Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap" > $(dirname ${my_dir})/BirdDB.txt
+ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt
+chown pi:pi ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
 echo "Restarting services"
 restart_services.sh

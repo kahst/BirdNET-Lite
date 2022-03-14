@@ -9,6 +9,7 @@ echo "<a href=\"https://github.com/mcguirepr89/BirdNET-Pi.git\" target=\"_blank\
 echo "<a href=\"https://github.com/mcguirepr89/BirdNET-Pi.git\" target=\"_blank\"><img src=\"images/bird.png\"></a>";
 }?>
   </div>
+  <div class="stream">
 <?php
 if(isset($_GET['stream'])){
   if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
@@ -28,6 +29,7 @@ if(isset($_GET['stream'])){
     if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
       echo "
   <audio controls autoplay><source src=\"/stream\"></audio>
+  </div>
   <h1><a href=\"\">BirdNET-Pi</a><img src=\"images/version.svg\"></h1>
   </div>";
     } else {
@@ -42,34 +44,17 @@ if(isset($_GET['stream'])){
   <form action=\"\" method=\"GET\">
     <button type=\"submit\" name=\"stream\" value=\"play\">Live Audio</button>
   </form>
+  </div>
   <h1><a href=\"\">BirdNET-Pi</a><img src=\"images/version.svg\"></h1>
 </div>";
 }
 if(isset($_GET['log'])) {
   if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
-    $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
-    if(empty($config['BIRDNETLOG_URL']) !== true) {
-      $logs = $config['BIRDNETLOG_URL'];
-    } elseif(empty($config['BIRDNETPI_URL'] !== true)) {
-      $logs = $config['BIRDNETPI_URL'].":8080";
-    } else {
-      $logs = "http://birdnetpi.local:8080";
-    }
-  } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
-    $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
-    if(empty($config['BIRDNETLOG_URL']) !== true){
-      $logs = $config['BIRDNETLOG_URL'];
-    } elseif(empty($config['BIRDNETPI_URL'] !== true)) {
-      $logs = $config['BIRDNETPI_URL'].":8080";
-    } else {
-      $logs = "http://birdnetpi.local:8080";
-    }
-  }
-  header("Location: $logs?logo=smaller");
+    header("Location: /log");}
 } elseif(isset($_GET['spectrogram'])){
-  header("Location: /spectrogram.php?logo=smaller");
+    header("Location: /spectrogram.php");
 } else {
-  echo "
+    echo "
 <iframe src=\"/views.php\">
 </div>";
 }

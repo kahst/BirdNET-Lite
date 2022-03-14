@@ -7,7 +7,6 @@ USER=pi
 HOME=/home/pi
 my_dir=${HOME}/BirdNET-Pi/scripts
 tmpfile=$(mktemp)
-gotty_url="https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_arm.tar.gz"
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
 install_depends() {
@@ -20,7 +19,6 @@ install_depends() {
     pulseaudio avahi-utils sox libsox-fmt-mp3 php php-fpm php-curl php-xml \
     php-zip icecast2 swig ffmpeg wget unzip curl cmake make bc libjpeg-dev \
     zlib1g-dev python3-dev python3-pip python3-venv
-  wget -c ${gotty_url} -O - |  tar -xz -C /usr/local/bin/
 }
 
 
@@ -206,8 +204,14 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   basicauth /phpsysinfo* {
     birdnet ${HASHWORD}
   }
+  basicauth /terminal* {
+    birdnet ${HASHWORD}
+  }
   reverse_proxy /stream localhost:8000
   php_fastcgi unix//run/php/php7.4-fpm.sock
+  reverse_proxy /log* localhost:8080
+  reverse_proxy /stats* localhost:8501
+  reverse_proxy /terminal* localhost:8888
 }
 EOF
   else
@@ -223,34 +227,13 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   }
   reverse_proxy /stream localhost:8000
   php_fastcgi unix//run/php/php7.4-fpm.sock
+  reverse_proxy /log* localhost:8080
+  reverse_proxy /stats* localhost:8501
+  reverse_proxy /terminal* localhost:8888
 }
 EOF
   fi
 
-  if [ ! -z ${WEBTERMINAL_URL} ] && [ ! -z ${HASHWORD} ];then
-    cat << EOF >> /etc/caddy/Caddyfile
-${WEBTERMINAL_URL} {
-  basicauth {
-    birdnet ${HASHWORD}
-  }
-  reverse_proxy localhost:8888
-}
-EOF
-  elif [ ! -z ${WEBTERMINAL_URL} ] && [ -z ${HASHWORD} ];then
-    cat << EOF >> /etc/caddy/Caddyfile
-${WEBTERMINAL_URL} {
-  reverse_proxy localhost:8888
-}
-EOF
-  fi
-
-  if [ ! -z ${BIRDNETLOG_URL} ];then
-    cat << EOF >> /etc/caddy/Caddyfile
-${BIRDNETLOG_URL} {
-  reverse_proxy localhost:8080
-}
-EOF
-  fi
   systemctl enable caddy
   usermod -aG pi caddy
 }
@@ -322,7 +305,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -p 8080 --title-format "BirdNET-Pi Log" birdnet_log.sh
+ExecStart=/usr/local/bin/gotty --address localhost -p 8080 -P log --title-format "BirdNET-Pi Log" birdnet_log.sh
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -337,7 +320,7 @@ RestartSec=3
 Type=simple
 User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty -w -p 8888 --title-format "BirdNET-Pi Terminal" bash
+ExecStart=/usr/local/bin/gotty --address localhost -w -p 8888 -P terminal --title-format "BirdNET-Pi Terminal" bash
 [Install]
 WantedBy=multi-user.target
 EOF

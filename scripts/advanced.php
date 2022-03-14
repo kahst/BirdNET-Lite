@@ -50,30 +50,6 @@ if(isset($_POST['submit'])) {
     }
   }
 
-  if(isset($_POST["webterminal_url"])) {
-    $webterminal_url = $_POST["webterminal_url"];
-    if(strcmp($webterminal_url,$config['WEBTERMINAL_URL']) !== 0) {
-      $contents = preg_replace("/WEBTERMINAL_URL=.*/", "WEBTERMINAL_URL=$webterminal_url", $contents);
-      $contents2 = preg_replace("/WEBTERMINAL_URL=.*/", "WEBTERMINAL_URL=$webterminal_url", $contents2);
-      $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
-      $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
-      fwrite($fh, $contents);
-      fwrite($fh2, $contents2);
-    }
-  }
-
-  if(isset($_POST["birdnetlog_url"])) {
-    $birdnetlog_url = $_POST["birdnetlog_url"];
-    if(strcmp($birdnetlog_url,$config['BIRDNETLOG_URL']) !== 0) {
-      $contents = preg_replace("/BIRDNETLOG_URL=.*/", "BIRDNETLOG_URL=$birdnetlog_url", $contents);
-      $contents2 = preg_replace("/BIRDNETLOG_URL=.*/", "BIRDNETLOG_URL=$birdnetlog_url", $contents2);
-      $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
-      $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
-      fwrite($fh, $contents);
-      fwrite($fh2, $contents2);
-    }
-  }
-
   if(isset($_POST["birdnetpi_url"])) {
     $birdnetpi_url = $_POST["birdnetpi_url"];
     if(strcmp($birdnetpi_url,$config['BIRDNETPI_URL']) !== 0) {
@@ -219,17 +195,11 @@ foreach($formats as $format){
       <h3>BirdNET-Pi Password</h3>
       <label for="caddy_pwd">Webpage: </label>
       <input name="caddy_pwd" type="text" value="<?php print($newconfig['CADDY_PWD']);?>" /><br>
-      <h3>Custom URLs</h3>
-      <p>When you update any of the URL settings below, the web server will reload, so be sure to wait at least 30 seconds and then reload the page.</p>
+      <h3>Custom URL</h3>
+      <p>When you update the URL below, the web server will reload, so be sure to wait at least 30 seconds and then go to your new URL.</p>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
       <input name="birdnetpi_url" type="url" value="<?php print($newconfig['BIRDNETPI_URL']);?>" /><br>
       <p>This URL is how the main page will be reached. If you want your installation to respond to an IP address, place that here, but be sure to indicate `http://`.<br>Example for IP:http://192.168.0.109<br>Example if you own your own domain:https://birdnetpi.pmcgui.xyz</p>
-      <label for="birdnetlog_url">BirdNET-Lite Log URL: </label>
-      <input name="birdnetlog_url" type="url" value="<?php print($newconfig['BIRDNETLOG_URL']);?>" /><br>
-      <p>This URL is how the log will be reached. Only use this variable for Fully Qualified Domain Names.</p>
-      <label for="webterminal_url">Web Terminal URL: </label>
-      <input name="webterminal_url" type="url" value="<?php print($newconfig['WEBTERMINAL_URL']);?>" /><br>
-      <p>This URL is how the Web browser terminal will be reached. Only use this variable for Fully Qualified Domain Names.</p>
       <h3>BirdNET-Lite Settings</h3>
       <label for="overlap">Overlap: </label>
       <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($newconfig['OVERLAP']);?>" required/><br>

@@ -153,14 +153,7 @@ if(isset($_POST['view'])){
       $submitteduser = $_SERVER['PHP_AUTH_USER'];
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
         #ACCESS THE WEB TERMINAL
-        if(empty($config['BIRDNETLOG_URL']) == false) {
-          $webterm = $config['WEBTERMINAL_URL'];
-        } elseif(empty($config['BIRDNETPI_URL'] == false)) {
-          $webterm = $config['BIRDNETPI_URL'].":8888";
-        } else {
-          $webterm = "http://birdnetpi.local:8888";
-        }
-      	header("Location: $webterm");
+      	header("Location: /terminal");
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
