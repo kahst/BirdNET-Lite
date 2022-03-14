@@ -256,6 +256,24 @@ EOF
   systemctl enable avahi-alias@"$(hostname)".local.service
 }
 
+install_birdnet_stats_service() {
+  cat << EOF > /home/pi/BirdNET-Pi/templates/birdnet_stats.service
+[Unit]
+Description=BirdNET Stats
+[Service]
+Restart=on-failure
+RestartSec=5
+Type=simple
+User=${USER}
+ExecStart=/home/pi/BirdNET-Pi/birdnet/bin/streamlit run /home/pi/BirdNET-Pi/scripts/plotly_streamlit.py --server.address localhost --server.baseUrlPath "/stats"
+
+[Install]
+WantedBy=multi-user.target
+EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_stats.service /usr/lib/systemd/system
+  systemctl enable birdnet_stats.service
+}
+
 install_spectrogram_service() {
   cat << EOF > /home/pi/BirdNET-Pi/templates/spectrogram_viewer.service
 [Unit]
