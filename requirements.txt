@@ -9,3 +9,5 @@ tzlocal
 pandas
 seaborn
 babel
+streamlit
+plotly
