@@ -46,6 +46,13 @@
     <button type="submit" name="submit" value="sudo systemctl enable --now birdnet_analysis.service">Enable</button>
   </form>
   <form action="" method="POST">
+    <h3>Streamlit Statistics</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop birdnet_stats.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart birdnet_stats.service">Restart</button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now birdnet_stats.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now birdnet_stats.service">Enable</button>
+  </form>
+  <form action="" method="POST">
     <h3>Recording Service</h3>
     <button type="submit" name="submit" value="sudo systemctl stop birdnet_recording.service">Stop</button>
     <button type="submit" name="submit" value="sudo systemctl restart birdnet_recording.service">Restart</button>
