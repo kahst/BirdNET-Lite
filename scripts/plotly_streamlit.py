@@ -5,15 +5,36 @@ import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import timedelta, datetime
+import sqlite3
+from sqlite3 import Connection
+from pathlib import Path
 
-@st.cache()
-def load_data():
-    df1 = pd.read_csv('/home/pi/BirdNET-Pi/BirdDB.txt', sep=';')
+URI_SQLITE_DB = "/home/pi/BirdNET-Pi/scripts/birds.db"
+
+
+@st.cache(hash_funcs={Connection: id})
+def get_connection(path: str):
+    """Put the connection in cache to reuse if path does not change between Streamlit reruns.
+    NB : https://stackoverflow.com/questions/48218065/programmingerror-sqlite-objects-created-in-a-thread-can-only-be-used-in-that-sa
+    """
+    return sqlite3.connect(path, check_same_thread=False)
+
+
+def get_data(conn: Connection):
+    df1 = pd.read_sql("SELECT * FROM detections", con=conn)
     return df1
+
+conn = get_connection(URI_SQLITE_DB)
+
+#@st.cache()
+#def load_data():
+#    df1 = pd.read_csv('/home/pi/BirdNET-Pi/BirdDB.txt', sep=';')
+#    return df1
 
 
 # Read in the cereal data
-df = load_data()
+#df = load_data()
+df = get_data(conn)
 df2=df.copy()
 df2['DateTime']=pd.to_datetime(df2['Date'] + " " + df2['Time'])
 df2=df2.set_index('DateTime')
@@ -56,7 +77,6 @@ top_N_species = (df2['Com_Name'].value_counts()[:top_N])
 
 specie = st.sidebar.selectbox('Which bird would you like to explore?', species, index=species.index(list(top_N_species.index)[0]))
 
-
 font_size=15
 
 
@@ -83,7 +103,7 @@ fig = make_subplots(
 fig.add_trace(go.Bar(y=top_N_species.index, x=top_N_species, orientation='h'), row=1,col=1)
 
 fig.update_layout(
-    margin=dict(l=0, r=0, t=50, b=0),
+    margin=dict(l=0, r=50, t=50, b=0),
     yaxis={'categoryorder':'total ascending'})
 # Set 360 degrees, 24 hours for polar plot
 theta = np.linspace(0.0, 360, 24, endpoint=False)
