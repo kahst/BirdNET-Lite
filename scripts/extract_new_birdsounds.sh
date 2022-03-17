@@ -66,9 +66,9 @@ for h in "${SCAN_DIRS[@]}";do
     #CONFIDENCE_SCORE="${CONFIDENCE:0:2}%"
     locale_decimal=$(locale decimal_point)
     if [[ $locale_decimal == "." ]]; then
-    CONFIDENCE_SCORE="$(printf %.0f "$(echo "scale=2; ${CONFIDENCE} * 100" | bc)")"
+      CONFIDENCE_SCORE="$(printf %.0f "$(echo "scale=2; ${CONFIDENCE} * 100" | bc)")"
     else
-    CONFIDENCE_SCORE="$(printf %.0f "$(echo "scale=2; ${CONFIDENCE//./,} * 100" | bc)")"
+      CONFIDENCE_SCORE="$(printf %.0f "$(echo "scale=2; "${CONFIDENCE//./,}" * 100" | bc)")"
     fi
     NEWFILE="${COMMON_NAME// /_}-${CONFIDENCE_SCORE}-${OLDFILE//.wav/.${AUDIOFMT}}"
     echo "NEWFILE=$NEWFILE"
