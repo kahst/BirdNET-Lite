@@ -64,7 +64,12 @@ for h in "${SCAN_DIRS[@]}";do
 	    | awk -F\; '{print $5}')""
 	    
     #CONFIDENCE_SCORE="${CONFIDENCE:0:2}%"
+    locale_decimal=$(locale decimal_point)
+    if [[ $locale_decimal == "." ]]; then
     CONFIDENCE_SCORE="$(printf %.0f "$(echo "scale=2; ${CONFIDENCE} * 100" | bc)")"
+    else
+    CONFIDENCE_SCORE="$(printf %.0f "$(echo "scale=2; ${CONFIDENCE//./,} * 100" | bc)")"
+    fi
     NEWFILE="${COMMON_NAME// /_}-${CONFIDENCE_SCORE}-${OLDFILE//.wav/.${AUDIOFMT}}"
     echo "NEWFILE=$NEWFILE"
     NEWSPECIES_BYDATE="${EXTRACTED}/By_Date/${DATE}/${COMMON_NAME// /_}"
