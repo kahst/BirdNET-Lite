@@ -12,6 +12,7 @@ from pathlib import Path
 URI_SQLITE_DB = "/home/pi/BirdNET-Pi/scripts/birds.db"
 
 
+st.set_page_config(layout='wide')
 @st.cache(hash_funcs={Connection: id})
 def get_connection(path: str):
     """Put the connection in cache to reuse if path does not change between Streamlit reruns.
@@ -90,9 +91,9 @@ fig = make_subplots(
                     specs= [[{"type":"xy","rowspan":2}, {"type":"polar"}], [None, {"type":"xy"}]],
                     subplot_titles=('<b style="font-size:x-large;">Species in Date Range</b>',
                                     '<b style="font-size:large;">'+specie+'</b><br>'
-                                    '<span style="font-size:medium;">Total Detections:'+str('{:,}'.format(sum(df_counts.Time)))+'<br>'
-                                    'Max Confidence:'+str('{:.2f}%'.format(max(df2[df2['Com_Name']==specie]['Confidence'])*100))+'<br>'
-                                    'Median Confidence:'+str('{:.2f}%'.format(np.median(df2[df2['Com_Name']==specie]['Confidence'])*100))+'</span>'
+                                    '<span style="font-size:medium;">Total Detections: '+str('{:,}'.format(sum(df_counts.Time)))+'<br>'
+                                    'Max Confidence: '+str('{:.2f}%'.format(max(df2[df2['Com_Name']==specie]['Confidence'])*100))+'<br>'
+                                    'Median Confidence: '+str('{:.2f}%'.format(np.median(df2[df2['Com_Name']==specie]['Confidence'])*100))+'</span>'
                                     
                                     )
                     )
@@ -134,7 +135,7 @@ fig.update_layout(
         ),
     )
 
-fig.layout.annotations[1].update(x=0.775,y=0.4, font_size=25)
+fig.layout.annotations[1].update(x=0.775,y=0.4, font_size=20)
 
 x=df_counts.index
 y=df_counts['Com_Name']
