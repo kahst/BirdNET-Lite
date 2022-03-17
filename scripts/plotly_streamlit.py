@@ -1,7 +1,6 @@
 #!/home/pi/BirdNET-Pi/birdnet/bin/python3
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -40,7 +39,9 @@ Specie_Count=df2['Com_Name'].value_counts()
 #Create species treemap
 
 # Create Hourly Crosstab
-hourly=pd.crosstab(df2['Com_Name'],df2.index.hour)
+
+
+hourly=pd.crosstab(df2['Com_Name'],df2.index.hour, dropna=False)
 
 # Filter on species
 species = list(hourly.index)
@@ -48,7 +49,7 @@ species = list(hourly.index)
 top_N = st.sidebar.select_slider(
     'Select Number of Birds to Show',
     list(range(1,len(Specie_Count))),
-    value=(10))
+    value=min(10,len(Specie_Count)-1))
 
 top_N_species = (df2['Com_Name'].value_counts()[:top_N])
 
@@ -67,11 +68,11 @@ df_counts=df2[filt].resample('D').count()
 fig = make_subplots(
                     rows=2, cols =2,
                     specs= [[{"type":"xy","rowspan":2}, {"type":"polar"}], [None, {"type":"xy"}]],
-                    subplot_titles=('<b>Species in Date Range</b>',
-                                    '<b>'+specie+'</b>'
-                                    '<br>Total Detections:'+str('{:,}'.format(sum(df_counts.Time)))+
-                                    '<br>''Max Confidence:'+str('{:.2f}%'.format(max(df2[df2['Com_Name']==specie]['Confidence'])*100))+
-                                    '<br>''Median Confidence:'+str('{:.2f}%'.format(np.median(df2[df2['Com_Name']==specie]['Confidence'])*100))
+                    subplot_titles=('<b style="font-size:x-large;">Species in Date Range</b>',
+                                    '<b style="font-size:large;">'+specie+'</b><br>'
+                                    '<span style="font-size:medium;">Total Detections:'+str('{:,}'.format(sum(df_counts.Time)))+'<br>'
+                                    'Max Confidence:'+str('{:.2f}%'.format(max(df2[df2['Com_Name']==specie]['Confidence'])*100))+'<br>'
+                                    'Median Confidence:'+str('{:.2f}%'.format(np.median(df2[df2['Com_Name']==specie]['Confidence'])*100))+'</span>'
                                     
                                     )
                     )
@@ -87,7 +88,10 @@ fig.update_layout(
 # Set 360 degrees, 24 hours for polar plot
 theta = np.linspace(0.0, 360, 24, endpoint=False)
 
-fig.add_trace(go.Barpolar(r = hourly.loc[specie], theta=theta), row=1, col=2)
+d=pd.DataFrame(np.zeros((23,1))).squeeze()
+radius = hourly.loc[specie]
+radius=(d+radius).fillna(0)
+fig.add_trace(go.Barpolar(r = radius, theta=theta), row=1, col=2)
 
 fig.update_layout(
     autosize=True,
@@ -110,7 +114,7 @@ fig.update_layout(
         ),
     )
 
-fig.layout.annotations[1].update(x=0.8,y=0.4, font_size=25)
+fig.layout.annotations[1].update(x=0.775,y=0.4, font_size=25)
 
 x=df_counts.index
 y=df_counts['Com_Name']
