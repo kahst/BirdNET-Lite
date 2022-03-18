@@ -104,7 +104,7 @@ fig = make_subplots(
 fig.add_trace(go.Bar(y=top_N_species.index, x=top_N_species, orientation='h'), row=1,col=1)
 
 fig.update_layout(
-    margin=dict(l=0, r=50, t=50, b=0),
+    margin=dict(l=0, r=50, t=70, b=0),
     yaxis={'categoryorder':'total ascending'})
 # Set 360 degrees, 24 hours for polar plot
 theta = np.linspace(0.0, 360, 24, endpoint=False)
