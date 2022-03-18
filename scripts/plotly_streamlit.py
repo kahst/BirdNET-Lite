@@ -13,7 +13,7 @@ URI_SQLITE_DB = "/home/pi/BirdNET-Pi/scripts/birds.db"
 
 
 st.set_page_config(layout='wide')
-@st.cache(hash_funcs={Connection: id})
+@st.cache(ttl=60,hash_funcs={Connection: id})
 def get_connection(path: str):
     """Put the connection in cache to reuse if path does not change between Streamlit reruns.
     NB : https://stackoverflow.com/questions/48218065/programmingerror-sqlite-objects-created-in-a-thread-can-only-be-used-in-that-sa
@@ -135,7 +135,7 @@ fig.update_layout(
         ),
     )
 
-fig.layout.annotations[1].update(x=0.775,y=0.4, font_size=20)
+fig.layout.annotations[1].update(x=0.775,y=0.4, font_size=15)
 
 x=df_counts.index
 y=df_counts['Com_Name']
