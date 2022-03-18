@@ -55,6 +55,14 @@ if($statement5 == False) {
 }
 $result5 = $statement5->execute();
 $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
+
+$statement6 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections');
+if($statement6 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
+$result6 = $statement6->execute();
+$totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
 ?>
 <head>
   <meta charset="UTF-8">
@@ -83,6 +91,12 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
         <th>Species Detected Today</th>
         <form action="" method="POST">
         <td><button type="submit" name="view" value="Species Stats"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+        </form>
+      </tr>
+      <tr>
+        <th>Total Number of Species</th>
+        <form action="" method="POST">
+        <td><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
         </form>
       </tr>
     </table>
