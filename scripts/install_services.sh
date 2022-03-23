@@ -409,6 +409,7 @@ install_services() {
   install_avahi_aliases
   install_birdnet_analysis
   install_birdnet_server
+  install_birdnet_stats_service
   install_recording_service
   install_extraction_service
   install_pushed_notifications
