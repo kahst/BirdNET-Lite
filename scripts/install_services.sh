@@ -116,6 +116,7 @@ create_necessary_dirs() {
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
+  sudo -u ${USER} ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/play.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
