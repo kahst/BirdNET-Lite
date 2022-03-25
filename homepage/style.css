@@ -181,6 +181,13 @@ button:hover {
   vertical-align: middle;
 }
 
+.overview img {
+  display: block;
+  max-height: 100%;
+  margin-left: 25%;
+  margin-right: 10%;
+}
+
 .overview span {
   width: auto;
   margin-right: 20%;
@@ -363,11 +370,25 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 1290px) {
+  .overview img {
+    display: block;
+    max-height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .column1,.column2,.column3,.column4 {
     height: 90%
   }
 }
 @media screen and (max-width: 1000px) {
+  .overview img {
+    display: block;
+    max-height: 100%;
+    margin-left: 25%;
+    margin-right: 10%;
+  }
+
   .customlabels form,.customlabels2 form {
     width: 95%;
   }  
@@ -496,6 +517,12 @@ body::-webkit-scrollbar {
   .overview span img,.overview span table,.overview img {
     margin: 0;
     width: 100%;
+  }
+  .overview img {
+    display: block;
+    max-height: 100%;
+    margin-left: 25%;
+    margin-right: 10%;
   }
   .version {display:none;}
   .left {
