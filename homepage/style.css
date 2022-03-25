@@ -118,7 +118,7 @@ button:hover {
   padding: 10px;
 }
 
-.topnav, .topnav form {
+.topnav {
   background-color: rgb(159, 226, 155);
   display: block;
   width: 85%;
@@ -127,6 +127,8 @@ button:hover {
 }
 
 .topnav form {
+  display: block;
+  width: 80%;
   margin-left: auto;
   margin-rigth: auto;
 }
@@ -200,7 +202,7 @@ button:hover {
 }
 
 .overview span img {
-  margin-left: 15%;
+  margin-left: auto;
   margin-right: auto;
 }
 

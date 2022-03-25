@@ -104,7 +104,7 @@ $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
 </div>
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
-  echo "<img src=\"/Charts/$chart?nocache=time()\">";
+  echo "<img style=\"display:block;max-height:100%;margin-left:25%;margin-right:10%;\" src=\"/Charts/$chart?nocache=time()\">";
 } else {
   echo "<p>No Detections For Today</p>";
 }
