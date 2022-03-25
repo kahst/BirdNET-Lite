@@ -373,22 +373,18 @@ body::-webkit-scrollbar {
   .overview img {
     display: block;
     max-height: 100%;
-    margin-left: auto;
+    margin-left: 10%;
     margin-right: auto;
   }
 
   .column1,.column2,.column3,.column4 {
     height: 90%
   }
+  .left {
+    display: none;
+  }
 }
 @media screen and (max-width: 1000px) {
-  .overview img {
-    display: block;
-    max-height: 100%;
-    margin-left: 25%;
-    margin-right: 10%;
-  }
-
   .customlabels form,.customlabels2 form {
     width: 95%;
   }  
@@ -427,6 +423,12 @@ body::-webkit-scrollbar {
   .overview span img,.overview span table,.overview img {
     margin: 0;
     width: 100%;
+  }
+  .overview img {
+    display: block;
+    max-height: 100%;
+    margin-left: 5%;
+    margin-right: auto;
   }
   .banner {
     height: auto;
@@ -521,8 +523,8 @@ body::-webkit-scrollbar {
   .overview img {
     display: block;
     max-height: 100%;
-    margin-left: 25%;
-    margin-right: 10%;
+    margin-left: 5%;
+    margin-right: auto;
   }
   .version {display:none;}
   .left {
