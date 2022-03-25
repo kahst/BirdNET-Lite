@@ -416,6 +416,9 @@ body::-webkit-scrollbar {
     margin-left: auto;
     margin-right: auto;
   }
+  .topnav form {
+    width: 100%;
+  }
   .overview span {
     margin-right: auto;
     margin-left: auto;
