@@ -21,7 +21,7 @@ iframe {
   padding: 0;
   margin: 0;
   border: none;
-  height: 92%;
+  height: 93%;
   width: 100%;
 }
 
@@ -87,12 +87,12 @@ button:hover {
 }
 
 .banner {
-  padding-top: 1px;
-  height: 8%;
+  height: 7%;
   text-align: center;
 }
 
 .banner h1 {
+  padding: .5em;
   letter-spacing: 5px;
 }
 
