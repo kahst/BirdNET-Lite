@@ -74,6 +74,18 @@ button:hover {
   color: blue;
 }
 
+.row {
+  display: flex;
+}
+
+.centered {
+  text-align: center;
+  display: block;
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .banner {
   padding-top: 1px;
   height: 8%;
@@ -103,14 +115,6 @@ button:hover {
   font-size: x-large;
 }
 
-.italic {
-    -moz-transform: scale(1) rotate(0deg) translate(0px, 0px) skew(20deg, 0deg);
-    -webkit-transform: scale(1) rotate(0deg) translate(0px, 0px) skew(20deg, 0deg);
-    -o-transform: scale(1) rotate(0deg) translate(0px, 0px) skew(20deg, 0deg);
-    -ms-transform: scale(1) rotate(0deg) translate(0px, 0px) skew(20deg, 0deg);
-    transform: scale(1) rotate(0deg) translate(0px, 0px) skew(20deg, 0deg);
-}
-
 .logo img {
   position: absolute;
   top: 0;
@@ -120,26 +124,25 @@ button:hover {
 
 .topnav {
   background-color: rgb(159, 226, 155);
-  display: block;
-  width: 85%;
+  display: flex;
+  flex: 65%;
+  width: 65%;
+  justify-content: space-between;
   margin-left: auto;
   margin-right: auto;
 }
 
 .topnav form {
-  display: block;
-  width: 80%;
-  margin-left: auto;
-  margin-rigth: auto;
+  margin: 0;
+  padding: 0;
 }
 
 .topnav button {
   background-color: transparent;
-  display: block;
   text-align: center;
   padding: 14px 16px;
-  float: left;
   width: auto;
+  height: auto;
 }
 
 .topnav button:hover {
@@ -152,7 +155,6 @@ button:hover {
   color: white;
 }
 
-/* Hide the link that should open and close the topnav on small screens */
 .topnav .icon {
   display: none;
 }
@@ -166,10 +168,6 @@ button:hover {
   width: 75%;
 }
 
-.overview table {
-  width: 20%;
-}
-
 .overview th {
   background-color: rgb(219, 255, 235);
   border: 2px solid black;
@@ -181,36 +179,28 @@ button:hover {
   vertical-align: middle;
 }
 
-.overview img {
-  display: block;
+.overview div img {
   max-height: 100%;
-  margin-left: 25%;
-  margin-right: 10%;
-}
-
-.overview span {
-  width: auto;
-  margin-right: 20%;
-  margin-left: auto;
-}
-
-.overview span video {
-  width: 100%;
-  padding: 0;
-}
-
-.overview span table {
-  width: 50%;
-  margin-right: 25%;
-}
-
-.overview span td {
-  padding: 1;
-}
-
-.overview span img {
-  margin-left: auto;
+  display: flex;
+  justify-content: center;
   margin-right: auto;
+  margin-left: auto;
+}
+
+.overview-stats {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.left-column {
+  flex: 10%;
+  padding-left: 10px;
+}
+
+.right-column {
+  flex: 90%;
+  margin-right: 10%;
 }
 
 .stats td {
@@ -221,11 +211,6 @@ button:hover {
   height: auto;
 }
 
-.column {
-  width: auto;
-  height: 100%;
-}
-
 .stats button:hover {
   color: blue;
 }
@@ -233,10 +218,6 @@ button:hover {
 .overview button, .center button{
   font-weight: bold;
   color: blue;
-}
-
-.left {
-  float: left;
 }
 
 .history table,.history img {
@@ -334,14 +315,6 @@ button:hover {
   width:50%
 }
 
-.centered {
-  text-align: center;
-  display: block;
-  width: auto;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .full {
   width:100%;
 }
@@ -365,23 +338,16 @@ button:hover {
   width: 20%;
 }
 
-body::-webkit-scrollbar {
-  display:none
-}
+#body::-webkit-scrollbar {
+#  display:none
+#}
 
 @media screen and (max-width: 1290px) {
-  .overview img {
-    display: block;
-    max-height: 100%;
-    margin-left: 10%;
-    margin-right: auto;
-  }
-
   .column1,.column2,.column3,.column4 {
     height: 90%
   }
-  .left {
-    display: none;
+  .overview {
+    width: 100%;
   }
 }
 @media screen and (max-width: 1000px) {
@@ -406,31 +372,17 @@ body::-webkit-scrollbar {
     padding: 12px;
     background-color: rgb(219, 255, 235);
   }
+  .topnav {
+    flex: 100%;
+    width: 100%;
+  }
   .topnav button {display: none;}
-  .topnav button {width: 50%;}
   .topnav button.icon {
     padding: 0;
     margin: 0;
     display: block;
     width: 100%;
     margin-left: auto;
-    margin-right: auto;
-  }
-  .topnav form {
-    width: 100%;
-  }
-  .overview span {
-    margin-right: auto;
-    margin-left: auto;
-  }
-  .overview span img,.overview span table,.overview img {
-    margin: 0;
-    width: 100%;
-  }
-  .overview img {
-    display: block;
-    max-height: 100%;
-    margin-left: 5%;
     margin-right: auto;
   }
   .banner {
@@ -452,12 +404,19 @@ body::-webkit-scrollbar {
     display: block;
     text-align: center;
   }
-  .left {
+  .overview span {
     display: none;
+  }
+  .right-column {
+    flex: 100%;
+    margin: 0;
+  }
+  img {
+    max-width: 100%;
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
   .column1, .column3 {
     width: 100%;
   }
@@ -495,8 +454,9 @@ body::-webkit-scrollbar {
     width: 100%;
   }
   .topnav {
-    margin-left:auto;
-    margin-right:auto;
+    flex: 100%;
+    width: 100%;
+    flex-direction: column;
   }
   .topnav button { 
     font-size: large;
@@ -515,19 +475,8 @@ body::-webkit-scrollbar {
   .topnav.responsive button {
     display: block;
   }
-  .overview span{
-    margin-right: auto;
-    margin-left: auto;
-  }
-  .overview span img,.overview span table,.overview img {
-    margin: 0;
-    width: 100%;
-  }
-  .overview img {
-    display: block;
-    max-height: 100%;
-    margin-left: 5%;
-    margin-right: auto;
+  .overview .column .left {
+    display: none;
   }
   .version {display:none;}
   .left {
