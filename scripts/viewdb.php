@@ -9,7 +9,7 @@ if($db == False){
   header("refresh: 0;");
 }
 
-$statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC');
+$statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name, COUNT(File_Name) FROM detections WHERE Date == Date(\'now\', \'localtime\') GROUP BY Time ORDER BY Time DESC, MAX(Confidence) ASC');
 if($statement0 == False){
   echo "Database is busy";
   header("refresh: 0;");
