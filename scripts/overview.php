@@ -76,7 +76,6 @@ body::-webkit-scrollbar {
 </head>
 <div class="overview">
 <div class="overview-stats">
-<span>
 <div class="left-column">
 <table>
   <tr>
@@ -107,7 +106,6 @@ body::-webkit-scrollbar {
   </tr>
 </table>
 </div>
-</span>
 <div class="right-column">
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {

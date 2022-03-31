@@ -404,7 +404,7 @@ button:hover {
     display: block;
     text-align: center;
   }
-  .overview span {
+  .left-column {
     display: none;
   }
   .right-column {
@@ -413,6 +413,10 @@ button:hover {
   }
   img {
     max-width: 100%;
+  }
+  .overview .right-column img {
+    margin-left: 5%;
+    margin-right: auto;
   }
 }
 
@@ -475,11 +479,15 @@ button:hover {
   .topnav.responsive button {
     display: block;
   }
-  .overview .column .left {
+  .left-column {
     display: none;
   }
   .version {display:none;}
   .left {
     display:none;
+  }
+  .right-column img {
+    margin-left: 10%;
+    margin-right: auto;
   }
 }
