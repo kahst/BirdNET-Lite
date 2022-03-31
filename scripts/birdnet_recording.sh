@@ -10,6 +10,8 @@ fi
 
 [ -z $RECORDING_LENGTH ] && RECORDING_LENGTH=15
 
+if ! pulseaudio --check;then pulseaudio --start;fi
+
 if pgrep arecord &> /dev/null ;then
   echo "Recording"
 else
