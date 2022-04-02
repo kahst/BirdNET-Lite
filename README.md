@@ -21,6 +21,8 @@ Check out birds from around the world
 - [BirdNET-Pi in Öringe, Tyresö, Sweden](https://birdnet.svardsten.se)<br>
 - [Private Nature Garden, Grevenbroich, Germany](http://birdnetgv.ddnss.de)<br>
 
+[Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
+
 Currently listening in these countries . . . that I know of . . .
 - The United States
 - Germany
