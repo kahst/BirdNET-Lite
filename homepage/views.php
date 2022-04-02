@@ -14,18 +14,18 @@
   <button type="submit" name="view" value="Daily Charts" form="views">Daily Charts</button>
 </form>
 <form action="" method="POST" id="views">
-  <button type="submit" name="view" value="Tools" form="views">Tools</button>
-</form>
-<form action="" method="POST" id="views">
   <button type="submit" name="view" value="Recordings" form="views">Recordings</button>
+</form>
+<form action="index.php" method="GET" id="spectrogram">
+  <input type="hidden" name="logo" value="smaller">
+  <button style="float:none;" type="submit" name="spectrogram" value="view" id="spectrogram" form="spectrogram">Spectrogram</button>
 </form>
 <form action="index.php" method="GET" id="Log">
   <input type="hidden" name="logo" value="smaller">
   <button type="submit" name="log" value="log" form="Log">View Log</button>
 </form>
-<form action="index.php" method="GET" id="spectrogram">
-  <input type="hidden" name="logo" value="smaller">
-  <button style="float:none;" type="submit" name="spectrogram" value="view" id="spectrogram" form="spectrogram">Spectrogram</button>
+<form action="" method="POST" id="views">
+  <button type="submit" name="view" value="Tools" form="views">Tools</button>
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>

@@ -346,8 +346,22 @@ button:hover {
   .column1,.column2,.column3,.column4 {
     height: 90%
   }
+  .left-column {
+    display: none;
+  }
+  .right-column {
+    flex: 100%;
+    margin: 0;
+  }
+  img {
+    max-width: 100%;
+  }
   .overview {
-    width: 100%;
+    overflow-x: hidden;
+  }
+  .overview .right-column .chart img {
+    margin-left: 5%;
+    margin-right: auto;
   }
 }
 @media screen and (max-width: 1000px) {
@@ -403,20 +417,6 @@ button:hover {
   .topnav.responsive button {
     display: block;
     text-align: center;
-  }
-  .left-column {
-    display: none;
-  }
-  .right-column {
-    flex: 100%;
-    margin: 0;
-  }
-  img {
-    max-width: 100%;
-  }
-  .overview .right-column img {
-    margin-left: 5%;
-    margin-right: auto;
   }
 }
 
@@ -485,9 +485,5 @@ button:hover {
   .version {display:none;}
   .left {
     display:none;
-  }
-  .right-column img {
-    margin-left: 10%;
-    margin-right: auto;
   }
 }

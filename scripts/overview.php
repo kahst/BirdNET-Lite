@@ -107,6 +107,7 @@ body::-webkit-scrollbar {
 </table>
 </div>
 <div class="right-column">
+<div class="chart">
 <?php
 if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
   echo "<img src=\"/Charts/$chart?nocache=time()\">";
@@ -114,6 +115,7 @@ if (file_exists('/home/pi/BirdSongs/Extracted/Charts/'.$chart)) {
   echo "<p>No Detections For Today</p>";
 }
 ?>
+</div>
 <table>
   <h3>Most Recent Detection: <span style="font-weight: normal;"><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></span></h3>
   <tr>
