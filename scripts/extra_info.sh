@@ -12,29 +12,45 @@ echo "Binary: $binary";
 revbinary=$(echo $binary|rev)
 if echo $binary | grep 1 ;then
   echo "ISSUES DETECTED"
-  if [ ${revbinary:0:1} -eq 1 ];then
-    echo "Under-voltage detected"
+  if [ ${revbinary:0:1} -eq 1 &> /dev/null ];then
+    message="Under-voltage detected"
+    echo "$message"
+    dmesg -H | grep -i voltage
   fi
-  if [ ${revbinary:1:1} -eq 1 ];then
-    echo "Arm frequency capped"
+  if [ ${revbinary:1:1} -eq 1 &> /dev/null ];then
+    message="Arm frequency capped"
+    echo "$message"
+    dmesg -H | grep -i frequen
   fi
-  if [ ${revbinary:2:1} -eq 1 ];then
-    echo "Currently Throttled"
+  if [ ${revbinary:2:1} -eq 1 &> /dev/null ];then
+    message="Currently Throttled"
+    echo "$message"
+    dmesg -H | grep -i throttl
   fi
-  if [ ${revbinary:3:1} -eq 1 ];then
-    echo "Soft temperatue limit active"
+  if [ ${revbinary:3:1} -eq 1 &> /dev/null ];then
+    message="Soft temperatue limit active"
+    echo "$message"
+    dmesg -H | grep -i temperature 
   fi
-  if [ ${revbinary:16:1} -eq 1 ];then
-    echo "Under-voltage has occurred"
+  if [ ${revbinary:16:1} -eq 1 &> /dev/null ];then
+    message="Under-voltage has occurred"
+    echo "$message"
+    dmesg -H | grep -i voltage
   fi
-  if [ ${revbinary:17:1} -eq 1 ];then
-    echo "Arm frequency capping has occurred"
+  if [ ${revbinary:17:1} -eq 1 &> /dev/null ];then
+    message="Arm frequency capping has occurred"
+    echo "$message"
+    dmesg -H | grep -i frequen
   fi
-  if [ ${revbinary:18:1} -eq 1 ];then
-    echo "Throttling has occurred"
+  if [ ${revbinary:18:1} -eq 1 &> /dev/null ];then
+    message="Throttling has occurred"
+    echo "$message"
+    dmesg -H | grep -i throttl
   fi
-  if [ ${revbinary:19:1} -eq 1 ];then
-    echo "Soft temperature limit has occurred"
+  if [ ${revbinary:19:1} -eq 1 &> /dev/null ];then
+    message="Soft temperature limit has occurred"
+    echo "$message"
+    dmesg -H | grep -i temperature 
   fi
 fi
 echo "....................................Clock Speeds................................"

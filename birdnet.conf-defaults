@@ -4,13 +4,10 @@
 
 #--------------------- Required: Latitude, and Longitude ----------------------#
 
-## The shell substitution below guesses these based on your network. THESE NEED
-## TO BE CHANGED TO STATIC VALUES
 ## Please only go to 4 decimal places. Example:43.3984
 
-LATITUDE="$(curl -s4 ifconfig.co/json | awk '/lat/ {print $2}' | tr -d ',')"
-LONGITUDE="$(curl -s4 ifconfig.co/json | awk '/lon/ {print $2}' | tr -d ',')"
-
+LATITUDE=
+LONGITUDE=
 
 #---------------------  BirdWeather Station Information -----------------------#
 #_____________The variable below can be set to have your BirdNET-Pi____________#
@@ -27,14 +24,6 @@ BIRDWEATHER_ID=
 ## certain parts of the web interface
 
 CADDY_PWD=
-
-#-------------------------  MariaDB User Passwords  ---------------------------#
-#_____________The variable below sets the password for the_____________________# 
-#_______________________'birder' user on the MariaDB___________________________#
-
-## DB_PWD is for the 'birder' user. The shell substitution below sets a random
-## password for you during installation.
-DB_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 
 #-------------------------  Live Audio Stream  --------------------------------#
 #_____________The variable below configures/enables the live___________________# 
@@ -84,24 +73,6 @@ PUSHED_APP_SECRET=
 
 RECS_DIR=/home/pi/BirdSongs
 
-
-#------------------------------ Extraction Service  ---------------------------#
-
-## DO_EXTRACTIONS is simply a setting for enabling the extraction.service.
-## Set this to Y or y to enable extractions.
-
-DO_EXTRACTIONS=y
-
-#-----------------------------  Recording Service  ----------------------------#
-#____________________The variable below can be set to enable __________________#
-#________________________the birdnet_recording.service ________________________#
-
-## DO_RECORDING is simply a setting for enabling the 24/7
-## birdnet_recording.service.
-## Set this to Y or y to enable recording.
-
-DO_RECORDING=y
-
 ## REC_CARD is the sound card you would want the birdnet_recording.service to 
 ## use. Leave this as "default" to use PulseAudio (recommended), or use
 ## the output from "aplay -L" to specify an ALSA device.
@@ -117,12 +88,6 @@ PROCESSED=${RECS_DIR}/Processed
 ## EXTRACTED is the directory where the extracted audio selections are moved.
 
 EXTRACTED=${RECS_DIR}/Extracted
-
-## IDFILE is the file that keeps a complete list of every spececies that
-## BirdNET has identified from your data-set. It is a relic and not really
-## used anymore.
-
-IDFILE=${HOME}/BirdNET-Pi/IdentifiedSoFar.txt
 
 ## OVERLAP is the value in seconds which BirdNET should use when analyzing
 ## the data. The values must be between 0.0-2.9.
@@ -149,11 +114,6 @@ CHANNELS=2
 ## keep = Keep all data and 'stop_core_services.sh'
 
 FULL_DISK=purge
-
-## VENV is the python virtual environment wherein all modules and site-packages
-## have been installed.
-
-VENV=/home/pi/BirdNET-Pi/birdnet
 
 ## RECORDING_LENGTH sets the length of the recording that BirdNET-Lite will 
 ## analyze.
@@ -185,18 +145,4 @@ BIRDNET_USER=pi
 ## These are just for debugging
 LAST_RUN=
 THIS_RUN=
-
-## DEPRECATED 
-#-------------------------------  NoMachine  ----------------------------------#
-#_____________The variable below can be set include NoMachine__________________#
-#_________________remote desktop software to be installed._____________________#
-
-#            Keep this EMPTY if you do not want to install NoMachine.          #
-
-## INSTALL_NOMACHINE is simply a setting that can be enabled to install
-## NoMachine alongside the BirdNET-Pi for remote desktop access. This in-
-## staller assumes personal use. Please reference the LICENSE file included
-## in this repository for more information.
-## Set this to Y or y to install NoMachine alongside the BirdNET-Lite
-
-INSTALL_NOMACHINE=y
+IDFILE=/home/pi/BirdNET-Pi/IdentifiedSoFar.txt

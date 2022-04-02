@@ -1,3 +1,4 @@
+#!/home/pi/BirdNET-Pi/birdnet/bin/python3
 import argparse
 import socket
 

@@ -1,3 +1,16 @@
+# 0.13
+- Removed secondary and tertiary custom URLs
+- Added new custom-compiled GoTTY binary
+- All new web interface
+- SQLite database replaced MariaDB
+- Better service controls
+- Spectrogram views
+- Privacy server.py for testing
+- New mobile view
+- Moved (nearly) all CSS to style.css
+- Added "try/except" to server.py to fail BirdWeather
+  POSTing gracefully and not kill the service
+
 # main v.11.1
 - `server.py` socket
 - Removed DB password from scripts

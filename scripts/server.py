@@ -18,10 +18,8 @@ import math
 import time
 from decimal import Decimal
 import json
-###############################################################################    
 import requests
-import mysql.connector
-###############################################################################
+import sqlite3
 import datetime
 from time import sleep
 import pytz
@@ -48,7 +46,7 @@ except:
 # Open most recent Configuration and grab DB_PWD as a python variable
 with open('/home/pi/BirdNET-Pi/thisrun.txt', 'r') as f:
     this_run = f.readlines()
-    db_pwd = str(str(str([i for i in this_run if i.startswith('DB_PWD')]).split('=')[1]).split('\\')[0])
+    audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
 
 
 def loadModel():
@@ -304,7 +302,7 @@ def handle_client(conn, addr):
                 #print('Time:', date_time_obj.time())
                 print('Date-time:', date_time_obj)
                 now = date_time_obj
-                current_date = now.strftime("%Y/%m/%d")
+                current_date = now.strftime("%Y-%m-%d")
                 current_time = now.strftime("%H:%M:%S")
                 current_iso8601 = now.astimezone(get_localzone()).isoformat()
                 
@@ -331,88 +329,83 @@ def handle_client(conn, addr):
                   myReturn += str(i) + '-' + str(detections[i][0]) + '\n'
                 
                 
-
-                
                 with open('/home/pi/BirdNET-Pi/BirdDB.txt', 'a') as rfile:
                     for d in detections:
                         for entry in detections[d]:
                             if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) ):
                                 rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' \
                                 + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' \
-                                + str(sensitivity) +';' + str(args.overlap) + '\n')
-
-                                def insert_variables_into_table(Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap):
-                                    try:
-                                        connection = mysql.connector.connect(host='localhost',
-                                                                             database='birds',
-                                                                             user='birder',
-                                                                             password=db_pwd)
-                                        cursor = connection.cursor()
-                                        mySql_insert_query = """INSERT INTO detections (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
-                                                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
+                                + str(args.sensitivity) +';' + str(args.overlap) + '\n')
                                 
-                                        record = (Date, Time, Sci_Name, Com_Name, Confidence, Lat, Lon, Cutoff, Week, Sens, Overlap)
-
-                                        cursor.execute(mySql_insert_query, record)
-                                        connection.commit()
-                                        print("Record inserted successfully into detections table")
-
-                                
-                                    except mysql.connector.Error as error:
-                                        print("Failed to insert record into detections table {}".format(error))
-                                    
-                                    finally:
-                                        if connection.is_connected():
-                                            connection.close()
-                                            print("MySQL connection is closed")
-
+                                Date = str(current_date)
+                                Time = str(current_time)
                                 species = entry[0]
-                                sci_name,com_name = species.split('_')
-                                insert_variables_into_table(str(current_date), str(current_time), sci_name, com_name, \
-                                str(entry[1]), str(args.lat), str(args.lon), str(min_conf), str(week), \
-                                str(args.sensitivity), str(args.overlap))
+                                Sci_Name,Com_Name = species.split('_')
+                                score = entry[1]
+                                Confidence = str(round(score*100))
+                                Lat = str(args.lat)
+                                Lon = str(args.lon)
+                                Cutoff = str(args.min_conf)
+                                Week = str(args.week)
+                                Sens = str(args.sensitivity)
+                                Overlap = str(args.overlap)
+                                Com_Name = Com_Name.replace("'", "")
+                                File_Name = Com_Name.replace(" ", "_") + '-' + Confidence + '-' + \
+                                        Date.replace("/", "-") + '-birdnet-' + Time + audiofmt
 
-                                print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) +";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + '\n')
+                                #Connect to SQLite Database
+                                try: 
+                                    con = sqlite3.connect('/home/pi/BirdNET-Pi/scripts/birds.db')
+                                    cur = con.cursor()
+                                    cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Date, Time, Sci_Name, Com_Name, str(score), Lat, Lon, Cutoff, Week, Sens, Overlap, File_Name))
+
+                                    con.commit()
+                                    con.close()
+                                except:
+                                    print("Database busy")
+                                    time.sleep(2)
+                                print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + ';' + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + Com_Name.replace(" ", "_") + '-' + str(score) + '-' + str(current_date) + '-birdnet-' + str(current_time) + audiofmt  + '\n')
 
                                 if birdweather_id != "99999":
+                                    try:
 
-                                    if soundscape_uploaded is False:
-                                        # POST soundscape to server
-                                        soundscape_url = "https://app.birdweather.com/api/v1/stations/" + birdweather_id +  "/soundscapes" + "?timestamp=" + current_iso8601
-
-                                        with open(args.i, 'rb') as f:
-                                            wav_data = f.read()
-                                        response = requests.post(url=soundscape_url, data=wav_data, headers={'Content-Type': 'application/octet-stream'})
-                                        print("Soundscape POST Response Status - ", response.status_code)
-                                        sdata = response.json()
-                                        soundscape_id = sdata['soundscape']['id']
-                                        soundscape_uploaded = True
-
-                                    # POST detection to server
-                                    detection_url = "https://app.birdweather.com/api/v1/stations/" + birdweather_id + "/detections"
-                                    start_time = d.split(';')[0]
-                                    end_time = d.split(';')[1]
-                                    post_begin = "{ "
-                                    now_p_start = now + datetime.timedelta(seconds=float(start_time))
-                                    current_iso8601 = now_p_start.astimezone(get_localzone()).isoformat()
-                                    post_timestamp =  "\"timestamp\": \"" + current_iso8601 + "\","
-                                    post_lat = "\"lat\": " + str(args.lat) + ","
-                                    post_lon = "\"lon\": " + str(args.lon) + ","
-                                    post_soundscape_id = "\"soundscapeId\": " + str(soundscape_id) + ","
-                                    post_soundscape_start_time = "\"soundscapeStartTime\": " + start_time + ","
-                                    post_soundscape_end_time = "\"soundscapeEndTime\": " + end_time + ","
-                                    post_commonName = "\"commonName\": \"" + entry[0].split('_')[1] + "\","
-                                    post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
-                                    post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
-                                    post_confidence = "\"confidence\": " + str(entry[1])
-                                    post_end = " }"
-
-                                    post_json = post_begin + post_timestamp + post_lat + post_lon + post_soundscape_id + post_soundscape_start_time + post_soundscape_end_time + post_commonName + post_scientificName + post_algorithm + post_confidence + post_end
-                                    print(post_json)
-                                    response = requests.post(detection_url, json=json.loads(post_json))
-                                    print("Detection POST Response Status - ", response.status_code)
-
-                
+                                        if soundscape_uploaded is False:
+                                            # POST soundscape to server
+                                            soundscape_url = "https://app.birdweather.com/api/v1/stations/" + birdweather_id +  "/soundscapes" + "?timestamp=" + current_iso8601
+    
+                                            with open(args.i, 'rb') as f:
+                                                wav_data = f.read()
+                                            response = requests.post(url=soundscape_url, data=wav_data, headers={'Content-Type': 'application/octet-stream'})
+                                            print("Soundscape POST Response Status - ", response.status_code)
+                                            sdata = response.json()
+                                            soundscape_id = sdata['soundscape']['id']
+                                            soundscape_uploaded = True
+    
+                                        # POST detection to server
+                                        detection_url = "https://app.birdweather.com/api/v1/stations/" + birdweather_id + "/detections"
+                                        start_time = d.split(';')[0]
+                                        end_time = d.split(';')[1]
+                                        post_begin = "{ "
+                                        now_p_start = now + datetime.timedelta(seconds=float(start_time))
+                                        current_iso8601 = now_p_start.astimezone(get_localzone()).isoformat()
+                                        post_timestamp =  "\"timestamp\": \"" + current_iso8601 + "\","
+                                        post_lat = "\"lat\": " + str(args.lat) + ","
+                                        post_lon = "\"lon\": " + str(args.lon) + ","
+                                        post_soundscape_id = "\"soundscapeId\": " + str(soundscape_id) + ","
+                                        post_soundscape_start_time = "\"soundscapeStartTime\": " + start_time + ","
+                                        post_soundscape_end_time = "\"soundscapeEndTime\": " + end_time + ","
+                                        post_commonName = "\"commonName\": \"" + entry[0].split('_')[1] + "\","
+                                        post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
+                                        post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
+                                        post_confidence = "\"confidence\": " + str(entry[1])
+                                        post_end = " }"
+    
+                                        post_json = post_begin + post_timestamp + post_lat + post_lon + post_soundscape_id + post_soundscape_start_time + post_soundscape_end_time + post_commonName + post_scientificName + post_algorithm + post_confidence + post_end
+                                        print(post_json)
+                                        response = requests.post(detection_url, json=json.loads(post_json))
+                                        print("Detection POST Response Status - ", response.status_code)
+                                    except:
+                                        print("Cannot POST right now")
                 conn.send(myReturn.encode(FORMAT))
 
                                 #time.sleep(3)

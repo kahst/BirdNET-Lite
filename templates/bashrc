@@ -112,3 +112,8 @@ if ! shopt -oq posix; then
   fi
 fi
 cd ~/BirdNET-Pi
+function remove() {
+  find /home/pi/BirdSongs -iname *${1}* -exec rm -drfv {} +
+}
+alias rerc="source ~/.bashrc"
+alias vimrc="vim ~/.bashrc"

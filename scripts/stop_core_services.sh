@@ -6,7 +6,7 @@ services=(birdnet_recording.service
 birdnet_analysis.service
 birdnet_server.service
 chart_viewer.service
-extraction.timer
+extraction.service
 spectrogram_viewer.service)
 
 for i in  "${services[@]}";do

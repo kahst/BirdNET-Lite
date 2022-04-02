@@ -1,96 +1,489 @@
-/* style sheet */
 * {
   font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
   ' Calibri', 'Trebuchet MS', 'sans-serif';
   box-sizing: border-box;
+  font-size: medium;
 }
 
-/* Create two equal columns that floats next to each other */
-.column2 {
-  margin-left: auto;
-  margin-right: auto;
-  width: 75%;
-  padding: 5px;
+a {
+  text-decoration: none;
 }
 
-/* Create two equal columns that floats next to each other */
-.column {
-  float: left;
-  width: 50%;
-  padding: 5px;
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-table {
-  background-color: rgb(219, 255, 235);
-  margin: 0 auto;
-  font-size: large;
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 100%;
-  border: 1px solid black;
-}
-
-h1 {
-  text-align: center;
-  color: black;
-  font-size: xx-large;
-}
-
-h2 {
-  margin-left: -150px;
-  text-align: center;
-  color: black;
-  font-size: large;
+a:hover {
+  font-weight: bold;
 }
 
 h3 {
   text-align: center;
-  color: black;
-  font-size: large;
+}
+
+iframe {
+  padding: 0;
+  margin: 0;
+  border: none;
+  height: 93%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: rgb(119, 196, 135);
+}
+
+table {
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 td {
+  padding: 10px;
+  vertical-align: top;
   background-color: rgb(219, 255, 235);
   font-weight: lighter;
-  border: 1px solid black;
-  padding: 10px;
+  border: 2px solid black;
   text-align: center;
 }
 
 th {
-  background-color: rgb(219, 255, 235);
   font-weight: bold;
-  border: 1px solid black;
-  padding: 10px;
+  height: auto;
   text-align: center;
 }
 
-@media screen and (max-width: 600px) {
-  h2 {
-    margin-left: 0;
-    text-align: center;
-    color: black;
-    font-size: large;
-  }
-
-  .column {
-    width: 100%;
-  }
-  /* Create two equal columns that floats next to each other */
-  .column2 {
-    float: center;
-    width: 100%;
-    padding: 0px;
-  }
-
-
+audio, video{
+  max-height: 100%;
+  max-width: 100%;
 }
-body::-webkit-scrollbar {
-  display:none
+
+label {
+  font-weight: bold;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  color: black;
+  cursor: pointer;
+}
+
+button:hover {
+  font-weight: bold;
+  color: blue;
+}
+
+.row {
+  display: flex;
+}
+
+.centered {
+  text-align: center;
+  display: block;
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.banner {
+  height: 7%;
+  text-align: center;
+}
+
+.banner h1 {
+  padding: .5em;
+  letter-spacing: 5px;
+}
+
+.banner audio,.banner form {
+  float: right;
+  width: 120px;
+  margin-left: -120px;
+  margin-right: auto;
+}
+
+.banner button {
+  padding-top: 8px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.banner a {
+  text-decoration: none;
+  color: black;
+  font-size: x-large;
+}
+
+.logo img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px;
+}
+
+.topnav {
+  background-color: rgb(159, 226, 155);
+  display: flex;
+  flex: 65%;
+  width: 65%;
+  justify-content: space-between;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.topnav form {
+  margin: 0;
+  padding: 0;
+}
+
+.topnav button {
+  background-color: transparent;
+  text-align: center;
+  padding: 14px 16px;
+  width: auto;
+  height: auto;
+}
+
+.topnav button:hover {
+  background-color: rgb(219, 295, 235);
+  color: black;
+}
+
+.topnav button.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.topnav .icon {
+  display: none;
+}
+
+.play table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.stats table,.viewdb table {
+  width: 75%;
+}
+
+.overview th {
+  background-color: rgb(219, 255, 235);
+  border: 2px solid black;
+  text-align: center;
+  padding: 12px;
+}
+
+.overview td {
+  vertical-align: middle;
+}
+
+.overview div img {
+  max-height: 100%;
+  display: flex;
+  justify-content: center;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.overview-stats {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.left-column {
+  flex: 10%;
+  padding-left: 10px;
+}
+
+.right-column {
+  flex: 90%;
+  margin-right: 10%;
+}
+
+.stats td {
+  vertical-align: middle;
+}
+
+.stats table {
+  height: auto;
+}
+
+.stats button:hover {
+  color: blue;
+}
+
+.overview button, .center button{
+  font-weight: bold;
+  color: blue;
+}
+
+.history table,.history img {
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.views .centered button {
+  border: 2px solid black;
+  background-color: rgb(219, 255, 235);
+  padding: 12px;
+}
+
+.views .centered button:hover {
+  background-color: rgb(159, 226, 155);
+  color: black;
+}
+
+.settings {
+  padding: 12px;
+}
+
+.settings h3 {
+  text-align: left;
+}
+
+.settings button {
+  border: 2px solid black;
+  background-color: rgb(219, 255, 235);
+  padding: 12px;
+}
+
+.settings button:hover {
+  background-color: rgb(159, 226, 155);
+  color: black;
+}
+
+.customlabels,.customlabels2 {
+  float:left;
+}
+
+.customlabels table {
+  height: 100%;
+}
+
+.customlabels td,.customlabels2 td {
+  border:none;
+  background-color: transparent;
+  vertical-align: middle;
+}
+
+.customlabels button,.customlabels2 button {
+  padding: 12px;
+  background-color: rgb(219, 255, 235);
+  border: 2px solid black;
+  width: 100%;
+}
+
+.column1, .column3 {
+  width: 45%;
+}
+
+.smaller {
+  width: 100%;
+  display: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.column2 {
+  text-align: center;
+  width: 10%;
+  height: 80%;
+}
+
+.column4 {
+  text-align: justify;
+  width: 10%;
+  height: 50%;
+}
+
+.column1 form,.column3 form {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.column1 select,.column3 select {
+  height: 80%;
+  width: 100%;
+}
+
+.spectrogram {
+  width:50%
+}
+
+.full {
+  width:100%;
+}
+
+.logbutton, .navbuttons {
+  float: left;
+}
+
+.systemcontrols form,.servicecontrols form {
+  text-align: center;
+}
+
+.systemcontrols button,.servicecontrols button {
+  border: 2px solid black;
+  background-color: rgb(219, 255, 235);
+  padding: 12px;
+  width: 50%;
+}
+
+.servicecontrols button {
+  width: 20%;
+}
+
+#body::-webkit-scrollbar {
+#  display:none
+#}
+
+@media screen and (max-width: 1290px) {
+  .column1,.column2,.column3,.column4 {
+    height: 90%
+  }
+  .left-column {
+    display: none;
+  }
+  .right-column {
+    flex: 100%;
+    margin: 0;
+  }
+  img {
+    max-width: 100%;
+  }
+  .overview {
+    overflow-x: hidden;
+  }
+  .overview .right-column .chart img {
+    margin-left: 5%;
+    margin-right: auto;
+  }
+}
+@media screen and (max-width: 1000px) {
+  .customlabels form,.customlabels2 form {
+    width: 95%;
+  }  
+  .column1, .column3 {
+    width: 50%;
+    height: 100%;
+  }
+  .column1 select,.column3 select {
+    height: 70%;
+  }
+  .column2,.column4 {
+    display: none;
+  }
+  .smaller{
+    display: block;
+  }
+  .systemcontrols button,.servicecontrols button {
+    width: 60%;
+    padding: 12px;
+    background-color: rgb(219, 255, 235);
+  }
+  .topnav {
+    flex: 100%;
+    width: 100%;
+  }
+  .topnav button {display: none;}
+  .topnav button.icon {
+    padding: 0;
+    margin: 0;
+    display: block;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .banner {
+    height: auto;
+  }
+  .banner img {
+    display: none;
+  }
+  .logo img {
+    display: block;
+    width: 60px;
+    height: 60px;
+  }
+  .version {
+    display: none;
+  }
+  .topnav.responsive {position: relative;}
+  .topnav.responsive button {
+    display: block;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .column1, .column3 {
+    width: 100%;
+  }
+  .systemcontrols button,.servicecontrols button {
+    width: 80%;
+    padding: 12px;
+    background-color: rgb(219, 255, 235);
+  }
+  .stats img {
+    width: 100%;
+    margin-left:auto;
+    margin-rigth:auto;
+  }
+  .viewdb table,.overview img {
+    width: 100%
+  }
+  .banner {
+    height: auto;
+    margin-left: 60px;
+  }
+  .banner img {
+    display: none;
+  }
+  .stream {
+    float: right;
+    display: block;
+    width: 60px;
+  }
+  .logo img {
+    display: block;
+    width: 60px;
+    height: 60px;
+  }
+  .play table,.overview table,.stats table {
+    width: 100%;
+  }
+  .topnav {
+    flex: 100%;
+    width: 100%;
+    flex-direction: column;
+  }
+  .topnav button { 
+    font-size: large;
+    width: 100%
+  }
+  .topnav button {display: none;}
+  .topnav button.icon {
+    margin: 0;
+    padding: 0;
+    display: block;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .topnav.responsive {position: relative;}
+  .topnav.responsive button {
+    display: block;
+  }
+  .left-column {
+    display: none;
+  }
+  .version {display:none;}
+  .left {
+    display:none;
+  }
+}

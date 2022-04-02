@@ -13,7 +13,6 @@ spectrogram_viewer.service
 pushed_notifications.service
 livestream.service
 icecast2.service
-extraction.timer
 extraction.service
 chart_viewer.service
 birdnet_recording.service
@@ -24,6 +23,6 @@ sudo systemctl restart "${i}"
 done
 until grep 5050 <(netstat -tulpn 2>&1);do
 sudo systemctl restart birdnet_server.service
-sleep 30
+sleep 45 
 done
 sudo systemctl restart birdnet_analysis.service

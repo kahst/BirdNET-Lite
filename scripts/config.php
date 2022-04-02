@@ -1,125 +1,72 @@
 <?php
-session_start();
 error_reporting(E_ALL);
 ini_set('display_errors',1);
+
+# Basic Settings
+if(isset($_POST["latitude"])){
+$latitude = $_POST["latitude"];
+$longitude = $_POST["longitude"];
+$birdweather_id = $_POST["birdweather_id"];
+$pushed_app_key = $_POST["pushed_app_key"];
+$pushed_app_secret = $_POST["pushed_app_secret"];
+
+$contents = file_get_contents("/home/pi/BirdNET-Pi/birdnet.conf");
+$contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
+$contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
+$contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
+$contents = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents);
+$contents = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents);
+
+$contents2 = file_get_contents("/home/pi/BirdNET-Pi/thisrun.txt");
+$contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
+$contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
+$contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
+$contents2 = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents2);
+$contents2 = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents2);
+
+$fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
+$fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
+fwrite($fh, $contents);
+fwrite($fh2, $contents2);
+
+$language = $_POST["language"];
+if ($language != "none"){
+  $command = "sudo -upi mv /home/pi/BirdNET-Pi/model/labels.txt /home/pi/BirdNET-Pi/model/labels.txt.old && sudo -upi unzip /home/pi/BirdNET-Pi/model/labels_l18n.zip $language -d /home/pi/BirdNET-Pi/model && sudo -upi mv /home/pi/BirdNET-Pi/model/$language /home/pi/BirdNET-Pi/model/labels.txt";
+  $command_output = `$command`;
+}
+}
 
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-* {
-  font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
-  ' Calibri', 'Trebuchet MS', 'sans-serif';
-	box-sizing: border-box;
-}
-/* Create two unequal columns that floats next to each other */
-.column {
-	float: left;
-  padding: 10px;
-}
-.first {
-	width: calc(50% - 70px);
-}
-.second {
-	width: calc(50% - 30px);
-}
-.
-/* Clear floats after the columns */
-.row:after {
-	content: "";
-	display: table;
-	clear: both;
-}
-body {
-	background-color: rgb(119, 196, 135);
-}
-a {
-	text-decoration: none;
-}
-.block {
-	display: block;
-	width:50%;
-	border: none;
-	padding: 10px 10px;
-	font-size: medium;
-	cursor: pointer;
-	text-align: center;
-}
-
-select {
-  font-size:large;
-  width: 60%;
-}
-
-select option {
-  font-size:large;
-}
-
-form {
-  text-align:left;
-  margin-left:20px;
-}
-
-h2 {
-  margin-bottom:0px;
-}
-h3 {
-  margin-left: -10px;
-  text-align:left;
-}
-label {
-  float:left;
-  width:40%;
-  font-weight:bold;
-}
-input {
-  width:60%;
-  text-align:center;
-  font-size:large;
-}
-@media screen and (max-width: 800px) {
-  select {
-    width:100%;
-  }
-  h2 {
-    margin-bottom:0px;
-    text-align:center;
-  }
-  form {
-    text-align:left;
-    margin-left:0px;
-  }	
-  .column {
-    float: none;
-    width: 100%;
-  }
-  input, label  {
-    width:100%;
-  {
-}
   </style>
   </head>
+<div class="settings">
       <h2>Basic Settings</h2>
-  <body style="background-color: rgb(119, 196, 135);">
-  <div class="row">
-    <div class="column first">
-    <form action="write_config.php" method="POST" name="normal">
+    <form action="" method="POST">
 <?php 
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
 } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
-} ?>
+} 
+$caddypwd = $config['CADDY_PWD'];
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+  header('WWW-Authenticate: Basic realm="My Realm"');
+  header('HTTP/1.0 401 Unauthorized');
+  echo 'You cannot edit the settings for this installation';
+  exit;
+} else {
+  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+  $submitteduser = $_SERVER['PHP_AUTH_USER'];
+  if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'You cannot edit the settings for this installation';
+    exit;
+  }
+}
+?>
       <label for="latitude">Latitude: </label>
       <input name="latitude" type="number" max="90" min="-90" step="0.0001" value="<?php print($config['LATITUDE']);?>" required/><br>
       <label for="longitude">Longitude: </label>
@@ -167,22 +114,19 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
         <option value="labels_uk.txt">Ukrainian</option>
       </select>
       <br><br>
-      <button type="submit" name="normal" class="block"><?php
-if(isset($_SESSION['success'])){
+      <input type="hidden" name="status" value="success">
+      <input type="hidden" name="submit" value="settings">
+      <button type="submit" name="view" value="Settings">
+<?php
+if(isset($_POST['status'])){
   echo "Success!";
-  unset($_SESSION['success']);
 } else {
   echo "Update Settings";
 }
-?></button>
-    </form>
-    <form action="advanced.php" class="form2">
-      <button type="submit" class="block">Advanced Settings</button>
-    </form>
-    <form action="index.html" class="form2">
-      <button type="submit" class="block">Tools</button>
-    </form>
-    </div>
-  </div>
-</body>
-
+?>
+      </button>
+      </form>
+      <form action="" method="POST">
+        <button type="submit" name="view" value="Advanced">Advanced Settings</button>
+      </form>
+</div>

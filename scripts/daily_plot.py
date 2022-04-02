@@ -1,9 +1,8 @@
 #!/home/pi/BirdNET-Pi/birdnet/bin/python3
 
-import mysql.connector as sql
+import sqlite3
 import os
 import configparser
-
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -11,25 +10,14 @@ from matplotlib.colors import LogNorm
 from datetime import datetime
 import textwrap
 
-#Extract DB_PWD from thisrun.txt
-with open('/home/pi/BirdNET-Pi/thisrun.txt', 'r') as f:
-     this_run = f.readlines()
-     db_pwd = str(str(str([i for i in this_run if i.startswith('DB_PWD')]).split('=')[1]).split('\\')[0])
+conn = sqlite3.connect('/home/pi/BirdNET-Pi/scripts/birds.db')
+df = pd.read_sql_query("SELECT * from detections", conn)
+cursor = conn.cursor()
+cursor.execute('SELECT * FROM detections')
 
+table_rows = cursor.fetchall()
 
-db_connection = sql.connect(host='localhost',
-                 database='birds',
-                 user='birder',
-                 password=db_pwd)
-
-                    
-db_cursor=db_connection.cursor(dictionary=True)
-
-db_cursor.execute('SELECT * FROM detections')
-
-table_rows = db_cursor.fetchall()
-
-df=pd.DataFrame(table_rows)
+#df=pd.DataFrame(table_rows)
 
 #Convert Date and Time Fields to Panda's format
 df['Date']=pd.to_datetime(df['Date'])
@@ -97,7 +85,7 @@ heat_frame = pd.DataFrame(data=0, index=heat.index, columns = hours_in_day)
 heat=(heat+heat_frame).fillna(0)
 
 #Generatie heatmap plot
-plot = sns.heatmap(heat, norm=LogNorm(),  annot=True,  annot_kws={"fontsize":7}, cmap = pal , square = False, cbar=False, linewidths = 0.5, linecolor = "Grey", ax=axs[1], yticklabels = False)
+plot = sns.heatmap(heat, norm=LogNorm(),  annot=True,  annot_kws={"fontsize":7}, fmt="g", cmap = pal , square = False, cbar=False, linewidths = 0.5, linecolor = "Grey", ax=axs[1], yticklabels = False)
 plot.set_xticklabels(plot.get_xticklabels(), rotation = 0, size = 7)
 
 # Set heatmap border
@@ -165,7 +153,7 @@ heat_frame = pd.DataFrame(data=0, index=heat.index, columns = hours_in_day)
 heat=(heat+heat_frame).fillna(0)
 
 #Generatie heatmap plot
-plot = sns.heatmap(heat, norm=LogNorm(),  annot=True,  annot_kws={"fontsize":7}, cmap = pal , square = False, cbar=False, linewidths = 0.5, linecolor = "Grey", ax=axs[1], yticklabels = False)
+plot = sns.heatmap(heat, norm=LogNorm(),  annot=True, fmt="g",  annot_kws={"fontsize":7}, cmap = pal , square = False, cbar=False, linewidths = 0.5, linecolor = "Grey", ax=axs[1], yticklabels = False)
 plot.set_xticklabels(plot.get_xticklabels(), rotation = 0, size = 7)
 
 # Set heatmap border

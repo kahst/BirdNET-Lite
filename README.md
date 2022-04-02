@@ -1,5 +1,5 @@
 <h1 align="center">
-  BirdNET-Pi <img src="https://img.shields.io/badge/version-0.11.1-orange" />
+  BirdNET-Pi <img src="https://img.shields.io/badge/Version-0.13-pink" />
 </h1>
 <p align="center">
 A realtime acoustic bird classification system for the Raspberry Pi 4B
@@ -47,12 +47,11 @@ If your installation isn't in one of the countries listed above, please let me k
 * FTP server included
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
-* MariaDB integration
-* NoMachine remote desktop (for personal use only)
+* SQLite3 Database
 * Live audio stream
 * Adminer database maintenance
-* Integrated phpSysInfo
-* New species mobile notifications from Pushed.co (for iOS users only)
+* [phpSysInfo](https://github.com/phpsysinfo/phpsysinfo)
+* New species mobile notifications from [Pushed.co](https://pushed.co/quick-start-guide) (for iOS users only)
 * Localization supported
 
 ## Requirements
@@ -65,7 +64,7 @@ If your installation isn't in one of the countries listed above, please let me k
 
 The system can be installed with:
 ```
-curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/main/newinstaller.sh | bash | tee -a installation.log 2>&1 && sudo reboot
+curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/main/newinstaller.sh | bash
 ```
 The installer takes care of any and all necessary updates, so you can run that as the very first command upon the first boot, if you'd like.
 

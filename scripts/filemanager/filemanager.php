@@ -1,6 +1,6 @@
 <?php
 //Default Configuration
-$CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false,"hide_Cols":false,"calc_folder":false,"theme":"light"}';
+$CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":true,"hide_Cols":false,"calc_folder":false,"theme":"light"}';
 
 /**
  * H3K | Tiny File Manager V2.4.6
@@ -3342,9 +3342,9 @@ function fm_show_nav_path($path)
     }
     ?>
     <nav class="navbar navbar-expand-lg <?php echo $getTheme; ?> mb-4 main-nav <?php echo $isStickyNavBar ?>">
-        <a class="navbar-brand" href="../../">BirdNET-Pi Homepage </a>
-	<a class="navbar-brand" href="../"><?php echo lng('Tools'); ?></a>
-	<a class="navbar-brand" href="http://birdnetpi.local:8888" target="_"><?php echo lng('WebTerminal'); ?></a>
+	<form action="../../views.php" method="POST">
+        <button style="margin-left:80px;" class="navbar-brand" type="submit" name="view" value="Overview">BirdNET-Pi Homepage</button>
+	<button class="navbar-brand" type="submit" name="view" value="Tools"><?php echo lng('Tools'); ?></button></form>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>

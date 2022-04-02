@@ -1,107 +1,86 @@
+<html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-* {
-  font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
-  ' Calibri', 'Trebuchet MS', 'sans-serif';
-  box-sizing: border-box;
-
-	box-sizing: border-box;
-}
-
-/* Create two unequal columns that floats next to each other */
-.column {
-	float: left;
-	padding: 10px;
-}
-
-.first {
-	width: calc(50% - 70px);
-}
-
-.second {
-	width: calc(50% - 30px);
-}
-
-/* Clear floats after the columns */
-.row:after {
-	content: "";
-	display: table;
-	clear: both;
-}
-body {
-	background-color: rgb(119, 196, 135);
-}
-
-a {
-	text-decoration: none;
-	color: white;
-}
-
-.block {
-	display: block;
-	font-weight: bold;
-	width:100%;
-	border: none;
-	background-color: #04AA6D;
-	padding: 20px 20px;
-	color: white;
-	font-size: medium;
-	cursor: pointer;
-	text-align: center;
-}
-		@media screen and (max-width: 800px) {
-			.column {
-				float: none;
-				width: 100%;
-			}
-		}
-</style>
-<body style="background-color: rgb(119, 196, 135);">
-	<div class="row">
-		<div class="column first">
-			<form action="" method="POST" onclick="return confirm('Stop core services?')">
-				<input type="hidden" name="submit" value="stop_core_services.sh">
-				<button type="submit" class="block">Stop Core Services</button>
-			</form>
-			<form action="" method="POST" onclick="return confirm('Restart ALL services?')">
-				<input type="hidden" name="submit" value="restart_services.sh">
-				<button type="submit" class="block">Restart ALL Services</button>
-			</form>
-			<form action="" method="POST">
-				<input type="hidden" name="submit" value="sudo systemctl restart birdnet_analysis.service">
-				<button type="submit" class="block">Restart BirdNET Analysis</button>
-			</form>
-			<form action="" method="POST">
-				<input type="hidden" name="submit" value="sudo systemctl restart birdnet_recording.service">
-				<button type="submit" class="block">Restart Recording</button>
-			</form>
-			<form action="" method="POST" onclick="return confirm('Restart Caddy? You will be disconnected for about 20 seconds.')">
-				<input type="hidden" name="submit" value="sudo systemctl restart caddy">
-				<button type="submit" class="block">Restart Caddy</button>
-			</form>
-		</div>
-		<div class="column second">
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-if(isset($_POST['submit'])){
-$command = $_POST['submit'];
-if($command == 'restart_services.sh'){
-  $str= "<h3>Restarting Services</h3>
-        <p>Please wait 60-90 seconds</p>";
-  echo str_pad($str, 4096);
-  ob_flush();
-  flush();
-}
-if(isset($command)){
-$results = shell_exec("$command 2>&1");
-echo "<pre>$results</pre>";
-}
-}
-ob_end_flush();
-?>
-		</div>
-	</div>
-</body>
+<br>
+<br>
+<div class="servicecontrols">
+  <form action="" method="POST">
+    <h3>Live Audio Stream</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop livestream.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart livestream.service">Restart </button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now livestream.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now livestream.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <h3>Web Terminal</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop web_terminal.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart web_terminal.service">Restart </button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now web_terminal.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now web_terminal.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <h3>BirdNET Log</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop birdnet_log.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart birdnet_log.service">Restart </button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now birdnet_log.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now birdnet_log.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <h3>Extraction Service</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop extraction.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart extraction.service">Restart </button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now extraction.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now extraction.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <h3>BirdNET Analysis Server</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop birdnet_server.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart birdnet_server.service">Restart</button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now birdnet_server.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now birdnet_server.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <h3>BirdNET Analysis Client</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop birdnet_analysis.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart birdnet_analysis.service">Restart</button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now birdnet_analysis.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now birdnet_analysis.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <h3>Streamlit Statistics</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop birdnet_stats.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart birdnet_stats.service">Restart</button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now birdnet_stats.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now birdnet_stats.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <h3>Recording Service</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop birdnet_recording.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart birdnet_recording.service">Restart</button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now birdnet_recording.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now birdnet_recording.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <h3>Chart Viewer</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop chart_viewer.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart chart_viewer.service">Restart</button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now chart_viewer.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now chart_viewer.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <h3>Spectrogram Viewer</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop spectrogram_viewer.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart spectrogram_viewer.service">Restart</button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now spectrogram_viewer.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now spectrogram_viewer.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <h3>Pushed Notifications</h3>
+    <button type="submit" name="submit" value="sudo systemctl stop pushed_notifications.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart pushed_notifications.service">Restart</button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now pushed_notifications.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable --now pushed_notifications.service">Enable</button>
+  </form>
+  <form action="" method="POST">
+    <button type="submit" name="submit" value="restart_services.sh" onclick="return confirm('This will take about 90 seconds.')">Restart All Services</button>
+  </form>	
+</div>

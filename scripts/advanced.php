@@ -7,6 +7,23 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
 }
+$caddypwd = $config['CADDY_PWD'];
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+  header('WWW-Authenticate: Basic realm="My Realm"');
+  header('HTTP/1.0 401 Unauthorized');
+  echo 'You cannot edit the settings for this installation';
+  exit;
+} else {
+  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+  $submitteduser = $_SERVER['PHP_AUTH_USER'];
+  if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'You cannot edit the settings for this installation';
+    exit;
+  }
+}
+
 
 if(isset($_POST['submit'])) {
   $contents = file_get_contents("/home/pi/BirdNET-Pi/birdnet.conf");
@@ -25,44 +42,11 @@ if(isset($_POST['submit'])) {
     }
   }
 
-  if(isset($_POST["db_pwd"])) {
-    $db_pwd = $_POST["db_pwd"];
-    if(strcmp($db_pwd,$config['DB_PWD']) !== 0) {
-      shell_exec('sudo /usr/local/bin/update_db_pwd_bullseye.sh');
-      $contents = preg_replace("/DB_PWD=.*/", "DB_PWD=$db_pwd", $contents);
-      $contents2 = preg_replace("/DB_PWD=.*/", "DB_PWD=$db_pwd", $contents2);
-    }
-  }
-
   if(isset($_POST["ice_pwd"])) {
     $ice_pwd = $_POST["ice_pwd"];
     if(strcmp($ice_pwd,$config['ICE_PWD']) !== 0) {
       $contents = preg_replace("/ICE_PWD=.*/", "ICE_PWD=$ice_pwd", $contents);
       $contents2 = preg_replace("/ICE_PWD=.*/", "ICE_PWD=$ice_pwd", $contents2);
-    }
-  }
-
-  if(isset($_POST["webterminal_url"])) {
-    $webterminal_url = $_POST["webterminal_url"];
-    if(strcmp($webterminal_url,$config['WEBTERMINAL_URL']) !== 0) {
-      $contents = preg_replace("/WEBTERMINAL_URL=.*/", "WEBTERMINAL_URL=$webterminal_url", $contents);
-      $contents2 = preg_replace("/WEBTERMINAL_URL=.*/", "WEBTERMINAL_URL=$webterminal_url", $contents2);
-      $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
-      $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
-      fwrite($fh, $contents);
-      fwrite($fh2, $contents2);
-    }
-  }
-
-  if(isset($_POST["birdnetlog_url"])) {
-    $birdnetlog_url = $_POST["birdnetlog_url"];
-    if(strcmp($birdnetlog_url,$config['BIRDNETLOG_URL']) !== 0) {
-      $contents = preg_replace("/BIRDNETLOG_URL=.*/", "BIRDNETLOG_URL=$birdnetlog_url", $contents);
-      $contents2 = preg_replace("/BIRDNETLOG_URL=.*/", "BIRDNETLOG_URL=$birdnetlog_url", $contents2);
-      $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
-      $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
-      fwrite($fh, $contents);
-      fwrite($fh2, $contents2);
     }
   }
 
@@ -155,104 +139,13 @@ if(isset($_POST['submit'])) {
   $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
   fwrite($fh, $contents);
   fwrite($fh2, $contents2);
-  @session_start();
-  if(true){
-    $_SESSION['success'] = 1;
-  }
 }
 ?>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-* {
-  font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
-  ' Calibri', 'Trebuchet MS', 'sans-serif';
-  box-sizing: border-box;
-}
-/* Create two unequal columns that floats next to each other */
-.column {
-  float: left;
-  padding: 10px;
-}
-.first {
-  width: calc(50% - 70px);
-}
-.second {
-  width: calc(50% - 70px);
-}
-.
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-body {
-  background-color: rgb(119, 196, 135);
-}
-a {
-  font-size:large;
-  text-decoration: none;
-}
-.block {
-  display: block;
-  width:50%;
-  border: none;
-  padding: 10px 10px;
-  font-size: medium;
-  cursor: pointer;
-  text-align: center;
-}
-
-form {
-  text-align:left;
-  margin-left:20px;
-}
-h2 {
-  margin-bottom:0px;
-}
-h3 {
-  margin-left: -10px;
-  text-align:left;
-}
-label {
-  float:left;
-  width: 40%;
-  font-weight:bold;
-}
-input,select {
-  width: 60%;
-  text-align:center;
-  font-size:large;
-}
-@media screen and (max-width: 1000px) {
-  h2,h3 {
-    text-align:center;
-  }  
-  form {
-    margin:0;
-  }
-  .column {
-    float: none;
-    width: 100%;
-  }
-  input, label {
-    width: 100%;
-  {
-}
   </style>
   </head>
+<div class="settings">
 <?php
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $newconfig = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
@@ -261,20 +154,17 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 }
 ?>
       <h2>Advanced Settings</h2>
-  <body style="background-color: rgb(119, 196, 135);">
-  <div class="row">
-    <div class="column first">
-    <form action="advanced.php" method="POST">
+    <form action="" method="POST">
       <h3>Defaults</h3>
       <label>Full Disk Behavior: </label>
-      <label style="width:30%;" for="purge">
-      <input style="width:15%;" name="full_disk" type="radio" id="purge" value="purge" 
+      <label for="purge">
+      <input name="full_disk" type="radio" id="purge" value="purge" 
 <?php
 if (strcmp($newconfig['FULL_DISK'], "purge") == 0) {
   echo "checked";
 }?>>Purge</label>
-      <label style="width:30%;" for="keep">
-      <input style="width:15%" name="full_disk" type="radio" id="keep" value="keep" 
+      <label for="keep">
+      <input name="full_disk" type="radio" id="keep" value="keep" 
 <?php
   if (strcmp($newconfig['FULL_DISK'], "keep") == 0) {
     echo "checked";
@@ -288,7 +178,7 @@ if (strcmp($newconfig['FULL_DISK'], "purge") == 0) {
       <p>Set Channels to the number of channels supported by your sound card. 32 max.</p>
       <label for="recording_length">Recording Length: </label>
       <input name="recording_length" type="number" min="3" max="60" step="1" value="<?php print($newconfig['RECORDING_LENGTH']);?>" required/><br>
-  <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
+      <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
       <label for="extraction_length">Extraction Length: </label>
       <input name="extraction_length" type="number" min="3" max="<?php print($newconfig['RECORDING_LENGTH']);?>" value="<?php print($newconfig['EXTRACTION_LENGTH']);?>" /><br>
       <p>Set Extraction Length to something less than your Recording Length. Min=3 Max=Recording Length</p>
@@ -302,28 +192,14 @@ foreach($formats as $format){
 }
 ?>
       </select>
-      <h3>Passwords</h3>
+      <h3>BirdNET-Pi Password</h3>
       <label for="caddy_pwd">Webpage: </label>
       <input name="caddy_pwd" type="text" value="<?php print($newconfig['CADDY_PWD']);?>" /><br>
-      <p>This password protects the Live Audio Stream, the Processed extractions, phpSysInfo, your Tools, and WebTerminal. When you update this value, the web server will reload, so wait about 30 seconds and then reload the page.</p>
-      <label for="db_pwd">Database: </label>
-      <input name="db_pwd" type="text" value="<?php print($newconfig['DB_PWD']);?>" required/><br>
-      <p>This password protects the database. When you update this value, it will be updated automatically.</p>
-      <label for="ice_pwd">Live Audio Stream: </label>
-      <input name="ice_pwd" type="text" value="<?php print($newconfig['ICE_PWD']);?>" required/><br>
-    </div>
-    <div class="column second">
-      <h3>Custom URLs</h3>
-      <p>When you update any of the URL settings below, the web server will reload, so be sure to wait at least 30 seconds and then reload the page.</p>
+      <h3>Custom URL</h3>
+      <p>When you update the URL below, the web server will reload, so be sure to wait at least 30 seconds and then go to your new URL.</p>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
       <input name="birdnetpi_url" type="url" value="<?php print($newconfig['BIRDNETPI_URL']);?>" /><br>
       <p>This URL is how the main page will be reached. If you want your installation to respond to an IP address, place that here, but be sure to indicate `http://`.<br>Example for IP:http://192.168.0.109<br>Example if you own your own domain:https://birdnetpi.pmcgui.xyz</p>
-      <label for="birdnetlog_url">BirdNET-Lite Log URL: </label>
-      <input name="birdnetlog_url" type="url" value="<?php print($newconfig['BIRDNETLOG_URL']);?>" /><br>
-      <p>This URL is how the log will be reached. Only use this variable if you own your own domain.</p>
-      <label for="webterminal_url">Web Terminal URL: </label>
-      <input name="webterminal_url" type="url" value="<?php print($newconfig['WEBTERMINAL_URL']);?>" /><br>
-      <p>This URL is how the Web browser terminal will be reached. Only use this variable if you own your own domain.</p>
       <h3>BirdNET-Lite Settings</h3>
       <label for="overlap">Overlap: </label>
       <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($newconfig['OVERLAP']);?>" required/><br>
@@ -335,24 +211,19 @@ foreach($formats as $format){
       <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($newconfig['SENSITIVITY']);?>" required/><br>
       <p>Min=0.5, Max=1.5</p>
       <br><br>
-      <button type="submit" name="submit" class="block"><?php
-
-if(isset($_SESSION['success'])){
+      <input type="hidden" name="view" value="Advanced">
+      <button type="submit" name="submit" value="advanced">
+<?php
+if(isset($_POST['submit'])){
   echo "Success!";
-  unset($_SESSION['success']);
 } else {
   echo "Update Settings";
 }
-?></button>
+?>
+      </button>
       <br>
-    </form>
-    <form action="config.php" style="margin:0;">
-      <button type="submit" class="block">Basic Settings</button>
-    </form>
-      <br>
-    <form action="index.html" style="margin:0;">
-      <button type="submit" class="block">Tools</button>
-    </form>
+      </form>
+      <form action="" method="POST">
+        <button type="submit" name="view" value="Settings">Basic Settings</button>
+      </form>
 </div>
-</div>
-</body>
