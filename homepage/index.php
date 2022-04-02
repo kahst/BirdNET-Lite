@@ -1,6 +1,12 @@
 <title>BirdNET-Pi</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body::-webkit-scrollbar {
+  display:none
+}
+</style>
 <link rel="stylesheet" href="style.css">
+<body>
 <div class="banner">
   <div class="logo">
 <?php if(isset($_GET['logo'])) {
