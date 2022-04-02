@@ -176,6 +176,24 @@ EOF
   systemctl enable birdnet_recording.service
 }
 
+install_custom_recording_service() {
+  echo "Installing custom_recording.service"
+  cat << EOF > /home/pi/BirdNET-Pi/templates/custom_recording.service
+[Unit]
+Description=BirdNET Custom Recording
+[Service]
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Restart=always
+Type=simple
+RestartSec=3
+User=${USER}
+ExecStart=/usr/local/bin/custom_recording.sh
+[Install]
+WantedBy=multi-user.target
+EOF
+  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_recording.service /usr/lib/systemd/system
+}
+
 install_Caddyfile() {
   [ -d /etc/caddy ] || mkdir /etc/caddy
   if [ -f /etc/caddy/Caddyfile ];then
@@ -412,6 +430,7 @@ install_services() {
   install_birdnet_server
   install_birdnet_stats_service
   install_recording_service
+  install_custom_recording_service # But does not enable
   install_extraction_service
   install_pushed_notifications
   install_spectrogram_service

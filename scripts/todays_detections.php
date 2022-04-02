@@ -9,7 +9,7 @@ if($db == False){
   header("refresh: 0;");
 }
 
-$statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') GROUP BY Time ORDER BY Time DESC, MAX(Confidence) ASC');
+$statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC');
 if($statement0 == False){
   echo "Database is busy";
   header("refresh: 0;");
@@ -103,7 +103,7 @@ $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
       <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
       <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
       <b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br>
-      <video controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>"></video></td>
+      <a href="<?php echo $filename;?>"><img src="<?php echo $filename.".png";?>"></a></td>
 <?php }?>
       </tr>
     </table>
