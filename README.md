@@ -73,6 +73,8 @@ The installation creates a log in `/home/pi/installation.log` that you can [emai
 ## Access
 The BirdNET-Pi system can be accessed from any web browser on the same network:
 - http://birdnetpi.local
+- Default Basic Authentication Username: birdnet
+- Password is empty by default. Set this in "Tools" > "Settings" > "Advanced Settings"
 
 ## Uninstallation
 ```
