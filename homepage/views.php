@@ -8,10 +8,10 @@
   <button type="submit" name="view" value="Today's Detections" form="views">Today's Detections</button>
 </form>
 <form action="" method="POST" id="views">
-  <button type="submit" name="view" value="Best Recordings" form="views">Best Recordings</button>
+  <button type="submit" name="view" value="Species Stats" form="views">Best Recordings</button>
 </form>
 <form action="" method="POST" id="views">
-  <button type="submit" name="view" value="Species Stats" form="views">Species Stats</button>
+  <button type="submit" name="view" value="Streamlit" form="views">Species Stats</button>
 </form>
 <form action="" method="POST" id="views">
   <button type="submit" name="view" value="Daily Charts" form="views">Daily Charts</button>
@@ -41,8 +41,8 @@ if(isset($_POST['view'])){
   if($_POST['view'] == "Spectrogram"){include('spectrogram.php');}
   if($_POST['view'] == "Overview"){include('overview.php');}
   if($_POST['view'] == "Today's Detections"){include('todays_detections.php');}
-  if($_POST['view'] == "Best Recordings"){echo "<br><br>";include('stats.php');}
-  if($_POST['view'] == "Species Stats"){header('location:/stats');}
+  if($_POST['view'] == "Species Stats"){echo "<br><br>";include('stats.php');}
+  if($_POST['view'] == "Streamlit"){header('location:/stats');}
   if($_POST['view'] == "Daily Charts"){include('history.php');}
   if($_POST['view'] == "Tools"){
     if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
