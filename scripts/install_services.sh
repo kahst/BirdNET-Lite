@@ -191,7 +191,7 @@ ExecStart=/usr/local/bin/custom_recording.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_recording.service /usr/lib/systemd/system
+  ln -sf /home/pi/BirdNET-Pi/templates/custom_recording.service /usr/lib/systemd/system
 }
 
 install_Caddyfile() {
