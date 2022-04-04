@@ -5,10 +5,10 @@
 <div class="servicecontrols">
   <form action="" method="POST">
     <h3>Live Audio Stream</h3>
-    <button type="submit" name="submit" value="sudo systemctl stop livestream.service">Stop</button>
-    <button type="submit" name="submit" value="sudo systemctl restart livestream.service">Restart </button>
-    <button type="submit" name="submit" value="sudo systemctl disable --now livestream.service">Disable</button>
-    <button type="submit" name="submit" value="sudo systemctl enable --now livestream.service">Enable</button>
+    <button type="submit" name="submit" value="sudo systemctl stop livestream.service && sudo /etc/init.d/icecast2 stop">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart livestream.service && sudo /etc/init.d/icecast2 restart">Restart </button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo /etc/init.d/icecast2 stop">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable icecast2 && sudo /etc/init.d/icecast2 start && sudo systemctl enable --now livestream.service">Enable</button>
   </form>
   <form action="" method="POST">
     <h3>Web Terminal</h3>
