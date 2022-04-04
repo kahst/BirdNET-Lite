@@ -29,7 +29,7 @@ ln -fs $(dirname ${my_dir})/scripts/play.php ${EXTRACTED}
 ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
 ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
 ln -fs $(dirname ${my_dir})/scripts/stats.php ${EXTRACTED}
-ln -fs $(dirname ${my_dir})/scripts/viewdb.php ${EXTRACTED}
+ln -fs $(dirname ${my_dir})/scripts/todays_detections.php ${EXTRACTED}
 ln -fs $(dirname ${my_dir})/scripts/history.php ${EXTRACTED}
 ln -fs $(dirname ${my_dir})/homepage/images/favicon.ico ${EXTRACTED}
 ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
