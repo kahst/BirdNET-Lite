@@ -18,7 +18,7 @@ Check out birds from around the world
 - [BirdWeather](https://app.birdweather.com)<br>
 - [My test system in Virginia, United States](https://virginia.birdnetpi.com)<br>
 - [NatureStation.net in Johannesburg, South Africa](https://joburg.birdnetpi.com)<br>
-- [BirdNET-Pi in Öringe, Tyresö, Sweden](https://birdnet.svardsten.se)<br>
+- [BirdNET-Pi in Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
 - [Private Nature Garden, Grevenbroich, Germany](http://birdnetgv.ddnss.de)<br>
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
@@ -73,6 +73,8 @@ The installation creates a log in `/home/pi/installation.log` that you can [emai
 ## Access
 The BirdNET-Pi system can be accessed from any web browser on the same network:
 - http://birdnetpi.local
+- Default Basic Authentication Username: birdnet
+- Password is empty by default. Set this in "Tools" > "Settings" > "Advanced Settings"
 
 ## Uninstallation
 ```
