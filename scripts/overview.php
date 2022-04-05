@@ -85,7 +85,7 @@ body::-webkit-scrollbar {
   <tr>
     <th>Today</th>
     <form action="" method="POST">
-    <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button></td>
+    <td><button type="submit" name="view" value="Today's Detections"><?php echo $todaycount['COUNT(*)'];?></button></td>
     </form>
   </tr>
   <tr>
