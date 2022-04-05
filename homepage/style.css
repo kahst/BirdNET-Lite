@@ -48,6 +48,7 @@ td {
 }
 
 th {
+  padding: 12px;
   font-weight: bold;
   height: auto;
   text-align: center;

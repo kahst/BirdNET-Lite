@@ -48,13 +48,22 @@ if($statement4 == False){
 $result4 = $statement4->execute();
 $mostrecent = $result4->fetchArray(SQLITE3_ASSOC);
 
-$statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections');
-if($statement4 == False){
+$statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date == Date(\'now\', \'localtime\')');
+if($statement5 == False){
   echo "Database is busy";
   header("refresh: 0;");
 }
 $result5 = $statement5->execute();
-$speciestally = $result5->fetchArray(SQLITE3_ASSOC);
+$todayspeciestally = $result5->fetchArray(SQLITE3_ASSOC);
+
+$statement6 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections');
+if($statement6 == False){
+  echo "Database is busy";
+  header("refresh: 0;");
+}
+$result6 = $statement6->execute();
+$totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
+
 
 ?>
 
@@ -75,7 +84,8 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
 	<th>Total</th>
 	<th>Today</th>
 	<th>Last Hour</th>
-	<th>Number of Unique Species</th>
+	<th>Unique Species Total</th>
+	<th>Unique Species Today</th>
       </tr>
       <tr>
       <td><?php echo $totalcount['COUNT(*)'];?></td>
@@ -84,7 +94,10 @@ $speciestally = $result5->fetchArray(SQLITE3_ASSOC);
       </form>
       <td><?php echo $hourcount['COUNT(*)'];?></td>
       <form action="" method="POST">
-      <td><button type="submit" name="view" value="Species Stats"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+      <td><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+      </form>
+      <form action="" method="POST">
+      <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todayspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
       </form>
       </tr>
     </table>
