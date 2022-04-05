@@ -95,7 +95,7 @@ body::-webkit-scrollbar {
   <tr>
     <th>Species Detected Today</th>
     <form action="" method="POST">
-    <td><button type="submit" name="view" value="Species Stats"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+    <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
     </form>
   </tr>
   <tr>
