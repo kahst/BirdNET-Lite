@@ -164,7 +164,7 @@ button:hover {
   margin-right: auto;
 }
 
-.stats table,.viewdb table {
+.stats table {
   width: 75%;
 }
 
@@ -434,7 +434,7 @@ button:hover {
     margin-left:auto;
     margin-rigth:auto;
   }
-  .viewdb table,.overview img {
+  .overview img {
     width: 100%
   }
   .banner {
@@ -447,7 +447,7 @@ button:hover {
   .stream {
     float: right;
     display: block;
-    width: 60px;
+    width: 100px;
   }
   .logo img {
     display: block;
