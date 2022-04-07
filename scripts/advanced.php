@@ -146,6 +146,8 @@ if(isset($_POST['submit'])) {
   </style>
   </head>
 <div class="settings">
+<iframe src="https://github.com/sponsors/mcguirepr89/button" title="Sponsor mcguirepr89" style="height:35px;width:116px;border:0;"></iframe>
+
 <?php
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $newconfig = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
@@ -196,6 +198,7 @@ foreach($formats as $format){
       <label for="caddy_pwd">Webpage: </label>
       <input name="caddy_pwd" type="text" value="<?php print($newconfig['CADDY_PWD']);?>" /><br>
       <h3>Custom URL</h3>
+      <p><a href="mailto:mcguirepr89@gmail.com?subject=Request%20BirdNET-Pi%20Subdomain&body=<?php include('birdnetpi_request.php'); ?>" target="_blank">Email Me</a> if you would like a BirdNETPi.com subdomain. This would be, https://YourLocation.birdnetpi.com</p>
       <p>When you update the URL below, the web server will reload, so be sure to wait at least 30 seconds and then go to your new URL.</p>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
       <input name="birdnetpi_url" type="url" value="<?php print($newconfig['BIRDNETPI_URL']);?>" /><br>
