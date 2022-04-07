@@ -81,6 +81,9 @@
     <button type="submit" name="submit" value="sudo systemctl enable --now pushed_notifications.service">Enable</button>
   </form>
   <form action="" method="POST">
+    <button type="submit" name="submit" value="stop_core_services.sh">Stop Core Services</button>
+  </form>	
+  <form action="" method="POST">
     <button type="submit" name="submit" value="restart_services.sh" onclick="return confirm('This will take about 90 seconds.')">Restart All Services</button>
   </form>	
 </div>
