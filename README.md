@@ -17,7 +17,7 @@ BirdNET-Pi is built on the [TFLite version of BirdNET](https://github.com/kahst/
 Check out birds from around the world
 - [BirdWeather](https://app.birdweather.com)<br>
 - [My test system in Virginia, United States](https://virginia.birdnetpi.com)<br>
-- [BirdNET-Pi running on a Raspberry Pi 0W2!!](https://pi0w2.birdnetpi.com:8443)<br>
+- [BirdNET-Pi running on a Raspberry Pi 0W2!!](https://pi0w2.birdnetpi.com:8443) see the [RPi0W2 Installation Guide for more info](https://github.com/mcguirepr89/BirdNET-Pi/wiki/RPi0W2-Installation-Guide)<br>
 - [NatureStation.net in Johannesburg, South Africa](https://joburg.birdnetpi.com)<br>
 - [BirdNET-Pi in Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
 - [Private Nature Garden, Grevenbroich, Germany](http://grevenbroich-elsen.birdnetpi.com)<br>
@@ -41,7 +41,7 @@ If your installation isn't in one of the countries listed above, please let me k
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
-* [BirdWeather](https://app.birdweather.com) integration (you will need to be issued a BirdWeather ID -- for now, request that from [@timsterc here](https://github.com/mcguirepr89/BirdNET-Pi/discussions/82))
+* [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
 * Web interface access to all data and logs
 * Web Terminal
 * [Tiny File Manager](https://tinyfilemanager.github.io/)
