@@ -137,7 +137,7 @@ def predict(sample, interpreter, sensitivity):
             p_sorted[i] = (p_sorted[i][0], 0.0)
 
     # Only return first the top ten results
-    return p_sorted[:args.num_output]
+    return p_sorted[:args.num_outputs]
 
 def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap, interpreter):
 
@@ -213,7 +213,7 @@ def main():
     parser.add_argument('--min_conf', type=float, default=0.1, help='Minimum confidence threshold. Values in [0.01, 0.99]. Defaults to 0.1.')
     parser.add_argument('--custom_list', default='', help='Path to text file containing a list of species. Not used if not provided.')
     parser.add_argument('--filetype', default='wav', help='Filetype of soundscape recordings. Defaults to \'wav\'.')
-    parser.add_arugment('--num_output',type=int, default=10, help="The number of species predictions in a given 3s segment. Defaults to 10")
+    parser.add_arugment('--num_outputs',type=int, default=10, help="The number of species predictions in a given 3s segment. Defaults to 10")
 
     args = parser.parse_args()
 
