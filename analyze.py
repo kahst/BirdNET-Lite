@@ -137,7 +137,7 @@ def predict(sample, interpreter, sensitivity):
             p_sorted[i] = (p_sorted[i][0], 0.0)
 
     # Only return first the top ten results
-    return p_sorted[:10]
+    return p_sorted[:args.num_output]
 
 def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap, interpreter):
 
@@ -213,6 +213,7 @@ def main():
     parser.add_argument('--min_conf', type=float, default=0.1, help='Minimum confidence threshold. Values in [0.01, 0.99]. Defaults to 0.1.')
     parser.add_argument('--custom_list', default='', help='Path to text file containing a list of species. Not used if not provided.')
     parser.add_argument('--filetype', default='wav', help='Filetype of soundscape recordings. Defaults to \'wav\'.')
+    parser.add_arugment('--num_output', default=10, help="The number of species predictions in a given 3s segment. Defaults to 10")
 
     args = parser.parse_args()
 
@@ -235,7 +236,7 @@ def main():
     sensitivity = max(0.5, min(1.0 - (args.sensitivity - 1.0), 1.5))
 
     ## TODO refactor so that this works in a more general case, I.E. you don't have to differentiate between cases where there is only one clip vs. when there
-    ## is multiple audio clips to process. 
+    ## is multiple audio clips to process.
     if len(dataset) == 1:
         try:
             datafile = dataset[0]
