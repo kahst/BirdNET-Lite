@@ -21,6 +21,7 @@ Check out birds from around the world
 - [NatureStation.net in Johannesburg, South Africa](https://joburg.birdnetpi.com)<br>
 - [BirdNET-Pi in Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
 - [Private Nature Garden, Grevenbroich, Germany](http://grevenbroich-elsen.birdnetpi.com)<br>
+- [Norman, Oklahoma, United States](https://normanok.birdnetpi.com)>br>
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 
