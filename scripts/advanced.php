@@ -2,11 +2,13 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
 } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
   $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
 }
+
 $caddypwd = $config['CADDY_PWD'];
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
   header('WWW-Authenticate: Basic realm="My Realm"');
@@ -23,7 +25,6 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
     exit;
   }
 }
-
 
 if(isset($_POST['submit'])) {
   $contents = file_get_contents("/home/pi/BirdNET-Pi/birdnet.conf");
@@ -95,6 +96,23 @@ if(isset($_POST['submit'])) {
     }
   }
 
+  if(isset($_POST["privacy_mode"])) {
+    $privacy_mode = $_POST["privacy_mode"];
+    if(strcmp($privacy_mode,$config['PRIVACY_MODE']) !== 0) {
+      $contents = preg_replace("/PRIVACY_MODE=.*/", "PRIVACY_MODE=$privacy_mode", $contents);
+      $contents2 = preg_replace("/PRIVACY_MODE=.*/", "PRIVACY_MODE=$privacy_mode", $contents2);
+      if(strcmp($privacy_mode,"on") == 0) {
+        exec('sudo sed -i \'s/server.py/privacy_server.py/g\' /home/pi/BirdNET-Pi/templates/birdnet_server.service');
+	exec('sudo systemctl daemon-reload');
+	exec('restart_services.sh');
+      } elseif(strcmp($privacy_mode,"off") == 0) {
+        exec('sudo sed -i \'s/privacy_server.py/server.py/g\' /home/pi/BirdNET-Pi/templates/birdnet_server.service');
+	exec('sudo systemctl daemon-reload');
+	exec('restart_services.sh');
+      }
+    }
+  }
+
   if(isset($_POST["rec_card"])) {
     $rec_card = $_POST["rec_card"];
     if(strcmp($rec_card,$config['REC_CARD']) !== 0) {
@@ -157,20 +175,19 @@ if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
 ?>
       <h2>Advanced Settings</h2>
     <form action="" method="POST">
-      <h3>Defaults</h3>
+      <label>Privacy Mode: </label>
+      <label for="on">
+      <input name="privacy_mode" type="radio" id="on" value="on" <?php if (strcmp($newconfig['PRIVACY_MODE'], "1") == 0) { echo "checked"; }?>>On</label>
+      <label for="off">
+      <input name="privacy_mode" type="radio" id="off" value="off" <?php if (strcmp($newconfig['PRIVACY_MODE'], "") == 0) { echo "checked"; }?>>Off</label>
+      <p>Privacy mode can be set to 'on' or 'off' to configure analysis to be more sensitive to human detections. Privacy mode 'on' will purge any data that receives even a low Human confidence score.
+      Please note that changing this setting restarts services and replaces the running server. It will take about 90, so please be patient!</p>
+
       <label>Full Disk Behavior: </label>
       <label for="purge">
-      <input name="full_disk" type="radio" id="purge" value="purge" 
-<?php
-if (strcmp($newconfig['FULL_DISK'], "purge") == 0) {
-  echo "checked";
-}?>>Purge</label>
+      <input name="full_disk" type="radio" id="purge" value="purge" <?php if (strcmp($newconfig['FULL_DISK'], "purge") == 0) { echo "checked"; }?>>Purge</label>
       <label for="keep">
-      <input name="full_disk" type="radio" id="keep" value="keep" 
-<?php
-  if (strcmp($newconfig['FULL_DISK'], "keep") == 0) {
-    echo "checked";
-  }?>>Keep</label>
+      <input name="full_disk" type="radio" id="keep" value="keep" <?php if (strcmp($newconfig['FULL_DISK'], "keep") == 0) { echo "checked"; }?>>Keep</label>
       <p>When the disk becomes full, you can choose to 'purge' old files to make room for new ones or 'keep' your data and stop all services instead.</p>
       <label for="rec_card">Audio Card: </label>
       <input name="rec_card" type="text" value="<?php print($newconfig['REC_CARD']);?>" required/><br>
@@ -195,14 +212,15 @@ foreach($formats as $format){
 ?>
       </select>
       <h3>BirdNET-Pi Password</h3>
-      <label for="caddy_pwd">Webpage: </label>
+      <p>This password will protect your "Tools" page and "Live Audio" stream.</p>
+      <label for="caddy_pwd">Password: </label>
       <input name="caddy_pwd" type="text" value="<?php print($newconfig['CADDY_PWD']);?>" /><br>
       <h3>Custom URL</h3>
-      <p><a href="mailto:mcguirepr89@gmail.com?subject=Request%20BirdNET-Pi%20Subdomain&body=<?php include('birdnetpi_request.php'); ?>" target="_blank">Email Me</a> if you would like a BirdNETPi.com subdomain. This would be, https://YourLocation.birdnetpi.com</p>
+      <p><a href="mailto:mcguirepr89@gmail.com?subject=Request%20BirdNET-Pi%20Subdomain&body=<?php include('birdnetpi_request.php'); ?>" target="_blank">Email Me</a> if you would like a BirdNETPi.com subdomain. This would be, <i>https://YourLocation.birdnetpi.com</i></p>
       <p>When you update the URL below, the web server will reload, so be sure to wait at least 30 seconds and then go to your new URL.</p>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
       <input name="birdnetpi_url" type="url" value="<?php print($newconfig['BIRDNETPI_URL']);?>" /><br>
-      <p>This URL is how the main page will be reached. If you want your installation to respond to an IP address, place that here, but be sure to indicate `http://`.<br>Example for IP:http://192.168.0.109<br>Example if you own your own domain:https://birdnetpi.pmcgui.xyz</p>
+      <p>The BirdNET-Pi URL is how the main page will be reached. If you want your installation to respond to an IP address, place that here, but be sure to indicate "<i>http://</i>".<br>Example for IP: <i>http://192.168.0.109</i><br>Example if you own your own domain: <i>https://virginia.birdnetpi.com</i></p>
       <h3>BirdNET-Lite Settings</h3>
       <label for="overlap">Overlap: </label>
       <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($newconfig['OVERLAP']);?>" required/><br>

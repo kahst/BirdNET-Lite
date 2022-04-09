@@ -10,3 +10,4 @@ sudo -u${USER} git -C /home/pi/BirdNET-Pi stash
 sudo -u${USER} git -C /home/pi/BirdNET-Pi pull -f
 sudo systemctl daemon-reload
 sudo -u${USER} git -C /home/pi/BirdNET-Pi stash pop
+sudo ln -sf $my_dir/* /usr/local/bin/
