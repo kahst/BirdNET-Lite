@@ -61,8 +61,6 @@ ICE_PWD=birdnetpi
 ## the BirdNET-Pi on your local network, keep this EMPTY.
 
 BIRDNETPI_URL=
-BIRDNETLOG_URL=
-WEBTERMINAL_URL=
 
 
 #-------------------  Mobile Notifications via Pushed.co  ---------------------#
@@ -128,6 +126,12 @@ CHANNELS=2
 ## keep = Keep all data and 'stop_core_services.sh'
 
 FULL_DISK=purge
+
+## PRIVACY_MODE can be set to 'on' or 'off' to configure analysis to be more
+## sensitive to human detections. PRIVACY_MODE 'on' will purge any data that
+## receives even a low HUMAN_HUMAN confidence score.
+
+PRIVACY_MODE=off
 
 ## RECORDING_LENGTH sets the length of the recording that BirdNET-Lite will
 ## analyze.
