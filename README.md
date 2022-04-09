@@ -78,11 +78,15 @@ The BirdNET-Pi system can be accessed from any web browser on the same network:
 - Default Basic Authentication Username: birdnet
 - Password is empty by default. Set this in "Tools" > "Settings" > "Advanced Settings"
 
-Please take a look at the [wiki](https://github.com/mcguirepr89/BirdNET-Pi/wiki) for information on
+Please take a look at the [wiki](https://github.com/mcguirepr89/BirdNET-Pi/wiki) and [discussions](https://github.com/mcguirepr89/BirdNET-Pi/discussions) for information on
 - [making your installation public](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 - [backing up and restoring your database](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Backup-and-Restore-the-Database)
 - [adjusting your sound card settings](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Adjusting-your-sound-card)
-- and [building your own microphone](https://github.com/DD4WH/SASS/wiki/Stereo--(Mono)-recording-low-noise-low-cost-system)
+- [suggested USB microphones](https://github.com/mcguirepr89/BirdNET-Pi/discussions/39)
+- [building your own microphone](https://github.com/DD4WH/SASS/wiki/Stereo--(Mono)-recording-low-noise-low-cost-system)
+- [privacy concerns and options](https://github.com/mcguirepr89/BirdNET-Pi/discussions/166)
+- [beta testing](https://github.com/mcguirepr89/BirdNET-Pi/discussions/11)
+- [and more!](https://github.com/mcguirepr89/BirdNET-Pi/discussions)
 
 ## Uninstallation
 ```
