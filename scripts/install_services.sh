@@ -4,7 +4,7 @@ set -x # Uncomment to enable debugging
 trap 'rm -f ${tmpfile}' EXIT
 trap 'exit 1' SIGINT SIGHUP
 tmpfile=$(mktemp)
-config_file="$(dirname ${my_dir})/birdnet.conf"
+config_file=$my_dir/birdnet.conf
 
 install_depends() {
   curl -1sLf \
@@ -112,33 +112,33 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/Charts ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/play.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/stats.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/todays_detections.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/history.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/images/favicon.ico ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/homepage/* ${EXTRACTED}  
+  sudo -u ${USER} ln -fs $my_dir/model/labels.txt ${my_dir}
+  sudo -u ${USER} ln -fs $my_dir/scripts ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/play.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/spectrogram.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/overview.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/stats.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/todays_detections.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/history.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/homepage/images/favicon.ico ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
-  chmod -R g+rw $(dirname ${my_dir})
+  sudo -u ${USER} ln -fs $my_dir/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
+  sudo -u ${USER} ln -fs $my_dir/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
+  sudo -u ${USER} ln -fs $my_dir/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
+  chmod -R g+rw $my_dir
   chmod -R g+rw ${RECS_DIR}
 }
 
 generate_BirdDB() {
   echo "Generating BirdDB.txt"
-  if ! [ -f $(dirname ${my_dir})/BirdDB.txt ];then
-    sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
-    echo "Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap" | sudo -u ${USER} tee -a $(dirname ${my_dir})/BirdDB.txt
-  elif ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
-    sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
+  if ! [ -f $my_dir/BirdDB.txt ];then
+    sudo -u ${USER} touch $my_dir/BirdDB.txt
+    echo "Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap" | sudo -u ${USER} tee -a $my_dir/BirdDB.txt
+  elif ! grep Date $my_dir/BirdDB.txt;then
+    sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $my_dir/BirdDB.txt
   fi
-  ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt &&
+  ln -sf $my_dir/BirdDB.txt ${my_dir}/BirdDB.txt &&
   chown $USER:$USER ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
 }
 
@@ -326,9 +326,9 @@ EOF
 }
 
 install_gotty_logs() {
-  sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/gotty \
+  sudo -u ${USER} ln -sf $my_dir/templates/gotty \
     ${HOME}/.gotty
-  sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/bashrc \
+  sudo -u ${USER} ln -sf $my_dir/templates/bashrc \
     ${HOME}/.bashrc
   cat << EOF > $HOME/BirdNET-Pi/templates/birdnet_log.service
 [Unit]
@@ -411,7 +411,7 @@ EOF
 }
 
 install_cleanup_cron() {
-  cat $(dirname ${my_dir})/templates/cleanup.cron >> /etc/crontab
+  cat $my_dir/templates/cleanup.cron >> /etc/crontab
 }
 
 install_services() {
