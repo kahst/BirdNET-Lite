@@ -3,7 +3,6 @@
 set -x # Uncomment to enable debugging
 trap 'rm -f ${tmpfile}' EXIT
 trap 'exit 1' SIGINT SIGHUP
-my_dir=$HOME/BirdNET-Pi/scripts
 tmpfile=$(mktemp)
 config_file="$(dirname ${my_dir})/birdnet.conf"
 
