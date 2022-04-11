@@ -4,7 +4,7 @@
 set -e
 trap 'exit 1' SIGINT SIGHUP
 
-birdnet_conf="$(dirname ${my_dir})/birdnet.conf"
+birdnet_conf=$my_dir/birdnet.conf
 
 install_config() {
   cat << EOF > $(dirname ${my_dir})/birdnet.conf
