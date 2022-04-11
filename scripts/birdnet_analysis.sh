@@ -6,9 +6,9 @@ source /etc/birdnet/birdnet.conf
 # Make a temporary file to compare the current birdnet.conf with
 # the birdnet.conf as it was the last time this script was called
 my_dir=$(realpath $(dirname $0))
-if [ -z ${THIS_RUN} ];then THIS_RUN=/home/pi/BirdNET-Pi/thisrun.txt;fi
+if [ -z ${THIS_RUN} ];then THIS_RUN=/home/*/BirdNET-Pi/thisrun.txt;fi
 [ -f ${THIS_RUN} ] || touch ${THIS_RUN} && chmod g+w ${THIS_RUN}
-if [ -z ${LAST_RUN} ];then LAST_RUN=/home/pi/BirdNET-Pi/lastrun.txt;fi
+if [ -z ${LAST_RUN} ];then LAST_RUN=/home/*/BirdNET-Pi/lastrun.txt;fi
 [ -z ${LATITUDE} ] && echo "LATITUDE not set, exiting 1" && exit 1
 [ -z ${LONGITUDE} ] && echo "LONGITUDE not set, exiting 1" && exit 1
 make_thisrun() {
@@ -27,8 +27,8 @@ if ! diff ${LAST_RUN} ${THIS_RUN};then
   sudo systemctl start birdnet_recording.service
 fi
 
-INCLUDE_LIST="/home/pi/BirdNET-Pi/include_species_list.txt"
-EXCLUDE_LIST="/home/pi/BirdNET-Pi/exclude_species_list.txt"
+INCLUDE_LIST="/home/*/BirdNET-Pi/include_species_list.txt"
+EXCLUDE_LIST="/home/*/BirdNET-Pi/exclude_species_list.txt"
 if [ ! -f ${INCLUDE_LIST} ];then 
   touch ${INCLUDE_LIST} && 
     chmod g+rw ${INCLUDE_LIST}
@@ -96,7 +96,7 @@ run_analysis() {
   fi
 
   for i in "${files[@]}";do
-    echo "${1}/${i}" > /home/pi/BirdNET-Pi/analyzing_now.txt
+    echo "${1}/${i}" > /home/*/BirdNET-Pi/analyzing_now.txt
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=15
     [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
     FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"

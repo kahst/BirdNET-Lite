@@ -2,7 +2,7 @@
 # Uninstall script to remove everything
 #set -x # Uncomment to debug
 trap 'rm -f ${TMPFILE}' EXIT
-my_dir=/home/pi/BirdNET-Pi/scripts
+my_dir=$HOME/BirdNET-Pi/scripts
 source /etc/birdnet/birdnet.conf &> /dev/null
 SCRIPTS=($(ls -1 ${my_dir}) ${HOME}/.gotty)
 set -x

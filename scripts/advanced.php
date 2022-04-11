@@ -3,10 +3,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
-  $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
-} elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
-  $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
+if (file_exists('/home/*/BirdNET-Pi/thisrun.txt')) {
+  $config = parse_ini_file('/home/*/BirdNET-Pi/thisrun.txt');
+} elseif (file_exists('/home/*/BirdNET-Pi/firstrun.ini')) {
+  $config = parse_ini_file('/home/*/BirdNET-Pi/firstrun.ini');
 }
 
 $caddypwd = $config['CADDY_PWD'];
@@ -27,16 +27,16 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 }
 
 if(isset($_POST['submit'])) {
-  $contents = file_get_contents("/home/pi/BirdNET-Pi/birdnet.conf");
-  $contents2 = file_get_contents("/home/pi/BirdNET-Pi/thisrun.txt");
+  $contents = file_get_contents("/home/*/BirdNET-Pi/birdnet.conf");
+  $contents2 = file_get_contents("/home/*/BirdNET-Pi/thisrun.txt");
 
   if(isset($_POST["caddy_pwd"])) {
     $caddy_pwd = $_POST["caddy_pwd"];
     if(strcmp($caddy_pwd,$config['CADDY_PWD']) !== 0) {
       $contents = preg_replace("/CADDY_PWD=.*/", "CADDY_PWD=$caddy_pwd", $contents);
       $contents2 = preg_replace("/CADDY_PWD=.*/", "CADDY_PWD=$caddy_pwd", $contents2);
-      $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
-      $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
+      $fh = fopen("/home/*/BirdNET-Pi/birdnet.conf", "w");
+      $fh2 = fopen("/home/*/BirdNET-Pi/thisrun.txt", "w");
       fwrite($fh, $contents);
       fwrite($fh2, $contents2);
       exec('sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &');
@@ -56,8 +56,8 @@ if(isset($_POST['submit'])) {
     if(strcmp($birdnetpi_url,$config['BIRDNETPI_URL']) !== 0) {
       $contents = preg_replace("/BIRDNETPI_URL=.*/", "BIRDNETPI_URL=$birdnetpi_url", $contents);
       $contents2 = preg_replace("/BIRDNETPI_URL=.*/", "BIRDNETPI_URL=$birdnetpi_url", $contents2);
-      $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
-      $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
+      $fh = fopen("/home/*/BirdNET-Pi/birdnet.conf", "w");
+      $fh2 = fopen("/home/*/BirdNET-Pi/thisrun.txt", "w");
       fwrite($fh, $contents);
       fwrite($fh2, $contents2);
       exec('sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &');
@@ -102,11 +102,11 @@ if(isset($_POST['submit'])) {
       $contents = preg_replace("/PRIVACY_MODE=.*/", "PRIVACY_MODE=$privacy_mode", $contents);
       $contents2 = preg_replace("/PRIVACY_MODE=.*/", "PRIVACY_MODE=$privacy_mode", $contents2);
       if(strcmp($privacy_mode,"on") == 0) {
-        exec('sudo sed -i \'s/server.py/privacy_server.py/g\' /home/pi/BirdNET-Pi/templates/birdnet_server.service');
+        exec('sudo sed -i \'s/server.py/privacy_server.py/g\' /home/*/BirdNET-Pi/templates/birdnet_server.service');
 	exec('sudo systemctl daemon-reload');
 	exec('restart_services.sh');
       } elseif(strcmp($privacy_mode,"off") == 0) {
-        exec('sudo sed -i \'s/privacy_server.py/server.py/g\' /home/pi/BirdNET-Pi/templates/birdnet_server.service');
+        exec('sudo sed -i \'s/privacy_server.py/server.py/g\' /home/*/BirdNET-Pi/templates/birdnet_server.service');
 	exec('sudo systemctl daemon-reload');
 	exec('restart_services.sh');
       }
@@ -153,8 +153,8 @@ if(isset($_POST['submit'])) {
     }
   }
 
-  $fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
-  $fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
+  $fh = fopen("/home/*/BirdNET-Pi/birdnet.conf", "w");
+  $fh2 = fopen("/home/*/BirdNET-Pi/thisrun.txt", "w");
   fwrite($fh, $contents);
   fwrite($fh2, $contents2);
 }
@@ -167,10 +167,10 @@ if(isset($_POST['submit'])) {
 <iframe src="https://github.com/sponsors/mcguirepr89/button" title="Sponsor mcguirepr89" style="height:35px;width:116px;border:0;"></iframe>
 
 <?php
-if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
-  $newconfig = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
-} elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
-  $newconfig = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
+if (file_exists('/home/*/BirdNET-Pi/thisrun.txt')) {
+  $newconfig = parse_ini_file('/home/*/BirdNET-Pi/thisrun.txt');
+} elseif (file_exists('/home/*/BirdNET-Pi/firstrun.ini')) {
+  $newconfig = parse_ini_file('/home/*/BirdNET-Pi/firstrun.ini');
 }
 ?>
       <h2>Advanced Settings</h2>

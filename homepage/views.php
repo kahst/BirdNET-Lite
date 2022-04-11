@@ -45,10 +45,10 @@ if(isset($_POST['view'])){
   if($_POST['view'] == "Streamlit"){header('location:/stats');}
   if($_POST['view'] == "Daily Charts"){include('history.php');}
   if($_POST['view'] == "Tools"){
-    if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
-      $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
-    } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
-      $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
+    if (file_exists('/home/*/BirdNET-Pi/thisrun.txt')) {
+      $config = parse_ini_file('/home/*/BirdNET-Pi/thisrun.txt');
+    } elseif (file_exists('/home/*/BirdNET-Pi/firstrun.ini')) {
+      $config = parse_ini_file('/home/*/BirdNET-Pi/firstrun.ini');
     }
     $caddypwd = $config['CADDY_PWD'];
     if (!isset($_SERVER['PHP_AUTH_USER'])) {
@@ -87,25 +87,25 @@ if(isset($_POST['view'])){
   if($_POST['view'] == "Advanced"){include('scripts/advanced.php');}
   if($_POST['view'] == "Included"){
     if(isset($_POST['species']) && isset($_POST['add'])){
-      $file = '/home/pi/BirdNET-Pi/include_species_list.txt';
+      $file = '/home/*/BirdNET-Pi/include_species_list.txt';
       $str = file_get_contents("$file");
       $str = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $str);
       file_put_contents("$file", "$str");
       if(isset($_POST['species'])){
         foreach ($_POST['species'] as $selectedOption)
-          file_put_contents("/home/pi/BirdNET-Pi/include_species_list.txt", $selectedOption."\n", FILE_APPEND);
+          file_put_contents("/home/*/BirdNET-Pi/include_species_list.txt", $selectedOption."\n", FILE_APPEND);
       }
     } elseif(isset($_POST['species']) && isset($_POST['del'])){
-      $file = '/home/pi/BirdNET-Pi/include_species_list.txt';
+      $file = '/home/*/BirdNET-Pi/include_species_list.txt';
       $str = file_get_contents("$file");
       $str = preg_replace('/^\h*\v+/m', '', $str);
       file_put_contents("$file", "$str");
       foreach($_POST['species'] as $selectedOption) {
-        $content = file_get_contents("/home/pi/BirdNET-Pi/include_species_list.txt");
+        $content = file_get_contents("/home/*/BirdNET-Pi/include_species_list.txt");
         $newcontent = str_replace($selectedOption, "", "$content");
-        file_put_contents("/home/pi/BirdNET-Pi/include_species_list.txt", "$newcontent");
+        file_put_contents("/home/*/BirdNET-Pi/include_species_list.txt", "$newcontent");
       }
-      $file = '/home/pi/BirdNET-Pi/include_species_list.txt';
+      $file = '/home/*/BirdNET-Pi/include_species_list.txt';
       $str = file_get_contents("$file");
       $str = preg_replace('/^\h*\v+/m', '', $str);
       file_put_contents("$file", "$str");
@@ -114,23 +114,23 @@ if(isset($_POST['view'])){
   }
   if($_POST['view'] == "Excluded"){
     if(isset($_POST['species']) && isset($_POST['add'])){
-      $file = '/home/pi/BirdNET-Pi/exclude_species_list.txt';
+      $file = '/home/*/BirdNET-Pi/exclude_species_list.txt';
       $str = file_get_contents("$file");
       $str = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $str);
       file_put_contents("$file", "$str");
       foreach ($_POST['species'] as $selectedOption)
-        file_put_contents("/home/pi/BirdNET-Pi/exclude_species_list.txt", $selectedOption."\n", FILE_APPEND);
+        file_put_contents("/home/*/BirdNET-Pi/exclude_species_list.txt", $selectedOption."\n", FILE_APPEND);
     } elseif (isset($_POST['species']) && isset($_POST['del'])){
-      $file = '/home/pi/BirdNET-Pi/exclude_species_list.txt';
+      $file = '/home/*/BirdNET-Pi/exclude_species_list.txt';
       $str = file_get_contents("$file");
       $str = preg_replace('/^\h*\v+/m', '', $str);
       file_put_contents("$file", "$str");
       foreach($_POST['species'] as $selectedOption) {
-        $content = file_get_contents("/home/pi/BirdNET-Pi/exclude_species_list.txt");
+        $content = file_get_contents("/home/*/BirdNET-Pi/exclude_species_list.txt");
         $newcontent = str_replace($selectedOption, "", "$content");
-        file_put_contents("/home/pi/BirdNET-Pi/exclude_species_list.txt", "$newcontent");
+        file_put_contents("/home/*/BirdNET-Pi/exclude_species_list.txt", "$newcontent");
       }
-      $file = '/home/pi/BirdNET-Pi/exclude_species_list.txt';
+      $file = '/home/*/BirdNET-Pi/exclude_species_list.txt';
       $str = file_get_contents("$file");
       $str = preg_replace('/^\h*\v+/m', '', $str);
       file_put_contents("$file", "$str");
@@ -141,10 +141,10 @@ if(isset($_POST['view'])){
     header('Location: scripts/filemanager/filemanager.php');
   }
   if($_POST['view'] == "Webterm"){
-    if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
-      $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
-    } elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
-      $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
+    if (file_exists('/home/*/BirdNET-Pi/thisrun.txt')) {
+      $config = parse_ini_file('/home/*/BirdNET-Pi/thisrun.txt');
+    } elseif (file_exists('/home/*/BirdNET-Pi/firstrun.ini')) {
+      $config = parse_ini_file('/home/*/BirdNET-Pi/firstrun.ini');
     }
     $caddypwd = $config['CADDY_PWD'];
     if (!isset($_SERVER['PHP_AUTH_USER'])) {

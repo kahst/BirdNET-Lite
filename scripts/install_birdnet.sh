@@ -26,7 +26,7 @@ install_birdnet() {
   echo "Establishing a python virtual environment"
   python3 -m venv birdnet
   source ./birdnet/bin/activate
-  pip3 install -U -r /home/pi/BirdNET-Pi/requirements.txt
+  pip3 install -U -r $HOME/BirdNET-Pi/requirements.txt
 }
 
 [ -d ${RECS_DIR} ] || mkdir -p ${RECS_DIR} &> /dev/null

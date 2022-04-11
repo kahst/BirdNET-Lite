@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # Simple new installer
 
-HOME=/home/pi
-USER=pi
 branch=main
 if ! which git &> /dev/null;then
   sudo apt update

@@ -5,8 +5,8 @@ echo "........................................IPs...............................
 echo "LAN IP: $(hostname -I|cut -d' ' -f1)"
 echo "Public IP: $(curl -s4 ifconfig.co)"
 echo "..................................\`vcgencmd stats\`.............................."
-sudo -upi vcgencmd get_throttled
-hex=$(sudo -upi vcgencmd get_throttled|cut -d'x' -f2)
+sudo -u$USER vcgencmd get_throttled
+hex=$(sudo -u$USER vcgencmd get_throttled|cut -d'x' -f2)
 binary=$(echo "ibase=16;obase=2;$hex"|bc)
 echo "Binary: $binary";
 revbinary=$(echo $binary|rev)
@@ -55,11 +55,11 @@ if echo $binary | grep 1 ;then
 fi
 echo "....................................Clock Speeds................................"
 for i in arm core h264 isp v3d uart pwm emmc pixel vec hdmi dpi;do
-  echo -e "${i}:\t$(sudo -upi vcgencmd measure_clock ${i})"
+  echo -e "${i}:\t$(sudo -u$USER vcgencmd measure_clock ${i})"
 done
 echo "........................................Volts..................................."
 for i in core sdram_c sdram_i sdram_p;do
-  echo -e "${i}:\t$(sudo -upi vcgencmd measure_volts ${i})"
+  echo -e "${i}:\t$(sudo -u$USER vcgencmd measure_volts ${i})"
 done
 echo ".....................................Caddyfile.................................."
 cat /etc/caddy/Caddyfile

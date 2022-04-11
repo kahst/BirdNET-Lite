@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 source /etc/birdnet/birdnet.conf
-sqlite3 /home/pi/BirdNET-Pi/scripts/birds.db << EOF
+sqlite3 $HOME/BirdNET-Pi/scripts/birds.db << EOF
 DROP TABLE IF EXISTS detections;
 CREATE TABLE IF NOT EXISTS detections (
   Date DATE,
@@ -16,5 +16,5 @@ CREATE TABLE IF NOT EXISTS detections (
   Overlap FLOAT,
   File_Name VARCHAR(100) NOT NULL);
 EOF
-sudo chown pi:pi /home/pi/BirdNET-Pi/scripts/birds.db
-sudo chmod g+w /home/pi/BirdNET-Pi/scripts/birds.db
+sudo chown $USER:$USER $HOME/BirdNET-Pi/scripts/birds.db
+sudo chmod g+w $HOME/BirdNET-Pi/scripts/birds.db

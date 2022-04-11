@@ -4,8 +4,6 @@
 # you are okay will losing all the data that you've collected and processed
 # so far.
 source /etc/birdnet/birdnet.conf
-HOME=/home/pi
-USER=pi
 my_dir=${HOME}/BirdNET-Pi/scripts
 echo "Stopping services"
 sudo systemctl stop birdnet_recording.service
@@ -45,6 +43,6 @@ echo "Generating BirdDB.txt"
 touch $(dirname ${my_dir})/BirdDB.txt
 echo "Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap" > $(dirname ${my_dir})/BirdDB.txt
 ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt
-chown pi:pi ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
+chown $USER:$USER ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
 echo "Restarting services"
 restart_services.sh

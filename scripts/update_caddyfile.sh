@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 source /etc/birdnet/birdnet.conf
-USER=pi
-HOME=/home/pi
-my_dir=/home/pi/BirdNET-Pi/scripts
+my_dir=$HOME/BirdNET-Pi/scripts
 set -x
 [ -d /etc/caddy ] || mkdir /etc/caddy
 if [ -f /etc/caddy/Caddyfile ];then

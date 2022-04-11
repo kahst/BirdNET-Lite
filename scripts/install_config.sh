@@ -83,7 +83,7 @@ PUSHED_APP_SECRET=
 ## it needs to analyze. Be sure this directory is readable and writable for
 ## the BIRDNET_USER.
 
-RECS_DIR=/home/pi/BirdSongs
+RECS_DIR=$HOME/BirdSongs
 
 ## REC_CARD is the sound card you would want the birdnet_recording.service to
 ## use. Leave this as "default" to use PulseAudio (recommended), or use
@@ -95,11 +95,11 @@ REC_CARD=default
 ## after extractions have been made from them. This includes both WAVE and
 ## BirdNET.selection.txt files.
 
-PROCESSED=/home/pi/BirdSongs/Processed
+PROCESSED=$HOME/BirdSongs/Processed
 
 ## EXTRACTED is the directory where the extracted audio selections are moved.
 
-EXTRACTED=/home/pi/BirdSongs/Extracted
+EXTRACTED=$HOME/BirdSongs/Extracted
 
 ## OVERLAP is the value in seconds which BirdNET should use when analyzing
 ## the data. The values must be between 0.0-2.9.
@@ -155,15 +155,11 @@ EXTRACTION_LENGTH=
 
 AUDIOFMT=mp3
 
-## BIRDNET_USER should be the non-root user systemd should use to execute each
-## service.
-
-BIRDNET_USER=pi
 
 ## These are just for debugging
 LAST_RUN=
 THIS_RUN=
-IDFILE=/home/pi/BirdNET-Pi/IdentifiedSoFar.txt
+IDFILE=$HOME/BirdNET-Pi/IdentifiedSoFar.txt
 EOF
 }
 

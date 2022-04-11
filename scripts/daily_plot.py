@@ -1,5 +1,3 @@
-#!/home/pi/BirdNET-Pi/birdnet/bin/python3
-
 import sqlite3
 import os
 import configparser
@@ -10,7 +8,7 @@ from matplotlib.colors import LogNorm
 from datetime import datetime
 import textwrap
 
-conn = sqlite3.connect('/home/pi/BirdNET-Pi/scripts/birds.db')
+conn = sqlite3.connect('/home/*/BirdNET-Pi/scripts/birds.db')
 df = pd.read_sql_query("SELECT * from detections", conn)
 cursor = conn.cursor()
 cursor.execute('SELECT * FROM detections')
@@ -99,7 +97,7 @@ f.subplots_adjust(top=0.9)
 plt.suptitle("Top 10 Last Updated: "+ str(now.strftime("%Y-%m-%d %H:%M")))
 
 #Save combined plot
-savename='/home/pi/BirdSongs/Extracted/Charts/Combo-'+str(now.strftime("%Y-%m-%d"))+'.png'
+savename='/home/*/BirdSongs/Extracted/Charts/Combo-'+str(now.strftime("%Y-%m-%d"))+'.png'
 plt.savefig(savename)
 plt.show()
 plt.close()
@@ -167,7 +165,7 @@ f.subplots_adjust(top=0.9)
 plt.suptitle("Bottom 10 Last Updated: "+ str(now.strftime("%Y-%m-%d %H:%M")))
 
 #Save combined plot
-savename='/home/pi/BirdSongs/Extracted/Charts/Combo2-'+str(now.strftime("%Y-%m-%d"))+'.png'
+savename='/home/*/BirdSongs/Extracted/Charts/Combo2-'+str(now.strftime("%Y-%m-%d"))+'.png'
 plt.savefig(savename)
 plt.show()
 plt.close()
