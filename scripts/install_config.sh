@@ -167,5 +167,5 @@ if ! [ -f ${birdnet_conf} ];then
 fi
 chmod g+w ${birdnet_conf}
 [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
-sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf
+sudo ln -sf $birdnet_conf /etc/birdnet/birdnet.conf
 grep -ve '^#' -e '^$' /etc/birdnet/birdnet.conf > $my_dir/firstrun.ini
