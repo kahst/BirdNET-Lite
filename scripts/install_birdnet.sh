@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 # Install BirdNET script
-set -x
-exec > >(tee -i installation-$(date +%F).txt) 2>&1
+set -x # Debugging
+exec > >(tee -i installation-$(date +%F).txt) 2>&1 # Make log
 set -e # exit installation if anything fails
-trap '${my_dir}/dump_logs.sh && echo -e "\n\nExiting the installation. Goodbye!" && exit 1' SIGINT
+
 my_dir=$HOME/BirdNET-Pi
 export my_dir=$my_dir
-export HOME=$HOME
-export USER=$USER
+
 cd $my_dir/scripts || exit 1
 
 if [ "$(uname -m)" != "aarch64" ];then
@@ -21,7 +20,7 @@ fi
 
 #Install/Configure /etc/birdnet/birdnet.conf
 ./install_config.sh || exit 1
-HOME=$HOME USER=$USER sudo -E ./install_services.sh || exit 1
+sudo -E HOME=$HOME USER=$USER ./install_services.sh || exit 1
 source /etc/birdnet/birdnet.conf
 
 install_birdnet() {
