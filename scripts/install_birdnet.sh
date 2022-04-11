@@ -18,7 +18,7 @@ fi
 
 #Install/Configure /etc/birdnet/birdnet.conf
 ./install_config.sh || exit 1
-sudo ./install_services.sh || exit 1
+HOME=$HOME USER=$USER sudo ./install_services.sh || exit 1
 source /etc/birdnet/birdnet.conf
 
 install_birdnet() {
