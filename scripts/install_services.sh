@@ -31,7 +31,7 @@ update_etc_hosts() {
 }
 
 install_scripts() {
-  ln -sf ${my_dir}/* /usr/local/bin/
+  ln -sf ${my_dir}/scripts/* /usr/local/bin/
 }
 
 install_birdnet_analysis() {
@@ -441,7 +441,7 @@ install_services() {
   generate_BirdDB
   configure_caddy_php
   config_icecast
-  ${my_dir}/createdb.sh
+  ${my_dir}/scripts/createdb.sh
 }
 
 if [ -f ${config_file} ];then 
