@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Simple new installer
 
-branch=main
+branch=newbaseos
 if ! which git &> /dev/null;then
   sudo apt update
   sudo apt -y install git
