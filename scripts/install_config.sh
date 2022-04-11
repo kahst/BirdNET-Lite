@@ -4,7 +4,6 @@
 set -e
 trap 'exit 1' SIGINT SIGHUP
 
-birdnetpi_dir=$(realpath $(dirname $my_dir))
 birdnet_conf="$(dirname ${my_dir})/birdnet.conf"
 
 install_config() {
@@ -169,4 +168,4 @@ fi
 chmod g+w ${birdnet_conf}
 [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
 sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf
-grep -ve '^#' -e '^$' /etc/birdnet/birdnet.conf > ${birdnetpi_dir}/firstrun.ini
+grep -ve '^#' -e '^$' /etc/birdnet/birdnet.conf > $my_dir/firstrun.ini
