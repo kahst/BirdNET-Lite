@@ -4,7 +4,7 @@ set -x
 exec > >(tee -i installation-$(date +%F).txt) 2>&1
 set -e # exit installation if anything fails
 trap '${my_dir}/dump_logs.sh && echo -e "\n\nExiting the installation. Goodbye!" && exit 1' SIGINT
-cd $my_dir || exit 1
+cd $my_dir/scripts || exit 1
 
 if [ "$(uname -m)" != "aarch64" ];then
   echo "BirdNET-Pi requires a 64-bit OS.

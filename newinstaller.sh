@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 # Simple new installer
-my_dir=$(realpath $(dirname 0))
 HOME=$HOME
 USER=$USER
 
-export my_dir=$my_dir
 export HOME=$HOME
 export USER=$USER
 
