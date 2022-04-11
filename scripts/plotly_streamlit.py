@@ -1,3 +1,5 @@
+#!/home/patrick/BirdNET-Pi/birdnet/bin/python3
+import os
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -8,7 +10,8 @@ from pathlib import Path
 import sqlite3
 from sqlite3 import Connection
 
-URI_SQLITE_DB = "/home/*/BirdNET-Pi/scripts/birds.db"
+userDir = os.path.expanduser('~')
+URI_SQLITE_DB = userDir + '/BirdNET-Pi/scripts/birds.db'
 
 st.set_page_config(layout='wide')
 
@@ -30,23 +33,11 @@ st.markdown("""
         </style>
         """, unsafe_allow_html=True)
 
-col1,col2,col3 = st.columns([20,20,20])
-
-col1.title('BirdNET-Pi', anchor=None)
-col2.image('/home/*/BirdNET-Pi/homepage/images/bird.png')
-col3.text('')
-
 
 @st.cache(hash_funcs={Connection: id})
 def get_connection(path:str):
     return sqlite3.connect(path,check_same_thread=False)
 
-
-
-
-# def load_data():
-#     df1 = pd.read_csv('/home/*/BirdNET-Pi/BirdDB.txt', sep=';')
-#     return df1
 
 def get_data(conn: Connection):
     df1=pd.read_sql("SELECT * FROM detections", con=conn)

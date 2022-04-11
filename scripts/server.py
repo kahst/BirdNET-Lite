@@ -1,3 +1,4 @@
+#!/home/patrick/BirdNET-Pi/birdnet/bin/python3
 import socket 
 import threading
 import os
@@ -43,7 +44,8 @@ except:
 
 
 # Open most recent Configuration and grab DB_PWD as a python variable
-with open('/home/*/BirdNET-Pi/thisrun.txt', 'r') as f:
+userDir = os.path.expanduser('~')
+with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     this_run = f.readlines()
     audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
 
@@ -58,7 +60,8 @@ def loadModel():
     print('LOADING TF LITE MODEL...', end=' ')
 
     # Load TFLite model and allocate tensors.
-    myinterpreter = tflite.Interpreter(model_path='/home/*/BirdNET-Pi/model/BirdNET_6K_GLOBAL_MODEL.tflite',num_threads=2)
+    modelpath = userDir + '/BirdNET-Pi/model/BirdNET_6K_GLOBAL_MODEL.tflite'
+    myinterpreter = tflite.Interpreter(model_path=modelpath,num_threads=1)
     myinterpreter.allocate_tensors()
 
     # Get input and output tensors.
@@ -72,7 +75,8 @@ def loadModel():
 
     # Load labels
     CLASSES = []
-    with open('/home/*/BirdNET-Pi/model/labels.txt', 'r') as lfile:
+    labelspath = userDir + '/BirdNET-Pi/model/labels.txt'
+    with open(labelspath, 'r') as lfile:
         for line in lfile.readlines():
             CLASSES.append(line.replace('\n', ''))
 
@@ -232,8 +236,8 @@ def handle_client(conn, addr):
                 
                 args = type('', (), {})()
                 
-                args.i = '/home/*/test.wav'
-                args.o = '/home/*/test.wav.csv'
+                args.i = ''
+                args.o = ''
                 args.birdweather_id = '99999'
                 args.include_list = 'null'
                 args.exclude_list = 'null'
@@ -328,7 +332,7 @@ def handle_client(conn, addr):
                   myReturn += str(i) + '-' + str(detections[i][0]) + '\n'
                 
                 
-                with open('/home/*/BirdNET-Pi/BirdDB.txt', 'a') as rfile:
+                with open(userDir + '/BirdNET-Pi/BirdDB.txt', 'a') as rfile:
                     for d in detections:
                         for entry in detections[d]:
                             if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) ):
@@ -353,16 +357,17 @@ def handle_client(conn, addr):
                                         Date.replace("/", "-") + '-birdnet-' + Time + audiofmt
 
                                 #Connect to SQLite Database
-                                try: 
-                                    con = sqlite3.connect('/home/*/BirdNET-Pi/scripts/birds.db')
-                                    cur = con.cursor()
-                                    cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Date, Time, Sci_Name, Com_Name, str(score), Lat, Lon, Cutoff, Week, Sens, Overlap, File_Name))
+                                #try: 
+                                con = sqlite3.connect(userDir + '/BirdNET-Pi/scripts/birds.db')
+                                cur = con.cursor()
+                                cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Date, Time, Sci_Name, Com_Name, str(score), Lat, Lon, Cutoff, Week, Sens, Overlap, File_Name))
 
-                                    con.commit()
-                                    con.close()
-                                except:
-                                    print("Database busy")
-                                    time.sleep(2)
+                                con.commit()
+                                con.close()
+                                #except:
+                                #    print("Database busy")
+                                #    time.sleep(2)
+
                                 print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + ';' + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + Com_Name.replace(" ", "_") + '-' + str(score) + '-' + str(current_date) + '-birdnet-' + str(current_time) + audiofmt  + '\n')
 
                                 if birdweather_id != "99999":

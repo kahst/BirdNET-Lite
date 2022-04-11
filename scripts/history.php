@@ -11,7 +11,7 @@ $theDate = date('Y-m-d');
 $chart = "Combo-$theDate.png";
 $chart2 = "Combo2-$theDate.png";
 
-$db = new SQLite3('/home/*/BirdNET-Pi/scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+$db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 
 $statement1 = $db->prepare("SELECT COUNT(*) FROM detections
 	WHERE Date == \"$theDate\"");
@@ -38,13 +38,13 @@ $totalcount = $result1->fetchArray(SQLITE3_ASSOC);
 			</tr>
 		</table>
 <?php
-if (file_exists('/home/*/BirdSongs/Extracted/Charts/'.$chart)) {
+if (file_exists('./Charts/'.$chart)) {
   echo "<img src=\"/Charts/$chart?nocache=time()\" >";
 } else {
   echo "<p>No Charts for $theDate</p>";
 }
 echo "<hr>";
-if (file_exists('/home/*/BirdSongs/Extracted/Charts/'.$chart2)) {
+if (file_exists('./Charts/'.$chart2)) {
   echo "<img src=\"/Charts/$chart2?nocache=time()\">";
 } else {
   echo "<p>No Charts For $theDate</p>";

@@ -13,6 +13,6 @@
     <button type="submit" name="submit" value="sudo shutdown now" onclick="return confirm('Are you sure you want to shutdown?')">Shutdown</button>
   </form>
   <form action="" method="POST">
-    <button type="submit" name="submit" value="sudo -upi clear_all_data.sh" onclick="return confirm('Clear ALL Data? This cannot be undone.')">Clear ALL data</button>
+    <button type="submit" name="submit" value="sudo clear_all_data.sh" onclick="return confirm('Clear ALL Data? This cannot be undone.')">Clear ALL data</button>
   </form>	
 </div>

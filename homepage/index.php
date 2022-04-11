@@ -18,10 +18,10 @@ echo "<a href=\"https://github.com/mcguirepr89/BirdNET-Pi.git\" target=\"_blank\
   <div class="stream">
 <?php
 if(isset($_GET['stream'])){
-  if (file_exists('/home/*/BirdNET-Pi/thisrun.txt')) {
-    $config = parse_ini_file('/home/*/BirdNET-Pi/thisrun.txt');
-  } elseif (file_exists('/home/*/BirdNET-Pi/firstrun.ini')) {
-    $config = parse_ini_file('/home/*/BirdNET-Pi/firstrun.ini');
+  if (file_exists('./scripts/thisrun.txt')) {
+    $config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+    $config = parse_ini_file('./scripts/firstrun.ini');
   }
   $caddypwd = $config['CADDY_PWD'];
   if (!isset($_SERVER['PHP_AUTH_USER'])) {
@@ -55,7 +55,7 @@ if(isset($_GET['stream'])){
 </div>";
 }
 if(isset($_GET['log'])) {
-  if (file_exists('/home/*/BirdNET-Pi/thisrun.txt')) {
+  if (file_exists('./scripts/thisrun.txt')) {
     header("Location: /log");}
 } elseif(isset($_GET['spectrogram'])){
     header("Location: /spectrogram.php");

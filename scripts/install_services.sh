@@ -115,8 +115,10 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/Charts ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
+  sudo -u ${USER} ln -fs $my_dir/exclude_species_list.txt $my_dir/scripts
+  sudo -u ${USER} ln -fs $my_dir/include_species_list.txt $my_dir/scripts
   sudo -u ${USER} ln -fs $my_dir/homepage/* ${EXTRACTED}  
-  sudo -u ${USER} ln -fs $my_dir/model/labels.txt ${my_dir}
+  sudo -u ${USER} ln -fs $my_dir/model/labels.txt ${my_dir}/scripts
   sudo -u ${USER} ln -fs $my_dir/scripts ${EXTRACTED}
   sudo -u ${USER} ln -fs $my_dir/scripts/play.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $my_dir/scripts/spectrogram.php ${EXTRACTED}
@@ -255,6 +257,7 @@ EOF
 
   systemctl enable caddy
   usermod -aG $USER caddy
+  usermod -aG video caddy
 }
 
 install_avahi_aliases() {

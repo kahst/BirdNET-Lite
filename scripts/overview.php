@@ -1,12 +1,9 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 header("refresh: 300;");
 $myDate = date('Y-m-d');
 $chart = "Combo-$myDate.png";
 
-$db = new SQLite3('/home/*/BirdNET-Pi/scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+$db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 if($db == False) {
   echo "Database is busy";
   header("refresh: 0;");
@@ -109,7 +106,7 @@ body::-webkit-scrollbar {
 <div class="right-column">
 <div class="chart">
 <?php
-if (file_exists('/home/*/BirdSongs/Extracted/Charts/'.$chart)) {
+if (file_exists('./Charts/'.$chart)) {
   echo "<img src=\"/Charts/$chart?nocache=time()\">";
 } else {
   echo "<p>No Detections For Today</p>";

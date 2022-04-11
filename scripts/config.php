@@ -10,22 +10,22 @@ $birdweather_id = $_POST["birdweather_id"];
 $pushed_app_key = $_POST["pushed_app_key"];
 $pushed_app_secret = $_POST["pushed_app_secret"];
 
-$contents = file_get_contents("/home/*/BirdNET-Pi/birdnet.conf");
+$contents = file_get_contents("/etc/birdnet/birdnet.conf");
 $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
 $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
 $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
 $contents = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents);
 $contents = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents);
 
-$contents2 = file_get_contents("/home/*/BirdNET-Pi/thisrun.txt");
+$contents2 = file_get_contents("./scripts/thisrun.txt");
 $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
 $contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
 $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
 $contents2 = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents2);
 $contents2 = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents2);
 
-$fh = fopen("/home/*/BirdNET-Pi/birdnet.conf", "w");
-$fh2 = fopen("/home/*/BirdNET-Pi/thisrun.txt", "w");
+$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+$fh2 = fopen("./scripts/thisrun.txt", "w");
 fwrite($fh, $contents);
 fwrite($fh2, $contents2);
 
@@ -46,10 +46,10 @@ if ($language != "none"){
       <h2>Basic Settings</h2>
     <form action="" method="POST">
 <?php 
-if (file_exists('/home/*/BirdNET-Pi/thisrun.txt')) {
-  $config = parse_ini_file('/home/*/BirdNET-Pi/thisrun.txt');
-} elseif (file_exists('/home/*/BirdNET-Pi/firstrun.ini')) {
-  $config = parse_ini_file('/home/*/BirdNET-Pi/firstrun.ini');
+if (file_exists('./scripts/thisrun.txt')) {
+  $config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
 } 
 $caddypwd = $config['CADDY_PWD'];
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
