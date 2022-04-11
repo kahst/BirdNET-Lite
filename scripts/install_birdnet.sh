@@ -21,7 +21,7 @@ fi
 
 #Install/Configure /etc/birdnet/birdnet.conf
 ./install_config.sh || exit 1
-export my_dir=$my_dir sudo ./install_services.sh || exit 1
+my_dir=$my_dir HOME=$HOME USER=$USER sudo ./install_services.sh || exit 1
 source /etc/birdnet/birdnet.conf
 
 install_birdnet() {
