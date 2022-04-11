@@ -4,7 +4,6 @@
 set -e
 trap 'exit 1' SIGINT SIGHUP
 
-my_dir=$(realpath $(dirname $0))
 birdnetpi_dir=$(realpath $(dirname $my_dir))
 birdnet_conf="$(dirname ${my_dir})/birdnet.conf"
 
