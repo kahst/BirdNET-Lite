@@ -4,7 +4,10 @@ set -x # Uncomment to enable debugging
 trap 'rm -f ${tmpfile}' EXIT
 trap 'exit 1' SIGINT SIGHUP
 tmpfile=$(mktemp)
+
 config_file=$my_dir/birdnet.conf
+export USER=$USER
+export HOME=$HOME
 
 install_depends() {
   curl -1sLf \
@@ -441,7 +444,7 @@ install_services() {
   generate_BirdDB
   configure_caddy_php
   config_icecast
-  ${my_dir}/scripts/createdb.sh
+  USER=$USER HOME=$HOME ${my_dir}/scripts/createdb.sh
 }
 
 if [ -f ${config_file} ];then 
