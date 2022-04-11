@@ -8,7 +8,7 @@ echo "Beginning $0"
 birdnet_conf=$my_dir/birdnet.conf
 
 install_config() {
-  cat << EOF > $(dirname ${my_dir})/birdnet.conf
+  cat << EOF > $birdnet_conf
 ################################################################################
 #                    Configuration settings for BirdNET-Pi                     #
 ################################################################################
