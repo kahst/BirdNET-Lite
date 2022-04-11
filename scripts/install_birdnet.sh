@@ -6,6 +6,8 @@ set -e # exit installation if anything fails
 trap '${my_dir}/dump_logs.sh && echo -e "\n\nExiting the installation. Goodbye!" && exit 1' SIGINT
 my_dir=$HOME/BirdNET-Pi
 export my_dir=$my_dir
+export HOME=$HOME
+export USER=$USER
 cd $my_dir/scripts || exit 1
 
 if [ "$(uname -m)" != "aarch64" ];then
@@ -19,7 +21,7 @@ fi
 
 #Install/Configure /etc/birdnet/birdnet.conf
 ./install_config.sh || exit 1
-HOME=$HOME USER=$USER sudo ./install_services.sh || exit 1
+sudo ./install_services.sh || exit 1
 source /etc/birdnet/birdnet.conf
 
 install_birdnet() {
