@@ -98,7 +98,12 @@ if(isset($_POST['submit'])) {
 
   if(isset($_POST["privacy_mode"])) {
     $privacy_mode = $_POST["privacy_mode"];
-    if(strcmp($privacy_mode,$config['PRIVACY_MODE']) !== 0) {
+    if(strcmp($config['PRIVACY_MODE'], "1") == 0 ) {
+      $pmode = "on";
+    }elseif(strcmp($config['PRIVACY_MODE'], "") == 0) {
+      $pmode = "off";
+    }
+    if(strcmp($privacy_mode,$pmode) !== 0) {
       $contents = preg_replace("/PRIVACY_MODE=.*/", "PRIVACY_MODE=$privacy_mode", $contents);
       $contents2 = preg_replace("/PRIVACY_MODE=.*/", "PRIVACY_MODE=$privacy_mode", $contents2);
       if(strcmp($privacy_mode,"on") == 0) {
