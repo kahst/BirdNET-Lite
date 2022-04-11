@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 # Simple new installer
 
+HOME=$HOME
+USER=$USER
+
+export HOME=$HOME
+export USER=$USER
+
 branch=newbaseos
 if ! which git &> /dev/null;then
   sudo apt update
