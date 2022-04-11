@@ -5,6 +5,7 @@ exec > >(tee -i installation-$(date +%F).txt) 2>&1
 set -e # exit installation if anything fails
 trap '${my_dir}/dump_logs.sh && echo -e "\n\nExiting the installation. Goodbye!" && exit 1' SIGINT
 my_dir=$HOME/BirdNET-Pi
+export my_dir=$my_dir
 cd $my_dir/scripts || exit 1
 
 if [ "$(uname -m)" != "aarch64" ];then
