@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Creates and installs the /etc/birdnet/birdnet.conf file
-#set -x # Uncomment to enable debugging
+set -x # Uncomment to enable debugging
 set -e
 trap 'exit 1' SIGINT SIGHUP
 
+echo "Beginning $0"
 birdnet_conf=$my_dir/birdnet.conf
 
 install_config() {
