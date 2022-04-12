@@ -62,8 +62,7 @@ If your installation isn't in one of the countries listed above, please let me k
 * A USB Microphone or Sound Card
 
 ## Installation
-Updated installation guide for changes to RaspiOS (04.07.2022) coming soon!
-[An installation guide is available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Installation-Guide).
+[A comprehensive installation guide is available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Installation-Guide).
 
 The system can be installed with:
 ```
