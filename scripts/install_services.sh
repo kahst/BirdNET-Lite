@@ -417,7 +417,7 @@ EOF
 }
 
 install_cleanup_cron() {
-  cat $my_dir/templates/cleanup.cron >> /etc/crontab
+  sed "s/\$USER/$USER/g" $my_dir/templates/cleanup.cron >> /etc/crontab
 }
 
 install_services() {
