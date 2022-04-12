@@ -1,4 +1,4 @@
-#!/home/pi/BirdNET-Pi/birdnet/bin/python3
+import os
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -9,7 +9,8 @@ from pathlib import Path
 import sqlite3
 from sqlite3 import Connection
 
-URI_SQLITE_DB = "/home/pi/BirdNET-Pi/scripts/birds.db"
+userDir = os.path.expanduser('~')
+URI_SQLITE_DB = userDir + '/BirdNET-Pi/scripts/birds.db'
 
 st.set_page_config(layout='wide')
 
@@ -31,23 +32,11 @@ st.markdown("""
         </style>
         """, unsafe_allow_html=True)
 
-col1,col2,col3 = st.columns([20,20,20])
-
-col1.title('BirdNET-Pi', anchor=None)
-col2.image('/home/pi/BirdNET-Pi/homepage/images/bird.png')
-col3.text('')
-
 
 @st.cache(hash_funcs={Connection: id})
 def get_connection(path:str):
     return sqlite3.connect(path,check_same_thread=False)
 
-
-
-
-# def load_data():
-#     df1 = pd.read_csv('/home/pi/BirdNET-Pi/BirdDB.txt', sep=';')
-#     return df1
 
 def get_data(conn: Connection):
     df1=pd.read_sql("SELECT * FROM detections", con=conn)
@@ -179,6 +168,6 @@ st.plotly_chart(fig, use_container_width=True) #, config=config)
 # 
 # extract_date=Date_Slider
 # 
-# audio_file = open('/home/pi/BirdSongs/Extracted/By_Date/2022-03-22/Yellow-streaked_Greenbul/Yellow-streaked_Greenbul-77-2022-03-22-birdnet-15:04:28.mp3', 'rb')
+# audio_file = open('/home/*/BirdSongs/Extracted/By_Date/2022-03-22/Yellow-streaked_Greenbul/Yellow-streaked_Greenbul-77-2022-03-22-birdnet-15:04:28.mp3', 'rb')
 # audio_bytes = audio_file.read()
 # cols4.audio(audio_bytes, format='audio/mp3')

@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 # Creates and installs the /etc/birdnet/birdnet.conf file
-#set -x # Uncomment to enable debugging
+set -x # Uncomment to enable debugging
 set -e
 trap 'exit 1' SIGINT SIGHUP
 
-my_dir=$(realpath $(dirname $0))
-birdnetpi_dir=$(realpath $(dirname $my_dir))
-birdnet_conf="$(dirname ${my_dir})/birdnet.conf"
+echo "Beginning $0"
+birdnet_conf=$my_dir/birdnet.conf
 
 install_config() {
-  cat << EOF > $(dirname ${my_dir})/birdnet.conf
+  cat << EOF > $birdnet_conf
 ################################################################################
 #                    Configuration settings for BirdNET-Pi                     #
 ################################################################################
@@ -83,7 +82,7 @@ PUSHED_APP_SECRET=
 ## it needs to analyze. Be sure this directory is readable and writable for
 ## the BIRDNET_USER.
 
-RECS_DIR=/home/pi/BirdSongs
+RECS_DIR=$HOME/BirdSongs
 
 ## REC_CARD is the sound card you would want the birdnet_recording.service to
 ## use. Leave this as "default" to use PulseAudio (recommended), or use
@@ -95,11 +94,11 @@ REC_CARD=default
 ## after extractions have been made from them. This includes both WAVE and
 ## BirdNET.selection.txt files.
 
-PROCESSED=/home/pi/BirdSongs/Processed
+PROCESSED=$HOME/BirdSongs/Processed
 
 ## EXTRACTED is the directory where the extracted audio selections are moved.
 
-EXTRACTED=/home/pi/BirdSongs/Extracted
+EXTRACTED=$HOME/BirdSongs/Extracted
 
 ## OVERLAP is the value in seconds which BirdNET should use when analyzing
 ## the data. The values must be between 0.0-2.9.
@@ -155,15 +154,11 @@ EXTRACTION_LENGTH=
 
 AUDIOFMT=mp3
 
-## BIRDNET_USER should be the non-root user systemd should use to execute each
-## service.
-
-BIRDNET_USER=pi
 
 ## These are just for debugging
 LAST_RUN=
 THIS_RUN=
-IDFILE=/home/pi/BirdNET-Pi/IdentifiedSoFar.txt
+IDFILE=$HOME/BirdNET-Pi/IdentifiedSoFar.txt
 EOF
 }
 
@@ -173,5 +168,5 @@ if ! [ -f ${birdnet_conf} ];then
 fi
 chmod g+w ${birdnet_conf}
 [ -d /etc/birdnet ] || sudo mkdir /etc/birdnet
-sudo ln -sf $(dirname ${my_dir})/birdnet.conf /etc/birdnet/birdnet.conf
-grep -ve '^#' -e '^$' /etc/birdnet/birdnet.conf > ${birdnetpi_dir}/firstrun.ini
+sudo ln -sf $birdnet_conf /etc/birdnet/birdnet.conf
+grep -ve '^#' -e '^$' /etc/birdnet/birdnet.conf > $my_dir/firstrun.ini

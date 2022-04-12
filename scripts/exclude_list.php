@@ -12,7 +12,7 @@
     error_reporting(E_ALL);
     ini_set('display_errors',1);
     
-    $filename = 'scripts/labels.txt';
+    $filename = './scripts/labels.txt';
     $eachline = file($filename, FILE_IGNORE_NEW_LINES);
     
     foreach($eachline as $lines){echo 
@@ -39,7 +39,7 @@
   <h3>Excluded Species List</h3>
   <select name="species[]" id="value2" multiple size="auto">
 <?php
-  $filename = '/home/pi/BirdNET-Pi/exclude_species_list.txt';
+  $filename = './scripts/exclude_species_list.txt';
   $eachline = file($filename, FILE_IGNORE_NEW_LINES);
   foreach($eachline as $lines){
     echo 

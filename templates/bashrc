@@ -113,7 +113,8 @@ if ! shopt -oq posix; then
 fi
 cd ~/BirdNET-Pi
 function remove() {
-  find /home/pi/BirdSongs -iname *${1}* -exec rm -drfv {} +
+  source /etc/birdnet/birdnet.conf
+  find $RECS_DIR -iname *${1}* -exec rm -drfv {} +
 }
 alias rerc="source ~/.bashrc"
 alias vimrc="vim ~/.bashrc"

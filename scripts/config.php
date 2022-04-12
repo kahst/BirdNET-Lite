@@ -10,29 +10,33 @@ $birdweather_id = $_POST["birdweather_id"];
 $pushed_app_key = $_POST["pushed_app_key"];
 $pushed_app_secret = $_POST["pushed_app_secret"];
 
-$contents = file_get_contents("/home/pi/BirdNET-Pi/birdnet.conf");
+$contents = file_get_contents("/etc/birdnet/birdnet.conf");
 $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
 $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
 $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
 $contents = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents);
 $contents = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents);
 
-$contents2 = file_get_contents("/home/pi/BirdNET-Pi/thisrun.txt");
+$contents2 = file_get_contents("./scripts/thisrun.txt");
 $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
 $contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
 $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
 $contents2 = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents2);
 $contents2 = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents2);
 
-$fh = fopen("/home/pi/BirdNET-Pi/birdnet.conf", "w");
-$fh2 = fopen("/home/pi/BirdNET-Pi/thisrun.txt", "w");
+$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+$fh2 = fopen("./scripts/thisrun.txt", "w");
 fwrite($fh, $contents);
 fwrite($fh2, $contents2);
 
 $language = $_POST["language"];
 if ($language != "none"){
-  $command = "sudo -upi mv /home/pi/BirdNET-Pi/model/labels.txt /home/pi/BirdNET-Pi/model/labels.txt.old && sudo -upi unzip /home/pi/BirdNET-Pi/model/labels_l18n.zip $language -d /home/pi/BirdNET-Pi/model && sudo -upi mv /home/pi/BirdNET-Pi/model/$language /home/pi/BirdNET-Pi/model/labels.txt";
-  $command_output = `$command`;
+  $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+  $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+  $home = trim($home);
+  $command = "sudo -u".$user." mv ".$home."/BirdNET-Pi/model/labels.txt ".$home."/BirdNET-Pi/model/labels.txt.old && sudo -u".$user." unzip ".$home."/BirdNET-Pi/model/labels_l18n.zip ".$language." -d ".$home."/BirdNET-Pi/model && sudo -u".$user." mv ".$home."/BirdNET-Pi/model/".$language." ".$home."/BirdNET-Pi/model/labels.txt";
+  $command_output = `sudo $command`;
+  `sudo restart_services.sh`;
 }
 }
 
@@ -46,10 +50,10 @@ if ($language != "none"){
       <h2>Basic Settings</h2>
     <form action="" method="POST">
 <?php 
-if (file_exists('/home/pi/BirdNET-Pi/thisrun.txt')) {
-  $config = parse_ini_file('/home/pi/BirdNET-Pi/thisrun.txt');
-} elseif (file_exists('/home/pi/BirdNET-Pi/firstrun.ini')) {
-  $config = parse_ini_file('/home/pi/BirdNET-Pi/firstrun.ini');
+if (file_exists('./scripts/thisrun.txt')) {
+  $config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
 } 
 $caddypwd = $config['CADDY_PWD'];
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
@@ -75,7 +79,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <p>Set your Latitude and Longitude to 4 decimal places. Get your coordinates <a href="https://latlong.net" target="_blank">here</a>.</p>
       <label for="birdweather_id">BirdWeather ID: </label>
       <input name="birdweather_id" type="text" value="<?php print($config['BIRDWEATHER_ID']);?>" /><br>
-      <p><a href="https://app.birdweather.com" target="_blank">BirdWeather.com</a> is a weather map for bird sounds. Stations around the world supply audio and video streams to BirdWeather where they are then analyzed by BirdNET and compared to eBird Grid data. BirdWeather catalogues the bird audio and spectrogram visualizations so that you can listen to, view, and read about birds throughout the world. <a href="mailto:tim@birdweather.com?subject=Request%20BirdWeather%20ID&body=<?php include('birdweather_request.php'); ?>" target="_blank">Email Tim</a> to request a BirdWeather ID</p>
+      <p><a href="https://app.birdweather.com" target="_blank">BirdWeather.com</a> is a weather map for bird sounds. Stations around the world supply audio and video streams to BirdWeather where they are then analyzed by BirdNET and compared to eBird Grid data. BirdWeather catalogues the bird audio and spectrogram visualizations so that you can listen to, view, and read about birds throughout the world. <a href="mailto:tim@birdweather.com?subject=Request%20BirdWeather%20ID&body=<?php include('./scripts/birdweather_request.php'); ?>" target="_blank">Email Tim</a> to request a BirdWeather ID</p>
       <label for="pushed_app_key">Pushed App Key: </label>
       <input name="pushed_app_key" type="text" value="<?php print($config['PUSHED_APP_KEY']);?>" /><br>
       <label for="pushed_app_secret">Pushed App Secret: </label>

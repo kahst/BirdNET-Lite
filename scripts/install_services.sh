@@ -3,11 +3,11 @@
 set -x # Uncomment to enable debugging
 trap 'rm -f ${tmpfile}' EXIT
 trap 'exit 1' SIGINT SIGHUP
-USER=pi
-HOME=/home/pi
-my_dir=${HOME}/BirdNET-Pi/scripts
 tmpfile=$(mktemp)
-config_file="$(dirname ${my_dir})/birdnet.conf"
+
+config_file=$my_dir/birdnet.conf
+export USER=$USER
+export HOME=$HOME
 
 install_depends() {
   curl -1sLf \
@@ -34,11 +34,11 @@ update_etc_hosts() {
 }
 
 install_scripts() {
-  ln -sf ${my_dir}/* /usr/local/bin/
+  ln -sf ${my_dir}/scripts/* /usr/local/bin/
 }
 
 install_birdnet_analysis() {
-  cat << EOF > /home/pi/BirdNET-Pi/templates/birdnet_analysis.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/birdnet_analysis.service
 [Unit]
 Description=BirdNET Analysis
 After=birdnet_server.service
@@ -52,12 +52,12 @@ ExecStart=/usr/local/bin/birdnet_analysis.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_analysis.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/birdnet_analysis.service /usr/lib/systemd/system
   systemctl enable birdnet_analysis.service
 }
 
 install_birdnet_server() {
-  cat << EOF > /home/pi/BirdNET-Pi/templates/birdnet_server.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/birdnet_server.service
 [Unit]
 Description=BirdNET Analysis Server
 Before=birdnet_analysis.service
@@ -70,12 +70,12 @@ ExecStart=/usr/local/bin/server.py
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_server.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/birdnet_server.service /usr/lib/systemd/system
   systemctl enable birdnet_server.service
 }
 
 install_extraction_service() {
-  cat << EOF > /home/pi/BirdNET-Pi/templates/extraction.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/extraction.service
 [Unit]
 Description=BirdNET BirdSound Extraction
 [Service]
@@ -87,24 +87,24 @@ ExecStart=/usr/bin/env bash -c 'while true;do extract_new_birdsounds.sh;sleep 3;
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/extraction.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/extraction.service /usr/lib/systemd/system
   systemctl enable extraction.service
 }
 
 install_pushed_notifications() {
-  cat << EOF > /home/pi/BirdNET-Pi/templates/pushed_notifications.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/pushed_notifications.service
 [Unit]
 Description=BirdNET-Pi Pushed.co Notifications
 [Service]
 Restart=on-success
 RestartSec=3
 Type=simple
-User=pi
+User=$USER
 ExecStart=/usr/local/bin/species_notifier.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/pushed_notifications.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/pushed_notifications.service /usr/lib/systemd/system
   systemctl enable pushed_notifications.service
 }
 
@@ -115,34 +115,36 @@ create_necessary_dirs() {
   [ -d ${EXTRACTED}/Charts ] || sudo -u ${USER} mkdir -p ${EXTRACTED}/Charts
   [ -d ${PROCESSED} ] || sudo -u ${USER} mkdir -p ${PROCESSED}
 
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/* ${EXTRACTED}  
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/model/labels.txt ${my_dir}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/play.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/spectrogram.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/overview.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/stats.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/todays_detections.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/scripts/history.php ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/homepage/images/favicon.ico ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/exclude_species_list.txt $my_dir/scripts
+  sudo -u ${USER} ln -fs $my_dir/include_species_list.txt $my_dir/scripts
+  sudo -u ${USER} ln -fs $my_dir/homepage/* ${EXTRACTED}  
+  sudo -u ${USER} ln -fs $my_dir/model/labels.txt ${my_dir}/scripts
+  sudo -u ${USER} ln -fs $my_dir/scripts ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/play.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/spectrogram.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/overview.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/stats.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/todays_detections.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/history.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/homepage/images/favicon.ico ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
-  sudo -u ${USER} ln -fs $(dirname ${my_dir})/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
-  chmod -R g+rw $(dirname ${my_dir})
+  sudo -u ${USER} ln -fs $my_dir/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
+  sudo -u ${USER} ln -fs $my_dir/templates/green_bootstrap.css ${HOME}/phpsysinfo/templates/
+  sudo -u ${USER} ln -fs $my_dir/templates/index_bootstrap.html ${HOME}/phpsysinfo/templates/html
+  chmod -R g+rw $my_dir
   chmod -R g+rw ${RECS_DIR}
 }
 
 generate_BirdDB() {
   echo "Generating BirdDB.txt"
-  if ! [ -f $(dirname ${my_dir})/BirdDB.txt ];then
-    sudo -u ${USER} touch $(dirname ${my_dir})/BirdDB.txt
-    echo "Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap" | sudo -u ${USER} tee -a $(dirname ${my_dir})/BirdDB.txt
-  elif ! grep Date $(dirname ${my_dir})/BirdDB.txt;then
-    sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $(dirname ${my_dir})/BirdDB.txt
+  if ! [ -f $my_dir/BirdDB.txt ];then
+    sudo -u ${USER} touch $my_dir/BirdDB.txt
+    echo "Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap" | sudo -u ${USER} tee -a $my_dir/BirdDB.txt
+  elif ! grep Date $my_dir/BirdDB.txt;then
+    sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $my_dir/BirdDB.txt
   fi
-  ln -sf $(dirname ${my_dir})/BirdDB.txt ${my_dir}/BirdDB.txt &&
-  chown pi:pi ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
+  ln -sf $my_dir/BirdDB.txt ${my_dir}/BirdDB.txt &&
+  chown $USER:$USER ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
 }
 
 set_login() {
@@ -159,7 +161,7 @@ EOF
 
 install_recording_service() {
   echo "Installing birdnet_recording.service"
-  cat << EOF > /home/pi/BirdNET-Pi/templates/birdnet_recording.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/birdnet_recording.service
 [Unit]
 Description=BirdNET Recording
 [Service]
@@ -172,13 +174,13 @@ ExecStart=/usr/local/bin/birdnet_recording.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_recording.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/birdnet_recording.service /usr/lib/systemd/system
   systemctl enable birdnet_recording.service
 }
 
 install_custom_recording_service() {
   echo "Installing custom_recording.service"
-  cat << EOF > /home/pi/BirdNET-Pi/templates/custom_recording.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/custom_recording.service
 [Unit]
 Description=BirdNET Custom Recording
 [Service]
@@ -191,7 +193,7 @@ ExecStart=/usr/local/bin/custom_recording.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/custom_recording.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/custom_recording.service /usr/lib/systemd/system
 }
 
 install_Caddyfile() {
@@ -254,11 +256,12 @@ EOF
   fi
 
   systemctl enable caddy
-  usermod -aG pi caddy
+  usermod -aG $USER caddy
+  usermod -aG video caddy
 }
 
 install_avahi_aliases() {
-  cat << 'EOF' > /home/pi/BirdNET-Pi/templates/avahi-alias@.service
+  cat << 'EOF' > $HOME/BirdNET-Pi/templates/avahi-alias@.service
 [Unit]
 Description=Publish %I as alias for %H.local via mdns
 After=network.target network-online.target
@@ -271,12 +274,12 @@ ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I $(hostname -I |cut -d' '
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/avahi-alias@.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/avahi-alias@.service /usr/lib/systemd/system
   systemctl enable avahi-alias@"$(hostname)".local.service
 }
 
 install_birdnet_stats_service() {
-  cat << EOF > /home/pi/BirdNET-Pi/templates/birdnet_stats.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/birdnet_stats.service
 [Unit]
 Description=BirdNET Stats
 [Service]
@@ -284,17 +287,17 @@ Restart=on-failure
 RestartSec=5
 Type=simple
 User=${USER}
-ExecStart=/home/pi/BirdNET-Pi/birdnet/bin/streamlit run /home/pi/BirdNET-Pi/scripts/plotly_streamlit.py --server.address localhost --server.baseUrlPath "/stats"
+ExecStart=$HOME/BirdNET-Pi/birdnet/bin/streamlit run $HOME/BirdNET-Pi/scripts/plotly_streamlit.py --server.address localhost --server.baseUrlPath "/stats"
 
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_stats.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/birdnet_stats.service /usr/lib/systemd/system
   systemctl enable birdnet_stats.service
 }
 
 install_spectrogram_service() {
-  cat << EOF > /home/pi/BirdNET-Pi/templates/spectrogram_viewer.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/spectrogram_viewer.service
 [Unit]
 Description=BirdNET-Pi Spectrogram Viewer
 [Service]
@@ -306,34 +309,34 @@ ExecStart=/usr/local/bin/spectrogram.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/spectrogram_viewer.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/spectrogram_viewer.service /usr/lib/systemd/system
   systemctl enable spectrogram_viewer.service
 }
 
 install_chart_viewer_service() {
   echo "Installing the chart_viewer.service"
-  cat << EOF > /home/pi/BirdNET-Pi/templates/chart_viewer.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/chart_viewer.service
 [Unit]
 Description=BirdNET-Pi Chart Viewer Service
 [Service]
 Restart=always
 RestartSec=300
 Type=simple
-User=pi
+User=$USER
 ExecStart=/usr/local/bin/daily_plot.py
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/chart_viewer.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/chart_viewer.service /usr/lib/systemd/system
   systemctl enable chart_viewer.service
 }
 
 install_gotty_logs() {
-  sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/gotty \
+  sudo -u ${USER} ln -sf $my_dir/templates/gotty \
     ${HOME}/.gotty
-  sudo -u ${USER} ln -sf $(dirname ${my_dir})/templates/bashrc \
+  sudo -u ${USER} ln -sf $my_dir/templates/bashrc \
     ${HOME}/.bashrc
-  cat << EOF > /home/pi/BirdNET-Pi/templates/birdnet_log.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/birdnet_log.service
 [Unit]
 Description=BirdNET Analysis Log
 [Service]
@@ -346,9 +349,9 @@ ExecStart=/usr/local/bin/gotty --address localhost -p 8080 -P log --title-format
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/birdnet_log.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/birdnet_log.service /usr/lib/systemd/system
   systemctl enable birdnet_log.service
-  cat << EOF > /home/pi/BirdNET-Pi/templates/web_terminal.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/web_terminal.service
 [Unit]
 Description=BirdNET-Pi Web Terminal
 [Service]
@@ -361,7 +364,7 @@ ExecStart=/usr/local/bin/gotty --address localhost -w -p 8888 -P terminal --titl
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/web_terminal.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/web_terminal.service /usr/lib/systemd/system
   systemctl enable web_terminal.service
 }
 
@@ -394,7 +397,7 @@ config_icecast() {
 }
 
 install_livestream_service() {
-  cat << EOF > /home/pi/BirdNET-Pi/templates/livestream.service
+  cat << EOF > $HOME/BirdNET-Pi/templates/livestream.service
 [Unit]
 Description=BirdNET-Pi Live Stream
 After=network-online.target
@@ -409,12 +412,12 @@ ExecStart=/usr/local/bin/livestream.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-  ln -sf /home/pi/BirdNET-Pi/templates/livestream.service /usr/lib/systemd/system
+  ln -sf $HOME/BirdNET-Pi/templates/livestream.service /usr/lib/systemd/system
   systemctl enable livestream.service
 }
 
 install_cleanup_cron() {
-  cat $(dirname ${my_dir})/templates/cleanup.cron >> /etc/crontab
+  sed "s/\$USER/$USER/g" $my_dir/templates/cleanup.cron >> /etc/crontab
 }
 
 install_services() {
@@ -444,7 +447,7 @@ install_services() {
   generate_BirdDB
   configure_caddy_php
   config_icecast
-  ${my_dir}/createdb.sh
+  USER=$USER HOME=$HOME ${my_dir}/scripts/createdb.sh
 }
 
 if [ -f ${config_file} ];then 

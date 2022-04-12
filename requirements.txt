@@ -8,6 +8,5 @@ pytz
 tzlocal
 pandas
 seaborn
-babel
 streamlit
 plotly

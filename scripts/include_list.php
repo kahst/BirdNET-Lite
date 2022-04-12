@@ -6,7 +6,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors',1);
 
-$filename = 'scripts/labels.txt';
+$filename = './scripts/labels.txt';
 $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
 
 ?>
@@ -47,7 +47,7 @@ $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
   <select name="species[]" id="value2" multiple size="30">
     <option selected value="base">Please Select</option>
       <?php
-        $filename = '/home/pi/BirdNET-Pi/include_species_list.txt';
+        $filename = './scripts/include_species_list.txt';
         $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
         foreach($eachlines as $lines){echo 
     "<option value='".$lines."'>$lines</option>";}
