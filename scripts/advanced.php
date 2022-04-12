@@ -108,14 +108,14 @@ if(isset($_POST['submit'])) {
       $contents2 = preg_replace("/PRIVACY_MODE=.*/", "PRIVACY_MODE=$privacy_mode", $contents2);
       if(strcmp($privacy_mode,"on") == 0) {
         exec('sudo sed -i \'s/\/usr\/local\/bin\/server.py/\/usr\/local\/bin\/privacy_server.py/g\' ../../BirdNET-Pi/templates/birdnet_server.service');
-	exec('sudo systemctl daemon-reload');
-	exec('restart_services.sh');
-	header('Location: /log');
+	      exec('sudo systemctl daemon-reload');
+	      exec('restart_services.sh');
+	      header('Location: /log');
       } elseif(strcmp($privacy_mode,"off") == 0) {
         exec('sudo sed -i \'s/\/usr\/local\/bin\/privacy_server.py/\/usr\/local\/bin\/server.py/g\' ../../BirdNET-Pi/templates/birdnet_server.service');
-	exec('sudo systemctl daemon-reload');
-	exec('restart_services.sh');
-	header('Location: /log');
+	      exec('sudo systemctl daemon-reload');
+	      exec('restart_services.sh');
+	      header('Location: /log');
       }
     }
   }
