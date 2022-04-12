@@ -1,4 +1,3 @@
-#!/home/patrick/BirdNET-Pi/birdnet/bin/python3
 import socket 
 import threading
 import os
