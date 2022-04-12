@@ -6,7 +6,7 @@ USER=$USER
 export HOME=$HOME
 export USER=$USER
 
-branch=newbaseos
+branch=main
 if ! which git &> /dev/null;then
   sudo apt update
   sudo apt -y install git
