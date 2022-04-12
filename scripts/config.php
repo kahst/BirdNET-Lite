@@ -31,8 +31,12 @@ fwrite($fh2, $contents2);
 
 $language = $_POST["language"];
 if ($language != "none"){
-  $command = "sudo -upi mv /home/*/BirdNET-Pi/model/labels.txt /home/*/BirdNET-Pi/model/labels.txt.old && sudo -upi unzip /home/*/BirdNET-Pi/model/labels_l18n.zip $language -d /home/*/BirdNET-Pi/model && sudo -upi mv /home/*/BirdNET-Pi/model/$language /home/*/BirdNET-Pi/model/labels.txt";
-  $command_output = `$command`;
+  $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+  $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+  $home = trim($home);
+  $command = "sudo -u".$user." mv ".$home."/BirdNET-Pi/model/labels.txt ".$home."/BirdNET-Pi/model/labels.txt.old && sudo -u".$user." unzip ".$home."/BirdNET-Pi/model/labels_l18n.zip ".$language." -d ".$home."/BirdNET-Pi/model && sudo -u".$user." mv ".$home."/BirdNET-Pi/model/".$language." ".$home."/BirdNET-Pi/model/labels.txt";
+  $command_output = `sudo $command`;
+  `sudo restart_services.sh`;
 }
 }
 
@@ -75,7 +79,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <p>Set your Latitude and Longitude to 4 decimal places. Get your coordinates <a href="https://latlong.net" target="_blank">here</a>.</p>
       <label for="birdweather_id">BirdWeather ID: </label>
       <input name="birdweather_id" type="text" value="<?php print($config['BIRDWEATHER_ID']);?>" /><br>
-      <p><a href="https://app.birdweather.com" target="_blank">BirdWeather.com</a> is a weather map for bird sounds. Stations around the world supply audio and video streams to BirdWeather where they are then analyzed by BirdNET and compared to eBird Grid data. BirdWeather catalogues the bird audio and spectrogram visualizations so that you can listen to, view, and read about birds throughout the world. <a href="mailto:tim@birdweather.com?subject=Request%20BirdWeather%20ID&body=<?php include('birdweather_request.php'); ?>" target="_blank">Email Tim</a> to request a BirdWeather ID</p>
+      <p><a href="https://app.birdweather.com" target="_blank">BirdWeather.com</a> is a weather map for bird sounds. Stations around the world supply audio and video streams to BirdWeather where they are then analyzed by BirdNET and compared to eBird Grid data. BirdWeather catalogues the bird audio and spectrogram visualizations so that you can listen to, view, and read about birds throughout the world. <a href="mailto:tim@birdweather.com?subject=Request%20BirdWeather%20ID&body=<?php include('./scripts/birdweather_request.php'); ?>" target="_blank">Email Tim</a> to request a BirdWeather ID</p>
       <label for="pushed_app_key">Pushed App Key: </label>
       <input name="pushed_app_key" type="text" value="<?php print($config['PUSHED_APP_KEY']);?>" /><br>
       <label for="pushed_app_secret">Pushed App Secret: </label>

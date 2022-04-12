@@ -4,7 +4,7 @@ if (file_exists('thisrun.txt')) {
 } elseif (file_exists('firstrun.ini')) {
   $config = parse_ini_file('firstrun.ini');
 } 
-$template = file_get_contents("email_template2");
+$template = file_get_contents("./scripts/email_template2");
 
 foreach($config as $key => $value)
 {
