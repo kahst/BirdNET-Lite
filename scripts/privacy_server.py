@@ -44,7 +44,7 @@ except:
 
 # Open most recent Configuration and grab DB_PWD as a python variable
 userDir = os.path.expanduser('~')
-with open(userDir + '/BirdNET-Pi/thisrun.txt', 'r') as f:
+with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     this_run = f.readlines()
     audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
 
