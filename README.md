@@ -37,6 +37,7 @@ Currently listening in these countries . . . that I know of . . .
 - England
 - Italy
 - Finland
+- Australia
 
 If your installation isn't in one of the countries listed above, please let me know so that I can add your country to the list! Let me know either in a GitHub issue, or [email me](mailto:mcguirepr89@gmail.com) and let me know where your BirdNET-Pi is listening.
 
