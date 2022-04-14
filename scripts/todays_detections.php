@@ -3,13 +3,21 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+if(isset($_POST['display_limit'])) {
+  if(is_numeric($_POST['display_limit'])) {
+    $display_limit = $_POST['display_limit'] + 40;
+  }
+} else {
+  $display_limit = 40;
+}
+
 $db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 if($db == False){
   echo "Database is busy";
   header("refresh: 0;");
 }
 
-$statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC');
+$statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC LIMIT '.$display_limit.'');
 if($statement0 == False){
   echo "Database is busy";
   header("refresh: 0;");
@@ -63,8 +71,6 @@ if($statement6 == False){
 }
 $result6 = $statement6->execute();
 $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
-
-
 ?>
 
 <!DOCTYPE html>
@@ -101,23 +107,40 @@ $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
       </form>
       </tr>
     </table>
+
     <h3>Today's Detections</h3>
     <table>
 <?php
+$iterations = 0;
 while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
 {
+  $iterations++;
+
 $comname = preg_replace('/ /', '_', $todaytable['Com_Name']);
 $comname = preg_replace('/\'/', '_', $comname);
 $filename = "/By_Date/".date('Y-m-d')."/".$comname."/".$todaytable['File_Name'];
 $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
 ?>
-      <tr>
+      <tr id="<?php echo $iterations;?>">
       <td><?php echo $todaytable['Time'];?><br>
       <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
       <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
       <b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br>
-      <a href="<?php echo $filename;?>"><img src="<?php echo $filename.".png";?>"></a></td>
+      <video controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
+      </td>
 <?php }?>
       </tr>
     </table>
+
+<br>
+<?php 
+// don't show the button if there's no more detections to be displayed, we're at the end of the list
+if($iterations == $display_limit) { ?>
+<center>
+<form action="#<?php echo $display_limit; ?>" method="POST">
+  <input type="input" name="display_limit" value="<?php echo $display_limit; ?>" hidden>
+  <button style="font-size:x-large;background:#dbffeb;padding:10px" type="submit" name="view" value="Today's Detections">Load 40 More...</button>
+</form>
+</center>
+<?php } ?>
 </div>
