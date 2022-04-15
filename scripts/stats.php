@@ -95,7 +95,7 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   <b>Max Confidence: </b>$maxconf<br>
   <b>Best Recording: </b>$date $time<br>
   <a href=\"https://allaboutbirds.org/guide/$comname\" target=\"top\"/>All About Birds</a><br>
-  <video controls poster=\"$filename.png\" title=\"$filename\"><source src=\"$filename\"></video></td>
+  <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" title=\"$filename\"><source src=\"$filename\"></video></td>
   </tr>
     </table>
   <p>Loading Images from <a href=\"https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image\" target=\"_blank\">Wikimedia Commons</a></p>", '6096');
@@ -127,7 +127,7 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
       <td><input type="hidden" name="view" value="Species Stats">
         <button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button><br><b>Occurrences:</b> <?php echo $results['COUNT(*)'];?><br>
       <b>Max Confidence:</b> <?php echo $results['MAX(Confidence)'];?><br>
-      <b>Best Recording:</b> <?php echo $results['Date']." ".$results['Time'];?><br><video controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
+      <b>Best Recording:</b> <?php echo $results['Date']." ".$results['Time'];?><br><video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
       </tr>
 <?php
 }
