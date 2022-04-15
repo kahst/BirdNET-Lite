@@ -3,12 +3,12 @@ error_reporting(E_ALL);
 ini_set('display_errors',1);
 
 # Basic Settings
-if(isset($_POST["latitude"])){
-$latitude = $_POST["latitude"];
-$longitude = $_POST["longitude"];
-$birdweather_id = $_POST["birdweather_id"];
-$pushed_app_key = $_POST["pushed_app_key"];
-$pushed_app_secret = $_POST["pushed_app_secret"];
+if(isset($_GET["latitude"])){
+$latitude = $_GET["latitude"];
+$longitude = $_GET["longitude"];
+$birdweather_id = $_GET["birdweather_id"];
+$pushed_app_key = $_GET["pushed_app_key"];
+$pushed_app_secret = $_GET["pushed_app_secret"];
 
 $contents = file_get_contents("/etc/birdnet/birdnet.conf");
 $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
@@ -29,7 +29,7 @@ $fh2 = fopen("./scripts/thisrun.txt", "w");
 fwrite($fh, $contents);
 fwrite($fh2, $contents2);
 
-$language = $_POST["language"];
+$language = $_GET["language"];
 if ($language != "none"){
   $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
   $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
@@ -48,7 +48,7 @@ if ($language != "none"){
 <div class="settings">
 <iframe src="https://github.com/sponsors/mcguirepr89/button" title="Sponsor mcguirepr89" style="height:35px;width:116px;border:0;"></iframe>
       <h2>Basic Settings</h2>
-    <form action="" method="POST">
+    <form action="" method="GET">
 <?php 
 if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/thisrun.txt');
@@ -123,7 +123,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <input type="hidden" name="submit" value="settings">
       <button type="submit" name="view" value="Settings">
 <?php
-if(isset($_POST['status'])){
+if(isset($_GET['status'])){
   echo "Success!";
 } else {
   echo "Update Settings";
@@ -131,7 +131,7 @@ if(isset($_POST['status'])){
 ?>
       </button>
       </form>
-      <form action="" method="POST">
+      <form action="" method="GET">
         <button type="submit" name="view" value="Advanced">Advanced Settings</button>
       </form>
 </div>

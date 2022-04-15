@@ -46,7 +46,7 @@ if(isset($_GET['stream'])){
     }
   }
 } else {
-  echo "
+	  echo "
   <form action=\"\" method=\"GET\">
     <button type=\"submit\" name=\"stream\" value=\"play\">Live Audio</button>
   </form>
@@ -54,13 +54,6 @@ if(isset($_GET['stream'])){
   <h1><a href=\"\">BirdNET-Pi</a><img src=\"images/version.svg\"></h1>
 </div>";
 }
-if(isset($_GET['log'])) {
-  if (file_exists('./scripts/thisrun.txt')) {
-    header("Location: /log");}
-} elseif(isset($_GET['spectrogram'])){
-    header("Location: /spectrogram.php");
-} else {
-    echo "
+  echo "
 <iframe src=\"/views.php\">
 </div>";
-}

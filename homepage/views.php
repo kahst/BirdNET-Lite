@@ -1,50 +1,49 @@
 <link rel="stylesheet" href="style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <div class="topnav" id="myTopnav">
-<form action="" method="POST" id="views">
+<form action="" method="GET" id="views">
   <button type="submit" name="view" value="Overview" form="views">Overview</button>
 </form>
-<form action="" method="POST" id="views">
+<form action="" method="GET" id="views">
   <button type="submit" name="view" value="Today's Detections" form="views">Today's Detections</button>
 </form>
-<form action="" method="POST" id="views">
+<form action="" method="GET" id="views">
   <button type="submit" name="view" value="Species Stats" form="views">Best Recordings</button>
 </form>
-<form action="" method="POST" id="views">
+<form action="" method="GET" id="views">
   <button type="submit" name="view" value="Streamlit" form="views">Species Stats</button>
 </form>
-<form action="" method="POST" id="views">
+<form action="" method="GET" id="views">
   <button type="submit" name="view" value="Daily Charts" form="views">Daily Charts</button>
 </form>
-<form action="" method="POST" id="views">
+<form action="" method="GET" id="views">
   <button type="submit" name="view" value="Recordings" form="views">Recordings</button>
 </form>
-<form action="index.php" method="GET" id="spectrogram">
-  <input type="hidden" name="logo" value="smaller">
-  <button style="float:none;" type="submit" name="spectrogram" value="view" id="spectrogram" form="spectrogram">Spectrogram</button>
+<form action="" method="GET" id="views">
+  <button type="submit" name="view" value="Spectrogram" form="views">Spectrogram</button>
 </form>
-<form action="index.php" method="GET" id="Log">
-  <input type="hidden" name="logo" value="smaller">
-  <button type="submit" name="log" value="log" form="Log">View Log</button>
+<form action="" method="GET" id="views">
+  <button type="submit" name="view" value="View Log" form="views">View Log</button>
 </form>
-<form action="" method="POST" id="views">
+<form action="" method="GET" id="views">
   <button type="submit" name="view" value="Tools" form="views">Tools</button>
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>
 <div class="views">
 <?php
-if(isset($_POST['view'])){
-  if($_POST['view'] == "System Info"){header('location:phpsysinfo/index.php');}
-  if($_POST['view'] == "System Controls"){include('scripts/system_controls.php');}
-  if($_POST['view'] == "Services"){include('scripts/service_controls.php');}
-  if($_POST['view'] == "Spectrogram"){include('spectrogram.php');}
-  if($_POST['view'] == "Overview"){include('overview.php');}
-  if($_POST['view'] == "Today's Detections"){include('todays_detections.php');}
-  if($_POST['view'] == "Species Stats"){echo "<br><br>";include('stats.php');}
-  if($_POST['view'] == "Streamlit"){header('location:/stats');}
-  if($_POST['view'] == "Daily Charts"){include('history.php');}
-  if($_POST['view'] == "Tools"){
+if(isset($_GET['view'])){
+  if($_GET['view'] == "System Info"){header('location:phpsysinfo/index.php');}
+  if($_GET['view'] == "System Controls"){include('scripts/system_controls.php');}
+  if($_GET['view'] == "Services"){include('scripts/service_controls.php');}
+  if($_GET['view'] == "Spectrogram"){include('spectrogram.php');}
+  if($_GET['view'] == "View Log"){echo "<iframe src=\"/log\">";}
+  if($_GET['view'] == "Overview"){include('overview.php');}
+  if($_GET['view'] == "Today's Detections"){include('todays_detections.php');}
+  if($_GET['view'] == "Species Stats"){echo "<br><br>";include('stats.php');}
+  if($_GET['view'] == "Streamlit"){echo "<iframe src=\"/stats\">";}
+  if($_GET['view'] == "Daily Charts"){include('history.php');}
+  if($_GET['view'] == "Tools"){
     if (file_exists('./scripts/thisrun.txt')) {
       $config = parse_ini_file('./scripts/thisrun.txt');
     } elseif (file_exists('./scripts/firstrun.ini')) {
@@ -62,7 +61,7 @@ if(isset($_POST['view'])){
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
         $url = $_SERVER['SERVER_NAME']."/scripts/adminer.php";
         echo "<div class=\"centered\">
-	<form action=\"\" method=\"POST\" id=\"views\">
+	<form action=\"\" method=\"GET\" id=\"views\">
         <button type=\"submit\" name=\"view\" value=\"Settings\" form=\"views\">Settings</button>
         <button type=\"submit\" name=\"view\" value=\"System Info\" form=\"views\">System Info</button>
         <button type=\"submit\" name=\"view\" value=\"System Controls\" form=\"views\">System Controls</button>
@@ -82,25 +81,25 @@ if(isset($_POST['view'])){
       }
     }
   }
-  if($_POST['view'] == "Recordings"){include('play.php');}
-  if($_POST['view'] == "Settings"){include('scripts/config.php');} 
-  if($_POST['view'] == "Advanced"){include('scripts/advanced.php');}
-  if($_POST['view'] == "Included"){
-    if(isset($_POST['species']) && isset($_POST['add'])){
+  if($_GET['view'] == "Recordings"){include('play.php');}
+  if($_GET['view'] == "Settings"){include('scripts/config.php');} 
+  if($_GET['view'] == "Advanced"){include('scripts/advanced.php');}
+  if($_GET['view'] == "Included"){
+    if(isset($_GET['species']) && isset($_GET['add'])){
       $file = './scripts/include_species_list.txt';
       $str = file_get_contents("$file");
       $str = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $str);
       file_put_contents("$file", "$str");
-      if(isset($_POST['species'])){
-        foreach ($_POST['species'] as $selectedOption)
+      if(isset($_GET['species'])){
+        foreach ($_GET['species'] as $selectedOption)
           file_put_contents("./scripts/include_species_list.txt", $selectedOption."\n", FILE_APPEND);
       }
-    } elseif(isset($_POST['species']) && isset($_POST['del'])){
+    } elseif(isset($_GET['species']) && isset($_GET['del'])){
       $file = './scripts/include_species_list.txt';
       $str = file_get_contents("$file");
       $str = preg_replace('/^\h*\v+/m', '', $str);
       file_put_contents("$file", "$str");
-      foreach($_POST['species'] as $selectedOption) {
+      foreach($_GET['species'] as $selectedOption) {
         $content = file_get_contents("../BirdNET-Pi/include_species_list.txt");
         $newcontent = str_replace($selectedOption, "", "$content");
         file_put_contents("./scripts/include_species_list.txt", "$newcontent");
@@ -112,20 +111,20 @@ if(isset($_POST['view'])){
     }
     include('./scripts/include_list.php');
   }
-  if($_POST['view'] == "Excluded"){
-    if(isset($_POST['species']) && isset($_POST['add'])){
+  if($_GET['view'] == "Excluded"){
+    if(isset($_GET['species']) && isset($_GET['add'])){
       $file = './scripts/exclude_species_list.txt';
       $str = file_get_contents("$file");
       $str = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $str);
       file_put_contents("$file", "$str");
-      foreach ($_POST['species'] as $selectedOption)
+      foreach ($_GET['species'] as $selectedOption)
         file_put_contents("./scripts/exclude_species_list.txt", $selectedOption."\n", FILE_APPEND);
-    } elseif (isset($_POST['species']) && isset($_POST['del'])){
+    } elseif (isset($_GET['species']) && isset($_GET['del'])){
       $file = './scripts/exclude_species_list.txt';
       $str = file_get_contents("$file");
       $str = preg_replace('/^\h*\v+/m', '', $str);
       file_put_contents("$file", "$str");
-      foreach($_POST['species'] as $selectedOption) {
+      foreach($_GET['species'] as $selectedOption) {
         $content = file_get_contents("./scripts/exclude_species_list.txt");
         $newcontent = str_replace($selectedOption, "", "$content");
         file_put_contents("./scripts/exclude_species_list.txt", "$newcontent");
@@ -137,10 +136,10 @@ if(isset($_POST['view'])){
     }
     include('./scripts/exclude_list.php');
   }
-  if($_POST['view'] == "File"){
+  if($_GET['view'] == "File"){
     header('Location: scripts/filemanager/filemanager.php');
   }
-  if($_POST['view'] == "Webterm"){
+  if($_GET['view'] == "Webterm"){
     if (file_exists('./scripts/thisrun.txt')) {
       $config = parse_ini_file('./scripts/thisrun.txt');
     } elseif (file_exists('./scripts/firstrun.ini')) {
@@ -166,8 +165,8 @@ if(isset($_POST['view'])){
       }
     }
   }
-} elseif(isset($_POST['submit'])) {
-  $command = $_POST['submit'];
+} elseif(isset($_GET['submit'])) {
+  $command = $_GET['submit'];
   if(isset($command)){
     $results = shell_exec("$command 2>&1");
     echo "<pre>$results</pre>";

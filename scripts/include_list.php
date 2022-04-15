@@ -17,7 +17,7 @@ $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
 <body style="height: 90%;">
   <p>Warning!<br>If this list contains ANY species, the system will ONLY recognize those species. Keep this list EMPTY unless you are ONLY interested in detecting specific species.</p>
 <div class="customlabels2 column1">
-<form action="" method="POST" id="add">
+<form action="" method="GET" id="add">
   <h2>All Species Labels</h2>
   <select name="species[]" id="species" multiple size="30">
     <option selected value="base">Please Select</option>
@@ -42,7 +42,7 @@ $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
 </div>
 
 <div class="customlabels2 column3">
-<form action="" method="POST" id="del">
+<form action="" method="GET" id="del">
   <h2>Custom Species List</h2>
   <select name="species[]" id="value2" multiple size="30">
     <option selected value="base">Please Select</option>
