@@ -81,7 +81,7 @@ body::-webkit-scrollbar {
   </tr>
   <tr>
     <th>Today</th>
-    <form action="" method="POST">
+    <form action="" method="GET">
     <td><button type="submit" name="view" value="Today's Detections"><?php echo $todaycount['COUNT(*)'];?></button></td>
     </form>
   </tr>
@@ -91,13 +91,13 @@ body::-webkit-scrollbar {
   </tr>
   <tr>
     <th>Species Detected Today</th>
-    <form action="" method="POST">
+    <form action="" method="GET">
     <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
     </form>
   </tr>
   <tr>
     <th>Total Number of Species</th>
-    <form action="" method="POST">
+    <form action="" method="GET">
     <td><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
     </form>
   </tr>
@@ -117,7 +117,7 @@ if (file_exists('./Charts/'.$chart)) {
   <h3>Most Recent Detection: <span style="font-weight: normal;"><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></span></h3>
   <tr>
     <td>
-    <form action="" method="POST">
+    <form action="" method="GET">
         <input type="hidden" name="view" value="Species Stats">
         <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?>: </button>
         <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a>

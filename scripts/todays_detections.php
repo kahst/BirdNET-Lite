@@ -3,9 +3,9 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-if(isset($_POST['display_limit'])) {
-  if(is_numeric($_POST['display_limit'])) {
-    $display_limit = $_POST['display_limit'] + 40;
+if(isset($_GET['display_limit'])) {
+  if(is_numeric($_GET['display_limit'])) {
+    $display_limit = $_GET['display_limit'] + 40;
   }
 } else {
   $display_limit = 40;
@@ -95,14 +95,14 @@ $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
       </tr>
       <tr>
       <td><?php echo $totalcount['COUNT(*)'];?></td>
-      <form action="" method="POST">
+      <form action="" method="GET">
       <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button></td>
       </form>
       <td><?php echo $hourcount['COUNT(*)'];?></td>
-      <form action="" method="POST">
+      <form action="" method="GET">
       <td><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
       </form>
-      <form action="" method="POST">
+      <form action="" method="GET">
       <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todayspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
       </form>
       </tr>
@@ -137,7 +137,7 @@ $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
 // don't show the button if there's no more detections to be displayed, we're at the end of the list
 if($iterations == $display_limit) { ?>
 <center>
-<form action="#<?php echo $display_limit; ?>" method="POST">
+<form action="#<?php echo $display_limit; ?>" method="GET">
   <input type="input" name="display_limit" value="<?php echo $display_limit; ?>" hidden>
   <button style="font-size:x-large;background:#dbffeb;padding:10px" type="submit" name="view" value="Today's Detections">Load 40 More...</button>
 </form>

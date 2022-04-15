@@ -26,12 +26,12 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
   }
 }
 
-if(isset($_POST['submit'])) {
+if(isset($_GET['submit'])) {
   $contents = file_get_contents('/etc/birdnet/birdnet.conf');
   $contents2 = file_get_contents('./scripts/thisrun.txt');
 
-  if(isset($_POST["caddy_pwd"])) {
-    $caddy_pwd = $_POST["caddy_pwd"];
+  if(isset($_GET["caddy_pwd"])) {
+    $caddy_pwd = $_GET["caddy_pwd"];
     if(strcmp($caddy_pwd,$config['CADDY_PWD']) !== 0) {
       $contents = preg_replace("/CADDY_PWD=.*/", "CADDY_PWD=$caddy_pwd", $contents);
       $contents2 = preg_replace("/CADDY_PWD=.*/", "CADDY_PWD=$caddy_pwd", $contents2);
@@ -43,16 +43,16 @@ if(isset($_POST['submit'])) {
     }
   }
 
-  if(isset($_POST["ice_pwd"])) {
-    $ice_pwd = $_POST["ice_pwd"];
+  if(isset($_GET["ice_pwd"])) {
+    $ice_pwd = $_GET["ice_pwd"];
     if(strcmp($ice_pwd,$config['ICE_PWD']) !== 0) {
       $contents = preg_replace("/ICE_PWD=.*/", "ICE_PWD=$ice_pwd", $contents);
       $contents2 = preg_replace("/ICE_PWD=.*/", "ICE_PWD=$ice_pwd", $contents2);
     }
   }
 
-  if(isset($_POST["birdnetpi_url"])) {
-    $birdnetpi_url = $_POST["birdnetpi_url"];
+  if(isset($_GET["birdnetpi_url"])) {
+    $birdnetpi_url = $_GET["birdnetpi_url"];
     if(strcmp($birdnetpi_url,$config['BIRDNETPI_URL']) !== 0) {
       $contents = preg_replace("/BIRDNETPI_URL=.*/", "BIRDNETPI_URL=$birdnetpi_url", $contents);
       $contents2 = preg_replace("/BIRDNETPI_URL=.*/", "BIRDNETPI_URL=$birdnetpi_url", $contents2);
@@ -64,40 +64,40 @@ if(isset($_POST['submit'])) {
     }
   }
 
-  if(isset($_POST["overlap"])) {
-    $overlap = $_POST["overlap"];
+  if(isset($_GET["overlap"])) {
+    $overlap = $_GET["overlap"];
     if(strcmp($overlap,$config['OVERLAP']) !== 0) {
       $contents = preg_replace("/OVERLAP=.*/", "OVERLAP=$overlap", $contents);
       $contents2 = preg_replace("/OVERLAP=.*/", "OVERLAP=$overlap", $contents2);
     }
   }
 
-  if(isset($_POST["confidence"])) {
-    $confidence = $_POST["confidence"];
+  if(isset($_GET["confidence"])) {
+    $confidence = $_GET["confidence"];
     if(strcmp($confidence,$config['CONFIDENCE']) !== 0) {
       $contents = preg_replace("/CONFIDENCE=.*/", "CONFIDENCE=$confidence", $contents);
       $contents2 = preg_replace("/CONFIDENCE=.*/", "CONFIDENCE=$confidence", $contents2);
     }
   }
 
-  if(isset($_POST["sensitivity"])) {
-    $sensitivity = $_POST["sensitivity"];
+  if(isset($_GET["sensitivity"])) {
+    $sensitivity = $_GET["sensitivity"];
     if(strcmp($sensitivity,$config['SENSITIVITY']) !== 0) {
       $contents = preg_replace("/SENSITIVITY=.*/", "SENSITIVITY=$sensitivity", $contents);
       $contents2 = preg_replace("/SENSITIVITY=.*/", "SENSITIVITY=$sensitivity", $contents2);
     }
   }
 
-  if(isset($_POST["full_disk"])) {
-    $full_disk = $_POST["full_disk"];
+  if(isset($_GET["full_disk"])) {
+    $full_disk = $_GET["full_disk"];
     if(strcmp($full_disk,$config['FULL_DISK']) !== 0) {
       $contents = preg_replace("/FULL_DISK=.*/", "FULL_DISK=$full_disk", $contents);
       $contents2 = preg_replace("/FULL_DISK=.*/", "FULL_DISK=$full_disk", $contents2);
     }
   }
 
-  if(isset($_POST["privacy_mode"])) {
-    $privacy_mode = $_POST["privacy_mode"];
+  if(isset($_GET["privacy_mode"])) {
+    $privacy_mode = $_GET["privacy_mode"];
     if(strcmp($config['PRIVACY_MODE'], "1") == 0 ) {
       $pmode = "on";
     }elseif(strcmp($config['PRIVACY_MODE'], "") == 0) {
@@ -120,40 +120,40 @@ if(isset($_POST['submit'])) {
     }
   }
 
-  if(isset($_POST["rec_card"])) {
-    $rec_card = $_POST["rec_card"];
+  if(isset($_GET["rec_card"])) {
+    $rec_card = $_GET["rec_card"];
     if(strcmp($rec_card,$config['REC_CARD']) !== 0) {
       $contents = preg_replace("/REC_CARD=.*/", "REC_CARD=$rec_card", $contents);
       $contents2 = preg_replace("/REC_CARD=.*/", "REC_CARD=$rec_card", $contents2);
     }
   }
 
-  if(isset($_POST["channels"])) {
-    $channels = $_POST["channels"];
+  if(isset($_GET["channels"])) {
+    $channels = $_GET["channels"];
     if(strcmp($channels,$config['CHANNELS']) !== 0) {
       $contents = preg_replace("/CHANNELS=.*/", "CHANNELS=$channels", $contents);
       $contents2 = preg_replace("/CHANNELS=.*/", "CHANNELS=$channels", $contents2);
     }
   }
 
-  if(isset($_POST["recording_length"])) {
-    $recording_length = $_POST["recording_length"];
+  if(isset($_GET["recording_length"])) {
+    $recording_length = $_GET["recording_length"];
     if(strcmp($recording_length,$config['RECORDING_LENGTH']) !== 0) {
       $contents = preg_replace("/RECORDING_LENGTH=.*/", "RECORDING_LENGTH=$recording_length", $contents);
       $contents2 = preg_replace("/RECORDING_LENGTH=.*/", "RECORDING_LENGTH=$recording_length", $contents2);
     }
   }
 
-  if(isset($_POST["extraction_length"])) {
-    $extraction_length = $_POST["extraction_length"];
+  if(isset($_GET["extraction_length"])) {
+    $extraction_length = $_GET["extraction_length"];
     if(strcmp($extraction_length,$config['EXTRACTION_LENGTH']) !== 0) {
       $contents = preg_replace("/EXTRACTION_LENGTH=.*/", "EXTRACTION_LENGTH=$extraction_length", $contents);
       $contents2 = preg_replace("/EXTRACTION_LENGTH=.*/", "EXTRACTION_LENGTH=$extraction_length", $contents2);
     }
   }
 
-  if(isset($_POST["audiofmt"])) {
-    $audiofmt = $_POST["audiofmt"];
+  if(isset($_GET["audiofmt"])) {
+    $audiofmt = $_GET["audiofmt"];
     if(strcmp($audiofmt,$config['AUDIOFMT']) !== 0) {
       $contents = preg_replace("/AUDIOFMT=.*/", "AUDIOFMT=$audiofmt", $contents);
       $contents2 = preg_replace("/AUDIOFMT=.*/", "AUDIOFMT=$audiofmt", $contents2);
@@ -181,7 +181,7 @@ if (file_exists('./scripts/thisrun.txt')) {
 }
 ?>
       <h2>Advanced Settings</h2>
-    <form action="" method="POST">
+    <form action="" method="GET">
       <label>Privacy Mode: </label>
       <label for="on">
       <input name="privacy_mode" type="radio" id="on" value="on" <?php if (strcmp($newconfig['PRIVACY_MODE'], "1") == 0) { echo "checked"; }?>>On</label>
@@ -242,7 +242,7 @@ foreach($formats as $format){
       <input type="hidden" name="view" value="Advanced">
       <button type="submit" name="submit" value="advanced">
 <?php
-if(isset($_POST['submit'])){
+if(isset($_GET['submit'])){
   echo "Success!";
 } else {
   echo "Update Settings";
@@ -251,7 +251,7 @@ if(isset($_POST['submit'])){
       </button>
       <br>
       </form>
-      <form action="" method="POST">
+      <form action="" method="GET">
         <button type="submit" name="view" value="Settings">Basic Settings</button>
       </form>
 </div>

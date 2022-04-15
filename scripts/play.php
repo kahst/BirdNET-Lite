@@ -10,7 +10,7 @@ if($db == False){
 }
 
 #By Date
-if(isset($_POST['bydate'])){
+if(isset($_GET['bydate'])){
   $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date');
   if($statement == False){
     echo "Database is busy";
@@ -20,8 +20,8 @@ if(isset($_POST['bydate'])){
   $view = "bydate";
 
   #Specific Date
-} elseif(isset($_POST['date'])) {
-  $date = $_POST['date'];
+} elseif(isset($_GET['date'])) {
+  $date = $_GET['date'];
   session_start();
   $_SESSION['date'] = $date;
   $statement = $db->prepare("SELECT DISTINCT(Com_Name) FROM detections WHERE Date == \"$date\" ORDER BY Com_Name");
@@ -33,7 +33,7 @@ if(isset($_POST['bydate'])){
   $view = "date";
 
   #By Species
-} elseif(isset($_POST['byspecies'])) {
+} elseif(isset($_GET['byspecies'])) {
   $statement = $db->prepare('SELECT DISTINCT(Com_Name) FROM detections ORDER BY Com_Name');
   session_start();
   if($statement == False){
@@ -44,8 +44,8 @@ if(isset($_POST['bydate'])){
   $view = "byspecies";
 
   #Specific Species
-} elseif(isset($_POST['species'])) {
-  $species = $_POST['species'];
+} elseif(isset($_GET['species'])) {
+  $species = $_GET['species'];
   session_start();
   $_SESSION['species'] = $species;
   $statement = $db->prepare("SELECT * FROM detections WHERE Com_Name == \"$species\" ORDER BY Com_Name");
@@ -75,12 +75,12 @@ if(isset($_POST['bydate'])){
 
 <?php
 #If no specific species
-if(!isset($_POST['species'])){
+if(!isset($_GET['species'])){
 ?>
 <div class="play">
 <table>
   <tr>
-    <form action="" method="POST">
+    <form action="" method="GET">
     <input type="hidden" name="view" value="Recordings">
 <?php
   #By Date
@@ -117,8 +117,8 @@ if(!isset($_POST['species'])){
 }
 
 #Specific Species
-if(isset($_POST['species'])){
-  $name = $_POST['species'];
+if(isset($_GET['species'])){
+  $name = $_GET['species'];
   if(isset($_SESSION['date'])) {
     $date = $_SESSION['date'];
     $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Time DESC");

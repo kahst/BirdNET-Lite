@@ -4,7 +4,7 @@
 
 <body>
 <div class="customlabels column1">
-<form action="" method="POST" id="add">
+<form action="" method="GET" id="add">
   <h3>All Species Labels</h3>
   <select name="species[]" id="species" multiple size="auto">
   <option>Choose a species below to add to the Excluded Species List</option>
@@ -35,7 +35,7 @@
 </div>
 
 <div class="customlabels column3">
-<form action="" method="POST" id="del">
+<form action="" method="GET" id="del">
   <h3>Excluded Species List</h3>
   <select name="species[]" id="value2" multiple size="auto">
 <?php
