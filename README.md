@@ -89,6 +89,14 @@ Please take a look at the [wiki](https://github.com/mcguirepr89/BirdNET-Pi/wiki)
 - [beta testing](https://github.com/mcguirepr89/BirdNET-Pi/discussions/11)
 - [and more!](https://github.com/mcguirepr89/BirdNET-Pi/discussions)
 
+
+## Updating 
+
+Since the change in RaspiOS that has discontinued the default `pi` user, the recommended update instructions for installations that _do_ have the default `pi` user:
+1. Go to "Tools" > "Web Terminal"
+2. Type ```git pull```
+3. Go to "Tools" > "System Controls" > "Update" > "OK"
+
 ## Uninstallation
 ```
 /usr/local/bin/uninstall.sh && cd ~ && rm -drf BirdNET-Pi
