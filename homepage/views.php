@@ -184,6 +184,21 @@ function myFunction() {
     x.className = "topnav";
   }
 }
+function setLiveStreamVolume(vol) {
+  var audioelement =  window.parent.document.getElementsByTagName("audio")[0];
+  if (typeof(audioelement) != 'undefined' && audioelement != null)
+  {
+    audioelement.volume = vol
+  }
+}
+window.onbeforeunload = function(event) {
+  // if the user is playing a video and then navigates away mid-play, the live stream audio should be unmuted again
+  var audioelement =  window.parent.document.getElementsByTagName("audio")[0];
+  if (typeof(audioelement) != 'undefined' && audioelement != null)
+  {
+    audioelement.volume = 1
+  }
+}
 </script>
 </div>
 </body>
