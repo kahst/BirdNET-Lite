@@ -3,26 +3,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-if(isset($_GET['display_limit'])) {
-  if(is_numeric($_GET['display_limit'])) {
-    $display_limit = $_GET['display_limit'] + 40;
-  }
-} else {
-  $display_limit = 40;
-}
-
 $db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 if($db == False){
   echo "Database is busy";
   header("refresh: 0;");
 }
-
-$statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC LIMIT '.$display_limit.'');
-if($statement0 == False){
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result0 = $statement0->execute();
 
 $statement1 = $db->prepare('SELECT COUNT(*) FROM detections');
 if($statement1 == False){
@@ -71,6 +56,48 @@ if($statement6 == False){
 }
 $result6 = $statement6->execute();
 $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
+
+if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['display_limit']) && is_numeric($_GET['display_limit']) ) {
+  $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC LIMIT '.(intval($_GET['display_limit'])-40).',40');
+  if($statement0 == False){
+    echo "Database is busy";
+    header("refresh: 0;");
+  }
+  $result0 = $statement0->execute();
+
+  ?> <table> <?php
+  $iterations = 0;
+  while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
+  {
+    $iterations++;
+
+  $comname = preg_replace('/ /', '_', $todaytable['Com_Name']);
+  $comname = preg_replace('/\'/', '_', $comname);
+  $filename = "/By_Date/".date('Y-m-d')."/".$comname."/".$todaytable['File_Name'];
+  $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
+  ?>
+        <tr id="<?php echo $iterations; ?>">
+        <td><?php echo $todaytable['Time'];?><br>
+        <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
+        <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
+        <b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br>
+        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
+        </td>
+  <?php }?>
+        </tr>
+      </table>
+
+  <?php 
+  // don't show the button if there's no more detections to be displayed, we're at the end of the list
+  if($iterations >= 40) { ?>
+  <center>
+  <button style="margin-top:10px;font-size:x-large;background:#dbffeb;padding:10px;border: 2px solid black;" onclick="loadDetections(<?php echo $_GET['display_limit'] + 40; ?>, this);" value="Today's Detections">Load 40 More...</button>
+  </center>
+  <?php }
+
+  die();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -87,11 +114,11 @@ $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
     <h3>Number of Detections</h3>
     <table>
       <tr>
-	<th>Total</th>
-	<th>Today</th>
-	<th>Last Hour</th>
-	<th>Unique Species Total</th>
-	<th>Unique Species Today</th>
+  <th>Total</th>
+  <th>Today</th>
+  <th>Last Hour</th>
+  <th>Unique Species Total</th>
+  <th>Unique Species Today</th>
       </tr>
       <tr>
       <td><?php echo $totalcount['COUNT(*)'];?></td>
@@ -109,38 +136,28 @@ $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
     </table>
 
     <h3>Today's Detections</h3>
-    <table>
-<?php
-$iterations = 0;
-while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
-{
-  $iterations++;
+    
+    <div style="padding-bottom:10px" id="detections_table"></div>
 
-$comname = preg_replace('/ /', '_', $todaytable['Com_Name']);
-$comname = preg_replace('/\'/', '_', $comname);
-$filename = "/By_Date/".date('Y-m-d')."/".$comname."/".$todaytable['File_Name'];
-$sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
-?>
-      <tr id="<?php echo $iterations;?>">
-      <td><?php echo $todaytable['Time'];?><br>
-      <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
-      <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
-      <b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br>
-      <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
-      </td>
-<?php }?>
-      </tr>
-    </table>
-
-<br>
-<?php 
-// don't show the button if there's no more detections to be displayed, we're at the end of the list
-if($iterations == $display_limit) { ?>
-<center>
-<form action="#<?php echo $display_limit; ?>" method="GET">
-  <input type="input" name="display_limit" value="<?php echo $display_limit; ?>" hidden>
-  <button style="font-size:x-large;background:#dbffeb;padding:10px" type="submit" name="view" value="Today's Detections">Load 40 More...</button>
-</form>
-</center>
-<?php } ?>
 </div>
+
+<script>
+function loadDetections(detections_limit, element=undefined) {
+  console.log(element);
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    if(typeof element !== "undefined")
+    {
+     element.remove();
+    }
+    document.getElementById("detections_table").innerHTML+= this.responseText;
+  }
+  xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit, true);
+  xhttp.send();
+}
+window.addEventListener("load", function(){
+  loadDetections(40);
+});
+</script>
+
+
