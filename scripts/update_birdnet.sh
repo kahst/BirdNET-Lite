@@ -2,7 +2,7 @@
 # Update BirdNET-Pi
 source /etc/birdnet/birdnet.conf
 trap 'exit 1' SIGINT SIGHUP
-my_dir=$(realpath $(dirname $0))
+my_dir=$HOME/BirdNET-Pi/scripts
 
 sudo -u${USER} git -C $my_dir stash
 sudo -u${USER} git -C $my_dir pull -f
