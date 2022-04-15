@@ -24,8 +24,8 @@ $result2 = $statement2->execute();
 
 
 
-if(isset($_POST['species'])){
-  $selection = $_POST['species'];
+if(isset($_GET['species'])){
+  $selection = $_GET['species'];
   $statement3 = $db->prepare("SELECT Com_Name, Sci_Name, COUNT(*), MAX(Confidence), File_Name, Date, Time from detections WHERE Com_Name = \"$selection\"");
   if($statement3 == False) {
   	echo "Database busy";
@@ -57,7 +57,7 @@ $comname = preg_replace('/\'/', '', $comname);
 $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
 ?>
   <tr>
-  <form action="" method="POST">
+  <form action="" method="GET">
   <td><input type="hidden" name="view" value="Species Stats">
     <button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button>
   </td>
@@ -69,12 +69,12 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
 </table>
 </div>
 <div class="column center">
-<?php if(!isset($_POST['species'])){
+<?php if(!isset($_GET['species'])){
 ?><p class="centered">Choose a species to load images from Wikimedia Commons.</p>
 <?php
 };?>
-<?php if(isset($_POST['species'])){
-  $species = $_POST['species'];
+<?php if(isset($_GET['species'])){
+  $species = $_GET['species'];
    
 while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   $count = $results['COUNT(*)'];
@@ -123,7 +123,7 @@ $comname = preg_replace('/\'/', '', $comname);
 $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
 ?>
       <tr>
-      <form action="" method="POST">
+      <form action="" method="GET">
       <td><input type="hidden" name="view" value="Species Stats">
         <button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button><br><b>Occurrences:</b> <?php echo $results['COUNT(*)'];?><br>
       <b>Max Confidence:</b> <?php echo $results['MAX(Confidence)'];?><br>

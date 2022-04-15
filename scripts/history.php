@@ -3,8 +3,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-if(isset($_POST['date'])){
-$theDate = $_POST['date'];
+if(isset($_GET['date'])){
+$theDate = $_GET['date'];
 } else {
 $theDate = date('Y-m-d');
 }
@@ -27,7 +27,7 @@ $totalcount = $result1->fetchArray(SQLITE3_ASSOC);
 </head>
 <body>
 <div class="history centered">
-<form action="" method="POST">
+<form action="" method="GET">
   <input type="date" name="date" value="<?php echo $theDate;?>">
   <button type="submit" name="view" value="Daily Charts">Submit Date</button>
 </form>
