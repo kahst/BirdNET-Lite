@@ -48,7 +48,6 @@ fi
 # Takes one argument:
 #   - {DIRECTORY}
 get_files() {
-  echo "get_files() for ${1:19}"
   files=($( find ${1} -maxdepth 1 -name '*wav' \
   | sort \
   | awk -F "/" '{print $NF}' ))
@@ -60,14 +59,12 @@ get_files() {
 # Takes one argument:
 #   - {DIRECTORY}
 move_analyzed() {
-  echo "Starting move_analyzed() for ${1:19}"
   for i in "${files[@]}";do 
     j="${i}.csv" 
     if [ -f "${1}/${j}" ];then
       if [ ! -d "${1}-Analyzed" ];then
         mkdir -p "${1}-Analyzed" && echo "'Analyzed' directory created"
       fi
-      echo "Moving analyzed files to new directory"
       mv "${1}/${i}" "${1}-Analyzed/"
       mv "${1}/${j}" "${1}-Analyzed/"
     fi
@@ -79,8 +76,6 @@ move_analyzed() {
 #   - {DIRECTORY}
 run_analysis() {
   sleep .5 
-  echo "Starting run_analysis() for ${1:19}"
-
 
   ### TESTING NEW WEEK CALCULATION
   WEEK_OF_YEAR="$(echo "($(date +%m)-1) * 4" | bc -l)"
@@ -313,7 +308,6 @@ run_analysis() {
 # Takes one argument:
 #   - {DIRECTORY}
 run_birdnet() {
-  echo "Starting run_birdnet() for ${1:19}"
   get_files "${1}"
   move_analyzed "${1}"
   run_analysis "${1}"
@@ -327,7 +321,10 @@ if [ $(find ${RECS_DIR} -maxdepth 1 -name '*wav' | wc -l) -gt 0 ];then
   run_birdnet "${RECS_DIR}"
 fi
 
-DIRECTORY="$RECS_DIR/$(date "+%B-%Y/%d-%A")"
-if [ $(find ${DIRECTORY} -name '*wav' | wc -l) -gt 0 ];then
-  run_birdnet "${DIRECTORY}"
+YESTERDAY="$RECS_DIR/$(date --date="yesterday" "+%B-%Y/%d-%A")"
+TODAY="$RECS_DIR/$(date "+%B-%Y/%d-%A")"
+if [ $(find ${YESTERDAY} -name '*wav' | wc -l) -gt 0 ];then
+  run_birdnet "${YESTERDAY}"
+elif [ $(find ${TODAY} -name '*wav' | wc -l) -gt 0 ];then
+  run_birdnet "${TODAY}"
 fi
