@@ -1,5 +1,4 @@
 <?php
-//header("refresh: 300;");
 $myDate = date('Y-m-d');
 $chart = "Combo-$myDate.png";
 
