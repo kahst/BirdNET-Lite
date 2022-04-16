@@ -65,7 +65,16 @@ $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['previous_detection_identifier'])) {
   if($_GET['previous_detection_identifier'] != $filename || $_GET['previous_detection_identifier'] == "undefined") {
     // check to make sure the image actually exists, sometimes it takes a minute to be created
-    $headers = @get_headers("http://".$_SERVER['HTTP_HOST'].$filename.".png");
+    if (isset($_SERVER['HTTPS']) &&
+        ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
+        isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
+        $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+      $protocol = 'https://';
+    }
+    else {
+      $protocol = 'http://';
+    }
+    $headers = @get_headers($protocol.$_SERVER['HTTP_HOST'].$filename.".png");
     if(strpos($headers[0],'200')) {
     ?>
       <style>
@@ -149,18 +158,42 @@ body::-webkit-scrollbar {
 <div class="right-column">
 <div class="chart">
 <?php
+if (file_exists('./scripts/thisrun.txt')) {
+  $config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
+}
+$refresh = $config['RECORDING_LENGTH'];
+$time = time();
 if (file_exists('./Charts/'.$chart)) {
-  echo "<img src=\"/Charts/$chart?nocache=time()\">";
+  echo "<img id='chart' src=\"/Charts/$chart?nocache=$time\">";
 } else {
   echo "<p>No Detections For Today</p>";
 }
 ?>
+<script>
+// every $refresh seconds, this loop will run and refresh the spectrogram image
+window.setInterval(function(){
+	document.getElementById("chart").src = "/Charts/<?php echo $chart;?>?nocache="+Date.now();
+}, <?php echo $refresh; ?>*1000);
+</script>
 </div>
 
 <div id="most_recent_detection"></div>
 
 <h3>Currently Analyzing</h3>
-<img src='/spectrogram.png?nocache=<?php echo time();?>' >
+<?php
+$refresh = $config['RECORDING_LENGTH'];
+$time = time();
+echo "<img id=\"spectrogramimage\" src=\"/spectrogram.png?nocache=$time\">";
+?>
+<script>
+// every $refresh seconds, this loop will run and refresh the spectrogram image
+window.setInterval(function(){
+  document.getElementById("spectrogramimage").src = "/spectrogram.png?nocache="+Date.now();
+}, <?php echo $refresh; ?>*1000);
+</script>
+
 </div>
 </div>
 
