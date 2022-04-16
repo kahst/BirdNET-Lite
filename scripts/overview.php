@@ -121,8 +121,8 @@ if(isset($_GET['ajax_left_chart']) && $_GET['ajax_left_chart'] == "true") {
   </tr>
   <tr>
     <th>Today</th>
-    <form action="" method="GET">
-    <td><button type="submit" name="view" value="Today's Detections"><?php echo $todaycount['COUNT(*)'];?></button></td>
+    
+    <td><form action="" method="GET"><button type="submit" name="view" value="Today's Detections"><?php echo $todaycount['COUNT(*)'];?></button></td>
     </form>
   </tr>
   <tr>
@@ -131,14 +131,12 @@ if(isset($_GET['ajax_left_chart']) && $_GET['ajax_left_chart'] == "true") {
   </tr>
   <tr>
     <th>Species Detected Today</th>
-    <form action="" method="GET">
-    <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+    <td><form action="" method="GET"><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
     </form>
   </tr>
   <tr>
     <th>Total Number of Species</th>
-    <form action="" method="GET">
-    <td><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+    <td><form action="" method="GET"><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
     </form>
   </tr>
 </table>
@@ -159,7 +157,6 @@ body::-webkit-scrollbar {
 <div class="overview">
 <div class="overview-stats">
 <div class="left-column">
-</table>
 </div>
 <div class="right-column">
 <div class="chart">
