@@ -12,7 +12,7 @@ userDir = os.path.expanduser('~')
 conn = sqlite3.connect(userDir + '/BirdNET-Pi/scripts/birds.db')
 df = pd.read_sql_query("SELECT * from detections", conn)
 cursor = conn.cursor()
-cursor.execute('SELECT * FROM detections')
+cursor.execute('SELECT * FROM detections WHERE Date = DATE(\'now\', \'localtime\')')
 
 table_rows = cursor.fetchall()
 
