@@ -33,7 +33,7 @@
 <div class="views">
 <?php
 if(isset($_GET['view'])){
-  if($_GET['view'] == "System Info"){header('location:phpsysinfo/index.php');}
+  if($_GET['view'] == "System Info"){echo "<iframe src='phpsysinfo/index.php'>";}
   if($_GET['view'] == "System Controls"){include('scripts/system_controls.php');}
   if($_GET['view'] == "Services"){include('scripts/service_controls.php');}
   if($_GET['view'] == "Spectrogram"){include('spectrogram.php');}
@@ -67,7 +67,7 @@ if(isset($_GET['view'])){
         <button type=\"submit\" name=\"view\" value=\"System Controls\" form=\"views\">System Controls</button>
         <button type=\"submit\" name=\"view\" value=\"Services\" form=\"views\">Services</button>
         <button type=\"submit\" name=\"view\" value=\"File\" form=\"views\">File Manager</button>
-	<a href=\"scripts/adminer.php\" target=\"_top\"><button type=\"submit\" form=\"\">Database Maintenanace</button></a>
+        <a href=\"scripts/adminer.php\" target=\"_top\"><button type=\"submit\" form=\"\">Database Maintenanace</button></a>
         <button type=\"submit\" name=\"view\" value=\"Webterm\" form=\"views\">Web Terminal</button>
         <button type=\"submit\" name=\"view\" value=\"Included\" form=\"views\">Custom Species List</button>
         <button type=\"submit\" name=\"view\" value=\"Excluded\" form=\"views\">Excluded Species List</button>
@@ -137,7 +137,7 @@ if(isset($_GET['view'])){
     include('./scripts/exclude_list.php');
   }
   if($_GET['view'] == "File"){
-    header('Location: scripts/filemanager/filemanager.php');
+    echo "<iframe src='scripts/filemanager/filemanager.php'>";
   }
   if($_GET['view'] == "Webterm"){
     if (file_exists('./scripts/thisrun.txt')) {
@@ -156,7 +156,7 @@ if(isset($_GET['view'])){
       $submitteduser = $_SERVER['PHP_AUTH_USER'];
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
         #ACCESS THE WEB TERMINAL
-      	header("Location: /terminal");
+      	echo "<iframe src='/terminal'>";
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
