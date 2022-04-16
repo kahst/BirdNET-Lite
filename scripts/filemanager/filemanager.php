@@ -51,7 +51,7 @@ $default_timezone = 'Etc/UTC'; // UTC
 
 // Root path for file manager
 // use absolute path of directory i.e: '/var/www/folder' or $_SERVER['DOCUMENT_ROOT'].'/folder'
-$root_path = $_SERVER['DOCUMENT_ROOT'];
+$root_path = '/home';
 
 // Root url for links in file manager.Relative to $http_host. Variants: '', 'path/to/subfolder'
 // Will not working if $root_path will be outside of server document root
@@ -69,7 +69,7 @@ $iconv_input_encoding = 'UTF-8';
 
 // date() format for file modification date
 // Doc - https://www.php.net/manual/en/function.date.php
-$datetime_format = 'd.m.y H:i';
+$datetime_format = 'Y-m-d H:i';
 
 // Allowed file extensions for create and rename files
 // e.g. 'txt,html,css,js'
@@ -3342,9 +3342,6 @@ function fm_show_nav_path($path)
     }
     ?>
     <nav class="navbar navbar-expand-lg <?php echo $getTheme; ?> mb-4 main-nav <?php echo $isStickyNavBar ?>">
-	<form action="../../views.php" method="POST">
-        <button style="margin-left:80px;" class="navbar-brand" type="submit" name="view" value="Overview">BirdNET-Pi Homepage</button>
-	<button class="navbar-brand" type="submit" name="view" value="Tools"><?php echo lng('Tools'); ?></button></form>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -4013,7 +4010,6 @@ function lng($txt) {
 
     // English Language
     $tr['en']['AppName']        = 'BirdNET-Pi Files';       $tr['en']['AppTitle']           = 'BirdNET-Pi Files';
-    $tr['en']['Tools']		= 'Tools';		    $tr['en']['WebTerminal']        = 'Web Terminal';
     $tr['en']['Login']          = 'Sign in';                $tr['en']['Username']           = 'Username';
     $tr['en']['Password']       = 'Password';               $tr['en']['Logout']             = 'Sign Out';
     $tr['en']['Move']           = 'Move';                   $tr['en']['Copy']               = 'Copy';
