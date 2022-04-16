@@ -111,6 +111,38 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
   }
   die();
 }
+
+if(isset($_GET['ajax_left_chart']) && $_GET['ajax_left_chart'] == "true") {
+?>
+<table>
+  <tr>
+    <th>Total</th>
+    <td><?php echo $totalcount['COUNT(*)'];?></td>
+  </tr>
+  <tr>
+    <th>Today</th>
+    
+    <td><form action="" method="GET"><button type="submit" name="view" value="Today's Detections"><?php echo $todaycount['COUNT(*)'];?></button></td>
+    </form>
+  </tr>
+  <tr>
+    <th>Last Hour</th>
+    <td><?php echo $hourcount['COUNT(*)'];?></td>
+  </tr>
+  <tr>
+    <th>Species Detected Today</th>
+    <td><form action="" method="GET"><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+    </form>
+  </tr>
+  <tr>
+    <th>Total Number of Species</th>
+    <td><form action="" method="GET"><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+    </form>
+  </tr>
+</table>
+<?php
+die();
+}
 ?>
 <head>
   <meta charset="UTF-8">
@@ -125,34 +157,6 @@ body::-webkit-scrollbar {
 <div class="overview">
 <div class="overview-stats">
 <div class="left-column">
-<table>
-  <tr>
-    <th>Total</th>
-    <td><?php echo $totalcount['COUNT(*)'];?></td>
-  </tr>
-  <tr>
-    <th>Today</th>
-    <form action="" method="GET">
-    <td><button type="submit" name="view" value="Today's Detections"><?php echo $todaycount['COUNT(*)'];?></button></td>
-    </form>
-  </tr>
-  <tr>
-    <th>Last Hour</th>
-    <td><?php echo $hourcount['COUNT(*)'];?></td>
-  </tr>
-  <tr>
-    <th>Species Detected Today</th>
-    <form action="" method="GET">
-    <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $speciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
-    </form>
-  </tr>
-  <tr>
-    <th>Total Number of Species</th>
-    <form action="" method="GET">
-    <td><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
-    </form>
-  </tr>
-</table>
 </div>
 <div class="right-column">
 <div class="chart">
@@ -170,12 +174,6 @@ if (file_exists('./Charts/'.$chart)) {
   echo "<p>No Detections For Today</p>";
 }
 ?>
-<script>
-// every $refresh seconds, this loop will run and refresh the spectrogram image
-window.setInterval(function(){
-	document.getElementById("chart").src = "/Charts/<?php echo $chart;?>?nocache="+Date.now();
-}, <?php echo $refresh; ?>*1000);
-</script>
 </div>
 
 <div id="most_recent_detection"></div>
@@ -186,12 +184,6 @@ $refresh = $config['RECORDING_LENGTH'];
 $time = time();
 echo "<img id=\"spectrogramimage\" src=\"/spectrogram.png?nocache=$time\">";
 ?>
-<script>
-// every $refresh seconds, this loop will run and refresh the spectrogram image
-window.setInterval(function(){
-  document.getElementById("spectrogramimage").src = "/spectrogram.png?nocache="+Date.now();
-}, <?php echo $refresh; ?>*1000);
-</script>
 
 </div>
 </div>
@@ -204,9 +196,20 @@ function loadDetectionIfNewExists(previous_detection_identifier=undefined) {
     // if there's a new detection that needs to be updated to the page
     if(this.responseText.length > 0) {
       document.getElementById("most_recent_detection").innerHTML = this.responseText;
+
+      // only going to load left chart if there's a new detection
+      loadLeftChart();
     }
   }
   xhttp.open("GET", "overview.php?ajax_detections=true&previous_detection_identifier="+previous_detection_identifier, true);
+  xhttp.send();
+}
+function loadLeftChart() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    document.getElementsByClassName("left-column")[0].innerHTML = this.responseText;
+  }
+  xhttp.open("GET", "overview.php?ajax_left_chart=true", true);
   xhttp.send();
 }
 window.setInterval(function(){
@@ -220,9 +223,15 @@ window.setInterval(function(){
     // image or audio didn't load for some reason, force a refresh in 5 seconds
     loadDetectionIfNewExists();
   }
-}, 5*1000);
+}, <?php echo intval($refresh/4); ?>*1000);
 window.addEventListener("load", function(){
   loadDetectionIfNewExists();
+  loadLeftChart();
 });
+// every $refresh seconds, this loop will run and refresh the spectrogram image
+window.setInterval(function(){
+  document.getElementById("chart").src = "/Charts/<?php echo $chart;?>?nocache="+Date.now();
+  document.getElementById("spectrogramimage").src = "/spectrogram.png?nocache="+Date.now();
+}, <?php echo $refresh; ?>*1000);
 </script>
 
