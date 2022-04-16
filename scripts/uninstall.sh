@@ -6,12 +6,15 @@ my_dir=$HOME/BirdNET-Pi/scripts
 source /etc/birdnet/birdnet.conf &> /dev/null
 SCRIPTS=($(ls -1 ${my_dir}) ${HOME}/.gotty)
 set -x
-services=($(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort))
+services=($(awk '/service/ && /systemctl/ && !/php/ {print $3}' ${my_dir}/install_services.sh | sort) custom_recording.service avahi-alias@.service)
 
 remove_services() {
   for i in "${services[@]}"; do
     if [ -L /etc/systemd/system/multi-user.target.wants/"${i}" ];then
       sudo systemctl disable --now "${i}"
+    fi
+    if [ -L /lib/systemd/system/"${i}" ];then
+      sudo rm -f /lib/systemd/system/$i
     fi
     if [ -f /etc/systemd/system/"${i}" ];then
       sudo rm /etc/systemd/system/"${i}"
