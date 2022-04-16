@@ -1,5 +1,5 @@
 <?php
-header("refresh: 300;");
+//header("refresh: 300;");
 $myDate = date('Y-m-d');
 $chart = "Combo-$myDate.png";
 
@@ -60,6 +60,49 @@ if($statement6 == False) {
 }
 $result6 = $statement6->execute();
 $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
+
+
+if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['previous_detection_identifier'])) {
+  if($_GET['previous_detection_identifier'] != $filename || $_GET['previous_detection_identifier'] == "undefined") {
+    // check to make sure the image actually exists, sometimes it takes a minute to be created
+    $headers = @get_headers("http://".$_SERVER['HTTP_HOST'].$filename.".png");
+    if(strpos($headers[0],'200')) {
+    ?>
+      <style>
+      .fade-in {
+        opacity: 1;
+        animation-name: fadeInOpacity;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-in;
+        animation-duration: 1s;
+      }
+
+      @keyframes fadeInOpacity {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+      </style>
+      <table class="<?php echo ($_GET['previous_detection_identifier'] == 'undefined') ? '' : 'fade-in';  ?>">
+        <h3>Most Recent Detection: <span style="font-weight: normal;"><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></span></h3>
+        <tr>
+          <td>
+          <form action="" method="GET">
+              <input type="hidden" name="view" value="Species Stats">
+              <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?>: </button>
+              <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a>
+              <br>Confidence: <?php echo $mostrecent['Confidence'];?><br>
+              <video height="611px" onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>"></video></td>
+          </form>
+        </tr>
+      </table> <?php
+    }
+  }
+  die();
+}
 ?>
 <head>
   <meta charset="UTF-8">
@@ -113,20 +156,41 @@ if (file_exists('./Charts/'.$chart)) {
 }
 ?>
 </div>
-<table>
-  <h3>Most Recent Detection: <span style="font-weight: normal;"><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></span></h3>
-  <tr>
-    <td>
-    <form action="" method="GET">
-        <input type="hidden" name="view" value="Species Stats">
-        <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?>: </button>
-        <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a>
-        <br>Confidence: <?php echo $mostrecent['Confidence'];?><br>
-        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>"></video></td>
-    </form>
-  </tr>
-</table>
+
+<div id="most_recent_detection"></div>
+
 <h3>Currently Analyzing</h3>
 <img src='/spectrogram.png?nocache=<?php echo time();?>' >
 </div>
 </div>
+
+<script>
+// we're passing a unique ID of the currently displayed detection to our script, which checks the database to see if the newest detection entry is that ID, or not. If the IDs don't match, it must mean we have a new detection and it's loaded onto the page
+function loadDetectionIfNewExists(previous_detection_identifier=undefined) {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    // if there's a new detection that needs to be updated to the page
+    if(this.responseText.length > 0) {
+      document.getElementById("most_recent_detection").innerHTML = this.responseText;
+    }
+  }
+  xhttp.open("GET", "overview.php?ajax_detections=true&previous_detection_identifier="+previous_detection_identifier, true);
+  xhttp.send();
+}
+window.setInterval(function(){
+  var videoelement = document.getElementsByTagName("video")[0];
+  if(typeof videoelement !== "undefined") {
+    // don't refresh the detection if the user is playing the previous one's audio, wait until they're finished
+    if(!!(videoelement.currentTime > 0 && !videoelement.paused && !videoelement.ended && videoelement.readyState > 2) == false) {
+      loadDetectionIfNewExists(videoelement.title);
+    }
+  } else{
+    // image or audio didn't load for some reason, force a refresh in 5 seconds
+    loadDetectionIfNewExists();
+  }
+}, 5*1000);
+window.addEventListener("load", function(){
+  loadDetectionIfNewExists();
+});
+</script>
+

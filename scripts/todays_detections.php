@@ -143,7 +143,6 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
 
 <script>
 function loadDetections(detections_limit, element=undefined) {
-  console.log(element);
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
     if(typeof element !== "undefined")
