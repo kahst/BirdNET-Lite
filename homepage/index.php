@@ -55,5 +55,5 @@ if(isset($_GET['stream'])){
 </div>";
 }
   echo "
-<iframe src=\"/views.php\">
+<iframe src=\"/views.php\"></iframe>
 </div>";

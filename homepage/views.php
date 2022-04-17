@@ -33,15 +33,15 @@
 <div class="views">
 <?php
 if(isset($_GET['view'])){
-  if($_GET['view'] == "System Info"){echo "<iframe src='phpsysinfo/index.php'>";}
+  if($_GET['view'] == "System Info"){echo "<iframe src='phpsysinfo/index.php'></iframe>";}
   if($_GET['view'] == "System Controls"){include('scripts/system_controls.php');}
   if($_GET['view'] == "Services"){include('scripts/service_controls.php');}
   if($_GET['view'] == "Spectrogram"){include('spectrogram.php');}
-  if($_GET['view'] == "View Log"){echo "<iframe src=\"/log\">";}
+  if($_GET['view'] == "View Log"){echo "<iframe src=\"/log\"></iframe>";}
   if($_GET['view'] == "Overview"){include('overview.php');}
   if($_GET['view'] == "Today's Detections"){include('todays_detections.php');}
   if($_GET['view'] == "Species Stats"){echo "<br><br>";include('stats.php');}
-  if($_GET['view'] == "Streamlit"){echo "<iframe src=\"/stats\">";}
+  if($_GET['view'] == "Streamlit"){echo "<iframe src=\"/stats\"></iframe>";}
   if($_GET['view'] == "Daily Charts"){include('history.php');}
   if($_GET['view'] == "Tools"){
     if (file_exists('./scripts/thisrun.txt')) {
@@ -137,7 +137,7 @@ if(isset($_GET['view'])){
     include('./scripts/exclude_list.php');
   }
   if($_GET['view'] == "File"){
-    echo "<iframe src='scripts/filemanager/filemanager.php'>";
+    echo "<iframe src='scripts/filemanager/filemanager.php'></iframe>";
   }
   if($_GET['view'] == "Webterm"){
     if (file_exists('./scripts/thisrun.txt')) {
@@ -156,7 +156,7 @@ if(isset($_GET['view'])){
       $submitteduser = $_SERVER['PHP_AUTH_USER'];
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
         #ACCESS THE WEB TERMINAL
-      	echo "<iframe src='/terminal'>";
+      	echo "<iframe src='/terminal'></iframe>";
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
