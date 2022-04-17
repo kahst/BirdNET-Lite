@@ -71,7 +71,6 @@ button {
 }
 
 button:hover {
-  font-weight: bold;
   color: blue;
 }
 
