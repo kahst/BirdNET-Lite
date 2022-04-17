@@ -320,7 +320,7 @@ install_chart_viewer_service() {
 Description=BirdNET-Pi Chart Viewer Service
 [Service]
 Restart=always
-RestartSec=60
+RestartSec=120
 Type=simple
 User=$USER
 ExecStart=/usr/local/bin/daily_plot.py
