@@ -105,7 +105,6 @@ ExecStart=/usr/local/bin/species_notifier.sh
 WantedBy=multi-user.target
 EOF
   ln -sf $HOME/BirdNET-Pi/templates/pushed_notifications.service /usr/lib/systemd/system
-  systemctl enable pushed_notifications.service
 }
 
 create_necessary_dirs() {
