@@ -47,7 +47,7 @@ if(isset($_GET['species'])){
 </head>
 <body>
 <div class="stats">
-<div class="column left">
+<div class="column">
 <table>
 <?php
 while($results=$result2->fetchArray(SQLITE3_ASSOC))
