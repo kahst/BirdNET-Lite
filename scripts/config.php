@@ -84,7 +84,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <input name="pushed_app_key" type="text" value="<?php print($config['PUSHED_APP_KEY']);?>" /><br>
       <label for="pushed_app_secret">Pushed App Secret: </label>
       <input name="pushed_app_secret" type="text" value="<?php print($config['PUSHED_APP_SECRET']);?>" /><br>
-      <p><a href="https://pushed.co/quick-start-guide">Pushed iOS Notifications</a> can be setup and enabled for New Species notifications. Sorry, Android users, this only works on iOS.</p>
+      <p><a href="https://pushed.co/quick-start-guide">Pushed iOS Notifications</a> can be setup and enabled for New Species notifications. Be sure to "Enable" the "Pushed Notifications" in "Tools" > "Services" if you would like to use this feature. Sorry, Android users, this only works on iOS.</p>
       <label for="language">Database Language: </label>
       <select name="language">
         <option value="none">Select your language</option>
