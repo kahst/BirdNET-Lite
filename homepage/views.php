@@ -1,32 +1,32 @@
 <link rel="stylesheet" href="style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<div style="margin-bottom:15px" class="topnav" id="myTopnav">
+<div class="topnav" id="myTopnav">
 <form action="" method="GET" id="views">
-  <button style="height:100%;vertical-align:middle" type="submit" name="view" value="Overview" form="views">Overview</button>
+  <button type="submit" name="view" value="Overview" form="views">Overview</button>
 </form>
 <form action="" method="GET" id="views">
-  <button style="height:100%;vertical-align:middle" type="submit" name="view" value="Today's Detections" form="views">Today's Detections</button>
+  <button type="submit" name="view" value="Today's Detections" form="views">Today's Detections</button>
 </form>
 <form action="" method="GET" id="views">
-  <button style="height:100%;vertical-align:middle" type="submit" name="view" value="Species Stats" form="views">Best Recordings</button>
+  <button type="submit" name="view" value="Species Stats" form="views">Best Recordings</button>
 </form>
 <form action="" method="GET" id="views">
-  <button style="height:100%;vertical-align:middle" type="submit" name="view" value="Streamlit" form="views">Species Stats</button>
+  <button type="submit" name="view" value="Streamlit" form="views">Species Stats</button>
 </form>
 <form action="" method="GET" id="views">
-  <button style="height:100%;vertical-align:middle" type="submit" name="view" value="Daily Charts" form="views">Daily Charts</button>
+  <button type="submit" name="view" value="Daily Charts" form="views">Daily Charts</button>
 </form>
 <form action="" method="GET" id="views">
-  <button style="height:100%;vertical-align:middle" type="submit" name="view" value="Recordings" form="views">Recordings</button>
+  <button type="submit" name="view" value="Recordings" form="views">Recordings</button>
 </form>
 <form action="" method="GET" id="views">
-  <button style="height:100%;vertical-align:middle" type="submit" name="view" value="Spectrogram" form="views">Spectrogram</button>
+  <button type="submit" name="view" value="Spectrogram" form="views">Spectrogram</button>
 </form>
 <form action="" method="GET" id="views">
-  <button style="height:100%;vertical-align:middle" type="submit" name="view" value="View Log" form="views">View Log</button>
+  <button type="submit" name="view" value="View Log" form="views">View Log</button>
 </form>
 <form action="" method="GET" id="views">
-  <button style="height:100%;vertical-align:middle" type="submit" name="view" value="Tools" form="views">Tools</button>
+  <button type="submit" name="view" value="Tools" form="views">Tools</button>
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>
