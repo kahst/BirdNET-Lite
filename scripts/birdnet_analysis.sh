@@ -323,7 +323,7 @@ fi
 
 YESTERDAY="$RECS_DIR/$(date --date="yesterday" "+%B-%Y/%d-%A")"
 TODAY="$RECS_DIR/$(date "+%B-%Y/%d-%A")"
-if [ $(find ${YESTERDAY} -name '*wav' | wc -l) -gt 0 ];then
+if [ $(find ${YESTERDAY} -name '*wav' 2>/dev/null | wc -l) -gt 0 ];then
   run_birdnet "${YESTERDAY}"
 elif [ $(find ${TODAY} -name '*wav' | wc -l) -gt 0 ];then
   run_birdnet "${TODAY}"
