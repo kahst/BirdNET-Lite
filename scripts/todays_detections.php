@@ -65,7 +65,8 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
   }
   $result0 = $statement0->execute();
 
-  ?> <table> <?php
+  ?> <table>
+   <?php
   $iterations = 0;
   while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
   {
@@ -76,8 +77,8 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
   $filename = "/By_Date/".date('Y-m-d')."/".$comname."/".$todaytable['File_Name'];
   $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
   ?>
-        <tr id="<?php echo $iterations; ?>">
-        <td><?php echo $todaytable['Time'];?><br>
+        <tr class="relative" id="<?php echo $iterations; ?>">
+        <td><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><?php echo $todaytable['Time'];?><br>
         <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
         <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
         <b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br>

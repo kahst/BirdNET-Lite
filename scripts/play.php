@@ -10,7 +10,16 @@ if($db == False){
 }
 
 #By Date
-if(isset($_GET['bydate'])){
+if(isset($_GET['byfilename'])){
+  $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date');
+  if($statement == False){
+    echo "Database is busy";
+    header("refresh: 0;");
+  }
+  $result = $statement->execute();
+  $view = "bydate";
+  #By Date
+}elseif(isset($_GET['bydate'])){
   $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date');
   if($statement == False){
     echo "Database is busy";
@@ -75,7 +84,7 @@ if(isset($_GET['bydate'])){
 
 <?php
 #If no specific species
-if(!isset($_GET['species'])){
+if(!isset($_GET['species']) && !isset($_GET['filename'])){
 ?>
 <div class="play">
 <table>
@@ -124,6 +133,35 @@ if(isset($_GET['species'])){
     $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Time DESC");
   } else {
   $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Date DESC, Time DESC");}
+  if($statement2 == False){
+    echo "Database is busy";
+    header("refresh: 0;");
+  }
+  $result2 = $statement2->execute();
+  echo "<table>
+    <tr>
+    <th>$name</th>
+    </tr>";
+    while($results=$result2->fetchArray(SQLITE3_ASSOC))
+    {
+      $comname = preg_replace('/ /', '_', $results['Com_Name']);
+      $comname = preg_replace('/\'/', '', $comname);
+      $date = $results['Date'];
+      $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
+      $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
+      $sci_name = $results['Sci_Name'];
+      $time = $results['Time'];
+      $confidence = $results['Confidence'];
+      echo "<tr class='relative'>
+        <td><a target=\"_blank\" href=\"index.php?filename=".$results['File_Name']."\"><img class=\"copyimage\" width=25 src=\"images/copy.png\"></a>$date $time<br>$confidence<br>
+        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+        </tr>";
+
+    }echo "</table>";}
+
+if(isset($_GET['filename'])){
+  $name = $_GET['filename'];
+  $statement2 = $db->prepare("SELECT * FROM detections where File_name == \"$name\" ORDER BY Date DESC, Time DESC");
   if($statement2 == False){
     echo "Database is busy";
     header("refresh: 0;");
