@@ -54,6 +54,14 @@ if(isset($_GET['stream'])){
   <h1><a href=\"\">BirdNET-Pi</a><img src=\"images/version.svg\"></h1>
 </div>";
 }
+if(isset($_GET['filename'])) {
+  $filename = $_GET['filename'];
+echo "
+<iframe src=\"/views.php?view=Recordings&filename=$filename\"></iframe>
+</div>";
+} else {
   echo "
 <iframe src=\"/views.php\"></iframe>
 </div>";
+}
+

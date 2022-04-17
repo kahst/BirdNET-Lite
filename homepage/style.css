@@ -494,3 +494,14 @@ button:hover {
     display:none;
   }
 }
+
+.copyimage {
+  position:absolute;
+  top: 7px;
+  right: 7px;
+  width: 25px !important;
+  height: 25px !important;
+}
+.relative {
+  position:relative;
+}
