@@ -100,6 +100,8 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
     </table>
   <p>Loading Images from <a href=\"https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image\" target=\"_blank\">Wikimedia Commons</a></p>", '6096');
   
+  echo "<script>document.getElementsByTagName(\"h3\")[0].scrollIntoView();</script>";
+  
   ob_flush();
   flush();
   $imagelink = "https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image";
