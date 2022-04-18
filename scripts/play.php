@@ -152,8 +152,8 @@ if(isset($_GET['species'])){
       $sci_name = $results['Sci_Name'];
       $time = $results['Time'];
       $confidence = $results['Confidence'];
-      echo "<tr class='relative'>
-        <td><a target=\"_blank\" href=\"index.php?filename=".$results['File_Name']."\"><img class=\"copyimage\" width=25 src=\"images/copy.png\"></a>$date $time<br>$confidence<br>
+      echo "<tr>
+        <td class=\"relative\"><a target=\"_blank\" href=\"index.php?filename=".$results['File_Name']."\"><img class=\"copyimage\" width=25 src=\"images/copy.png\"></a>$date $time<br>$confidence<br>
         <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
         </tr>";
 
