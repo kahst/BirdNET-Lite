@@ -44,7 +44,7 @@ If your installation isn't in one of the countries listed above, please let me k
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
 * [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
-* Web interface access to all data and logs
+* Web interface access to all data and logs provided by [Caddy](https://caddyserver.com)
 * Web Terminal
 * [Tiny File Manager](https://tinyfilemanager.github.io/)
 * FTP server included
