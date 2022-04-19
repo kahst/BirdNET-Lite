@@ -46,7 +46,6 @@ if ($language != "none"){
   </style>
   </head>
 <div class="settings">
-<iframe src="https://github.com/sponsors/mcguirepr89/button" title="Sponsor mcguirepr89" style="height:35px;width:116px;border:0;"></iframe>
       <h2>Basic Settings</h2>
     <form action="" method="GET">
 <?php 
