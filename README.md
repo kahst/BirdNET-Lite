@@ -41,7 +41,7 @@ Currently listening in these countries . . . that I know of . . .
 - Finland
 - Australia
 
-If your installation isn't in one of the countries listed above, please let me know so that I can add your country to the list! Let me know either in a GitHub issue, or [email me](mailto:mcguirepr89@gmail.com) and let me know where your BirdNET-Pi is listening.
+If your installation isn't in one of the countries listed above, please let me know so that I can add your country to the list! Let me know either in a GitHub issue, or [email me](mailto:@gmail.com) and let me know where your BirdNET-Pi is listening.
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
@@ -73,7 +73,7 @@ curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/main/newinstall
 ```
 The installer takes care of any and all necessary updates, so you can run that as the very first command upon the first boot, if you'd like.
 
-The installation creates a log in `$HOME/installation$(date "+%F").log` that you can [email me](mailto:mcguirepr89@gmail.com) if you encounter any issues during installation.
+The installation creates a log in `$HOME/installation$(date "+%F").log` that you can [email me](mailto:@gmail.com) if you encounter any issues during installation.
 
 ## Access
 The BirdNET-Pi can be accessed from any web browser on the same network:
@@ -109,7 +109,7 @@ I want this to work for you! If you have any trouble, or if my documentation is 
 
 If you encounter any issues at any point, or have questions, comments, concerns, ideas, or want to share something, please take a look through the [open and closed issues](https://github.com/mcguirepr89/BirdNET-Pi/issues?q=is%3A+issue) and [the community discussions](https://github.com/mcguirepr89/BirdNET-Pi/discussions). PLEASE feel invited to [open a new issue](https://github.com/mcguirepr89/BirdNET-Pi/issues/new/choose) if you don't find the help you need. Likewise, please accept my invitation to [start a new discussion](https://github.com/mcguirepr89/BirdNET-Pi/discussions/new) to get a conversation started around your topic.
 
-If you are not a GitHub user and need help, you can [email me](mailto:mcguirepr89@gmail.com), but I hope you will consider making a GitHub account so that your questions can be answered here for others as well. I expect this project will attract more bird-enthusiasts than Linux-enthusiasts, so please don't feel like any question is too _novice_ or, pardon the phrase, _stupid_ to ask. I want to help!
+If you are not a GitHub user and need help, you can [email me](mailto:@gmail.com), but I hope you will consider making a GitHub account so that your questions can be answered here for others as well. I expect this project will attract more bird-enthusiasts than Linux-enthusiasts, so please don't feel like any question is too _novice_ or, pardon the phrase, _stupid_ to ask. I want to help!
 
 ## Sharing
 Please join a Discussion!! and please join [BirdWeather!!](https://app.birdweather.com)
