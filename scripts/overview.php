@@ -8,60 +8,21 @@ if($db == False) {
   header("refresh: 0;");
 }
 
-$statement = $db->prepare('SELECT COUNT(*) FROM detections');
-if($statement == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result = $statement->execute();
-$totalcount = $result->fetchArray(SQLITE3_ASSOC);
-
-$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\', \'localtime\')');
-if($statement2 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result2 = $statement2->execute();
-$todaycount = $result2->fetchArray(SQLITE3_ASSOC);
-
-$statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == Date(\'now\', \'localtime\') AND TIME >= TIME(\'now\', \'localtime\', \'-1 hour\')');
-if($statement3 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result3 = $statement3->execute();
-$hourcount = $result3->fetchArray(SQLITE3_ASSOC);
-
-$statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 1');
-if($statement4 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result4 = $statement4->execute();
-$mostrecent = $result4->fetchArray(SQLITE3_ASSOC);
-$comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
-$sciname = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
-$comname = preg_replace('/\'/', '', $comname);
-$filename = "/By_Date/".$mostrecent['Date']."/".$comname."/".$mostrecent['File_Name'];
-
-$statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date == Date(\'now\',\'localtime\')');
-if($statement5 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result5 = $statement5->execute();
-$speciestally = $result5->fetchArray(SQLITE3_ASSOC);
-
-$statement6 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections');
-if($statement6 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result6 = $statement6->execute();
-$totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
-
-
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['previous_detection_identifier'])) {
+
+  $statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 1');
+  if($statement4 == False) {
+    echo "Database is busy";
+    header("refresh: 0;");
+  }
+  $result4 = $statement4->execute();
+  $mostrecent = $result4->fetchArray(SQLITE3_ASSOC);
+  $comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
+  $sciname = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
+  $comname = preg_replace('/\'/', '', $comname);
+  $filename = "/By_Date/".$mostrecent['Date']."/".$comname."/".$mostrecent['File_Name'];
+
+
   if($_GET['previous_detection_identifier'] != $filename || $_GET['previous_detection_identifier'] == "undefined") {
     // check to make sure the image actually exists, sometimes it takes a minute to be created
     if (isset($_SERVER['HTTPS']) &&
@@ -113,21 +74,57 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
 }
 
 if(isset($_GET['ajax_left_chart']) && $_GET['ajax_left_chart'] == "true") {
+
+$totalcount = 0;
+$todaycount = 0;
+$hourcount = 0;
+$statement = $db->prepare('SELECT * FROM detections ORDER BY Date DESC, Time DESC');
+if($statement == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
+$result = $statement->execute();
+while($detection=$result->fetchArray(SQLITE3_ASSOC))
+{
+  $totalcount++;
+  if(strtotime($detection["Date"]." ".$detection["Time"]) > (time() - 3600)){ 
+    $hourcount++;
+  } if(strtotime($detection["Date"]." ".$detection["Time"]) > (time() - (time() - strtotime("today"))) ){ 
+    $todaycount++;
+  } 
+}
+
+$statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date == Date(\'now\',\'localtime\')');
+if($statement5 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
+$result5 = $statement5->execute();
+$speciestally = $result5->fetchArray(SQLITE3_ASSOC);
+
+$statement6 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections');
+if($statement6 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
+$result6 = $statement6->execute();
+$totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
+  
 ?>
 <table>
   <tr>
     <th>Total</th>
-    <td><?php echo $totalcount['COUNT(*)'];?></td>
+    <td><?php echo $totalcount;?></td>
   </tr>
   <tr>
     <th>Today</th>
     
-    <td><form action="" method="GET"><button type="submit" name="view" value="Today's Detections"><?php echo $todaycount['COUNT(*)'];?></button></td>
+    <td><form action="" method="GET"><button type="submit" name="view" value="Today's Detections"><?php echo $todaycount;?></button></td>
     </form>
   </tr>
   <tr>
     <th>Last Hour</th>
-    <td><?php echo $hourcount['COUNT(*)'];?></td>
+    <td><?php echo $hourcount;?></td>
   </tr>
   <tr>
     <th>Species Detected Today</th>
