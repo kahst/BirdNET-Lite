@@ -60,7 +60,7 @@ def loadModel():
 
     # Load TFLite model and allocate tensors.
     modelpath = userDir + '/BirdNET-Pi/model/BirdNET_6K_GLOBAL_MODEL.tflite'
-    myinterpreter = tflite.Interpreter(model_path=modelpath,num_threads=1)
+    myinterpreter = tflite.Interpreter(model_path=modelpath,num_threads=2)
     myinterpreter.allocate_tensors()
 
     # Get input and output tensors.
@@ -356,16 +356,16 @@ def handle_client(conn, addr):
                                         Date.replace("/", "-") + '-birdnet-' + Time + audiofmt
 
                                 #Connect to SQLite Database
-                                #try: 
-                                con = sqlite3.connect(userDir + '/BirdNET-Pi/scripts/birds.db')
-                                cur = con.cursor()
-                                cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Date, Time, Sci_Name, Com_Name, str(score), Lat, Lon, Cutoff, Week, Sens, Overlap, File_Name))
+                                try: 
+                                    con = sqlite3.connect(userDir + '/BirdNET-Pi/scripts/birds.db')
+                                    cur = con.cursor()
+                                    cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Date, Time, Sci_Name, Com_Name, str(score), Lat, Lon, Cutoff, Week, Sens, Overlap, File_Name))
 
-                                con.commit()
-                                con.close()
-                                #except:
-                                #    print("Database busy")
-                                #    time.sleep(2)
+                                    con.commit()
+                                    con.close()
+                                except:
+                                    print("Database busy")
+                                    time.sleep(2)
 
                                 print(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + ';' + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';' + str(args.sensitivity) +';' + str(args.overlap) + Com_Name.replace(" ", "_") + '-' + str(score) + '-' + str(current_date) + '-birdnet-' + str(current_time) + audiofmt  + '\n')
 
