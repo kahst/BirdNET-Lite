@@ -1,4 +1,4 @@
-### Anyone interested in taking over this repo, let me know in an email or discussion
+# Anyone interested in taking over this repo, let me know in an email or discussion
 
 <h1 align="center">
   BirdNET-Pi <img src="https://img.shields.io/badge/Version-0.13-pink" />
