@@ -73,6 +73,8 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
   die();
 }
 
+if(isset($_GET['ajax_left_chart']) && $_GET['ajax_left_chart'] == "true") {
+
 $totalcount = 0;
 $todaycount = 0;
 $hourcount = 0;
@@ -107,9 +109,7 @@ if($statement6 == False) {
 }
 $result6 = $statement6->execute();
 $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
-
-
-if(isset($_GET['ajax_left_chart']) && $_GET['ajax_left_chart'] == "true") {
+  
 ?>
 <table>
   <tr>
