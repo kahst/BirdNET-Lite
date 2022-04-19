@@ -89,8 +89,8 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   $linkname = preg_replace('/_/', '+', $dbsciname);
   $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
   echo str_pad("<h3>$species</h3>
-    <table><tr class=\"relative\">
-  <td><a target=\"_blank\" href=\"index.php?filename=".$results['File_Name']."\"><img class=\"copyimage\" width=25 src=\"images/copy.png\"></a> <a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/><i>$sciname</i></a><br>
+    <table><tr>
+  <td class=\"relative\"><a target=\"_blank\" href=\"index.php?filename=".$results['File_Name']."\"><img class=\"copyimage\" width=25 src=\"images/copy.png\"></a> <a href=\"https://wikipedia.org/wiki/$dbsciname\" target=\"top\"/><i>$sciname</i></a><br>
   <b>Occurrences: </b>$count<br>
   <b>Max Confidence: </b>$maxconf<br>
   <b>Best Recording: </b>$date $time<br>
@@ -124,9 +124,9 @@ $comname = preg_replace('/ /', '_', $results['Com_Name']);
 $comname = preg_replace('/\'/', '', $comname);
 $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
 ?>
-      <tr class="relative">
+      <tr>
       <form action="" method="GET">
-      <td><a target="_blank" href="index.php?filename=<?php echo $results['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><input type="hidden" name="view" value="Species Stats">
+      <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $results['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><input type="hidden" name="view" value="Species Stats">
         <button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button><br><b>Occurrences:</b> <?php echo $results['COUNT(*)'];?><br>
       <b>Max Confidence:</b> <?php echo $results['MAX(Confidence)'];?><br>
       <b>Best Recording:</b> <?php echo $results['Date']." ".$results['Time'];?><br><video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
