@@ -103,11 +103,7 @@ Since the change in RaspiOS that has discontinued the default `pi` user, the rec
 ```
 
 ## Troubleshooting and Ideas
-I want this to work for you! If you have any trouble, or if my documentation is wrong, I'd like to get things right.
-
-If you encounter any issues at any point, or have questions, comments, concerns, ideas, or want to share something, please take a look through the [open and closed issues](https://github.com/mcguirepr89/BirdNET-Pi/issues?q=is%3A+issue) and [the community discussions](https://github.com/mcguirepr89/BirdNET-Pi/discussions). PLEASE feel invited to [open a new issue](https://github.com/mcguirepr89/BirdNET-Pi/issues/new/choose) if you don't find the help you need. Likewise, please accept my invitation to [start a new discussion](https://github.com/mcguirepr89/BirdNET-Pi/discussions/new) to get a conversation started around your topic.
-
-If you are not a GitHub user and need help, you can [email me](mailto:@gmail.com), but I hope you will consider making a GitHub account so that your questions can be answered here for others as well. I expect this project will attract more bird-enthusiasts than Linux-enthusiasts, so please don't feel like any question is too _novice_ or, pardon the phrase, _stupid_ to ask. I want to help!
+Submit an issue or discussion.
 
 ## Sharing
 Please join a Discussion!! and please join [BirdWeather!!](https://app.birdweather.com)
