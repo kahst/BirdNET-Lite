@@ -39,8 +39,6 @@ Currently listening in these countries . . . that I know of . . .
 - Finland
 - Australia
 
-If your installation isn't in one of the countries listed above, please let me know so that I can add your country to the list! Let me know either in a GitHub issue, or [email me](mailto:@gmail.com) and let me know where your BirdNET-Pi is listening.
-
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
 * [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
