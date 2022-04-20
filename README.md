@@ -142,12 +142,3 @@ Current database languages include the list below:
 | Swedish | 264 | 4.15% |
 | Thai | 5580 | 87.71% |
 | Ukrainian | 646 | 10.15% |
-
-### Tips and Coming Soon:
-For some reason, the system seems to run more efficiently and the birds sound better when you [![Star on GitHub](https://img.shields.io/github/stars/mcguirepr89/BirdNET-Pi.svg?style=social)](https://github.com/mcguirepr89/BirdNET-Pi/stargazers) and <a href="https://github.com/sponsors/mcguirepr89">Sponsor</a> the project :)
-
-Expect FULL internationalization options post-installation for the following languages:
-- German
-- Swedish
-- French
-- Spanish
