@@ -158,6 +158,11 @@ button:hover {
   color: white;
 }
 
+.topnav .button-hover {
+  background-color: rgb(219, 295, 235) !important;
+  color: black;
+}
+
 .topnav .icon {
   display: none;
 }

@@ -30,6 +30,20 @@
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>
+
+<script>
+  var topbuttons = document.querySelectorAll("button[form='views']");
+  if(window.location.search.substr(1) != '') {
+    for (var i = 0; i < topbuttons.length; i++) {
+       if(topbuttons[i].value == decodeURIComponent(window.location.search.substr(1)).replace(/\+/g,' ').split('=').pop()) {
+            topbuttons[i].classList.add("button-hover");
+       }
+     }
+  } else {
+    topbuttons[0].classList.add("button-hover");
+  }
+</script>
+
 <div class="views">
 <?php
 if(isset($_GET['view'])){
