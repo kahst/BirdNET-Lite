@@ -510,3 +510,10 @@ button:hover {
 .relative {
   position:relative;
 }
+.sortbutton {
+  margin-top:10px;
+  font-size:x-large;
+  background:#dbffeb;
+  padding:5px;
+  border: 2px solid black;
+}
