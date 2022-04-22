@@ -70,6 +70,7 @@ if(isset($_GET['species'])){
   <div style="width: auto;
    text-align: center">
    <form action="" method="GET">
+    <input type="hidden" name="sort" value="<?php if(isset($_GET['sort'])){echo $_GET['sort'];}?>">
       <input type="hidden" name="view" value="Species Stats">
       <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "alphabetical"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="alphabetical">
          <img src="images/sort_abc.svg" alt="Sort by alphabetical">
@@ -89,7 +90,8 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
 ?>
   <tr>
   <form action="" method="GET">
-  <td><input type="hidden" name="view" value="Species Stats">
+  <td><input type="hidden" name="sort" value="<?php if(isset($_GET['sort'])){echo $_GET['sort'];}?>">
+    <input type="hidden" name="view" value="Species Stats">
     <button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button>
   </td>
 <?php
@@ -158,6 +160,7 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
 ?>
       <tr>
       <form action="" method="GET">
+        <input type="hidden" name="sort" value="<?php if(isset($_GET['sort'])){echo $_GET['sort'];}?>">
       <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $results['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><input type="hidden" name="view" value="Species Stats">
         <button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button><br><b>Occurrences:</b> <?php echo $results['COUNT(*)'];?><br>
       <b>Max Confidence:</b> <?php echo $results['MAX(Confidence)'];?><br>
