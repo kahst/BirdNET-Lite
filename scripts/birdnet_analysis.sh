@@ -97,9 +97,9 @@ run_analysis() {
     echo "RECORDING_LENGTH set to ${RECORDING_LENGTH}"
     a=0
     until [ -z "$(lsof -t ${1}/${i})" ];do
-      sleep 1
+      sleep 2
       [ $a -ge ${RECORDING_LENGTH} ] && rm -f ${1}/${i} && break
-      a=$((a+1))
+      a=$((a+2))
     done
 
     if ! grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;then
