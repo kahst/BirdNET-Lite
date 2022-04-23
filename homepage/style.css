@@ -422,9 +422,6 @@ button:hover {
     width: 60px;
     height: 60px;
   }
-  .version {
-    display: none;
-  }
   .topnav.responsive {position: relative;}
   .topnav.responsive button {
     display: block;
@@ -494,7 +491,6 @@ button:hover {
   .left-column {
     display: none;
   }
-  .version {display:none;}
   .left {
     display:none;
   }

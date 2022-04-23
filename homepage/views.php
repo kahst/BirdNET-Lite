@@ -1,4 +1,9 @@
 <link rel="stylesheet" href="style.css">
+<style>
+body::-webkit-scrollbar {
+  display:none
+}
+</style>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <div class="topnav" id="myTopnav">
 <form action="" method="GET" id="views">
@@ -51,7 +56,7 @@ if(isset($_GET['view'])){
   if($_GET['view'] == "System Controls"){include('scripts/system_controls.php');}
   if($_GET['view'] == "Services"){include('scripts/service_controls.php');}
   if($_GET['view'] == "Spectrogram"){include('spectrogram.php');}
-  if($_GET['view'] == "View Log"){echo "<iframe src=\"/log\"></iframe>";}
+  if($_GET['view'] == "View Log"){echo "<body style=\"scroll:no;overflow-x:hidden;\"><iframe style=\"width:calc( 100% + 1em);\" src=\"/log\"></iframe></body>";}
   if($_GET['view'] == "Overview"){include('overview.php');}
   if($_GET['view'] == "Today's Detections"){include('todays_detections.php');}
   if($_GET['view'] == "Species Stats"){echo "<br><br>";include('stats.php');}
