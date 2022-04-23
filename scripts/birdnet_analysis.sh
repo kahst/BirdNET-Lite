@@ -91,10 +91,9 @@ run_analysis() {
   fi
 
   for i in "${files[@]}";do
+    [ ! -f ${1}/${i} ] && continue
     echo "${1}/${i}" > $HOME/BirdNET-Pi/analyzing_now.txt
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=15
-    FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"
-    [ -z $FILE_LENGTH ] && sleep 1 && continue
     echo "RECORDING_LENGTH set to ${RECORDING_LENGTH}"
     if [ "${RECORDING_LENGTH}" == 60 ];then
       RECORDING_LENGTH_MATCH="01:00"
