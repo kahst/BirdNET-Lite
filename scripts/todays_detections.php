@@ -57,8 +57,13 @@ if($statement6 == False){
 $result6 = $statement6->execute();
 $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
 
-if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['display_limit']) && is_numeric($_GET['display_limit']) ) {
-  $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC LIMIT '.(intval($_GET['display_limit'])-40).',40');
+if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
+  if(isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])){
+    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC LIMIT '.(intval($_GET['display_limit'])-40).',40');
+  } else {
+    // legacy mode
+    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC ');
+  }
   if($statement0 == False){
     echo "Database is busy";
     header("refresh: 0;");
@@ -77,20 +82,30 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
   $filename = "/By_Date/".date('Y-m-d')."/".$comname."/".$todaytable['File_Name'];
   $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
   ?>
-        <tr class="relative" id="<?php echo $iterations; ?>">
-        <td><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><?php echo $todaytable['Time'];?><br>
-        <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
-        <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
-        <b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br>
-        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
-        </td>
+        <?php if(isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])){ ?>
+          <tr class="relative" id="<?php echo $iterations; ?>">
+          <td><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><?php echo $todaytable['Time'];?><br>
+          <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
+          <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
+          <b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br>
+          <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
+          </td>
+        <?php } else { //legacy mode ?>
+          <tr class="relative" id="<?php echo $iterations; ?>">
+          <td><?php echo $todaytable['Time'];?><br></td><td>
+          <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
+          <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br></td>
+          <td><b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br></td>
+          <td style="min-width:180px"><audio controls preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
+          </td>
+        <?php } ?>
   <?php }?>
         </tr>
       </table>
 
   <?php 
   // don't show the button if there's no more detections to be displayed, we're at the end of the list
-  if($iterations >= 40) { ?>
+  if($iterations >= 40 && isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])) { ?>
   <center>
   <button style="margin-top:10px;font-size:x-large;background:#dbffeb;padding:10px;border: 2px solid black;" onclick="loadDetections(<?php echo $_GET['display_limit'] + 40; ?>, this);" value="Today's Detections">Load 40 More...</button>
   </center>
@@ -137,12 +152,24 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
     </table>
 
     <h3>Today's Detections</h3>
-    
+
     <div style="padding-bottom:10px" id="detections_table"></div>
+
+    <button onclick="switchViews(this);" style="color:gray;margin:5px;float:right;z-index:100;position:relative;font-size:small;background:#dbffeb;padding:5px;border: 2px solid black;">Legacy view</button>
 
 </div>
 
 <script>
+function switchViews(element) {
+  document.getElementById("detections_table").innerHTML = "";
+  if(element.innerHTML == "Legacy view") {
+    element.innerHTML = "Normal view";
+    loadDetections(undefined);
+  } else if(element.innerHTML == "Normal view") {
+    element.innerHTML = "Legacy view";
+    loadDetections(40);
+  }
+}
 function loadDetections(detections_limit, element=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
@@ -151,6 +178,7 @@ function loadDetections(detections_limit, element=undefined) {
      element.remove();
     }
     document.getElementById("detections_table").innerHTML+= this.responseText;
+    
   }
   xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit, true);
   xhttp.send();
@@ -159,5 +187,4 @@ window.addEventListener("load", function(){
   loadDetections(40);
 });
 </script>
-
 
