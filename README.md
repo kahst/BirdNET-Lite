@@ -39,15 +39,15 @@ Currently listening in these countries . . . that I know of . . .
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
+* Automatic extraction of detected data (creating audio clips of detected bird sounds)
+* Spectrograms available for all extractions
+* Live audio stream
 * [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
 * Web interface access to all data and logs provided by [Caddy](https://caddyserver.com)
 * Web Terminal
 * [Tiny File Manager](https://tinyfilemanager.github.io/)
 * FTP server included
-* Automatic extraction of detected data (creating audio clips of detected bird sounds)
-* Spectrograms available for all extractions
 * SQLite3 Database
-* Live audio stream
 * Adminer database maintenance
 * [phpSysInfo](https://github.com/phpsysinfo/phpsysinfo)
 * New species mobile notifications from [Pushed.co](https://pushed.co/quick-start-guide) (for iOS users only)
