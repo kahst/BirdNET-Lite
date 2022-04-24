@@ -27,12 +27,12 @@ for h in "${SCAN_DIRS[@]}";do
   #  Field 5: Confidence
 
   # Removes old directories
-  #if echo "${h}" | grep $(date --date="yesterday" "+%A") &> /dev/null;then
-  #  echo "Removing old directories"
-  #  rm -drf "${h}"
-  #  rm -drf "$(echo ${h} | cut -d'-' -f1-3)"
-  #  continue
-  #fi
+  if echo "${h}" | grep $(date --date="-2 day" "+%A") &> /dev/null;then
+    echo "Removing old directories"
+    rm -drf "${h}"
+    rm -drf "$(echo ${h} | cut -d'-' -f1-3)"
+    continue
+  fi
 
   # Iterates over each "Analyzed" directory
   for i in $(find ${h} -name '*csv' 2>/dev/null | sort );do 
