@@ -26,4 +26,5 @@ else
         -D "${REC_CARD}" --use-strftime \
         ${RECS_DIR}/%B-%Y/%d-%A/%F-birdnet-${STAMP}.wav
     fi
+  fi
 fi
