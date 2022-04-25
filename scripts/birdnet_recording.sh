@@ -6,7 +6,9 @@ source /etc/birdnet/birdnet.conf
 
 if [ ! -z $RTSP_STREAM ];then
   while true;do
-	  ffmpeg -i  $RTSP_STREAM -t 15 -vn -acodec pcm_s16le -ac 2 -ar 48000 file:${RECS_DIR}/$(date "+%F")-birdnet-$(date "+%H:%M:%S").wav
+    for i in ${RTSP_STREAM//,/ };do
+      ffmpeg -i  ${i} -t 15 -vn -acodec pcm_s16le -ac 2 -ar 48000 file:${RECS_DIR}/$(date "+%F")-birdnet-$(date "+%H:%M:%S").wav </dev/null > /dev/null 2>&1 & sleep 1;
+    done
   done
 else
   if ! pulseaudio --check;then pulseaudio --start;fi
