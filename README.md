@@ -20,6 +20,7 @@ Check out birds from around the world
 - [BirdNET-Pi in Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
 - [Private Nature Garden, Grevenbroich, Germany](http://grevenbroich-elsen.birdnetpi.com)<br>
 - [Norman, Oklahoma, United States](https://normanok.birdnetpi.com)<br>
+- [Nijmegen, the Netherlands](https://nijmegen.birdnetpi.com)<br>
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 
