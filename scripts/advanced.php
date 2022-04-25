@@ -216,7 +216,7 @@ if (file_exists('./scripts/thisrun.txt')) {
       <p>Set Channels to the number of channels supported by your sound card. 32 max.</p>
       <label for="rtsp_stream">RTSP Stream: </label>
       <textarea name="rtsp_stream" type="url" ><?php print( str_replace(",", "\r\n", $newconfig['RTSP_STREAM']));?></textarea><br>
-      <p>If you place an RTSP stream URL here, BirdNET-Pi will use that as its audio source.</p>
+      <p>If you place an RTSP stream URL here, BirdNET-Pi will use that as its audio source. If you have multiple streams, each URL should be on its own line.</p>
       <label for="recording_length">Recording Length: </label>
       <input name="recording_length" oninput="document.getElementsByName('extraction_length')[0].setAttribute('max', this.value);" type="number" min="3" max="60" step="1" value="<?php print($newconfig['RECORDING_LENGTH']);?>" required/><br>
       <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
