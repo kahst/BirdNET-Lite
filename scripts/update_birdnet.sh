@@ -18,3 +18,6 @@ fi
 if ! grep PRIVACY_MODE /etc/birdnet/birdnet.conf;then
   sudo -u${USER} echo "PRIVACY_MODE=off" >> /etc/birdnet/birdnet.conf
 fi
+if ! grep RTSP_STREAM /etc/birdnet/birdnet.conf;then
+  sudo -u${USER} echo "RTSP_STREAM=" >> /etc/birdnet/birdnet.conf
+fi
