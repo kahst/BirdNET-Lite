@@ -13,9 +13,9 @@ source /etc/birdnet/birdnet.conf
 
 # Set Variables
 TMPFILE=$(mktemp)
-ANALYZED=${RECS_DIR}/*/*Analyzed
-# SCAN_DIRS are all directories marked "Analyzed"
-SCAN_DIRS=($(find ${ANALYZED} -type d 2>/dev/null | sort ))
+#ANALYZED=${RECS_DIR}/*/*Analyzed
+#SCAN_DIRS are all directories marked "Analyzed"
+SCAN_DIRS=($(find $HOME -type d -name '*Analyzed' 2>/dev/null | sort ))
 
 for h in "${SCAN_DIRS[@]}";do
   # The TMPFILE is created from each .csv file BirdNET creates
@@ -38,13 +38,14 @@ for h in "${SCAN_DIRS[@]}";do
   for i in $(find ${h} -name '*csv' 2>/dev/null | sort );do 
     # Iterates over each '.csv' file found in each "Analyzed" directory
     # to create the TMPFILE
-    echo "${i}" | cut -d'/' -f7 >> ${TMPFILE}
+    echo "$(basename ${i})" >> ${TMPFILE}
     sort -k1n -t\; "${i}" | awk '!/Start/{print}' >> ${TMPFILE}
   done
 
   # The extraction reads each line of the TMPFILE and sets the variables ffmpeg
   # will use.
   while read -r line;do
+    echo "Line = $line"
     DATE="$(echo "${line}" \
       | awk -F- '/birdnet/{print $1"-"$2"-"$3}')"
     if [ ! -z ${DATE} ];then
