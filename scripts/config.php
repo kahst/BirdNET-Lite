@@ -9,6 +9,7 @@ $longitude = $_GET["longitude"];
 $birdweather_id = $_GET["birdweather_id"];
 $pushed_app_key = $_GET["pushed_app_key"];
 $pushed_app_secret = $_GET["pushed_app_secret"];
+$notify_run_channel = $_GET["notify_run_channel"];
 
 $contents = file_get_contents("/etc/birdnet/birdnet.conf");
 $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
@@ -16,6 +17,7 @@ $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
 $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
 $contents = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents);
 $contents = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents);
+$contents = preg_replace("/NOTIFY_RUN_CHANNEL_ID=.*/", "NOTIFY_RUN_CHANNEL_ID=$notify_run_channel", $contents);
 
 $contents2 = file_get_contents("./scripts/thisrun.txt");
 $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
@@ -23,6 +25,7 @@ $contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
 $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
 $contents2 = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents2);
 $contents2 = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents2);
+$contents2 = preg_replace("/NOTIFY_RUN_CHANNEL_ID=.*/", "NOTIFY_RUN_CHANNEL_ID=$notify_run_channel", $contents2);
 
 $fh = fopen("/etc/birdnet/birdnet.conf", "w");
 $fh2 = fopen("./scripts/thisrun.txt", "w");
@@ -84,6 +87,11 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <label for="pushed_app_secret">Pushed App Secret: </label>
       <input name="pushed_app_secret" type="text" value="<?php print($config['PUSHED_APP_SECRET']);?>" /><br>
       <p><a target="_blank" href="https://pushed.co/quick-start-guide">Pushed iOS Notifications</a> can be setup and enabled for New Species notifications. Be sure to "Enable" the "Pushed Notifications" in "Tools" > "Services" if you would like to use this feature. Sorry, Android users, this only works on iOS.</p>
+
+      <label for="notify_run_channel">Notify.run Channel ID: </label>
+      <input name="notify_run_channel" type="text" value="<?php print($config['NOTIFY_RUN_CHANNEL_ID']);?>" /><br>
+      <p><a target="_blank" href="https://notify.run/">Notify.run browser notifications</a> can be setup and enabled for New Species notifications.</p>
+
       <label for="language">Database Language: </label>
       <select name="language">
         <option value="none">Select your language</option>

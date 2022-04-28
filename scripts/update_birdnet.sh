@@ -18,3 +18,7 @@ fi
 if ! grep PRIVACY_MODE /etc/birdnet/birdnet.conf;then
   sudo -u${USER} echo "PRIVACY_MODE=off" >> /etc/birdnet/birdnet.conf
 fi
+if ! grep NOTIFY_RUN_CHANNEL_ID /etc/birdnet/birdnet.conf;then
+  sudo -u${USER} echo "NOTIFY_RUN_CHANNEL_ID=" >> /etc/birdnet/birdnet.conf
+fi
+
