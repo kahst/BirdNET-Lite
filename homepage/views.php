@@ -186,10 +186,6 @@ if(isset($_GET['view'])){
   }
 } elseif(isset($_GET['submit'])) {
   $command = $_GET['submit'];
-  if(isset($command)){
-    $results = shell_exec("$command 2>&1");
-    echo "<pre>$results</pre>";
-  }
   ob_end_flush();
 } else {include('overview.php');}
 ?>
