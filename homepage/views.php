@@ -185,7 +185,33 @@ if(isset($_GET['view'])){
     }
   }
 } elseif(isset($_GET['submit'])) {
-  $command = $_GET['submit'];
+    if (file_exists('./scripts/thisrun.txt')) {
+      $config = parse_ini_file('./scripts/thisrun.txt');
+    } elseif (file_exists('./scripts/firstrun.ini')) {
+      $config = parse_ini_file('./scripts/firstrun.ini');
+    }
+    $caddypwd = $config['CADDY_PWD'];
+    if (!isset($_SERVER['PHP_AUTH_USER'])) {
+      header('WWW-Authenticate: Basic realm="My Realm"');
+      header('HTTP/1.0 401 Unauthorized');
+      echo 'You cannot access the web terminal';
+      exit;
+    } else {
+      $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+      $submitteduser = $_SERVER['PHP_AUTH_USER'];
+      if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
+        $command = $_GET['submit'];
+	if(isset($command)){
+         $results = shell_exec("$command 2>&1");
+         echo "<pre>$results</pre>";      
+      } else {
+        header('WWW-Authenticate: Basic realm="My Realm"');
+        header('HTTP/1.0 401 Unauthorized');
+        echo 'You cannot access the web terminal';
+        exit;
+      }
+    }
+  }
   ob_end_flush();
 } else {include('overview.php');}
 ?>
