@@ -26,14 +26,6 @@ for h in "${SCAN_DIRS[@]}";do
   #  Field 4: Common name
   #  Field 5: Confidence
 
-  # Removes old directories
-  #if echo "${h}" | grep $(date --date="yesterday" "+%A") &> /dev/null;then
-  #  echo "Removing old directories"
-  #  rm -drf "${h}"
-  #  rm -drf "$(echo ${h} | cut -d'-' -f1-3)"
-  #  continue
-  #fi
-
   # Iterates over each "Analyzed" directory
   for i in $(find ${h} -name '*csv' 2>/dev/null | sort );do 
     # Iterates over each '.csv' file found in each "Analyzed" directory
@@ -142,7 +134,14 @@ for h in "${SCAN_DIRS[@]}";do
   # next extraction.
   [[ -d "${PROCESSED}" ]] || mkdir "${PROCESSED}"
   #echo "Moving processed files to ${PROCESSED}"
-  mv ${h}/* ${PROCESSED} &> /dev/null || continue
+  mv ${h}/* ${PROCESSED} &> /dev/null || true
+
+  # Removes old directories
+  if echo "${h}" | grep $(date --date="-2 day" "+%A") &> /dev/null;then
+    echo "Removing old directories"
+    rm -drf "${h}"
+    rm -drf "$(echo ${h} | cut -d'-' -f1-3)"
+  fi
 done
 
 #echo "Linking Processed files to "${EXTRACTED}/Processed" web directory"
