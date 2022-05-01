@@ -169,7 +169,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
 var timer = '';
 searchterm = "";
 
-document.getElementById("searchterm").onkeypress = (function(e) {
+document.getElementById("searchterm").oninput = (function(e) {
   if (e.key === "Enter") {
       clearTimeout(timer);
       searchDetections(document.getElementById("searchterm").value);
