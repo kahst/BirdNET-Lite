@@ -19,8 +19,8 @@ install_config() {
 ## TO BE CHANGED TO STATIC VALUES
 ## Please only go to 4 decimal places. Example:43.3984
 
-LATITUDE=$(curl -s4 ifconfig.co/json | awk '/lat/ {print $2}' | tr -d ',')
-LONGITUDE=$(curl -s4 ifconfig.co/json | awk '/lon/ {print $2}' | tr -d ',')
+LATITUDE=$(curl -s4 ifconfig.co/json | awk '/latitude/ {print $2}' | tr -d ',')
+LONGITUDE=$(curl -s4 ifconfig.co/json | awk '/longitude/ {print $2}' | tr -d ',')
 
 #---------------------  BirdWeather Station Information -----------------------#
 #_____________The variable below can be set to have your BirdNET-Pi____________#
