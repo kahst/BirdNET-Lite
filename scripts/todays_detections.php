@@ -58,11 +58,16 @@ $result6 = $statement6->execute();
 $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
 
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
+  if(isset($_GET['searchterm'])) {
+    $searchquery = "AND (Com_name LIKE '%".$_GET['searchterm']."%' OR Sci_name LIKE '%".$_GET['searchterm']."%' OR Confidence LIKE '%".$_GET['searchterm']."%' OR File_Name LIKE '%".$_GET['searchterm']."%' OR Time LIKE '%".$_GET['searchterm']."%')";
+  } else {
+    $searchquery = "";
+  }
   if(isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])){
-    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC LIMIT '.(intval($_GET['display_limit'])-40).',40');
+    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') '.$searchquery.' ORDER BY Time DESC LIMIT '.(intval($_GET['display_limit'])-40).',40');
   } else {
     // legacy mode
-    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC ');
+    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') '.$searchquery.' ORDER BY Time DESC'.$searchquery);
   }
   if($statement0 == False){
     echo "Database is busy";
@@ -151,7 +156,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
       </tr>
     </table>
 
-    <h3>Today's Detections</h3>
+    <h3>Today's Detections — <input size="11" type="text" placeholder="Search..." id="searchterm" name="searchterm"></h3>
 
     <div style="padding-bottom:10px" id="detections_table"></div>
 
@@ -160,6 +165,22 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
 </div>
 
 <script>
+
+var timer = '';
+searchterm = "";
+
+document.getElementById("searchterm").onkeypress = (function(e) {
+  if (e.key === "Enter") {
+      clearTimeout(timer);
+      searchDetections(document.getElementById("searchterm").value);
+  } else {
+     clearTimeout(timer);
+     timer = setTimeout(function() {
+        searchDetections(document.getElementById("searchterm").value);
+     }, 1000);
+  }
+});
+
 function switchViews(element) {
   document.getElementById("detections_table").innerHTML = "";
   if(element.innerHTML == "Legacy view") {
@@ -170,17 +191,28 @@ function switchViews(element) {
     loadDetections(40);
   }
 }
+function searchDetections(searchvalue) {
+    document.getElementById("detections_table").innerHTML = "";
+    searchterm = searchvalue;
+    loadDetections(40,undefined);
+}
 function loadDetections(detections_limit, element=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
     if(typeof element !== "undefined")
     {
      element.remove();
+     document.getElementById("detections_table").innerHTML+= this.responseText;
+    } else {
+     document.getElementById("detections_table").innerHTML= this.responseText;
     }
-    document.getElementById("detections_table").innerHTML+= this.responseText;
     
   }
-  xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit, true);
+  if(searchterm !== ""){
+    xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit+"&searchterm="+searchterm, true);
+  } else {
+    xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit, true);
+  }
   xhttp.send();
 }
 window.addEventListener("load", function(){
