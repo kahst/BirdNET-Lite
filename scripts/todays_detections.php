@@ -173,10 +173,12 @@ document.getElementById("searchterm").oninput = (function(e) {
   if (e.key === "Enter") {
       clearTimeout(timer);
       searchDetections(document.getElementById("searchterm").value);
+      document.getElementById("searchterm").blur();
   } else {
      clearTimeout(timer);
      timer = setTimeout(function() {
         searchDetections(document.getElementById("searchterm").value);
+        document.getElementById("searchterm").blur();
      }, 1000);
   }
 });
