@@ -89,7 +89,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   ?>
         <?php if(isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])){ ?>
           <tr class="relative" id="<?php echo $iterations; ?>">
-          <td><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><?php echo $todaytable['Time'];?><br>
+          <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><?php echo $todaytable['Time'];?><br>
           <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
           <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
           <b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br>
