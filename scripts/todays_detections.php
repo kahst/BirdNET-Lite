@@ -112,7 +112,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   // don't show the button if there's no more detections to be displayed, we're at the end of the list
   if($iterations >= 40 && isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])) { ?>
   <center>
-  <button style="margin-top:10px;font-size:x-large;background:#dbffeb;padding:10px;border: 2px solid black;" onclick="loadDetections(<?php echo $_GET['display_limit'] + 40; ?>, this);" value="Today's Detections">Load 40 More...</button>
+  <button class="loadmore" onclick="loadDetections(<?php echo $_GET['display_limit'] + 40; ?>, this);" value="Today's Detections">Load 40 More...</button>
   </center>
   <?php }
 
@@ -156,11 +156,11 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
       </tr>
     </table>
 
-    <h3>Today's Detections — <input size="11" type="text" placeholder="Search..." id="searchterm" name="searchterm"></h3>
+    <h3>Today's Detections — <input autocomplete="off" size="11" type="text" placeholder="Search..." id="searchterm" name="searchterm"></h3>
 
     <div style="padding-bottom:10px" id="detections_table"></div>
 
-    <button onclick="switchViews(this);" style="color:gray;margin:5px;float:right;z-index:100;position:relative;font-size:small;background:#dbffeb;padding:5px;border: 2px solid black;">Legacy view</button>
+    <button onclick="switchViews(this);" class="legacyview">Legacy view</button>
 
 </div>
 
@@ -169,7 +169,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
 var timer = '';
 searchterm = "";
 
-document.getElementById("searchterm").oninput = (function(e) {
+document.getElementById("searchterm").onkeydown = (function(e) {
   if (e.key === "Enter") {
       clearTimeout(timer);
       searchDetections(document.getElementById("searchterm").value);
@@ -178,7 +178,11 @@ document.getElementById("searchterm").oninput = (function(e) {
      clearTimeout(timer);
      timer = setTimeout(function() {
         searchDetections(document.getElementById("searchterm").value);
-        document.getElementById("searchterm").blur();
+
+        setTimeout(function() {
+            // search auto submitted and now the user is probably scrolling, get the keyboard out of the way & prevent browser from jumping to the top when a video is played
+            document.getElementById("searchterm").blur();
+        }, 2000);
      }, 1000);
   }
 });
@@ -194,7 +198,7 @@ function switchViews(element) {
   }
 }
 function searchDetections(searchvalue) {
-    document.getElementById("detections_table").innerHTML = "";
+    document.getElementById("detections_table").innerHTML = "<h3>Loading...</h3>";
     searchterm = searchvalue;
     loadDetections(40,undefined);
 }
