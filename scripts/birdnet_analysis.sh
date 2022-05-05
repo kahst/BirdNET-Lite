@@ -91,32 +91,16 @@ run_analysis() {
   fi
 
   for i in "${files[@]}";do
+    [ ! -f ${1}/${i} ] && continue
     echo "${1}/${i}" > $HOME/BirdNET-Pi/analyzing_now.txt
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=15
-    [ ${RECORDING_LENGTH} == "60" ] && RECORDING_LENGTH=01:00
-    FILE_LENGTH="$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)"
-    [ -z $FILE_LENGTH ] && sleep 1 && continue
     echo "RECORDING_LENGTH set to ${RECORDING_LENGTH}"
     a=0
-    if [ "${RECORDING_LENGTH}" == "01:00" ];then
-      until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "${RECORDING_LENGTH}" ];do
-        sleep 1
-      	[ $a -ge 60 ] && rm -f ${1}/${i} && break
-      	a=$((a+1))
-      done	
-    elif [ "${RECORDING_LENGTH}" -lt 10 ];then
-      until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "00:0${RECORDING_LENGTH}" ];do
-        sleep 1
-      	[ $a -ge ${RECORDING_LENGTH} ] && rm -f ${1}/${i} && break
-      	a=$((a+1))
-      done
-    else
-      until [ "$(ffmpeg -i ${1}/${i} 2>&1 | awk -F. '/Duration/ {print $1}' | cut -d':' -f3-4)" == "00:${RECORDING_LENGTH}" ];do
-        sleep 1
-      	[ $a -ge ${RECORDING_LENGTH} ] && rm -f ${1}/${i} && break
-      	a=$((a+1))
-      done
-    fi
+    until [ -z "$(lsof -t ${1}/${i})" ];do
+      sleep 2
+      [ $a -ge ${RECORDING_LENGTH} ] && rm -f ${1}/${i} && break
+      a=$((a+2))
+    done
 
     if ! grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;then
       echo "Waiting for socket"
@@ -124,183 +108,48 @@ run_analysis() {
         sleep 1
       done
     fi
-    if [ -f ${1}/${i} ] && [ ! -f ${INCLUDE_LIST} ] && [ ! -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
-      echo "analyze.py \
---i "${1}/${i}" \
---o "${1}/${i}.csv" \
---lat "${LATITUDE}" \
---lon "${LONGITUDE}" \
---week "${WEEK}" \
---overlap "${OVERLAP}" \
---sensitivity "${SENSITIVITY}" \
---min_conf "${CONFIDENCE}""
-      analyze.py \
-        --i "${1}/${i}" \
-        --o "${1}/${i}.csv" \
-        --lat "${LATITUDE}" \
-        --lon "${LONGITUDE}" \
-        --week "${WEEK}" \
-        --overlap "${OVERLAP}" \
-        --sensitivity "${SENSITIVITY}" \
-        --min_conf "${CONFIDENCE}"
-    elif [ -f ${1}/${i} ] && [ -f ${INCLUDELIST} ] && [ ! -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
-      echo "analyze.py \
---i "${1}/${i}" \
---o "${1}/${i}.csv" \
---lat "${LATITUDE}" \
---lon "${LONGITUDE}" \
---week "${WEEK}" \
---overlap "${OVERLAP}" \
---sensitivity "${SENSITIVITY}" \
---min_conf "${CONFIDENCE}" \
---include_list "${INCLUDE_LIST}""
-      analyze.py \
-        --i "${1}/${i}" \
-        --o "${1}/${i}.csv" \
-        --lat "${LATITUDE}" \
-        --lon "${LONGITUDE}" \
-        --week "${WEEK}" \
-        --overlap "${OVERLAP}" \
-      	--sensitivity "${SENSITIVITY}" \
-        --min_conf "${CONFIDENCE}" \
-	      --include_list "${INCLUDE_LIST}"
-    elif [ -f ${1}/${i} ] && [ ! -f ${INCLUDE_LIST} ] && [ -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
-      echo "analyze.py \
---i "${1}/${i}" \
---o "${1}/${i}.csv" \
---lat "${LATITUDE}" \
---lon "${LONGITUDE}" \
---week "${WEEK}" \
---overlap "${OVERLAP}" \
---sensitivity "${SENSITIVITY}" \
---min_conf "${CONFIDENCE}" \
---exclude_list "${EXCLUDE_LIST}""
-      analyze.py \
-        --i "${1}/${i}" \
-        --o "${1}/${i}.csv" \
-        --lat "${LATITUDE}" \
-        --lon "${LONGITUDE}" \
-        --week "${WEEK}" \
-        --overlap "${OVERLAP}" \
-	      --sensitivity "${SENSITIVITY}" \
-        --min_conf "${CONFIDENCE}" \
-	      --exclude_list "${EXCLUDE_LIST}"
-    elif [ -f ${1}/${i} ] && [ -f ${INCLUDE_LIST} ] && [ -f ${EXCLUDE_LIST} ] && [ -z $BIRDWEATHER_ID ];then
-      echo "analyze.py \
---i "${1}/${i}" \
---o "${1}/${i}.csv" \
---lat "${LATITUDE}" \
---lon "${LONGITUDE}" \
---week "${WEEK}" \
---overlap "${OVERLAP}" \
---sensitivity "${SENSITIVITY}" \
---min_conf "${CONFIDENCE}" \
---include_list "${INCLUDE_LIST}" \
---exclude_list "${EXCLUDE_LIST}""
-      analyze.py \
-        --i "${1}/${i}" \
-        --o "${1}/${i}.csv" \
-        --lat "${LATITUDE}" \
-        --lon "${LONGITUDE}" \
-        --week "${WEEK}" \
-        --overlap "${OVERLAP}" \
-	      --sensitivity "${SENSITIVITY}" \
-        --min_conf "${CONFIDENCE}" \
-        --include_list "${INCLUDE_LIST}" \
-        --exclude_list "${EXCLUDE_LIST}" 
-    elif [ -f ${1}/${i} ] && [ ! -f ${INCLUDE_LIST} ] && [ ! -f ${EXCLUDE_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
-      echo "analyze.py \
---i "${1}/${i}" \
---o "${1}/${i}.csv" \
---lat "${LATITUDE}" \
---lon "${LONGITUDE}" \
---week "${WEEK}" \
---overlap "${OVERLAP}" \
---sensitivity "${SENSITIVITY}" \
---min_conf "${CONFIDENCE}" \
---birdweather_id "IN_USE""
-      analyze.py \
-        --i "${1}/${i}" \
-        --o "${1}/${i}.csv" \
-        --lat "${LATITUDE}" \
-        --lon "${LONGITUDE}" \
-        --week "${WEEK}" \
-        --overlap "${OVERLAP}" \
-	      --sensitivity "${SENSITIVITY}" \
-        --min_conf "${CONFIDENCE}" \
-        --birdweather_id "${BIRDWEATHER_ID}" 
-    elif [ -f ${1}/${i} ] && [ -f ${INCLUDE_LIST} ] && [ ! -f ${EXCLUDE_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
-      echo "analyze.py \
---i "${1}/${i}" \
---o "${1}/${i}.csv" \
---lat "${LATITUDE}" \
---lon "${LONGITUDE}" \
---week "${WEEK}" \
---overlap "${OVERLAP}" \
---sensitivity "${SENSITIVITY}" \
---min_conf "${CONFIDENCE}" \
---include_list "${INCLUDE_LIST}" \
---birdweather_id "IN_USE""
-      analyze.py \
-        --i "${1}/${i}" \
-        --o "${1}/${i}.csv" \
-        --lat "${LATITUDE}" \
-        --lon "${LONGITUDE}" \
-        --week "${WEEK}" \
-        --overlap "${OVERLAP}" \
-	      --sensitivity "${SENSITIVITY}" \
-        --min_conf "${CONFIDENCE}" \
-        --include_list "${INCLUDE_LIST}" \
-        --birdweather_id "${BIRDWEATHER_ID}" 
-    elif [ -f ${1}/${i} ] && [ ! -f ${INCLUDE_LIST} ] && [ -f ${EXCLUDE_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
-      echo "analyze.py \
---i "${1}/${i}" \
---o "${1}/${i}.csv" \
---lat "${LATITUDE}" \
---lon "${LONGITUDE}" \
---week "${WEEK}" \
---overlap "${OVERLAP}" \
---sensitivity "${SENSITIVITY}" \
---min_conf "${CONFIDENCE}" \
---exclude_list "${EXCLUDE_LIST}" \
---birdweather_id "IN_USE""
-      analyze.py \
-        --i "${1}/${i}" \
-        --o "${1}/${i}.csv" \
-        --lat "${LATITUDE}" \
-        --lon "${LONGITUDE}" \
-        --week "${WEEK}" \
-        --overlap "${OVERLAP}" \
-	      --sensitivity "${SENSITIVITY}" \
-        --min_conf "${CONFIDENCE}" \
-        --exclude_list "${EXCLUDE_LIST}" \
-        --birdweather_id "${BIRDWEATHER_ID}" 
-    elif [ -f ${1}/${i} ] && [ -f ${INCLUDE_LIST} ] && [ -f ${EXCLUDE_LIST} ] && [ ! -z $BIRDWEATHER_ID ];then
-      echo "analyze.py \
---i "${1}/${i}" \
---o "${1}/${i}.csv" \
---lat "${LATITUDE}" \
---lon "${LONGITUDE}" \
---week "${WEEK}" \
---overlap "${OVERLAP}" \
---sensitivity "${SENSITIVITY}" \
---min_conf "${CONFIDENCE}" \
---include_list "${INCLUDE_LIST}" \
---exclude_list "${EXCLUDE_LIST}" \
---birdweather_id "IN_USE""
-      analyze.py \
-        --i "${1}/${i}" \
-        --o "${1}/${i}.csv" \
-        --lat "${LATITUDE}" \
-        --lon "${LONGITUDE}" \
-        --week "${WEEK}" \
-        --overlap "${OVERLAP}" \
-	      --sensitivity "${SENSITIVITY}" \
-        --min_conf "${CONFIDENCE}" \
-        --include_list "${INCLUDE_LIST}" \
-        --exclude_list "${EXCLUDE_LIST}" \
-        --birdweather_id "${BIRDWEATHER_ID}" 
+    # prepare optional parameters for analyse.py
+    if [ -f ${INCLUDE_LIST} ]; then
+      INCLUDEPARAM="--include_list \"${INCLUDE_LIST}\""
+    else
+      INCLUDEPARAM=""
     fi
+    if [ -f ${EXCLUDE_LIST} ]; then
+      EXCLUDEPARAM="--include_list \"${EXCLUDE_LIST}\""
+    else
+      EXCLUDEPARAM=""
+    fi
+    if [ ! -z $BIRDWEATHER_ID ]; then
+      BIRDWEATHER_ID_PARAM="--birdweather_id \"${BIRDWEATHER_ID}\""
+      BIRDWEATHER_ID_LOG="--birdweather_id \"IN_USE\""
+    else
+      BIRDWEATHER_ID_PARAM=""
+      BIRDWEATHER_ID_LOG=""
+    fi
+    echo analyze.py \
+--i "${1}/${i}" \
+--o "${1}/${i}.csv" \
+--lat "${LATITUDE}" \
+--lon "${LONGITUDE}" \
+--week "${WEEK}" \
+--overlap "${OVERLAP}" \
+--sensitivity "${SENSITIVITY}" \
+--min_conf "${CONFIDENCE}" \
+${INCLUDEPARAM} \
+${EXCLUDEPARAM} \
+${BIRDWEATHER_ID_LOG}
+    analyze.py \
+      --i "${1}/${i}" \
+      --o "${1}/${i}.csv" \
+      --lat "${LATITUDE}" \
+      --lon "${LONGITUDE}" \
+      --week "${WEEK}" \
+      --overlap "${OVERLAP}" \
+      --sensitivity "${SENSITIVITY}" \
+      --min_conf "${CONFIDENCE}" \
+      ${INCLUDEPARAM} \
+      ${EXCLUDEPARAM} \
+      ${BIRDWEATHER_ID_PARAM}
   done
 }
 
