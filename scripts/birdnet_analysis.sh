@@ -167,13 +167,16 @@ until grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;do
 done
 
 if [ $(find ${RECS_DIR} -maxdepth 1 -name '*wav' | wc -l) -gt 0 ];then
+  find $RECS_DIR -maxdepth 1 -name '*wav' -type f -size 0 -delete
   run_birdnet "${RECS_DIR}"
 fi
 
 YESTERDAY="$RECS_DIR/$(date --date="yesterday" "+%B-%Y/%d-%A")"
 TODAY="$RECS_DIR/$(date "+%B-%Y/%d-%A")"
 if [ $(find ${YESTERDAY} -name '*wav' 2>/dev/null | wc -l) -gt 0 ];then
+  find $YESTERDAY -name '*wav' -type f -size 0 -delete
   run_birdnet "${YESTERDAY}"
 elif [ $(find ${TODAY} -name '*wav' | wc -l) -gt 0 ];then
+  find $TODAY -name '*wav' -type f -size 0 -delete
   run_birdnet "${TODAY}"
 fi
