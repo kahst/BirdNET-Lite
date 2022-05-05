@@ -64,6 +64,19 @@ if(isset($_GET['submit'])) {
     }
   }
 
+  if(isset($_GET["rtsp_stream"])) {
+    $rtsp_stream = str_replace("\r\n", ",", $_GET["rtsp_stream"]);
+    if(strcmp($rtsp_stream,$config['RTSP_STREAM']) !== 0) {
+      $contents = preg_replace("/RTSP_STREAM=.*/", "RTSP_STREAM=$rtsp_stream", $contents);
+      $contents2 = preg_replace("/RTSP_STREAM=.*/", "RTSP_STREAM=$rtsp_stream", $contents2);
+      $fh = fopen('/etc/birdnet/birdnet.conf', "w");
+      $fh2 = fopen("./scripts/thisrun.txt", "w");
+      fwrite($fh, $contents);
+      fwrite($fh2, $contents2);
+      exec('sudo systemctl restart birdnet_recording.service');
+    }
+  }
+  
   if(isset($_GET["overlap"])) {
     $overlap = $_GET["overlap"];
     if(strcmp($overlap,$config['OVERLAP']) !== 0) {
@@ -108,14 +121,14 @@ if(isset($_GET['submit'])) {
       $contents2 = preg_replace("/PRIVACY_MODE=.*/", "PRIVACY_MODE=$privacy_mode", $contents2);
       if(strcmp($privacy_mode,"on") == 0) {
         exec('sudo sed -i \'s/\/usr\/local\/bin\/server.py/\/usr\/local\/bin\/privacy_server.py/g\' ../../BirdNET-Pi/templates/birdnet_server.service');
-	      exec('sudo systemctl daemon-reload');
-	      exec('restart_services.sh');
-	      header('Location: /log');
+        exec('sudo systemctl daemon-reload');
+        exec('restart_services.sh');
+        header('Location: /log');
       } elseif(strcmp($privacy_mode,"off") == 0) {
         exec('sudo sed -i \'s/\/usr\/local\/bin\/privacy_server.py/\/usr\/local\/bin\/server.py/g\' ../../BirdNET-Pi/templates/birdnet_server.service');
-	      exec('sudo systemctl daemon-reload');
-	      exec('restart_services.sh');
-	      header('Location: /log');
+        exec('sudo systemctl daemon-reload');
+        exec('restart_services.sh');
+        header('Location: /log');
       }
     }
   }
@@ -201,6 +214,9 @@ if (file_exists('./scripts/thisrun.txt')) {
       <label for="channels">Audio Channels: </label>
       <input name="channels" type="number" min="1" max="32" step="1" value="<?php print($newconfig['CHANNELS']);?>" required/><br>
       <p>Set Channels to the number of channels supported by your sound card. 32 max.</p>
+      <label for="rtsp_stream">RTSP Stream: </label>
+      <textarea name="rtsp_stream" type="url" ><?php print( str_replace(",", "\r\n", $newconfig['RTSP_STREAM']));?></textarea><br>
+      <p>If you place an RTSP stream URL here, BirdNET-Pi will use that as its audio source. If you have multiple streams, each URL should be on its own line.</p>
       <label for="recording_length">Recording Length: </label>
       <input name="recording_length" oninput="document.getElementsByName('extraction_length')[0].setAttribute('max', this.value);" type="number" min="3" max="60" step="1" value="<?php print($newconfig['RECORDING_LENGTH']);?>" required/><br>
       <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
