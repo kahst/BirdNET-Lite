@@ -142,3 +142,6 @@ Current database languages include the list below:
 | Swedish | 264 | 4.15% |
 | Thai | 5580 | 87.71% |
 | Ukrainian | 646 | 10.15% |
+
+## :thinking:
+Are you a lucky ducky with an extra Raspberry Pi 4B lying around? [Here's an idea!](https://foldingathome.org/alternative-downloads)
