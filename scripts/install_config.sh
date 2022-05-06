@@ -138,7 +138,7 @@ FULL_DISK=purge
 ## The PRIVACY_THRESHOLD value represents a percentage of the entire species
 ## list used during analysis. If a human sound is predicted anywhere within
 ## the precentile set below, no data is collected for that audio chunk.
-## Valid range: 0-30
+## Valid range: 0-25
 
 PRIVACY_THRESHOLD=0
 
