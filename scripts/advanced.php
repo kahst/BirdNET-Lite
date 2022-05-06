@@ -114,8 +114,6 @@ if(isset($_GET['submit'])) {
     if(strcmp($privacy_threshold,$config['PRIVACY_THRESHOLD']) !== 0) {
       $contents = preg_replace("/PRIVACY_THRESHOLD=.*/", "PRIVACY_THRESHOLD=$privacy_threshold", $contents);
       $contents2 = preg_replace("/PRIVACY_THRESHOLD=.*/", "PRIVACY_THRESHOLD=$privacy_threshold", $contents2);
-
-      exec('sudo systemctl restart birdnet_server.service');
     }
   }
 
@@ -164,6 +162,15 @@ if(isset($_GET['submit'])) {
   fwrite($fh, $contents);
   fwrite($fh2, $contents2);
 }
+
+$count_included = count(file("/home/pi/BirdNET-Pi/include_species_list.txt"));
+$count_labels = count(file("/home/pi/BirdNET-Pi/model/labels.txt"));
+
+if($count_included > 0) {
+  $count = $count_included;
+} else {
+  $count = $count_labels;
+}
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -193,8 +200,10 @@ if (file_exists('./scripts/thisrun.txt')) {
       // Update the current slider value (each time you drag the slider handle)
       slider.oninput = function() {
         output.innerHTML = this.value;
+        document.getElementById("predictionCount").innerHTML = parseInt((this.value * <?php echo $count; ?>)/100);
       }
       </script>
+      <p>If a Human is predicted anywhere among the top <span id="predictionCount"><?php echo $newconfig['PRIVACY_THRESHOLD'] == 0 ? "threshold % of" : int(($newconfig['PRIVACY_THRESHOLD'] * $count)/100); ?></span> predictions, the sample will be considered of human origin and no data will be collected.</p>
       <label>Full Disk Behavior: </label>
       <label for="purge">
       <input name="full_disk" type="radio" id="purge" value="purge" <?php if (strcmp($newconfig['FULL_DISK'], "purge") == 0) { echo "checked"; }?>>Purge</label>
