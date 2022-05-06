@@ -165,8 +165,8 @@ if(isset($_GET['submit'])) {
   fwrite($fh2, $contents2);
 }
 
-$count_included = count(file("/home/pi/BirdNET-Pi/include_species_list.txt"));
-$count_labels = count(file("/home/pi/BirdNET-Pi/model/labels.txt"));
+$count_included = count(file("./scripts/include_species_list.txt"));
+$count_labels = count(file("./scripts/labels.txt"));
 
 if($count_included > 0) {
   $count = $count_included;
