@@ -120,11 +120,14 @@ CHANNELS=2
 
 FULL_DISK=purge
 
-## PRIVACY_MODE can be set to 'on' or 'off' to configure analysis to be more
-## sensitive to human detections. PRIVACY_MODE 'on' will purge any data that
-## receives even a low HUMAN_HUMAN confidence score.
+## PRIVACY_THRESHOLD can be set to enable sensitivity to Human sounds. This
+## setting is an effort to introduce privacy into the data collection.
+## The PRIVACY_THRESHOLD value represents a percentage of the entire species 
+## list used during analysis. If a human sound is predicted anywhere within
+## the precentile set below, no data is collected for that audio chunk.
+## Valid range: 0-30
 
-PRIVACY_MODE=off
+PRIVACY_THRESHOLD=0
 
 ## RECORDING_LENGTH sets the length of the recording that BirdNET-Lite will 
 ## analyze.
