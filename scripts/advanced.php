@@ -111,12 +111,7 @@ if(isset($_GET['submit'])) {
 
   if(isset($_GET["privacy_threshold"])) {
     $privacy_threshold = $_GET["privacy_threshold"];
-    if(strcmp($config['PRIVACY_THRESHOLD'], "1") == 0 ) {
-      $pmode = "on";
-    }elseif(strcmp($config['PRIVACY_THRESHOLD'], "") == 0) {
-      $pmode = "off";
-    }
-    if(strcmp($privacy_threshold,$pmode) !== 0) {
+    if(strcmp($privacy_threshold,$config['PRIVACY_THRESHOLD']) !== 0) {
       $contents = preg_replace("/PRIVACY_THRESHOLD=.*/", "PRIVACY_THRESHOLD=$privacy_threshold", $contents);
       $contents2 = preg_replace("/PRIVACY_THRESHOLD=.*/", "PRIVACY_THRESHOLD=$privacy_threshold", $contents2);
     }
@@ -185,12 +180,12 @@ if (file_exists('./scripts/thisrun.txt')) {
     <form action="" method="GET">
       <label>Privacy Threshold: </label><br>
       <div class="slidecontainer">
-        <input type="range" min="0" max="25" value="0" class="slider" id="myRange">
-        <p>Value: <span id="demo"></span>%</p>
+        <input name="privacy_threshold" type="range" min="0" max="25" value="<?php print($newconfig['PRIVACY_THRESHOLD']);?>" class="slider" id="privacy_threshold">
+        <p>Value: <span id="threshold_value"></span>%</p>
       </div>
       <script>
-      var slider = document.getElementById("myRange");
-      var output = document.getElementById("demo");
+      var slider = document.getElementById("privacy_threshold");
+      var output = document.getElementById("threshold_value");
       output.innerHTML = slider.value; // Display the default slider value
       
       // Update the current slider value (each time you drag the slider handle)
