@@ -114,6 +114,8 @@ if(isset($_GET['submit'])) {
     if(strcmp($privacy_threshold,$config['PRIVACY_THRESHOLD']) !== 0) {
       $contents = preg_replace("/PRIVACY_THRESHOLD=.*/", "PRIVACY_THRESHOLD=$privacy_threshold", $contents);
       $contents2 = preg_replace("/PRIVACY_THRESHOLD=.*/", "PRIVACY_THRESHOLD=$privacy_threshold", $contents2);
+
+      exec('sudo systemctl restart birdnet_server.service');
     }
   }
 
