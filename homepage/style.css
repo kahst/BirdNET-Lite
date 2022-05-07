@@ -513,3 +513,21 @@ button:hover {
   padding:5px;
   border: 2px solid black;
 }
+button.legacyview {
+  color:gray;
+  margin:5px;
+  float:right;
+  z-index:100;
+  position:relative;
+  font-size:small;
+  background:#dbffeb;
+  padding:5px;
+  border: 2px solid black;
+}
+button.loadmore {
+  margin-top:10px;
+  font-size:x-large;
+  background:#dbffeb;
+  padding:10px;
+  border: 2px solid black;
+}

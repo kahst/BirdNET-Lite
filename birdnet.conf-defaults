@@ -48,6 +48,13 @@ ICE_PWD=birdnetpi
 
 BIRDNETPI_URL=
 
+#----------------------------  RTSP Stream URL  -------------------------------#
+
+## If RTSP_STREAM is set, the system will use the RTSP stream as its audio
+## source instead of recording its own audio. If this variable is kept empty,
+## BirdNET-Pi will default to recording its own audio.
+
+RTSP_STREAM=
 
 #-------------------  Mobile Notifications via Pushed.co  ---------------------#
 #____________The two variables below enable mobile notifications_______________#

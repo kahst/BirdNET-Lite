@@ -1,5 +1,5 @@
 <h1 align="center">
-  BirdNET-Pi <img src="https://img.shields.io/badge/Version-0.13-pink" />
+  BirdNET-Pi
 </h1>
 <p align="center">
 A realtime acoustic bird classification system for the Raspberry Pi 4B
@@ -37,6 +37,8 @@ Currently listening in these countries . . . that I know of . . .
 - Italy
 - Finland
 - Australia
+- Canada
+- Switzerland
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
@@ -141,3 +143,6 @@ Current database languages include the list below:
 | Swedish | 264 | 4.15% |
 | Thai | 5580 | 87.71% |
 | Ukrainian | 646 | 10.15% |
+
+## :thinking:
+Are you a lucky ducky with an extra Raspberry Pi 4B lying around? [Here's an idea!](https://foldingathome.org/alternative-downloads)

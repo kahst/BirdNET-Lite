@@ -58,11 +58,16 @@ $result6 = $statement6->execute();
 $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
 
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
+  if(isset($_GET['searchterm'])) {
+    $searchquery = "AND (Com_name LIKE '%".$_GET['searchterm']."%' OR Sci_name LIKE '%".$_GET['searchterm']."%' OR Confidence LIKE '%".$_GET['searchterm']."%' OR File_Name LIKE '%".$_GET['searchterm']."%' OR Time LIKE '%".$_GET['searchterm']."%')";
+  } else {
+    $searchquery = "";
+  }
   if(isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])){
-    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC LIMIT '.(intval($_GET['display_limit'])-40).',40');
+    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') '.$searchquery.' ORDER BY Time DESC LIMIT '.(intval($_GET['display_limit'])-40).',40');
   } else {
     // legacy mode
-    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') ORDER BY Time DESC ');
+    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') '.$searchquery.' ORDER BY Time DESC'.$searchquery);
   }
   if($statement0 == False){
     echo "Database is busy";
@@ -84,7 +89,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   ?>
         <?php if(isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])){ ?>
           <tr class="relative" id="<?php echo $iterations; ?>">
-          <td><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><?php echo $todaytable['Time'];?><br>
+          <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><?php echo $todaytable['Time'];?><br>
           <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
           <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
           <b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br>
@@ -107,7 +112,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   // don't show the button if there's no more detections to be displayed, we're at the end of the list
   if($iterations >= 40 && isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])) { ?>
   <center>
-  <button style="margin-top:10px;font-size:x-large;background:#dbffeb;padding:10px;border: 2px solid black;" onclick="loadDetections(<?php echo $_GET['display_limit'] + 40; ?>, this);" value="Today's Detections">Load 40 More...</button>
+  <button class="loadmore" onclick="loadDetections(<?php echo $_GET['display_limit'] + 40; ?>, this);" value="Today's Detections">Load 40 More...</button>
   </center>
   <?php }
 
@@ -151,15 +156,37 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
       </tr>
     </table>
 
-    <h3>Today's Detections</h3>
+    <h3>Today's Detections — <input autocomplete="off" size="11" type="text" placeholder="Search..." id="searchterm" name="searchterm"></h3>
 
     <div style="padding-bottom:10px" id="detections_table"></div>
 
-    <button onclick="switchViews(this);" style="color:gray;margin:5px;float:right;z-index:100;position:relative;font-size:small;background:#dbffeb;padding:5px;border: 2px solid black;">Legacy view</button>
+    <button onclick="switchViews(this);" class="legacyview">Legacy view</button>
 
 </div>
 
 <script>
+
+var timer = '';
+searchterm = "";
+
+document.getElementById("searchterm").onkeydown = (function(e) {
+  if (e.key === "Enter") {
+      clearTimeout(timer);
+      searchDetections(document.getElementById("searchterm").value);
+      document.getElementById("searchterm").blur();
+  } else {
+     clearTimeout(timer);
+     timer = setTimeout(function() {
+        searchDetections(document.getElementById("searchterm").value);
+
+        setTimeout(function() {
+            // search auto submitted and now the user is probably scrolling, get the keyboard out of the way & prevent browser from jumping to the top when a video is played
+            document.getElementById("searchterm").blur();
+        }, 2000);
+     }, 1000);
+  }
+});
+
 function switchViews(element) {
   document.getElementById("detections_table").innerHTML = "";
   if(element.innerHTML == "Legacy view") {
@@ -170,17 +197,28 @@ function switchViews(element) {
     loadDetections(40);
   }
 }
+function searchDetections(searchvalue) {
+    document.getElementById("detections_table").innerHTML = "<h3>Loading...</h3>";
+    searchterm = searchvalue;
+    loadDetections(40,undefined);
+}
 function loadDetections(detections_limit, element=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
     if(typeof element !== "undefined")
     {
      element.remove();
+     document.getElementById("detections_table").innerHTML+= this.responseText;
+    } else {
+     document.getElementById("detections_table").innerHTML= this.responseText;
     }
-    document.getElementById("detections_table").innerHTML+= this.responseText;
     
   }
-  xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit, true);
+  if(searchterm !== ""){
+    xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit+"&searchterm="+searchterm, true);
+  } else {
+    xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit, true);
+  }
   xhttp.send();
 }
 window.addEventListener("load", function(){

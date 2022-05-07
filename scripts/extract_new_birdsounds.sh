@@ -13,9 +13,9 @@ source /etc/birdnet/birdnet.conf
 
 # Set Variables
 TMPFILE=$(mktemp)
-ANALYZED=${RECS_DIR}/*/*Analyzed
-# SCAN_DIRS are all directories marked "Analyzed"
-SCAN_DIRS=($(find ${ANALYZED} -type d 2>/dev/null | sort ))
+#ANALYZED=${RECS_DIR}/*/*Analyzed
+#SCAN_DIRS are all directories marked "Analyzed"
+SCAN_DIRS=($(find $HOME -type d -name '*Analyzed' 2>/dev/null | sort ))
 
 for h in "${SCAN_DIRS[@]}";do
   # The TMPFILE is created from each .csv file BirdNET creates
@@ -26,25 +26,18 @@ for h in "${SCAN_DIRS[@]}";do
   #  Field 4: Common name
   #  Field 5: Confidence
 
-  # Removes old directories
-  #if echo "${h}" | grep $(date --date="yesterday" "+%A") &> /dev/null;then
-  #  echo "Removing old directories"
-  #  rm -drf "${h}"
-  #  rm -drf "$(echo ${h} | cut -d'-' -f1-3)"
-  #  continue
-  #fi
-
   # Iterates over each "Analyzed" directory
   for i in $(find ${h} -name '*csv' 2>/dev/null | sort );do 
     # Iterates over each '.csv' file found in each "Analyzed" directory
     # to create the TMPFILE
-    echo "${i}" | cut -d'/' -f7 >> ${TMPFILE}
+    echo "$(basename ${i})" >> ${TMPFILE}
     sort -k1n -t\; "${i}" | awk '!/Start/{print}' >> ${TMPFILE}
   done
 
   # The extraction reads each line of the TMPFILE and sets the variables ffmpeg
   # will use.
   while read -r line;do
+    echo "Line = $line"
     DATE="$(echo "${line}" \
       | awk -F- '/birdnet/{print $1"-"$2"-"$3}')"
     if [ ! -z ${DATE} ];then
@@ -142,7 +135,14 @@ for h in "${SCAN_DIRS[@]}";do
   # next extraction.
   [[ -d "${PROCESSED}" ]] || mkdir "${PROCESSED}"
   #echo "Moving processed files to ${PROCESSED}"
-  mv ${h}/* ${PROCESSED} &> /dev/null || continue
+  mv ${h}/* ${PROCESSED} &> /dev/null || true
+
+  # Removes old directories
+  if echo "${h}" | grep $(date --date="-2 day" "+%A") &> /dev/null;then
+    echo "Removing old directories"
+    rm -drf "${h}"
+    rm -drf "$(echo ${h} | cut -d'-' -f1-3)"
+  fi
 done
 
 #echo "Linking Processed files to "${EXTRACTED}/Processed" web directory"

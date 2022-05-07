@@ -6,11 +6,18 @@ USER=$USER
 export HOME=$HOME
 export USER=$USER
 
-branch=main
-if ! which git &> /dev/null;then
+PACKAGES_MISSING=
+for cmd in git jq ; do
+  if ! which $cmd &> /dev/null;then
+      PACKAGES_MISSING="${PACKAGES_MISSING} $cmd"
+  fi
+done
+if [[ ! -z $PACKAGES_MISSING ]] ; then
   sudo apt update
-  sudo apt -y install git
+  sudo apt -y install $PACKAGES_MISSING
 fi
+
+branch=main
 git clone -b $branch https://github.com/mcguirepr89/BirdNET-Pi.git ${HOME}/BirdNET-Pi &&
 
 $HOME/BirdNET-Pi/scripts/install_birdnet.sh

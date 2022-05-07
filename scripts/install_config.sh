@@ -19,8 +19,8 @@ install_config() {
 ## TO BE CHANGED TO STATIC VALUES
 ## Please only go to 4 decimal places. Example:43.3984
 
-LATITUDE=$(curl -s4 ifconfig.co/json | awk '/lat/ {print $2}' | tr -d ',')
-LONGITUDE=$(curl -s4 ifconfig.co/json | awk '/lon/ {print $2}' | tr -d ',')
+LATITUDE=$(curl -s4 ifconfig.co/json | jq .latitude)
+LONGITUDE=$(curl -s4 ifconfig.co/json | jq .longitude)
 
 #---------------------  BirdWeather Station Information -----------------------#
 #_____________The variable below can be set to have your BirdNET-Pi____________#
@@ -61,6 +61,13 @@ ICE_PWD=birdnetpi
 
 BIRDNETPI_URL=
 
+#----------------------------  RTSP Stream URL  -------------------------------#
+
+## If RTSP_STREAM is set, the system will use the RTSP stream as its audio
+## source instead of recording its own audio. If this variable is kept empty,
+## BirdNET-Pi will default to recording its own audio.
+
+RTSP_STREAM=
 
 #-------------------  Mobile Notifications via Pushed.co  ---------------------#
 #____________The two variables below enable mobile notifications_______________#

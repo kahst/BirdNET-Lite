@@ -10,65 +10,66 @@ if($db == False) {
 
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['previous_detection_identifier'])) {
 
-  $statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 1');
+  $statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 5');
   if($statement4 == False) {
     echo "Database is busy";
     header("refresh: 0;");
   }
   $result4 = $statement4->execute();
-  $mostrecent = $result4->fetchArray(SQLITE3_ASSOC);
-  $comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
-  $sciname = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
-  $comname = preg_replace('/\'/', '', $comname);
-  $filename = "/By_Date/".$mostrecent['Date']."/".$comname."/".$mostrecent['File_Name'];
+  // hopefully one of the 5 most recent detections has an image that is valid, we'll use that one as the most recent detection until the newer ones get their images created
+  while($mostrecent = $result4->fetchArray(SQLITE3_ASSOC)) {
+    $comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
+    $sciname = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
+    $comname = preg_replace('/\'/', '', $comname);
+    $filename = "/By_Date/".$mostrecent['Date']."/".$comname."/".$mostrecent['File_Name'];
 
-
-  if($_GET['previous_detection_identifier'] != $filename || $_GET['previous_detection_identifier'] == "undefined") {
-    // check to make sure the image actually exists, sometimes it takes a minute to be created
-    if (isset($_SERVER['HTTPS']) &&
-        ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
-        isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
-        $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
-      $protocol = 'https://';
-    }
-    else {
-      $protocol = 'http://';
-    }
-    $headers = @get_headers($protocol.$_SERVER['HTTP_HOST'].$filename.".png");
-    if(strpos($headers[0],'200')) {
-    ?>
-      <style>
-      .fade-in {
-        opacity: 1;
-        animation-name: fadeInOpacity;
-        animation-iteration-count: 1;
-        animation-timing-function: ease-in;
-        animation-duration: 1s;
+      // check to make sure the image actually exists, sometimes it takes a minute to be created
+      if (isset($_SERVER['HTTPS']) &&
+          ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
+          isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
+          $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+        $protocol = 'https://';
       }
-
-      @keyframes fadeInOpacity {
-        0% {
-          opacity: 0;
-        }
-        100% {
+      else {
+        $protocol = 'http://';
+      }
+      $headers = @get_headers($protocol.$_SERVER['HTTP_HOST'].$filename.".png");
+      // we've found our valid detection! ignore everything else from the database loop
+      if(strpos($headers[0],'200')) {
+          if($_GET['previous_detection_identifier'] == $filename) { die(); }
+      ?>
+        <style>
+        .fade-in {
           opacity: 1;
+          animation-name: fadeInOpacity;
+          animation-iteration-count: 1;
+          animation-timing-function: ease-in;
+          animation-duration: 1s;
         }
+
+        @keyframes fadeInOpacity {
+          0% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+        </style>
+        <table class="<?php echo ($_GET['previous_detection_identifier'] == 'undefined') ? '' : 'fade-in';  ?>">
+          <h3>Most Recent Detection: <span style="font-weight: normal;"><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></span></h3>
+          <tr>
+            <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $mostrecent['File_Name']; ?>"><img class="copyimage" width="25" height="25" src="images/copy.png"></a>
+            <form action="" method="GET">
+                <input type="hidden" name="view" value="Species Stats">
+                <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button></br>
+                <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a>
+                <br>Confidence: <?php echo $mostrecent['Confidence'];?><br>
+                <video style="margin-top:10px" onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>"></video></td>
+            </form>
+          </tr>
+        </table> <?php break;
       }
-      </style>
-      <table class="<?php echo ($_GET['previous_detection_identifier'] == 'undefined') ? '' : 'fade-in';  ?>">
-        <h3>Most Recent Detection: <span style="font-weight: normal;"><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></span></h3>
-        <tr>
-          <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $mostrecent['File_Name']; ?>"><img class="copyimage" width="25" height="25" src="images/copy.png"></a>
-          <form action="" method="GET">
-              <input type="hidden" name="view" value="Species Stats">
-              <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button></br>
-              <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a>
-              <br>Confidence: <?php echo $mostrecent['Confidence'];?><br>
-              <video style="margin-top:10px" onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>"></video></td>
-          </form>
-        </tr>
-      </table> <?php
-    }
   }
   die();
 }
@@ -191,7 +192,7 @@ function loadDetectionIfNewExists(previous_detection_identifier=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
     // if there's a new detection that needs to be updated to the page
-    if(this.responseText.length > 0) {
+    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy.")) {
       document.getElementById("most_recent_detection").innerHTML = this.responseText;
 
       // only going to load left chart if there's a new detection
