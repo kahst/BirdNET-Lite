@@ -17,7 +17,6 @@ $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
 $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
 $contents = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents);
 $contents = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents);
-$contents = preg_replace("/NOTIFY_RUN_CHANNEL_ID=.*/", "NOTIFY_RUN_CHANNEL_ID=$notify_run_channel", $contents);
 
 $contents2 = file_get_contents("./scripts/thisrun.txt");
 $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
@@ -25,7 +24,6 @@ $contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
 $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
 $contents2 = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents2);
 $contents2 = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents2);
-$contents2 = preg_replace("/NOTIFY_RUN_CHANNEL_ID=.*/", "NOTIFY_RUN_CHANNEL_ID=$notify_run_channel", $contents2);
 
 $fh = fopen("/etc/birdnet/birdnet.conf", "w");
 $fh2 = fopen("./scripts/thisrun.txt", "w");
