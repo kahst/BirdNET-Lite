@@ -35,7 +35,7 @@ if(strlen($apprise_input) > 0){
   $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
   $home = trim($home);
 
-  $appriseconfig = fopen($home."/BirdNET-Pi/.apprise", "w");
+  $appriseconfig = fopen($home."/BirdNET-Pi/apprise.txt", "w");
   fwrite($appriseconfig, $apprise_input);
 }
 
@@ -65,8 +65,11 @@ if (file_exists('./scripts/thisrun.txt')) {
 } elseif (file_exists('./scripts/firstrun.ini')) {
   $config = parse_ini_file('./scripts/firstrun.ini');
 } 
-if (file_exists('~/.apprise')) {
-  $apprise_config = file_get_contents('~/.apprise');
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
+if (file_exists($home."/BirdNET-Pi/apprise.txt")) {
+  $apprise_config = file_get_contents($home."/BirdNET-Pi/apprise.txt");
 } else {
   $apprise_config = "";
 }
