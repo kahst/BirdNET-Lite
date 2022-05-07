@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Sends a notification if a new species is detected
-#set -x
 trap 'rm -f $lastcheck' EXIT
 source /etc/birdnet/birdnet.conf
 
@@ -35,7 +34,7 @@ ${NOTIFICATION}"
   fi
 
   if [ ! -s ~/.apprise ];then
-    apprise -vv -t 'New Species Detected' -b ${NOTIFICATION}
+    $HOME/BirdNET-Pi/birdnet/bin/apprise -vv -t 'New Species Detected' -b ${NOTIFICATION}
   fi
 fi
 
