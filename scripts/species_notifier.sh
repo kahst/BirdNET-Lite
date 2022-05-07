@@ -33,8 +33,8 @@ ${NOTIFICATION}"
       https://api.pushed.co/1/push
   fi
 
-  if [ ! -s ~/.apprise ];then
-    $HOME/BirdNET-Pi/birdnet/bin/apprise -vv -t 'New Species Detected' -b ${NOTIFICATION} --config=$HOME/BirdNET-Pi/apprise.txt
+  if [ ! -s $HOME/BirdNET-Pi/apprise.txt ];then
+    $HOME/BirdNET-Pi/birdnet/bin/apprise -vv -t 'New Species Detected' -b "${NOTIFICATION}" --config=$HOME/BirdNET-Pi/apprise.txt
   fi
 fi
 
