@@ -31,7 +31,11 @@ fwrite($fh, $contents);
 fwrite($fh2, $contents2);
 
 if(strlen($apprise_input) > 0){
-  $appriseconfig = fopen("/etc/birdnet/.apprise", "w");
+  $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+  $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+  $home = trim($home);
+
+  $appriseconfig = fopen($home."/BirdNET-Pi/.apprise", "w");
   fwrite($appriseconfig, $apprise_input);
 }
 
