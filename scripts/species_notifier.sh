@@ -34,7 +34,7 @@ ${NOTIFICATION}"
   fi
 
   if [ ! -s ~/.apprise ];then
-    $HOME/BirdNET-Pi/birdnet/bin/apprise -vv -t 'New Species Detected' -b ${NOTIFICATION}
+    $HOME/BirdNET-Pi/birdnet/bin/apprise -vv -t 'New Species Detected' -b ${NOTIFICATION} --config=/etc/birdnet/.apprise
   fi
 fi
 

@@ -31,7 +31,7 @@ fwrite($fh, $contents);
 fwrite($fh2, $contents2);
 
 if(strlen($apprise_input) > 0){
-  $appriseconfig = fopen("".exec("~/").".apprise", "w");
+  $appriseconfig = fopen("/etc/birdnet/.apprise", "w");
   fwrite($appriseconfig, $apprise_input);
 }
 
