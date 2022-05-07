@@ -9,7 +9,7 @@ $longitude = $_GET["longitude"];
 $birdweather_id = $_GET["birdweather_id"];
 $pushed_app_key = $_GET["pushed_app_key"];
 $pushed_app_secret = $_GET["pushed_app_secret"];
-$notify_run_channel = $_GET["notify_run_channel"];
+$apprise_input = $_GET['apprise_input'];
 
 $contents = file_get_contents("/etc/birdnet/birdnet.conf");
 $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
@@ -31,6 +31,10 @@ $fh = fopen("/etc/birdnet/birdnet.conf", "w");
 $fh2 = fopen("./scripts/thisrun.txt", "w");
 fwrite($fh, $contents);
 fwrite($fh2, $contents2);
+
+$appriseconfig = fopen("~/.apprise");
+fwrite($appriseconfig, $apprise_input);
+
 
 $language = $_GET["language"];
 if ($language != "none"){
@@ -57,6 +61,11 @@ if (file_exists('./scripts/thisrun.txt')) {
 } elseif (file_exists('./scripts/firstrun.ini')) {
   $config = parse_ini_file('./scripts/firstrun.ini');
 } 
+if (file_exists('~/.apprise')) {
+  $apprise_config = file_get_contents('~/.apprise');
+} else {
+  $apprise_config = "";
+}
 $caddypwd = $config['CADDY_PWD'];
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
   header('WWW-Authenticate: Basic realm="My Realm"');
@@ -88,9 +97,9 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <input name="pushed_app_secret" type="text" value="<?php print($config['PUSHED_APP_SECRET']);?>" /><br>
       <p><a target="_blank" href="https://pushed.co/quick-start-guide">Pushed iOS Notifications</a> can be setup and enabled for New Species notifications. Be sure to "Enable" the "Pushed Notifications" in "Tools" > "Services" if you would like to use this feature. Sorry, Android users, this only works on iOS.</p>
 
-      <label for="notify_run_channel">Notify.run Channel ID: </label>
-      <input name="notify_run_channel" type="text" value="<?php print($config['NOTIFY_RUN_CHANNEL_ID']);?>" /><br>
-      <p><a target="_blank" href="https://notify.run/">Notify.run browser notifications</a> can be setup and enabled for New Species notifications.</p>
+      <label for="apprise_input">Apprise Notifications Configuration: </label>
+      <textarea name="apprise_input" type="text" ><?php print($apprise_config);?></textarea>
+      <p><a target="_blank" href="https://github.com/caronc/apprise/wiki">Apprise Notifications</a> can be setup and enabled for New Species notifications.</p>
 
       <label for="language">Database Language: </label>
       <select name="language">

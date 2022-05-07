@@ -33,5 +33,9 @@ ${NOTIFICATION}"
       --form-string "content=${NOTIFICATION}" \
       https://api.pushed.co/1/push
   fi
+
+  if [ ! -s ~/.apprise ];then
+    apprise -vv -t 'New Species Detected' -b ${NOTIFICATION}
+  fi
 fi
 

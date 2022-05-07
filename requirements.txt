@@ -10,3 +10,4 @@ pandas
 seaborn
 streamlit
 plotly
+apprise

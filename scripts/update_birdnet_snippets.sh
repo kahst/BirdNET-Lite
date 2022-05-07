@@ -15,3 +15,8 @@ fi
 if ! which lsof &>/dev/null;then
   sudo apt update && sudo apt -y install lsof
 fi
+apprise_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("apprise") else "not installed")')
+if [[ "$apprise_installation_status" = "not installed" ]];then
+  ~/BirdNET-Pi/birdnet/bin/pip3 install -U pip
+  ~/BirdNET-Pi/birdnet/bin/pip3 install apprise
+fi
