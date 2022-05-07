@@ -30,8 +30,10 @@ $fh2 = fopen("./scripts/thisrun.txt", "w");
 fwrite($fh, $contents);
 fwrite($fh2, $contents2);
 
-$appriseconfig = fopen("~/.apprise");
-fwrite($appriseconfig, $apprise_input);
+if(strlen($apprise_input) > 0){
+  $appriseconfig = fopen("~/.apprise", "w");
+  fwrite($appriseconfig, $apprise_input);
+}
 
 
 $language = $_GET["language"];
