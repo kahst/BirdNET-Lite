@@ -121,7 +121,11 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <p><a target="_blank" href="https://pushed.co/quick-start-guide">Pushed iOS Notifications</a> can be setup and enabled for New Species notifications. Be sure to "Enable" the "Pushed Notifications" in "Tools" > "Services" if you would like to use this feature. Sorry, Android users, this only works on iOS.</p>
 
       <label for="apprise_input">Apprise Notifications Configuration: </label>
-      <textarea style="vertical-align: top" name="apprise_input" cols="140" type="text" ><?php print($apprise_config);?></textarea><br><br>
+      <textarea placeholder="mailto://{user}:{password}@gmail.com
+tgram://{bot_token}/{chat_id}
+twitter://{ConsumerKey}/{ConsumerSecret}/{AccessToken}/{AccessSecret}
+https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
+..." style="vertical-align: top" name="apprise_input" cols="140" rows="5" type="text" ><?php print($apprise_config);?></textarea><br><br>
       <label for="apprise_notification_title">Notification Title: </label>
       <input name="apprise_notification_title" type="text" value="<?php print($config['APPRISE_NOTIFICATION_TITLE']);?>" /><br>
       <label for="apprise_notification_body">Notification Body (use variables $sciname, $comname, or $confidence): </label>
@@ -130,7 +134,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <label for="apprise_notify_each_species">Notify each new species</label><br>
       <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1) { echo "checked"; };?> >
       <label for="apprise_notify_each_detection">Notify each new detection</label><br>
-      <p><a target="_blank" href="https://github.com/caronc/apprise/wiki">Apprise Notifications</a> can be setup and enabled for New Species notifications.</p>
+      <p><a target="_blank" href="https://github.com/caronc/apprise/wiki">Apprise Notifications</a> can be setup and enabled for notifications. Each service should be on its own line.</p>
 
       <label for="language">Database Language: </label>
       <select name="language">
