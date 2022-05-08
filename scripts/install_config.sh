@@ -83,8 +83,8 @@ PUSHED_APP_SECRET=
 
 #-----------------------  Apprise Miscellanous Configuration -------------------#
 
-APPRISE_NOTIFICATION_TITLE=New BirdNET-Pi Detection
-APPRISE_NOTIFICATION_BODY=A $sciname $comname was just detected with a confidence of $confidence
+APPRISE_NOTIFICATION_TITLE="New BirdNET-Pi Detection"
+APPRISE_NOTIFICATION_BODY="A \$sciname \$comname was just detected with a confidence of \$confidence"
 APPRISE_NOTIFY_EACH_DETECTION=false
 
 ################################################################################
