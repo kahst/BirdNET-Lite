@@ -105,7 +105,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <p><a target="_blank" href="https://pushed.co/quick-start-guide">Pushed iOS Notifications</a> can be setup and enabled for New Species notifications. Be sure to "Enable" the "Pushed Notifications" in "Tools" > "Services" if you would like to use this feature. Sorry, Android users, this only works on iOS.</p>
 
       <label for="apprise_input">Apprise Notifications Configuration: </label>
-      <textarea name="apprise_input" type="text" ><?php print($apprise_config);?></textarea>
+      <textarea cols="140" name="apprise_input" type="text" ><?php print($apprise_config);?></textarea>
       <p><a target="_blank" href="https://github.com/caronc/apprise/wiki">Apprise Notifications</a> can be setup and enabled for New Species notifications.</p>
 
       <label for="language">Database Language: </label>
