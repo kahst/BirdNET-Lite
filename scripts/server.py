@@ -47,6 +47,7 @@ userDir = os.path.expanduser('~')
 with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     this_run = f.readlines()
     audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
+    priv_thresh = float("." + str(str(str([i for i in this_run if i.startswith('PRIVACY_THRESHOLD')]).split('=')[1]).split('\\')[0]))
 
 
 def loadModel():
@@ -164,14 +165,23 @@ def predict(sample, sensitivity):
 
     # Sort by score
     p_sorted = sorted(p_labels.items(), key=operator.itemgetter(1), reverse=True)
+                
+    print("DATABASE SIZE:", len(p_sorted))
+    print("HUMAN-CUTOFF AT:", int(len(p_sorted)*priv_thresh)/10)
 
     # Remove species that are on blacklist
     for i in range(min(10, len(p_sorted))):
-        if p_sorted[i][0] in ['Human_Human', 'Non-bird_Non-bird', 'Noise_Noise']:
+        if p_sorted[i][0] in ['Non-bird_Non-bird', 'Noise_Noise']:
             p_sorted[i] = (p_sorted[i][0], 0.0)
+        if p_sorted[i][0]=='Human_Human':
+#            print("HUMAN SCORE:",str(p_sorted[i]))
+#             HUMAN_FLAG=True
+            with open(userDir + '/BirdNET-Pi/HUMAN.txt', 'a') as rfile:
+                rfile.write(str(datetime.datetime.now())+str(p_sorted[i])+ '\n')
+    human_cutoff = max(10,int(len(p_sorted)*priv_thresh/10))
 
-    # Only return first the top ten results
-    return p_sorted[:10]
+
+    return p_sorted[:human_cutoff]
 
 def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
     global INTERPRETER
@@ -193,15 +203,32 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
 
         # Make prediction
         p = predict([sig, mdata], sensitivity)
-
+#        print("PPPPP",p)
+        HUMAN_DETECTED=False
+        #Catch if Human is recognized
+        for x in range(len(p)):
+            if "Human" in p[x][0]:
+#                print("HUMAN DETECTED!!",p[x][0])
+                #clear list
+                HUMAN_DETECTED=True
+                print("CHUNK -----",c)
+         
         # Save result and timestamp
         pred_end = pred_start + 3.0
+        
+        if HUMAN_DETECTED == True:
+            p=[('Human_Human',0.0)]*10
+            print("HUMAN DETECTED!!!",p)
+
         detections[str(pred_start) + ';' + str(pred_end)] = p
+        
         pred_start = pred_end - overlap
 
     print('DONE! Time', int((time.time() - start) * 10) / 10.0, 'SECONDS')
-
+#    print('DETECTIONS:::::',detections)
     return detections
+
+
 
 def writeResultsToFile(detections, min_conf, path):
 
