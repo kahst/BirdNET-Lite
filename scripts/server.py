@@ -208,8 +208,8 @@ def sendAppriseNotifications(species,confidence):
     if os.path.getsize(userDir + '/BirdNET-Pi/apprise.txt') > 0:
         with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
             this_run = f.readlines()
-            title = "." + str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_TITLE')]).split('=')[1]).split('\\')[0])
-            body = "." + str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_BODY')]).split('=')[1]).split('\\')[0])
+            title = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_TITLE')]).split('=')[1]).split('\\')[0]).replace('"', '')
+            body = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_BODY')]).split('=')[1]).split('\\')[0]).replace('"', '')
 
         apobj = apprise.Apprise()
         config = apprise.AppriseConfig()
@@ -230,7 +230,7 @@ def writeResultsToFile(detections, min_conf, path):
         for d in detections:
             for entry in detections[d]:
                 if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) ):
-                    if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_EACH_DETECTION')]).split('=')[1]).split('\\')[0]) == "true":
+                    if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_EACH_DETECTION')]).split('=')[1]).split('\\')[0]) == "1":
                         sendAppriseNotifications(str(entry[0]),str(entry[1]));
                     rfile.write(d + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + '\n')
                     rcnt += 1
