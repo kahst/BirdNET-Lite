@@ -12,7 +12,13 @@ $pushed_app_secret = $_GET["pushed_app_secret"];
 $apprise_input = $_GET['apprise_input'];
 $apprise_notification_title = $_GET['apprise_notification_title'];
 $apprise_notification_body = $_GET['apprise_notification_body'];
-$apprise_notify_each_detection = $_GET['apprise_notify_each_detection'];
+if(isset($_GET['apprise_notify_each_detection'])) {
+  $apprise_notify_each_detection = 1;
+} else {
+  $apprise_notify_each_detection = 0;
+}
+
+
 
 $contents = file_get_contents("/etc/birdnet/birdnet.conf");
 $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
@@ -31,6 +37,9 @@ $contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
 $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
 $contents2 = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents2);
 $contents2 = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents2);
+$contents2 = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=$apprise_notification_title", $contents2);
+$contents2 = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=$apprise_notification_body", $contents2);
+$contents2 = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents2);
 
 $fh = fopen("/etc/birdnet/birdnet.conf", "w");
 $fh2 = fopen("./scripts/thisrun.txt", "w");
@@ -119,7 +128,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <input name="apprise_notification_body" type="text" value="<?php print($config['APPRISE_NOTIFICATION_BODY']);?>" /><br>
       <input type="checkbox" name="apprise_notify_each_species" value="true" disabled checked>
       <label for="apprise_notify_each_species">Notify each new species</label><br>
-      <input type="checkbox" name="apprise_notify_each_detection" value="<?php print($config['APPRISE_NOTIFY_EACH_DETECTION']);?>">
+      <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1) { echo "checked"; };?> >
       <label for="apprise_notify_each_detection">Notify each new detection</label><br>
       <p><a target="_blank" href="https://github.com/caronc/apprise/wiki">Apprise Notifications</a> can be setup and enabled for New Species notifications.</p>
 

@@ -13,7 +13,7 @@ if ! grep PRIVACY_MODE /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "PRIVACY_MODE=off" >> /etc/birdnet/birdnet.conf
 fi
 if ! grep APPRISE_NOTIFICATION_TITLE /etc/birdnet/birdnet.conf &>/dev/null;then
-  sudo -u$USER echo "\"APPRISE_NOTIFICATION_TITLE=New BirdNET-Pi Detection\"" >> /etc/birdnet/birdnet.conf
+  sudo -u$USER echo "APPRISE_NOTIFICATION_TITLE=\"New BirdNET-Pi Detection\"" >> /etc/birdnet/birdnet.conf
 fi
 if ! grep APPRISE_NOTIFICATION_BODY /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "APPRISE_NOTIFICATION_BODY=\"A \$sciname \$comname was just detected with a confidence of \$confidence\"" >> /etc/birdnet/birdnet.conf
