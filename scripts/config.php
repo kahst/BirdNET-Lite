@@ -10,6 +10,9 @@ $birdweather_id = $_GET["birdweather_id"];
 $pushed_app_key = $_GET["pushed_app_key"];
 $pushed_app_secret = $_GET["pushed_app_secret"];
 $apprise_input = $_GET['apprise_input'];
+$apprise_notification_title = $_GET['apprise_notification_title'];
+$apprise_notification_body = $_GET['apprise_notification_body'];
+$apprise_notify_each_detection = $_GET['apprise_notify_each_detection'];
 
 $contents = file_get_contents("/etc/birdnet/birdnet.conf");
 $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
@@ -17,6 +20,10 @@ $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
 $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
 $contents = preg_replace("/PUSHED_APP_KEY=.*/", "PUSHED_APP_KEY=$pushed_app_key", $contents);
 $contents = preg_replace("/PUSHED_APP_SECRET=.*/", "PUSHED_APP_SECRET=$pushed_app_secret", $contents);
+$contents = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=$apprise_notification_title", $contents);
+$contents = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=$apprise_notification_body", $contents);
+$contents = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents);
+
 
 $contents2 = file_get_contents("./scripts/thisrun.txt");
 $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
@@ -105,7 +112,15 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
       <p><a target="_blank" href="https://pushed.co/quick-start-guide">Pushed iOS Notifications</a> can be setup and enabled for New Species notifications. Be sure to "Enable" the "Pushed Notifications" in "Tools" > "Services" if you would like to use this feature. Sorry, Android users, this only works on iOS.</p>
 
       <label for="apprise_input">Apprise Notifications Configuration: </label>
-      <textarea cols="140" name="apprise_input" type="text" ><?php print($apprise_config);?></textarea>
+      <textarea style="vertical-align: top" name="apprise_input" cols="140" type="text" ><?php print($apprise_config);?></textarea><br><br>
+      <label for="apprise_notification_title">Notification Title: </label>
+      <input name="apprise_notification_title" type="text" value="<?php print($config['APPRISE_NOTIFICATION_TITLE']);?>" /><br>
+      <label for="apprise_notification_body">Notification Body (use variables $sciname, $comname, or $confidence): </label>
+      <input name="apprise_notification_body" type="text" value="<?php print($config['APPRISE_NOTIFICATION_BODY']);?>" /><br>
+      <input type="checkbox" name="apprise_notify_each_species" value="true" disabled checked>
+      <label for="apprise_notify_each_species">Notify each new species</label><br>
+      <input type="checkbox" name="apprise_notify_each_detection" value="<?php print($config['APPRISE_NOTIFY_EACH_DETECTION']);?>">
+      <label for="apprise_notify_each_detection">Notify each new detection</label><br>
       <p><a target="_blank" href="https://github.com/caronc/apprise/wiki">Apprise Notifications</a> can be setup and enabled for New Species notifications.</p>
 
       <label for="language">Database Language: </label>

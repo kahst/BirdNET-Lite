@@ -20,10 +20,6 @@ if ! diff ${IDFILE} ${lastcheck} &> /dev/null;then
   echo "Sending the following notification:
 ${NOTIFICATION}"
 
-  if [ ! -z ${NOTIFY_RUN_CHANNEL_ID} ];then
-    curl https://notify.run/${NOTIFY_RUN_CHANNEL_ID} -d ${NOTIFICATION}
-  fi
-
   if [ ! -z ${PUSHED_APP_KEY} ];then
     curl -X POST \
       --form-string "app_key=${PUSHED_APP_KEY}" \
