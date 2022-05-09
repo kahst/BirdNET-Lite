@@ -8,7 +8,7 @@ if [ "${used//%}" -ge 95 ]; then
   case $FULL_DISK in
     purge) echo "Removing oldest data"
         cd ${EXTRACTED}/By_Date/
-
+	curl localhost/views.php?view=Species%20Stats &>/dev/null
         iter=0
         for i in */*/*; do
             if [ $iter -ge 250 ]; then
