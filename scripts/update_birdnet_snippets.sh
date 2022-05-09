@@ -15,6 +15,8 @@ fi
 if grep privacy ~/BirdNET-Pi/templates/birdnet_server.service &>/dev/null;then
   sudo -E sed -i 's/privacy_server.py/server.py/g' \
     ~/BirdNET-Pi/templates/birdnet_server.service
+  sudo systemctl daemon-reload
+  restart_services.sh
 fi
 if ! which lsof &>/dev/null;then
   sudo apt update && sudo apt -y install lsof
