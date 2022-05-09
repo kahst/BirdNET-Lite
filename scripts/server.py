@@ -1,3 +1,4 @@
+#!/home/pi/BirdNET-Pi/birdnet/bin/python3
 import socket 
 import threading
 import os
@@ -47,7 +48,7 @@ userDir = os.path.expanduser('~')
 with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     this_run = f.readlines()
     audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
-    priv_thresh = float("." + str(str(str([i for i in this_run if i.startswith('PRIVACY_THRESHOLD')]).split('=')[1]).split('\\')[0]))
+    priv_thresh = float("." + str(str(str([i for i in this_run if i.startswith('PRIVACY_THRESHOLD')]).split('=')[1]).split('\\')[0]))/10
 
 
 def loadModel():
@@ -166,20 +167,17 @@ def predict(sample, sensitivity):
     # Sort by score
     p_sorted = sorted(p_labels.items(), key=operator.itemgetter(1), reverse=True)
                 
-    print("DATABASE SIZE:", len(p_sorted))
-    print("HUMAN-CUTOFF AT:", int(len(p_sorted)*priv_thresh)/10)
+#     #print("DATABASE SIZE:", len(p_sorted))
+#     #print("HUMAN-CUTOFF AT:", int(len(p_sorted)*priv_thresh)/10)
+# 
+#     # Remove species that are on blacklist
 
-    # Remove species that are on blacklist
+    human_cutoff = max(10,int(len(p_sorted)*priv_thresh))
+
     for i in range(min(10, len(p_sorted))):
-        if p_sorted[i][0] in ['Non-bird_Non-bird', 'Noise_Noise']:
-            p_sorted[i] = (p_sorted[i][0], 0.0)
         if p_sorted[i][0]=='Human_Human':
-#            print("HUMAN SCORE:",str(p_sorted[i]))
-#             HUMAN_FLAG=True
             with open(userDir + '/BirdNET-Pi/HUMAN.txt', 'a') as rfile:
-                rfile.write(str(datetime.datetime.now())+str(p_sorted[i])+ '\n')
-    human_cutoff = max(10,int(len(p_sorted)*priv_thresh/10))
-
+                rfile.write(str(datetime.datetime.now())+str(p_sorted[i])+ ' '  + str(human_cutoff)+ '\n')
 
     return p_sorted[:human_cutoff]
 
@@ -205,20 +203,18 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
         p = predict([sig, mdata], sensitivity)
 #        print("PPPPP",p)
         HUMAN_DETECTED=False
+        
         #Catch if Human is recognized
         for x in range(len(p)):
             if "Human" in p[x][0]:
-#                print("HUMAN DETECTED!!",p[x][0])
-                #clear list
                 HUMAN_DETECTED=True
-                print("CHUNK -----",c)
          
         # Save result and timestamp
         pred_end = pred_start + 3.0
         
+        #If human detected set all detections to human to make sure voices are not saved
         if HUMAN_DETECTED == True:
             p=[('Human_Human',0.0)]*10
-            print("HUMAN DETECTED!!!",p)
 
         detections[str(pred_start) + ';' + str(pred_end)] = p
         
