@@ -13,7 +13,6 @@ $apprise_input = $_GET['apprise_input'];
 $apprise_notification_title = $_GET['apprise_notification_title'];
 $apprise_notification_body = $_GET['apprise_notification_body'];
 if(isset($_GET['apprise_notify_each_detection'])) {
-  exec('restart_services.sh');
   $apprise_notify_each_detection = 1;
 } else {
   $apprise_notify_each_detection = 0;
