@@ -110,12 +110,12 @@ run_analysis() {
     fi
     # prepare optional parameters for analyze.py
     if [ -f ${INCLUDE_LIST} ]; then
-      INCLUDEPARAM="--include_list \"${INCLUDE_LIST}\""
+      INCLUDEPARAM="--include_list ${INCLUDE_LIST}"
     else
       INCLUDEPARAM=""
     fi
     if [ -f ${EXCLUDE_LIST} ]; then
-      EXCLUDEPARAM="--exclude_list \"${EXCLUDE_LIST}\""
+      EXCLUDEPARAM="--exclude_list ${EXCLUDE_LIST}"
     else
       EXCLUDEPARAM=""
     fi
