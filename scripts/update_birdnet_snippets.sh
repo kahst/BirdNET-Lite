@@ -11,6 +11,7 @@ if ! grep python3 <(head -n1 $my_dir/analyze.py) &>/dev/null;then
 fi
 if ! grep PRIVACY_THRESHOLD /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "PRIVACY_THRESHOLD=0" >> /etc/birdnet/birdnet.conf
+  git -C $HOME/BirdNET-Pi rm $my_dir/privacy_server.py 
 fi
 if grep privacy ~/BirdNET-Pi/templates/birdnet_server.service &>/dev/null;then
   sudo -E sed -i 's/privacy_server.py/server.py/g' \
