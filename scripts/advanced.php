@@ -164,14 +164,8 @@ if(isset($_GET['submit'])) {
   fwrite($fh2, $contents2);
 }
 
-$count_included = count(file("./scripts/include_species_list.txt"));
 $count_labels = count(file("./scripts/labels.txt"));
-
-if($count_included > 0) {
-  $count = $count_included;
-} else {
-  $count = $count_labels;
-}
+$count = $count_labels;
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
