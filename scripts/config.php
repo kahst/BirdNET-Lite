@@ -163,7 +163,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <br><br>
       <input type="hidden" name="status" value="success">
       <input type="hidden" name="submit" value="settings">
-      <button onclick="if(Boolean(Number(<?php print($config['APPRISE_NOTIFY_EACH_DETECTION']); ?>)) != document.getElementsByName('apprise_notify_each_detection')[0].checked){return confirm('This will take about 90 seconds.')}"` type="submit" name="view" value="Settings">
+      <button onclick="if(Boolean(Number(<?php print($config['APPRISE_NOTIFY_EACH_DETECTION']); ?>)) != document.getElementsByName('apprise_notify_each_detection')[0].checked) type="submit" name="view" value="Settings">
 <?php
 if(isset($_GET['status'])){
   echo "Success!";
