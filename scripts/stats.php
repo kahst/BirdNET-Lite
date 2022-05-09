@@ -52,6 +52,11 @@ if(isset($_GET['species'])){
   }
   $result3 = $statement3->execute();
 }
+
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
+file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "");
 ?>
 
 <html lang="en">
@@ -157,6 +162,10 @@ while($results=$result->fetchArray(SQLITE3_ASSOC))
 $comname = preg_replace('/ /', '_', $results['Com_Name']);
 $comname = preg_replace('/\'/', '', $comname);
 $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
+
+$excludefile = fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "a") or die("Unable to open file!");
+$txt = $results['Date']."/".$comname."/".$results['File_Name']."\n".$results['Date']."/".$comname."/".$results['File_Name'].".png\n";
+fwrite($excludefile, $txt);
 ?>
       <tr>
       <form action="" method="GET">
@@ -175,4 +184,3 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
 </div>
 </body>
 </html>
-

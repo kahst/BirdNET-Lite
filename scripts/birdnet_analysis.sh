@@ -108,19 +108,19 @@ run_analysis() {
         sleep 1
       done
     fi
-    # prepare optional parameters for analyse.py
+    # prepare optional parameters for analyze.py
     if [ -f ${INCLUDE_LIST} ]; then
-      INCLUDEPARAM="--include_list \"${INCLUDE_LIST}\""
+      INCLUDEPARAM="--include_list ${INCLUDE_LIST}"
     else
       INCLUDEPARAM=""
     fi
     if [ -f ${EXCLUDE_LIST} ]; then
-      EXCLUDEPARAM="--include_list \"${EXCLUDE_LIST}\""
+      EXCLUDEPARAM="--exclude_list ${EXCLUDE_LIST}"
     else
       EXCLUDEPARAM=""
     fi
     if [ ! -z $BIRDWEATHER_ID ]; then
-      BIRDWEATHER_ID_PARAM="--birdweather_id \"${BIRDWEATHER_ID}\""
+      BIRDWEATHER_ID_PARAM="--birdweather_id ${BIRDWEATHER_ID}"
       BIRDWEATHER_ID_LOG="--birdweather_id \"IN_USE\""
     else
       BIRDWEATHER_ID_PARAM=""
