@@ -114,9 +114,8 @@ if(isset($_GET['submit'])) {
     if(strcmp($privacy_threshold,$config['PRIVACY_THRESHOLD']) !== 0) {
       $contents = preg_replace("/PRIVACY_THRESHOLD=.*/", "PRIVACY_THRESHOLD=$privacy_threshold", $contents);
       $contents2 = preg_replace("/PRIVACY_THRESHOLD=.*/", "PRIVACY_THRESHOLD=$privacy_threshold", $contents2);
+      exec('restart_services.sh');
     }
-
-    exec('sudo systemctl restart birdnet_server.service');
   }
 
   if(isset($_GET["rec_card"])) {
@@ -191,7 +190,7 @@ if (file_exists('./scripts/thisrun.txt')) {
     <form action="" method="GET">
       <label>Privacy Threshold: </label><br>
       <div class="slidecontainer">
-        <input name="privacy_threshold" type="range" min="0" max="25" value="<?php print($newconfig['PRIVACY_THRESHOLD']);?>" class="slider" id="privacy_threshold">
+        <input name="privacy_threshold" type="range" min="0" max="3" value="<?php print($newconfig['PRIVACY_THRESHOLD']);?>" class="slider" id="privacy_threshold">
         <p>Value: <span id="threshold_value"></span>%</p>
       </div>
       <script>
