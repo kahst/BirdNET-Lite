@@ -252,7 +252,7 @@ foreach($formats as $format){
       <p>Min=0.5, Max=1.5</p>
       <br><br>
       <input type="hidden" name="view" value="Advanced">
-      <button type="submit" name="submit" value="advanced">
+      <button onclick="if(<?php print($newconfig['PRIVACY_THRESHOLD']);?> != document.getElementById('privacy_threshold').value){return confirm('This will take about 90 seconds.')}" type="submit" name="submit" value="advanced">
 <?php
 if(isset($_GET['submit'])){
   echo "Success!";
