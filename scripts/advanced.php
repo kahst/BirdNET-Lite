@@ -109,27 +109,12 @@ if(isset($_GET['submit'])) {
     }
   }
 
-  if(isset($_GET["privacy_mode"])) {
-    $privacy_mode = $_GET["privacy_mode"];
-    if(strcmp($config['PRIVACY_MODE'], "1") == 0 ) {
-      $pmode = "on";
-    }elseif(strcmp($config['PRIVACY_MODE'], "") == 0) {
-      $pmode = "off";
-    }
-    if(strcmp($privacy_mode,$pmode) !== 0) {
-      $contents = preg_replace("/PRIVACY_MODE=.*/", "PRIVACY_MODE=$privacy_mode", $contents);
-      $contents2 = preg_replace("/PRIVACY_MODE=.*/", "PRIVACY_MODE=$privacy_mode", $contents2);
-      if(strcmp($privacy_mode,"on") == 0) {
-        exec('sudo sed -i \'s/\/usr\/local\/bin\/server.py/\/usr\/local\/bin\/privacy_server.py/g\' ../../BirdNET-Pi/templates/birdnet_server.service');
-        exec('sudo systemctl daemon-reload');
-        exec('restart_services.sh');
-        header('Location: /log');
-      } elseif(strcmp($privacy_mode,"off") == 0) {
-        exec('sudo sed -i \'s/\/usr\/local\/bin\/privacy_server.py/\/usr\/local\/bin\/server.py/g\' ../../BirdNET-Pi/templates/birdnet_server.service');
-        exec('sudo systemctl daemon-reload');
-        exec('restart_services.sh');
-        header('Location: /log');
-      }
+  if(isset($_GET["privacy_threshold"])) {
+    $privacy_threshold = $_GET["privacy_threshold"];
+    if(strcmp($privacy_threshold,$config['PRIVACY_THRESHOLD']) !== 0) {
+      $contents = preg_replace("/PRIVACY_THRESHOLD=.*/", "PRIVACY_THRESHOLD=$privacy_threshold", $contents);
+      $contents2 = preg_replace("/PRIVACY_THRESHOLD=.*/", "PRIVACY_THRESHOLD=$privacy_threshold", $contents2);
+      exec('restart_services.sh');
     }
   }
 
@@ -178,6 +163,9 @@ if(isset($_GET['submit'])) {
   fwrite($fh, $contents);
   fwrite($fh2, $contents2);
 }
+
+$count_labels = count(file("./scripts/labels.txt"));
+$count = $count_labels;
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -194,14 +182,23 @@ if (file_exists('./scripts/thisrun.txt')) {
 ?>
       <h2>Advanced Settings</h2>
     <form action="" method="GET">
-      <label>Privacy Mode: </label>
-      <label for="on">
-      <input name="privacy_mode" type="radio" id="on" value="on" <?php if (strcmp($newconfig['PRIVACY_MODE'], "1") == 0) { echo "checked"; }?>>On</label>
-      <label for="off">
-      <input name="privacy_mode" type="radio" id="off" value="off" <?php if (strcmp($newconfig['PRIVACY_MODE'], "") == 0) { echo "checked"; }?>>Off</label>
-      <p>Privacy mode can be set to 'on' or 'off' to configure analysis to be more sensitive to human detections. Privacy mode 'on' will purge any data that receives even a low Human confidence score.
-      Please note that changing this setting restarts services and replaces the running server. It will take about 90, so please be patient!</p>
-
+      <label>Privacy Threshold: </label><br>
+      <div class="slidecontainer">
+        <input name="privacy_threshold" type="range" min="0" max="3" value="<?php print($newconfig['PRIVACY_THRESHOLD']);?>" class="slider" id="privacy_threshold">
+        <p>Value: <span id="threshold_value"></span>%</p>
+      </div>
+      <script>
+      var slider = document.getElementById("privacy_threshold");
+      var output = document.getElementById("threshold_value");
+      output.innerHTML = slider.value; // Display the default slider value
+      
+      // Update the current slider value (each time you drag the slider handle)
+      slider.oninput = function() {
+        output.innerHTML = this.value;
+        document.getElementById("predictionCount").innerHTML = parseInt((this.value * <?php echo $count; ?>)/100);
+      }
+      </script>
+      <p>If a Human is predicted anywhere among the top <span id="predictionCount"><?php echo $newconfig['PRIVACY_THRESHOLD'] == 0 ? "threshold % of" : intval(($newconfig['PRIVACY_THRESHOLD'] * $count)/100); ?></span> predictions, the sample will be considered of human origin and no data will be collected. Start with 1% and move up as needed.</p>
       <label>Full Disk Behavior: </label>
       <label for="purge">
       <input name="full_disk" type="radio" id="purge" value="purge" <?php if (strcmp($newconfig['FULL_DISK'], "purge") == 0) { echo "checked"; }?>>Purge</label>

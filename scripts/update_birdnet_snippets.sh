@@ -9,8 +9,12 @@ if ! grep python3 <(head -n1 $my_dir/analyze.py) &>/dev/null;then
   echo "Ensure all python scripts use the virtual environment"
   sudo -u$USER sed -si "1 i\\#\!$HOME/BirdNET-Pi/birdnet/bin/python3" $my_dir/*.py
 fi
-if ! grep PRIVACY_MODE /etc/birdnet/birdnet.conf &>/dev/null;then
-  sudo -u$USER echo "PRIVACY_MODE=off" >> /etc/birdnet/birdnet.conf
+if ! grep PRIVACY_THRESHOLD /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "PRIVACY_THRESHOLD=0" >> /etc/birdnet/birdnet.conf
+fi
+if grep privacy ~/BirdNET-Pi/templates/birdnet_server.service &>/dev/null;then
+  sudo -E sed -i 's/privacy_server.py/server.py/g' \
+    ~/BirdNET-Pi/templates/birdnet_server.service
 fi
 if ! which lsof &>/dev/null;then
   sudo apt update && sudo apt -y install lsof
