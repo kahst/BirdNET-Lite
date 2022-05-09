@@ -69,18 +69,6 @@ BIRDNETPI_URL=
 
 RTSP_STREAM=
 
-#-------------------  Mobile Notifications via Pushed.co  ---------------------#
-#____________The two variables below enable mobile notifications_______________#
-#_____________See https://pushed.co/quick-start-guide to get___________________#
-#_________________________these values for your app.___________________________#
-
-#            Keep these EMPTY if haven't setup a Pushed.co App yet.            #
-
-## Pushed.co App Key and App Secret
-
-PUSHED_APP_KEY=
-PUSHED_APP_SECRET=
-
 #-----------------------  Apprise Miscellanous Configuration -------------------#
 
 APPRISE_NOTIFICATION_TITLE="New BirdNET-Pi Detection"
