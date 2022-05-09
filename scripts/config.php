@@ -13,6 +13,7 @@ $apprise_input = $_GET['apprise_input'];
 $apprise_notification_title = $_GET['apprise_notification_title'];
 $apprise_notification_body = $_GET['apprise_notification_body'];
 if(isset($_GET['apprise_notify_each_detection'])) {
+  exec('restart_services.sh');
   $apprise_notify_each_detection = 1;
 } else {
   $apprise_notify_each_detection = 0;
@@ -163,7 +164,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <br><br>
       <input type="hidden" name="status" value="success">
       <input type="hidden" name="submit" value="settings">
-      <button type="submit" name="view" value="Settings">
+      <button onclick="if(Boolean(Number(<?php print($config['APPRISE_NOTIFY_EACH_DETECTION']); ?>)) != document.getElementsByName('apprise_notify_each_detection')[0].checked){return confirm('This will take about 90 seconds.')}"` type="submit" name="view" value="Settings">
 <?php
 if(isset($_GET['status'])){
   echo "Success!";
