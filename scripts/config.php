@@ -7,8 +7,6 @@ if(isset($_GET["latitude"])){
 $latitude = $_GET["latitude"];
 $longitude = $_GET["longitude"];
 $birdweather_id = $_GET["birdweather_id"];
-$pushed_app_key = $_GET["pushed_app_key"];
-$pushed_app_secret = $_GET["pushed_app_secret"];
 $apprise_input = $_GET['apprise_input'];
 $apprise_notification_title = $_GET['apprise_notification_title'];
 $apprise_notification_body = $_GET['apprise_notification_body'];
