@@ -225,7 +225,7 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
     return detections
 
 def sendAppriseNotifications(species,confidence):
-    if os.path.getsize(userDir + '/BirdNET-Pi/apprise.txt') > 0:
+        if os.path.exists(userDir + '/BirdNET-Pi/apprise.txt') and os.path.getsize(userDir + '/BirdNET-Pi/apprise.txt') > 0:
         with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
             this_run = f.readlines()
             title = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_TITLE')]).split('=')[1]).split('\\')[0]).replace('"', '')
