@@ -125,7 +125,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <input name="apprise_notification_title" type="text" value="<?php print($config['APPRISE_NOTIFICATION_TITLE']);?>" /><br>
       <label for="apprise_notification_body">Notification Body (use variables $sciname, $comname, or $confidence): </label>
       <input name="apprise_notification_body" type="text" value="<?php print($config['APPRISE_NOTIFICATION_BODY']);?>" /><br>
-      <input type="checkbox" name="apprise_notify_each_species" <?php $output = shell_exec("service pushed_notifications status"); if (!strpos($output, 'dead') !== false) { echo "checked"; } ?>>
+      <input type="checkbox" name="apprise_notify_each_species" <?php $output = shell_exec("service pushed_notifications status"); if (!strpos($output, 'dead') !== false && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; } ?>>
       <label for="apprise_notify_each_species">Notify each new species</label><br>
       <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1) { echo "checked"; };?> >
       <label for="apprise_notify_each_detection">Notify each new detection</label><br><br>
