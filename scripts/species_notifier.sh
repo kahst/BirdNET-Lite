@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Sends a notification if a new species is detected
-#set -x
 trap 'rm -f $lastcheck' EXIT
 source /etc/birdnet/birdnet.conf
 
@@ -21,13 +20,8 @@ if ! diff ${IDFILE} ${lastcheck} &> /dev/null;then
   echo "Sending the following notification:
 ${NOTIFICATION}"
 
-  if [ ! -z ${PUSHED_APP_KEY} ];then
-    curl -X POST \
-      --form-string "app_key=${PUSHED_APP_KEY}" \
-      --form-string "app_secret=${PUSHED_APP_SECRET}" \
-      --form-string "target_type=app" \
-      --form-string "content=${NOTIFICATION}" \
-      https://api.pushed.co/1/push
+  if [ ! -s $HOME/BirdNET-Pi/apprise.txt ];then
+    $HOME/BirdNET-Pi/birdnet/bin/apprise -vv -t 'New Species Detected' -b "${NOTIFICATION}" --config=$HOME/BirdNET-Pi/apprise.txt
   fi
 fi
 
