@@ -28,13 +28,14 @@ fi
 if ! grep APPRISE_NOTIFY_EACH_DETECTION /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "APPRISE_NOTIFY_EACH_DETECTION=false" >> /etc/birdnet/birdnet.conf
 fi
-if ! which lsof &>/dev/null;then
-  sudo apt update && sudo apt -y install lsof
-fi
 apprise_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("apprise") else "not installed")')
 if [[ "$apprise_installation_status" = "not installed" ]];then
   ~/BirdNET-Pi/birdnet/bin/pip3 install -U pip
   ~/BirdNET-Pi/birdnet/bin/pip3 install apprise
+fi
+[ -f $HOME/BirdNET-Pi/apprise.txt ] || sudo -E -u$USER touch $HOME/BirdNET-Pi/apprise.txt
+if ! which lsof &>/dev/null;then
+  sudo apt update && sudo apt -y install lsof
 fi
 if ! grep RTSP_STREAM /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "RTSP_STREAM=" >> /etc/birdnet/birdnet.conf
