@@ -95,11 +95,8 @@ run_analysis() {
     echo "${1}/${i}" > $HOME/BirdNET-Pi/analyzing_now.txt
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=15
     echo "RECORDING_LENGTH set to ${RECORDING_LENGTH}"
-    a=0
     until [ -z "$(lsof -t ${1}/${i})" ];do
       sleep 2
-      [ $a -ge ${RECORDING_LENGTH} ] && rm -f ${1}/${i} && break
-      a=$((a+2))
     done
 
     if ! grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;then
