@@ -1,6 +1,5 @@
 import sqlite3
 import os
-import configparser
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
