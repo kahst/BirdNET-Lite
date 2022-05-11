@@ -13,6 +13,10 @@ if ! grep PRIVACY_THRESHOLD /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "PRIVACY_THRESHOLD=0" >> /etc/birdnet/birdnet.conf
   git -C $HOME/BirdNET-Pi rm $my_dir/privacy_server.py 
 fi
+if [ -f $my_dir/privacy_server ] || [ -L /usr/local/bin/privacy_server.py ];then
+  rm -f $my_dir/privacy_server.py
+  rm -f /usr/local/bin/privacy_server.py
+fi
 if grep privacy ~/BirdNET-Pi/templates/birdnet_server.service &>/dev/null;then
   sudo -E sed -i 's/privacy_server.py/server.py/g' \
     ~/BirdNET-Pi/templates/birdnet_server.service
