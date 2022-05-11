@@ -36,6 +36,7 @@ if(isset($_GET['stream'])){
       echo "
   <audio controls autoplay><source src=\"/stream\"></audio>
   </div>
+  <h1><a href=\"/\">BirdNET-Pi</a></h1>
   </div>";
     } else {
       header('WWW-Authenticate: Basic realm="My Realm"');
