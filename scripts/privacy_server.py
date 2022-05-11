@@ -504,7 +504,9 @@ def handle_client(conn, addr):
                                             str(entry[1])
                                         post_end = " }"
 
-                                        post_json = post_begin + post_timestamp + post_lat + post_lon + post_soundscape_id + post_soundscape_start_time + \
+                                        post_json = post_begin + \
+                                            post_timestamp + post_lat + post_lon + \
+                                            post_soundscape_id + post_soundscape_start_time + \
                                             post_soundscape_end_time + post_commonName + post_scientificName + \
                                             post_algorithm + post_confidence + post_end
                                         print(post_json)
