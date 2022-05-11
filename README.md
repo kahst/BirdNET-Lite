@@ -1,5 +1,5 @@
 <h1 align="center">
-  BirdNET-Pi <img src="https://img.shields.io/badge/Version-0.13-pink" />
+  BirdNET-Pi
 </h1>
 <p align="center">
 A realtime acoustic bird classification system for the Raspberry Pi 4B
@@ -38,6 +38,7 @@ Currently listening in these countries . . . that I know of . . .
 - Finland
 - Australia
 - Canada
+- Switzerland
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis

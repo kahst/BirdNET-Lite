@@ -95,11 +95,8 @@ run_analysis() {
     echo "${1}/${i}" > $HOME/BirdNET-Pi/analyzing_now.txt
     [ -z ${RECORDING_LENGTH} ] && RECORDING_LENGTH=15
     echo "RECORDING_LENGTH set to ${RECORDING_LENGTH}"
-    a=0
     until [ -z "$(lsof -t ${1}/${i})" ];do
       sleep 2
-      [ $a -ge ${RECORDING_LENGTH} ] && rm -f ${1}/${i} && break
-      a=$((a+2))
     done
 
     if ! grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;then
@@ -108,19 +105,19 @@ run_analysis() {
         sleep 1
       done
     fi
-    # prepare optional parameters for analyse.py
+    # prepare optional parameters for analyze.py
     if [ -f ${INCLUDE_LIST} ]; then
-      INCLUDEPARAM="--include_list \"${INCLUDE_LIST}\""
+      INCLUDEPARAM="--include_list ${INCLUDE_LIST}"
     else
       INCLUDEPARAM=""
     fi
     if [ -f ${EXCLUDE_LIST} ]; then
-      EXCLUDEPARAM="--include_list \"${EXCLUDE_LIST}\""
+      EXCLUDEPARAM="--exclude_list ${EXCLUDE_LIST}"
     else
       EXCLUDEPARAM=""
     fi
     if [ ! -z $BIRDWEATHER_ID ]; then
-      BIRDWEATHER_ID_PARAM="--birdweather_id \"${BIRDWEATHER_ID}\""
+      BIRDWEATHER_ID_PARAM="--birdweather_id ${BIRDWEATHER_ID}"
       BIRDWEATHER_ID_LOG="--birdweather_id \"IN_USE\""
     else
       BIRDWEATHER_ID_PARAM=""
