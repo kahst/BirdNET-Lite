@@ -121,8 +121,8 @@ if(isset($_GET['submit'])) {
   if(isset($_GET["rec_card"])) {
     $rec_card = $_GET["rec_card"];
     if(strcmp($rec_card,$config['REC_CARD']) !== 0) {
-      $contents = preg_replace("/REC_CARD=.*/", "REC_CARD=$rec_card", $contents);
-      $contents2 = preg_replace("/REC_CARD=.*/", "REC_CARD=$rec_card", $contents2);
+      $contents = preg_replace("/REC_CARD=.*/", "REC_CARD=\"$rec_card\"", $contents);
+      $contents2 = preg_replace("/REC_CARD=.*/", "REC_CARD=\"$rec_card\"", $contents2);
     }
   }
 
