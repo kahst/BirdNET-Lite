@@ -36,3 +36,6 @@ if [[ "$apprise_installation_status" = "not installed" ]];then
   ~/BirdNET-Pi/birdnet/bin/pip3 install -U pip
   ~/BirdNET-Pi/birdnet/bin/pip3 install apprise
 fi
+if ! grep RTSP_STREAM /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "RTSP_STREAM=" >> /etc/birdnet/birdnet.conf
+fi
