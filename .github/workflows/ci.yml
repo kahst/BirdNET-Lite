@@ -21,5 +21,3 @@ jobs:
 
       - name: Run Flake8 Lint
         uses: py-actions/flake8@v2
-        with:
-          exclude: "./scripts/daily_plot.py,./scripts/server.py,./scripts/plotly_streamlit.py,./scripts/privacy_server.py"
