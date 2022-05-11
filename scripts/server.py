@@ -1,16 +1,15 @@
-import argparse
+import os
+import socket
+import threading
 import operator
 import librosa
 import numpy as np
 import math
 import time
-from decimal import Decimal
 import json
 import requests
 import sqlite3
 import datetime
-from time import sleep
-import pytz
 from tzlocal import get_localzone
 from pathlib import Path
 import apprise
@@ -216,7 +215,7 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
         pred_end = pred_start + 3.0
 
         # If human detected set all detections to human to make sure voices are not saved
-        if HUMAN_DETECTED == True:
+        if HUMAN_DETECTED is True:
             p = [('Human_Human', 0.0)] * 10
 
         detections[str(pred_start) + ';' + str(pred_end)] = p
@@ -237,7 +236,7 @@ def sendAppriseNotifications(species, confidence):
             body = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_BODY')]
                                ).split('=')[1]).split('\\')[0]).replace('"', '')
 
-        if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_EACH_DETECTION')]).split('=')[1]).split('\\')[0]) == "1":
+        if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_EACH_DETECTION')]).split('=')[1]).split('\\')[0]) == "1": # noqa E501
 
             apobj = apprise.Apprise()
             config = apprise.AppriseConfig()
