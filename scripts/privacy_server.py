@@ -180,7 +180,6 @@ def predict(sample, sensitivity):
             p_sorted[i] = (p_sorted[i][0], 0.0)
         if p_sorted[i][0] == 'Human_Human':
             print("HUMAN SCORE:", str(p_sorted[i]))
-            HUMAN_FLAG = True
             with open(userDir + '/BirdNET-Pi/HUMAN.txt', 'a') as rfile:
                 rfile.write(str(datetime.datetime.now()) +
                             str(p_sorted[i]) + '\n')
