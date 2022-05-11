@@ -1,18 +1,14 @@
 from pathlib import Path
 from tzlocal import get_localzone
-import pytz
-from time import sleep
 import datetime
 import sqlite3
 import requests
 import json
-from decimal import Decimal
 import time
 import math
 import numpy as np
 import librosa
 import operator
-import argparse
 import socket
 import threading
 import os
@@ -239,7 +235,7 @@ def handle_client(conn, addr):
             if msg == DISCONNECT_MESSAGE:
                 connected = False
             else:
-                #print(f"[{addr}] {msg}")
+                # print(f"[{addr}] {msg}")
 
                 args = type('', (), {})()
 
@@ -297,7 +293,7 @@ def handle_client(conn, addr):
                 audioData = readAudioData(args.i, args.overlap)
 
                 # Get Date/Time from filename in case Pi gets behind
-                #now = datetime.now()
+                # now = datetime.now()
                 full_file_name = args.i
                 print('FULL FILENAME: -' + full_file_name + '-')
                 file_name = Path(full_file_name).stem
@@ -305,8 +301,8 @@ def handle_client(conn, addr):
                 file_time = file_name.split('-birdnet-')[1]
                 date_time_str = file_date + ' ' + file_time
                 date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
-                #print('Date:', date_time_obj.date())
-                #print('Time:', date_time_obj.time())
+                # print('Date:', date_time_obj.date())
+                # print('Time:', date_time_obj.time())
                 print('Date-time:', date_time_obj)
                 now = date_time_obj
                 current_date = now.strftime("%Y-%m-%d")
@@ -436,7 +432,8 @@ def handle_client(conn, addr):
                                             soundscape_uploaded = True
 
                                         # POST detection to server
-                                        detection_url = "https://app.birdweather.com/api/v1/stations/" + birdweather_id + "/detections"
+                                        detection_url = "https://app.birdweather.com/api/v1/stations/" + \
+                                            birdweather_id + "/detections"
                                         start_time = d.split(';')[0]
                                         end_time = d.split(';')[1]
                                         post_begin = "{ "
@@ -454,8 +451,11 @@ def handle_client(conn, addr):
                                         post_confidence = "\"confidence\": " + str(entry[1])
                                         post_end = " }"
 
-                                        post_json = post_begin + post_timestamp + post_lat + post_lon + post_soundscape_id + post_soundscape_start_time + \
-                                            post_soundscape_end_time + post_commonName + post_scientificName + post_algorithm + post_confidence + post_end
+                                        post_json = post_begin + \
+                                            post_timestamp + post_lat + post_lon + \
+                                            post_soundscape_id + post_soundscape_start_time + \
+                                            post_soundscape_end_time + post_commonName + post_scientificName + \
+                                            post_algorithm + post_confidence + post_end
                                         print(post_json)
                                         response = requests.post(detection_url, json=json.loads(post_json))
                                         print("Detection POST Response Status - ", response.status_code)
