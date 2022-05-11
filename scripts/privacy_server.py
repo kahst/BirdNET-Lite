@@ -228,7 +228,7 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
         # Save result and timestamp
         pred_end = pred_start + 3.0
 
-        if HUMAN_DETECTED == True:
+        if HUMAN_DETECTED is True:
             p = [('Human_Human', 0.0)] * 10
             print("HUMAN DETECTED!!!", p)
 
@@ -277,7 +277,7 @@ def handle_client(conn, addr):
             if msg == DISCONNECT_MESSAGE:
                 connected = False
             else:
-                #print(f"[{addr}] {msg}")
+                # print(f"[{addr}] {msg}")
 
                 args = type('', (), {})()
 
@@ -335,7 +335,7 @@ def handle_client(conn, addr):
                 audioData = readAudioData(args.i, args.overlap)
 
                 # Get Date/Time from filename in case Pi gets behind
-                #now = datetime.now()
+                # now = datetime.now()
                 full_file_name = args.i
                 print('FULL FILENAME: -' + full_file_name + '-')
                 file_name = Path(full_file_name).stem
@@ -344,8 +344,8 @@ def handle_client(conn, addr):
                 date_time_str = file_date + ' ' + file_time
                 date_time_obj = datetime.datetime.strptime(
                     date_time_str, '%Y-%m-%d %H:%M:%S')
-                #print('Date:', date_time_obj.date())
-                #print('Time:', date_time_obj.time())
+                # print('Date:', date_time_obj.date())
+                # print('Time:', date_time_obj.time())
                 print('Date-time:', date_time_obj)
                 now = date_time_obj
                 current_date = now.strftime("%Y-%m-%d")
