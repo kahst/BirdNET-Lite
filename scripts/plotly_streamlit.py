@@ -4,8 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from datetime import timedelta, datetime
-from pathlib import Path
+from datetime import timedelta
 import sqlite3
 from sqlite3 import Connection
 
@@ -93,8 +92,11 @@ top_N = cols1.slider(
 top_N_species = (df2['Com_Name'].value_counts()[:top_N])
 
 
-specie = cols2.selectbox('Which bird would you like to explore for the dates ' + str(Date_Slider[0]) + ' to ' + str(Date_Slider[1]) + '?', species,
-                         index=species.index(list(top_N_species.index)[0]))
+specie = cols2.selectbox(
+    'Which bird would you like to explore for the dates ' +
+    str(Date_Slider[0]) + ' to ' + str(Date_Slider[1]) + '?',
+    species,
+    index=species.index(list(top_N_species.index)[0]))
 
 
 font_size = 15
@@ -109,12 +111,16 @@ fig = make_subplots(
     rows=3, cols=2,
     specs=[[{"type": "xy", "rowspan": 3}, {"type": "polar", "rowspan": 2}], [
         {"rowspan": 1}, {"rowspan": 1}], [None, {"type": "xy", "rowspan": 1}]],
-    subplot_titles=('<b>Top ' + str(top_N) + ' Species in Date Range ' + str(Date_Slider[0]) + ' to ' + str(Date_Slider[1]) + '</b>',
-                    'Total Detect:' + str('{:,}'.format(sum(df_counts.Time))) +
-                    '   Confidence Max:' + str('{:.2f}%'.format(max(df2[df2['Com_Name'] == specie]['Confidence']) * 100)) +
-                    '   ' + '   Median:' +
-                    str('{:.2f}%'.format(np.median(df2[df2['Com_Name'] == specie]['Confidence']) * 100))
-                    )
+    subplot_titles=(
+        '<b>Top ' + str(top_N) +
+        ' Species in Date Range ' + str(Date_Slider[0]) +
+        ' to ' + str(Date_Slider[1]) +
+        '</b>',
+        'Total Detect:' + str('{:,}'.format(sum(df_counts.Time))) +
+        '   Confidence Max:' + str('{:.2f}%'.format(max(df2[df2['Com_Name'] == specie]['Confidence']) * 100)) +
+        '   ' + '   Median:' +
+        str('{:.2f}%'.format(np.median(df2[df2['Com_Name'] == specie]['Confidence']) * 100))
+        )
 )
 fig.layout.annotations[1].update(x=0.7, y=0.25, font_size=15)
 
@@ -170,6 +176,6 @@ st.plotly_chart(fig, use_container_width=True)  # , config=config)
 #
 # extract_date=Date_Slider
 #
-# audio_file = open('/home/*/BirdSongs/Extracted/By_Date/2022-03-22/Yellow-streaked_Greenbul/Yellow-streaked_Greenbul-77-2022-03-22-birdnet-15:04:28.mp3', 'rb')
+# audio_file = open('/home/*/BirdSongs/Extracted/By_Date/2022-03-22/Yellow-streaked_Greenbul/Yellow-streaked_Greenbul-77-2022-03-22-birdnet-15:04:28.mp3', 'rb') # noqa: E501
 # audio_bytes = audio_file.read()
 # cols4.audio(audio_bytes, format='audio/mp3')
