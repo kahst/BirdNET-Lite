@@ -43,7 +43,8 @@ userDir = os.path.expanduser('~')
 with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     this_run = f.readlines()
     audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
-    priv_thresh = float("." + str(str(str([i for i in this_run if i.startswith('PRIVACY_THRESHOLD')]).split('=')[1]).split('\\')[0]))/10
+    priv_thresh = float(
+        "." + str(str(str([i for i in this_run if i.startswith('PRIVACY_THRESHOLD')]).split('=')[1]).split('\\')[0])) / 10
 
 
 def loadModel():
@@ -173,12 +174,12 @@ def predict(sample, sensitivity):
 #
 #     # Remove species that are on blacklist
 
-    human_cutoff = max(10,int(len(p_sorted)*priv_thresh))
+    human_cutoff = max(10, int(len(p_sorted) * priv_thresh))
 
     for i in range(min(10, len(p_sorted))):
-        if p_sorted[i][0]=='Human_Human':
+        if p_sorted[i][0] == 'Human_Human':
             with open(userDir + '/BirdNET-Pi/HUMAN.txt', 'a') as rfile:
-                rfile.write(str(datetime.datetime.now())+str(p_sorted[i])+ ' '  + str(human_cutoff)+ '\n')
+                rfile.write(str(datetime.datetime.now()) + str(p_sorted[i]) + ' ' + str(human_cutoff) + '\n')
 
     return p_sorted[:human_cutoff]
 
@@ -204,19 +205,19 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
         # Make prediction
         p = predict([sig, mdata], sensitivity)
 #        print("PPPPP",p)
-        HUMAN_DETECTED=False
+        HUMAN_DETECTED = False
 
-        #Catch if Human is recognized
+        # Catch if Human is recognized
         for x in range(len(p)):
             if "Human" in p[x][0]:
-                HUMAN_DETECTED=True
+                HUMAN_DETECTED = True
 
         # Save result and timestamp
         pred_end = pred_start + 3.0
 
-        #If human detected set all detections to human to make sure voices are not saved
+        # If human detected set all detections to human to make sure voices are not saved
         if HUMAN_DETECTED == True:
-            p=[('Human_Human',0.0)]*10
+            p = [('Human_Human', 0.0)] * 10
 
         detections[str(pred_start) + ';' + str(pred_end)] = p
 
@@ -226,12 +227,15 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
 #    print('DETECTIONS:::::',detections)
     return detections
 
-def sendAppriseNotifications(species,confidence):
+
+def sendAppriseNotifications(species, confidence):
     if os.path.exists(userDir + '/BirdNET-Pi/apprise.txt') and os.path.getsize(userDir + '/BirdNET-Pi/apprise.txt') > 0:
         with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
             this_run = f.readlines()
-            title = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_TITLE')]).split('=')[1]).split('\\')[0]).replace('"', '')
-            body = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_BODY')]).split('=')[1]).split('\\')[0]).replace('"', '')
+            title = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_TITLE')]
+                                ).split('=')[1]).split('\\')[0]).replace('"', '')
+            body = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_BODY')]
+                               ).split('=')[1]).split('\\')[0]).replace('"', '')
 
         if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_EACH_DETECTION')]).split('=')[1]).split('\\')[0]) == "1":
 
@@ -241,9 +245,16 @@ def sendAppriseNotifications(species,confidence):
             apobj.add(config)
 
             apobj.notify(
-                body=body.replace("$sciname",species.split("_")[0]).replace("$comname",species.split("_")[1]).replace("$confidence",confidence),
+                body=body.replace(
+                    "$sciname",
+                    species.split("_")[0]).replace(
+                    "$comname",
+                    species.split("_")[1]).replace(
+                    "$confidence",
+                    confidence),
                 title=title,
             )
+
 
 def writeResultsToFile(detections, min_conf, path):
 
@@ -253,8 +264,9 @@ def writeResultsToFile(detections, min_conf, path):
         rfile.write('Start (s);End (s);Scientific name;Common name;Confidence\n')
         for d in detections:
             for entry in detections[d]:
-                if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) ):
-                    sendAppriseNotifications(str(entry[0]),str(entry[1]));
+                if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0)
+                                             and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0)):
+                    sendAppriseNotifications(str(entry[0]), str(entry[1]))
                     rfile.write(d + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + '\n')
                     rcnt += 1
     print('DONE! WROTE', rcnt, 'RESULTS.')
