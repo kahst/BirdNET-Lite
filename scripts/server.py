@@ -1,14 +1,6 @@
-import socket 
+import socket
 import threading
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-os.environ['CUDA_VISIBLE_DEVICES'] = ''
-
-try:
-    import tflite_runtime.interpreter as tflite
-except:
-    from tensorflow import lite as tflite
-
 import operator
 import librosa
 import numpy as np
@@ -21,6 +13,13 @@ import datetime
 from tzlocal import get_localzone
 from pathlib import Path
 import apprise
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+try:
+    import tflite_runtime.interpreter as tflite
+except ImportError:
+    from tensorflow import lite as tflite
 
 
 HEADER = 64
