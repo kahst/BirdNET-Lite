@@ -122,7 +122,7 @@ for h in "${SCAN_DIRS[@]}";do
     # Create spectrogram for extraction
     sox "${NEWSPECIES_BYDATE}/${NEWFILE}" -n remix 1 rate 24k spectrogram \
       -t "${COMMON_NAME}" \
-      -c "${NEWSPECIES_BYDATE}/${NEWFILE}" \
+      -c "${NEWSPECIES_BYDATE//$HOME\/}/${NEWFILE}" \
       -o "${NEWSPECIES_BYDATE}/${NEWFILE}.png"
     
   done < "${TMPFILE}"
