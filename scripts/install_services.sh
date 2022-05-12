@@ -360,9 +360,8 @@ Description=BirdNET-Pi Web Terminal
 Restart=on-failure
 RestartSec=3
 Type=simple
-User=${USER}
 Environment=TERM=xterm-256color
-ExecStart=/usr/local/bin/gotty --address localhost -w -p 8888 -P terminal --title-format "BirdNET-Pi Terminal" bash
+ExecStart=/usr/local/bin/gotty --address localhost -w -p 8888 -P terminal --title-format "BirdNET-Pi Terminal" login
 [Install]
 WantedBy=multi-user.target
 EOF
