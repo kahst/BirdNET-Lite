@@ -142,12 +142,16 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   
   ob_flush();
   flush();
-  $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=2158f6c5d66e89778bd0d340953f1bcf&text=".str_replace('_', '+', $comname)."&license=7%2C9%2C10&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
-  foreach ($flickrjson as $val) {
-      $imageurl = 'http://farm' .$val["farm"]. '.static.flickr.com/' .$val["server"]. '/' .$val["id"]. '_'  .$val["secret"].  '.jpg';
-      echo "<img src=\"$imageurl\">";
+  $imagelink = "https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image";
+  $homepage = file_get_contents($imagelink);
+  preg_match_all("{<img\\s*(.*?)src=('.*?'|\".*?\"|[^\\s]+)(.*?)\\s*/?>}ims", $homepage, $matches, PREG_SET_ORDER);
+  foreach ($matches as $val) {
+      $pos = strpos($val[2],"/");
+      $link = substr($val[2],1,-1);
+      if($pos !== 1 && strpos($link, "upload") == true && strpos($link, "CentralAutoLogin") == false)
+          echo "<img src=\"$link\">";
   }
-}
+}}
 ?>
 <br><br><br>
 
