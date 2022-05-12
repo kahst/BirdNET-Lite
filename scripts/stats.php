@@ -147,7 +147,7 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
       $imageurl = 'http://farm' .$val["farm"]. '.static.flickr.com/' .$val["server"]. '/' .$val["id"]. '_'  .$val["secret"].  '.jpg';
       echo "<img src=\"$imageurl\">";
   }
-}
+}}
 ?>
 <br><br><br>
 
