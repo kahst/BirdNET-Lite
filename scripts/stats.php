@@ -108,7 +108,7 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
 </div>
 <div class="column center">
 <?php if(!isset($_GET['species'])){
-?><p class="centered">Choose a species to load images from Wikimedia Commons.</p>
+?><p class="centered">Choose a species to load images from Flickr.</p>
 <?php
 };?>
 <?php if(isset($_GET['species'])){
@@ -136,7 +136,7 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" title=\"$filename\"><source src=\"$filename\"></video></td>
   </tr>
     </table>
-  <p>Loading Images from <a href=\"https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image\" target=\"_blank\">Wikimedia Commons</a></p>", '6096');
+  <p>Loading Images from Flickr</p>", '6096');
   
   echo "<script>document.getElementsByTagName(\"h3\")[0].scrollIntoView();</script>";
   
