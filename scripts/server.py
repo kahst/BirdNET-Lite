@@ -9,19 +9,15 @@ try:
 except:
     from tensorflow import lite as tflite
 
-import argparse
 import operator
 import librosa
 import numpy as np
 import math
 import time
-from decimal import Decimal
 import json
 import requests
 import sqlite3
 import datetime
-from time import sleep
-import pytz
 from tzlocal import get_localzone
 from pathlib import Path
 import apprise
