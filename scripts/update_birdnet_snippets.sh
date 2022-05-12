@@ -44,3 +44,8 @@ fi
 if ! grep RTSP_STREAM /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "RTSP_STREAM=" >> /etc/birdnet/birdnet.conf
 fi
+if grep bash $HOME/BirdNET-Pi/templates/web_terminal.service;then
+  sudo sed -i '/User/d;s/bash/login/g' $HOME/BirdNET-Pi/templates/web_terminal.service
+  sudo systemctl daemon-reload
+  sudo systemctl restart web_terminal.service
+fi
