@@ -25,7 +25,7 @@ import apprise
 
 HEADER = 64
 PORT = 5050
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = "localhost"
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
