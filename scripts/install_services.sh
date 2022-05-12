@@ -212,6 +212,9 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   handle /Charts/* {
     file_server browse
   }
+  basicauth views.php?view=File* {
+    birdnet ${HASHWORD}
+  }
   basicauth /Processed* {
     birdnet ${HASHWORD}
   }
