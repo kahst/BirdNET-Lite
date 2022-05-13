@@ -90,10 +90,7 @@ Please take a look at the [wiki](https://github.com/mcguirepr89/BirdNET-Pi/wiki)
 
 ## Updating 
 
-Since the change in RaspiOS that has discontinued the default `pi` user, the recommended update instructions for installations that _do_ have the default `pi` user:
-1. Go to "Tools" > "Web Terminal"
-2. Type ```git pull```
-3. Go to "Tools" > "System Controls" > "Update" > "OK"
+Use the web interface and go to "Tools" > "System Controls" > "Update." If you encounter any issues with that, or suspect that the update did not work for some reason, please save its output and post it in an issue where we can help.
 
 ## Uninstallation
 ```
