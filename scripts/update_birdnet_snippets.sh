@@ -49,3 +49,4 @@ if grep bash $HOME/BirdNET-Pi/templates/web_terminal.service;then
   sudo systemctl daemon-reload
   sudo systemctl restart web_terminal.service
 fi
+[ -L ~/BirdSongs/Extracted/static ] || ln -sf ~/BirdNET-Pi/homepage/static ~/BirdSongs/Extracted
