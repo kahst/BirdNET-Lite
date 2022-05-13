@@ -7,7 +7,6 @@ my_dir=$HOME/BirdNET-Pi/scripts
 sudo systemctl stop birdnet_server.service
 sudo pkill server.py
 sudo systemctl stop birdnet_recording.service
-sudo rm -rf ${RECS_DIR}/$(date +%B-%Y/%d-%A)/*
 services=(web_terminal.service
 spectrogram_viewer.service
 pushed_notifications.service
