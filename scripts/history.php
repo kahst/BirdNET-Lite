@@ -37,6 +37,7 @@ $totalcount = $result1->fetchArray(SQLITE3_ASSOC);
 				<td><?php echo $totalcount['COUNT(*)'];?></td>
 			</tr>
 		</table>
+		<br><br>
 <?php
 if (file_exists('./Charts/'.$chart)) {
   echo "<img src=\"/Charts/$chart?nocache=time()\" >";
