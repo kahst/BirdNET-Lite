@@ -164,9 +164,10 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
         <option value="labels_uk.txt">Ukrainian</option>
       </select>
       <br><br>
+
       <input type="hidden" name="status" value="success">
       <input type="hidden" name="submit" value="settings">
-      <button onclick="if(Boolean(Number(<?php print($config['APPRISE_NOTIFY_EACH_DETECTION']); ?>)) != document.getElementsByName('apprise_notify_each_detection')[0].checked) type="submit" name="view" value="Settings">
+      <button type="submit" name="view" value="Settings">
 <?php
 if(isset($_GET['status'])){
   echo "Success!";
