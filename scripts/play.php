@@ -151,13 +151,36 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
 }
 
 #Specific Species
-if(isset($_GET['species'])){
+if(isset($_GET['species'])){ ?>
+<div style="width: auto;
+   text-align: center">
+   <form action="" method="GET">
+      <input type="hidden" name="view" value="Recordings">
+      <input type="hidden" name="species" value="<?php echo $_GET['species']; ?>">
+      <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "date"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="date">
+         <img src="images/sort_date.svg" alt="Sort by date">
+      </button>
+      <button <?php if(isset($_GET['sort']) && $_GET['sort'] == "confidence"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="confidence">
+         <img src="images/sort_conf.svg" alt="Sort by confidence">
+      </button>
+   </form>
+</div>
+<?php
   $name = $_GET['species'];
   if(isset($_SESSION['date'])) {
     $date = $_SESSION['date'];
-    $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Time DESC");
+    if(isset($_GET['sort']) && $_GET['sort'] == "confidence") {
+        $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Confidence DESC");
+    } else {
+        $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Time DESC");
+    }
   } else {
-  $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Date DESC, Time DESC");}
+      if(isset($_GET['sort']) && $_GET['sort'] == "confidence") {
+        $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Confidence DESC");
+    } else {
+       $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Date DESC, Time DESC");
+    }
+  }
   if($statement2 == False){
     echo "Database is busy";
     header("refresh: 0;");
@@ -167,6 +190,9 @@ if(isset($_GET['species'])){
     <tr>
     <th>$name</th>
     </tr>";
+    $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+    $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+    $home = trim($home);
     while($results=$result2->fetchArray(SQLITE3_ASSOC))
     {
       $comname = preg_replace('/ /', '_', $results['Com_Name']);
@@ -176,7 +202,13 @@ if(isset($_GET['species'])){
       $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
       $sci_name = $results['Sci_Name'];
       $time = $results['Time'];
-      $confidence = round($results['Confidence'],2);
+      $confidence = $results['Confidence'];
+
+      // file was deleted by disk check, no need to show the detection in recordings
+      if(!file_exists($home."/BirdSongs/Extracted/".$filename)) {
+        continue;
+      }
+
       echo "<tr>
         <td class=\"relative\"><a target=\"_blank\" href=\"index.php?filename=".$results['File_Name']."\"><img class=\"copyimage\" width=25 src=\"images/copy.png\"></a>$date $time<br>$confidence<br>
         <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
