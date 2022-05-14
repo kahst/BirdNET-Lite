@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL);
+error_reporting(E_ERROR);
 ini_set('display_errors',1);
 
 # Basic Settings
@@ -20,6 +20,21 @@ if(isset($_GET['apprise_notify_each_species'])) {
 } else {
   exec('sudo systemctl stop pushed_notifications.service');
 }
+
+// logic for setting the date and time based on user inputs from the form below
+if(isset($_GET['date']) && isset($_GET['time'])) {
+  // can't set the date manually if it's getting it from the internet, disable ntp
+  exec("sudo timedatectl set-ntp false");
+
+  exec("sudo date -s '".$_GET['date']." ".$_GET['time']."'");
+} else {
+  // user checked 'use time from internet if available,' so make sure that's on
+  if(strlen(trim(exec("sudo timedatectl | grep \"NTP service: active\""))) == 0){
+    exec("sudo timedatectl set-ntp true");
+    sleep(3);
+  }
+}
+
 
 
 
@@ -163,10 +178,42 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
         <option value="labels_th.txt">Thai</option>
         <option value="labels_uk.txt">Ukrainian</option>
       </select>
-      <br><br>
+      <br>
+      <script>
+        function handleChange(checkbox) {
+          // this disables the input of manual date and time if the user wants to use the internet time
+          var date=document.getElementById("date");
+          var time=document.getElementById("time");
+          if(checkbox.checked) { 
+            date.setAttribute("disabled", "disabled"); 
+            time.setAttribute("disabled", "disabled"); 
+          } else { 
+            date.removeAttribute("disabled");
+            time.removeAttribute("disabled"); 
+          }
+        }
+      </script>
+      <?php 
+      // if NTP service is active, show the checkboxes as checked, and disable the manual input
+      $tdc = trim(exec("sudo timedatectl | grep \"NTP service: active\""));
+      if (strlen($tdc) > 0) { 
+        $checkedvalue = "checked";
+        $disabledvalue = "disabled";
+      } else {
+        $checkedvalue = "";
+        $disabledvalue = "";
+      }
+      ?>
+      <label for="appt">Select a Date and Time:</label><br>
+      <span>If connected to the internet, retrieve time automatically?</span>
+      <input type="checkbox" onchange='handleChange(this)' name="apprise_notify_each_detection" <?php echo $checkedvalue; ?> ><br>
+      <input onclick="this.showPicker()" type="date" id="date" name="date" value="<?php echo date('Y-m-d') ?>" <?php echo $disabledvalue; ?>>
+      <input onclick="this.showPicker()" type="time" id="time" name="time" value="<?php echo date('h:i') ?>" <?php echo $disabledvalue; ?>>
+      <br><br><br>
+
       <input type="hidden" name="status" value="success">
       <input type="hidden" name="submit" value="settings">
-      <button onclick="if(Boolean(Number(<?php print($config['APPRISE_NOTIFY_EACH_DETECTION']); ?>)) != document.getElementsByName('apprise_notify_each_detection')[0].checked) type="submit" name="view" value="Settings">
+      <button type="submit" name="view" value="Settings">
 <?php
 if(isset($_GET['status'])){
   echo "Success!";
