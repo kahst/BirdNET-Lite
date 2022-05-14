@@ -158,10 +158,10 @@ if(isset($_GET['species'])){ ?>
       <input type="hidden" name="view" value="Recordings">
       <input type="hidden" name="species" value="<?php echo $_GET['species']; ?>">
       <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "date"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="date">
-         <img src="images/sort_date.svg" alt="Sort by date">
+         <img width=35px src="images/sort_date.svg" alt="Sort by date">
       </button>
       <button <?php if(isset($_GET['sort']) && $_GET['sort'] == "confidence"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="confidence">
-         <img src="images/sort_conf.svg" alt="Sort by confidence">
+         <img src="images/sort_occ.svg" alt="Sort by confidence">
       </button>
    </form>
 </div>
