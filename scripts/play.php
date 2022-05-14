@@ -212,8 +212,9 @@ if(isset($_GET['species'])){ ?>
       $iter++;
 
       echo "<tr>
-        <td class=\"relative\"><a target=\"_blank\" href=\"index.php?filename=".$results['File_Name']."\"><img class=\"copyimage\" width=25 src=\"images/copy.png\"></a>$date $time<br>$confidence<br>
-        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+        <td>$date $time<br>$confidence<br>
+        <a href=\"$filename\"><img src=\"$filename.png\"></a>
+        </td>
         </tr>";
 
     }if($iter == 0){ echo "<tr><td><b>No recordings were found on this date.</b><br><br><span style='font-size:small'>They may have been deleted to make space for new recordings. You can modify this setting for the future in Tools -> Settings -> Advanced Settings -> Full Disk Behavior.</small></td></tr>";}echo "</table>";}
@@ -242,7 +243,8 @@ if(isset($_GET['filename'])){
       $confidence = $results['Confidence'];
       echo "<tr>
         <td>$date $time<br>$confidence<br>
-        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+        <a href=\"$filename\"><img src=\"$filename\"></a>
+        </td>
         </tr>";
 
     }echo "</table>";}?>
