@@ -116,7 +116,7 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
    
 while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   $count = $results['COUNT(*)'];
-  $maxconf = $results['MAX(Confidence)'];
+  $maxconf = round($results['MAX(Confidence)'],2);
   $date = $results['Date'];
   $time = $results['Time'];
   $name = $results['Com_Name'];
@@ -172,7 +172,7 @@ fwrite($excludefile, $txt);
         <input type="hidden" name="sort" value="<?php if(isset($_GET['sort'])){echo $_GET['sort'];}?>">
       <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $results['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><input type="hidden" name="view" value="Species Stats">
         <button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button><br><b>Occurrences:</b> <?php echo $results['COUNT(*)'];?><br>
-      <b>Max Confidence:</b> <?php echo $results['MAX(Confidence)'];?><br>
+      <b>Max Confidence:</b> <?php echo round($results['MAX(Confidence)'],2);?><br>
       <b>Best Recording:</b> <?php echo $results['Date']." ".$results['Time'];?><br><video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
       </tr>
 <?php
