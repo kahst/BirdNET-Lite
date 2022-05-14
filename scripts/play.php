@@ -193,6 +193,7 @@ if(isset($_GET['species'])){ ?>
     $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
     $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
     $home = trim($home);
+    $iter=0;
     while($results=$result2->fetchArray(SQLITE3_ASSOC))
     {
       $comname = preg_replace('/ /', '_', $results['Com_Name']);
@@ -208,13 +209,14 @@ if(isset($_GET['species'])){ ?>
       if(!file_exists($home."/BirdSongs/Extracted/".$filename)) {
         continue;
       }
+      $iter++;
 
       echo "<tr>
         <td class=\"relative\"><a target=\"_blank\" href=\"index.php?filename=".$results['File_Name']."\"><img class=\"copyimage\" width=25 src=\"images/copy.png\"></a>$date $time<br>$confidence<br>
         <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
         </tr>";
 
-    }echo "</table>";}
+    }if($iter == 0){ echo "<tr><td><b>No recordings were found on this date.</b><br><br><span style='font-size:small'>They may have been deleted to make space for new recordings. You can modify this setting for the future in Tools -> Settings -> Advanced Settings -> Full Disk Behavior.</small></td></tr>";}echo "</table>";}
 
 if(isset($_GET['filename'])){
   $name = $_GET['filename'];
