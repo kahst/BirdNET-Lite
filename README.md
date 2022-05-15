@@ -53,7 +53,7 @@ Currently listening in these countries . . . that I know of . . .
 * SQLite3 Database
 * Adminer database maintenance
 * [phpSysInfo](https://github.com/phpsysinfo/phpsysinfo)
-* New species mobile notifications from [Pushed.co](https://pushed.co/quick-start-guide) (for iOS users only)
+* [Apprise Notifications](https://github.com/caronc/apprise) supporting 70+ notification platforms
 * Localization supported
 
 ## Requirements
