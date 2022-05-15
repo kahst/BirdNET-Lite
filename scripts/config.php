@@ -178,7 +178,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
         <option value="labels_th.txt">Thai</option>
         <option value="labels_uk.txt">Ukrainian</option>
       </select>
-      <br>
+      <br><br>
       <script>
         function handleChange(checkbox) {
           // this disables the input of manual date and time if the user wants to use the internet time

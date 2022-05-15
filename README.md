@@ -53,7 +53,7 @@ Currently listening in these countries . . . that I know of . . .
 * SQLite3 Database
 * Adminer database maintenance
 * [phpSysInfo](https://github.com/phpsysinfo/phpsysinfo)
-* New species mobile notifications from [Pushed.co](https://pushed.co/quick-start-guide) (for iOS users only)
+* [Apprise Notifications](https://github.com/caronc/apprise) supporting 70+ notification platforms
 * Localization supported
 
 ## Requirements
@@ -104,7 +104,12 @@ Submit an issue or discussion.
 Please join a Discussion!! and please join [BirdWeather!!](https://app.birdweather.com)
 I hope that if you find BirdNET-Pi has been worth your time, you will share your setup, results, customizations, etc. [HERE](https://github.com/mcguirepr89/BirdNET-Pi/discussions/69) and will consider [making your installation public](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi).
 
-## ToDo, Notes, and Coming Soon 
+## Project Links
+
+- [Marie Lelouche's <i>Out of Spaces</i>](https://www.lestanneries.fr/exposition/marie-lelouche-out-of-spaces/) using BirdNET-Pi in post-sculpture VR! [Press Kit](https://github.com/mcguirepr89/BirdNET-Pi-assets/blob/main/dp_out_of_spaces_marie_lelouche_digital_05_01_22.pdf)
+- [Research on noded BirdNET-Pi networks for farming](https://github.com/mcguirepr89/BirdNET-Pi-assets/blob/main/G23_Report_ModelBasedSysEngineering_FarmMarkBirdDetector_V1__Copy_.pdf)
+- <ins>[Core-Electronics](https://core-electronics.com.au/projects/bird-calls-raspberry-pi)</ins> Build Article
+
 
 ### Internationalization:
 The bird names are in English by default, but other localized versions are available thanks to the wonderful efforts of [@patlevin](https://github.com/patlevin). Use the web interface's "Tools" > "Settings" and select your "Database Language" to have the detections in your language.

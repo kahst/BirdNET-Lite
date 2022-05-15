@@ -6,6 +6,7 @@ USER=$(awk -F: '/1000/ {print $1}' /etc/passwd)
 HOME=$(awk -F: '/1000/ {print $6}' /etc/passwd)
 my_dir=$HOME/BirdNET-Pi/scripts
 
+sudo -u$USER git -C $my_dir rm privacy_server.py
 sudo -u${USER} git -C $my_dir stash
 sudo -u${USER} git -C $my_dir pull -f
 sudo systemctl daemon-reload

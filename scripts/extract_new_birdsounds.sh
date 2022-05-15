@@ -117,7 +117,7 @@ for h in "${SCAN_DIRS[@]}";do
     fi
 
     sox "${h}/${OLDFILE}" "${NEWSPECIES_BYDATE}/${NEWFILE}" \
-      trim "${START}" "${END}"
+      trim ="${START}" ="${END}"
 
     # Create spectrogram for extraction
     sox "${NEWSPECIES_BYDATE}/${NEWFILE}" -n remix 1 rate 24k spectrogram \
