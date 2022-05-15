@@ -38,7 +38,7 @@ if(isset($_GET['submit'])) {
       $fh = fopen('/etc/birdnet/birdnet.conf', "w");
       $fh2 = fopen("./scripts/thisrun.txt", "w");
       fwrite($fh, $contents);
-      fwrite($fh2, $contents);
+      fwrite($fh2, $contents2);
       exec('sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &');
     }
   }
