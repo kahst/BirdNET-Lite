@@ -33,8 +33,8 @@ if(isset($_GET['submit'])) {
   if(isset($_GET["caddy_pwd"])) {
     $caddy_pwd = $_GET["caddy_pwd"];
     if(strcmp($caddy_pwd,$config['CADDY_PWD']) !== 0) {
-      $contents = preg_replace("/CADDY_PWD=.*/", "CADDY_PWD=$caddy_pwd", $contents);
-      $contents2 = preg_replace("/CADDY_PWD=.*/", "CADDY_PWD=$caddy_pwd", $contents2);
+      $contents = preg_replace("/CADDY_PWD=.*/", "CADDY_PWD=\"$caddy_pwd\"", $contents);
+      $contents2 = preg_replace("/CADDY_PWD=.*/", "CADDY_PWD=\"$caddy_pwd\"", $contents2);
       $fh = fopen('/etc/birdnet/birdnet.conf', "w");
       $fh2 = fopen("./scripts/thisrun.txt", "w");
       fwrite($fh, $contents);
