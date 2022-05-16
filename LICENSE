@@ -713,7 +713,7 @@ consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.
 =============================================================================
-Caddy, ,Streamlit, and Adminer use the Apache License Version 2.0
+Caddy, WiFi-Connect,Streamlit, and Adminer use the Apache License Version 2.0
 =============================================================================
                                 Apache License
                            Version 2.0, January 2004
@@ -918,7 +918,7 @@ Caddy, ,Streamlit, and Adminer use the Apache License Version 2.0
    limitations under the License.
 
 =============================================================================
-GoTTY and autoAP scripts use the MIT License
+GoTTY and Apprise Notifications use the MIT License
 =============================================================================
 MIT License
 
