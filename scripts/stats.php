@@ -56,7 +56,18 @@ if(isset($_GET['species'])){
 $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
-file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "");
+if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")) {
+  file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end");
+}
+function editfile( $sourcefile, $start='##start', $end='##end', $data=array() ){
+    $lines=array_filter( file( $sourcefile , FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES ) );
+    $output=array_merge(
+        array_splice( $lines, 0, array_search( strtolower( $start ), array_map('strtolower', $lines ) ) + 1 ),
+        $data,
+        array_splice( $lines, array_search( strtolower( $end ), array_map('strtolower', $lines ) ) )
+    );
+    file_put_contents( $sourcefile, implode( PHP_EOL, $output ) );
+}
 ?>
 
 <html lang="en">
@@ -151,21 +162,22 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
       if($pos !== 1 && strpos($link, "upload") == true && strpos($link, "CentralAutoLogin") == false)
           echo "<img src=\"$link\">";
   }
-}}
+}
+}
 ?>
 <br><br><br>
 
     <table>
 <?php
+$excludelines = [];
 while($results=$result->fetchArray(SQLITE3_ASSOC))
 {
 $comname = preg_replace('/ /', '_', $results['Com_Name']);
 $comname = preg_replace('/\'/', '', $comname);
 $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
 
-$excludefile = fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "a") or die("Unable to open file!");
-$txt = $results['Date']."/".$comname."/".$results['File_Name']."\n".$results['Date']."/".$comname."/".$results['File_Name'].".png\n";
-fwrite($excludefile, $txt);
+array_push($excludelines, $results['Date']."/".$comname."/".$results['File_Name']);
+array_push($excludelines, $results['Date']."/".$comname."/".$results['File_Name'].".png");
 ?>
       <tr>
       <form action="" method="GET">
@@ -176,6 +188,7 @@ fwrite($excludefile, $txt);
       <b>Best Recording:</b> <?php echo $results['Date']." ".$results['Time'];?><br><video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
       </tr>
 <?php
+editfile($home."/BirdNET-Pi/scripts/disk_check_exclude.txt","##start","##end",$excludelines);
 }
 ?>
     </table>
