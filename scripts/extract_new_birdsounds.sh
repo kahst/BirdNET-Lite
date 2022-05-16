@@ -116,11 +116,11 @@ for h in "${SCAN_DIRS[@]}";do
       END=${RECORDING_LENGTH}
     fi
 
-    sox "${h}/${OLDFILE}" "${NEWSPECIES_BYDATE}/${NEWFILE}" \
+    sox -V1 "${h}/${OLDFILE}" "${NEWSPECIES_BYDATE}/${NEWFILE}" \
       trim ="${START}" ="${END}"
 
     # Create spectrogram for extraction
-    sox "${NEWSPECIES_BYDATE}/${NEWFILE}" -n remix 1 rate 24k spectrogram \
+    sox -V1 "${NEWSPECIES_BYDATE}/${NEWFILE}" -n remix 1 rate 24k spectrogram \
       -t "${COMMON_NAME}" \
       -c "${NEWSPECIES_BYDATE//$HOME\/}/${NEWFILE}" \
       -o "${NEWSPECIES_BYDATE}/${NEWFILE}.png"
