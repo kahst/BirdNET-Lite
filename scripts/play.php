@@ -276,13 +276,13 @@ if(isset($_GET['species'])){ ?>
 
         echo "<tr>
           <td class='relative'>$date $time<br>$confidence<br><img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">
-          <a href=\"$filename\"><img src=\"$filename.png\"></a>
+          <a href=\"$filename\"><img loading=\"lazy\" src=\"$filename.png\"></a>
           </td>
           </tr>";
       } else {
         echo "<tr>
           <td class='relative'>$date $time<br>$confidence<br>
-          <a href=\"$filename\"><img src=\"$filename.png\"></a>
+          <a href=\"$filename\"><img loading=\"lazy\" src=\"$filename.png\"></a>
           </td>
           </tr>";
       }
