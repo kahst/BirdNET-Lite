@@ -1,35 +1,30 @@
-import socket 
+import socket
 import threading
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-os.environ['CUDA_VISIBLE_DEVICES'] = ''
-
-try:
-    import tflite_runtime.interpreter as tflite
-except:
-    from tensorflow import lite as tflite
-
-import argparse
 import operator
 import librosa
 import numpy as np
 import math
 import time
-from decimal import Decimal
 import json
 import requests
 import sqlite3
 import datetime
-from time import sleep
-import pytz
 from tzlocal import get_localzone
 from pathlib import Path
 import apprise
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+try:
+    import tflite_runtime.interpreter as tflite
+except ImportError:
+    from tensorflow import lite as tflite
+
 
 HEADER = 64
 PORT = 5050
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = "localhost"
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
