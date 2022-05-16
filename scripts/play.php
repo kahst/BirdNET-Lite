@@ -9,18 +9,9 @@ if($db == False){
   header("refresh: 0;");
 }
 
-#By Date
-if(isset($_GET['byfilename'])){
-  $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date');
-  if($statement == False){
-    echo "Database is busy";
-    header("refresh: 0;");
-  }
-  $result = $statement->execute();
-  $view = "bydate";
-  #By Date
-}elseif(isset($_GET['bydate'])){
-  $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date');
+
+if(isset($_GET['bydate'])){
+  $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date ORDER BY Date DESC');
   if($statement == False){
     echo "Database is busy";
     header("refresh: 0;");
@@ -79,7 +70,9 @@ if(isset($_GET['byfilename'])){
   session_unset();
   $view = "choose";
 }
-
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
 ?>
 
 <html>
@@ -121,13 +114,15 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
   if($view == "bydate") {
     while($results=$result->fetchArray(SQLITE3_ASSOC)){
       $date = $results['Date'];
+      if(realpath($home."/BirdSongs/Extracted/By_Date/".$date) !== false){
       echo "<td>
-        <button action=\"submit\" name=\"date\" value=\"$date\">$date</button></td></tr>";}
+        <button action=\"submit\" name=\"date\" value=\"$date\">$date</button></td></tr>";}}
 
   #By Species
   } elseif($view == "byspecies") {
     while($results=$result->fetchArray(SQLITE3_ASSOC)){
       $name = $results['Com_Name'];
+      
       echo "<td>
         <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";}
 
@@ -135,8 +130,11 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
   } elseif($view == "date") {
     while($results=$result->fetchArray(SQLITE3_ASSOC)){
       $name = $results['Com_Name'];
-      echo "<td>
-        <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";}
+      if(realpath($home."/BirdSongs/Extracted/By_Date/".$date."/".str_replace(" ", "_",$name)) !== false){
+         echo "<td>
+            <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";
+      }
+    }
 
   #Choose
   } else {
@@ -190,9 +188,6 @@ if(isset($_GET['species'])){ ?>
     <tr>
     <th>$name</th>
     </tr>";
-    $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-    $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-    $home = trim($home);
     $iter=0;
     while($results=$result2->fetchArray(SQLITE3_ASSOC))
     {
