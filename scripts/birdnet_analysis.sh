@@ -76,6 +76,7 @@ move_analyzed() {
 #   - {DIRECTORY}
 run_analysis() {
   PYTHON_VIRTUAL_ENV="$HOME/BirdNET-Pi/birdnet/bin/python3"
+  DIR="$HOME/BirdNET-Pi/scripts"
 
   sleep .5
 
@@ -125,7 +126,7 @@ run_analysis() {
       BIRDWEATHER_ID_PARAM=""
       BIRDWEATHER_ID_LOG=""
     fi
-    echo $PYTHON_VIRTUAL_ENV analyze.py \
+    echo $PYTHON_VIRTUAL_ENV "$DIR\analyze.py" \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat "${LATITUDE}" \
@@ -137,7 +138,7 @@ run_analysis() {
 ${INCLUDEPARAM} \
 ${EXCLUDEPARAM} \
 ${BIRDWEATHER_ID_LOG}
-    $PYTHON_VIRTUAL_ENV analyze.py \
+    $PYTHON_VIRTUAL_ENV $DIR/analyze.py \
       --i "${1}/${i}" \
       --o "${1}/${i}.csv" \
       --lat "${LATITUDE}" \
