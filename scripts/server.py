@@ -261,7 +261,7 @@ def writeResultsToFile(detections, min_conf, path):
 def handle_client(conn, addr):
     global INCLUDE_LIST
     global EXCLUDE_LIST
-    print(f"[NEW CONNECTION] {addr} connected.")
+    #print(f"[NEW CONNECTION] {addr} connected.")
 
     connected = True
     while connected:
@@ -335,7 +335,7 @@ def handle_client(conn, addr):
                 # Get Date/Time from filename in case Pi gets behind
                 #now = datetime.now()
                 full_file_name = args.i
-                print('FULL FILENAME: -' + full_file_name + '-')
+                #print('FULL FILENAME: -' + full_file_name + '-')
                 file_name = Path(full_file_name).stem
                 file_date = file_name.split('-birdnet-')[0]
                 file_time = file_name.split('-birdnet-')[1]
@@ -463,13 +463,13 @@ def start():
     global INTERPRETER, INCLUDE_LIST, EXCLUDE_LIST
     INTERPRETER = loadModel()
     server.listen()
-    print(f"[LISTENING] Server is listening on {SERVER}")
+    #print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
+        #print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
 
 
-print("[STARTING] server is starting...")
+#print("[STARTING] server is starting...")
 start()
