@@ -7,10 +7,8 @@ HOME=$(awk -F: '/1000/ {print $6}' /etc/passwd)
 my_dir=$HOME/BirdNET-Pi/scripts
 
 sudo -u$USER git -C $my_dir rm privacy_server.py
-sudo -u${USER} git -C $my_dir stash
 sudo -u${USER} git -C $my_dir pull -f
 sudo systemctl daemon-reload
-sudo -u${USER} git -C $my_dir stash pop
 sudo ln -sf $my_dir/* /usr/local/bin/
 
 # The script below handles changes to the host system
