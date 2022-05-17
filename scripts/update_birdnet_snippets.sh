@@ -14,6 +14,11 @@ if [ -f $my_dir/privacy_server ] || [ -L /usr/local/bin/privacy_server.py ];then
   rm -f $my_dir/privacy_server.py
   rm -f /usr/local/bin/privacy_server.py
 fi
+
+# Adds python virtual-env to the python systemd services
+sudo -E sed -i "s|ExecStart=.*|ExecStart=$HOME/BirdNET-Pi/birdnet/bin/python3 /usr/local/bin/server.py|" ~/BirdNET-Pi/templates/birdnet_server.service
+sudo -E sed -i "s|ExecStart=.*|ExecStart=$HOME/BirdNET-Pi/birdnet/bin/python3 /usr/local/bin/daily_plot.py|" ~/BirdNET-Pi/templates/chart_viewer.service
+
 if grep privacy ~/BirdNET-Pi/templates/birdnet_server.service &>/dev/null;then
   sudo -E sed -i 's/privacy_server.py/server.py/g' \
     ~/BirdNET-Pi/templates/birdnet_server.service
