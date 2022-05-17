@@ -220,6 +220,12 @@ if(isset($_GET['species'])){ ?>
    </form>
 </div>
 <?php
+  // add disk_check_exclude.txt lines into an array for grepping
+  $fp = @fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", 'r'); 
+  if ($fp) {
+     $disk_check_exclude_arr = explode("\n", fread($fp, filesize($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")));
+  }
+  
   $name = $_GET['species'];
   if(isset($_SESSION['date'])) {
     $date = $_SESSION['date'];
@@ -264,7 +270,7 @@ if(isset($_GET['species'])){ ?>
       $iter++;
 
       if($config["FULL_DISK"] == "purge") {
-        if(trim(shell_exec("cat ".$home."/BirdNET-Pi/scripts/disk_check_exclude.txt | grep \"".$filename_formatted."\" | wc -l")) == "0") {
+        if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
           $imageicon = "images/unlock.svg";
           $title = "This file is not delete protected.";
           $type = "add";
@@ -314,7 +320,7 @@ if(isset($_GET['filename'])){
       $filename_formatted = $date."/".$comname."/".$results['File_Name'];
 
       if($config["FULL_DISK"] == "purge") {
-        if(trim(shell_exec("cat ".$home."/BirdNET-Pi/scripts/disk_check_exclude.txt | grep \"".$filename_formatted."\" | wc -l")) == "0") {
+        if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
           $imageicon = "images/unlock.svg";
           $title = "This file is not delete protected.";
           $type = "add";
