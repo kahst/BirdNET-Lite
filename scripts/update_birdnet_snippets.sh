@@ -16,9 +16,11 @@ if [ -f $my_dir/privacy_server ] || [ -L /usr/local/bin/privacy_server.py ];then
 fi
 
 # Adds python virtual-env to the python systemd services
-sudo -E sed -i "s|ExecStart=.*|ExecStart=$HOME/BirdNET-Pi/birdnet/bin/python3 /usr/local/bin/server.py|" ~/BirdNET-Pi/templates/birdnet_server.service
-sudo -E sed -i "s|ExecStart=.*|ExecStart=$HOME/BirdNET-Pi/birdnet/bin/python3 /usr/local/bin/daily_plot.py|" ~/BirdNET-Pi/templates/chart_viewer.service
-sudo systemctl daemon-reload
+if ! grep 'BirdNET-Pi/birdnet/' $HOME/BirdNET-Pi/templates/birdnet_server.service || ! grep 'BirdNET-Pi/birdnet' $HOME/BirdNET-Pi/templates/chart_viewer.service;then
+  sudo -E sed -i "s|ExecStart=.*|ExecStart=$HOME/BirdNET-Pi/birdnet/bin/python3 /usr/local/bin/server.py|" ~/BirdNET-Pi/templates/birdnet_server.service
+  sudo -E sed -i "s|ExecStart=.*|ExecStart=$HOME/BirdNET-Pi/birdnet/bin/python3 /usr/local/bin/daily_plot.py|" ~/BirdNET-Pi/templates/chart_viewer.service
+  sudo systemctl daemon-reload && restart_services.sh
+fi
 
 if grep privacy ~/BirdNET-Pi/templates/birdnet_server.service &>/dev/null;then
   sudo -E sed -i 's/privacy_server.py/server.py/g' \
