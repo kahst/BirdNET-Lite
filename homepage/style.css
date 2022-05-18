@@ -585,4 +585,36 @@ tr {
 input {
   box-shadow: 0px 0px 17px 1px rgba(0, 0, 0, 0.10);
 }
-
+dialog {
+  border:none;
+}
+dialog::backdrop {
+  background: repeating-linear-gradient(
+    30deg,
+    rgba(24, 194, 236, 0.2),
+    rgba(24, 194, 236, 0.2) 1px,
+    rgba(24, 194, 236, 0.3) 1px,
+    rgba(24, 194, 236, 0.3) 20px
+  );
+  backdrop-filter: blur(1px)
+}
+.centered_image_container {
+  font-size:19px !important;
+  display:inline-block;
+  position:relative;
+  margin-bottom:3px;
+}
+.centered_image_container img.img1 {
+  cursor:pointer;
+  height:95%;
+  position:absolute;
+  right:110%;
+  top:0px;
+  border-radius: 5px;
+}
+.centered_image_container * {
+  font-size:19px !important;
+}
+.centered_image_container form {
+  margin-bottom:0px;
+}

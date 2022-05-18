@@ -50,3 +50,6 @@ if grep bash $HOME/BirdNET-Pi/templates/web_terminal.service;then
   sudo systemctl restart web_terminal.service
 fi
 [ -L ~/BirdSongs/Extracted/static ] || ln -sf ~/BirdNET-Pi/homepage/static ~/BirdSongs/Extracted
+if ! grep FLICKR_API_KEY /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "FLICKR_API_KEY=" >> /etc/birdnet/birdnet.conf
+fi

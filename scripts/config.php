@@ -10,6 +10,7 @@ $birdweather_id = $_GET["birdweather_id"];
 $apprise_input = $_GET['apprise_input'];
 $apprise_notification_title = $_GET['apprise_notification_title'];
 $apprise_notification_body = $_GET['apprise_notification_body'];
+$flickr_api_key = $_GET['flickr_api_key'];
 if(isset($_GET['apprise_notify_each_detection'])) {
   $apprise_notify_each_detection = 1;
 } else {
@@ -45,6 +46,7 @@ $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id"
 $contents = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents);
 $contents = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=\"$apprise_notification_body\"", $contents);
 $contents = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents);
+$contents = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents);
 
 
 $contents2 = file_get_contents("./scripts/thisrun.txt");
@@ -54,6 +56,8 @@ $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id
 $contents2 = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents2);
 $contents2 = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=\"$apprise_notification_body\"", $contents2);
 $contents2 = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents2);
+$contents2 = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents2);
+
 
 $fh = fopen("/etc/birdnet/birdnet.conf", "w");
 $fh2 = fopen("./scripts/thisrun.txt", "w");
@@ -144,6 +148,10 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <label for="apprise_notify_each_species">Notify each new species</label><br>
       <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_notify_each_detection">Notify each new detection</label><br><br>
+      <h3>Bird Photos from Flickr</h3>
+      <label for="flickr_api_key">Flickr API Key: </label>
+      <input name="flickr_api_key" type="text" value="<?php print($config['FLICKR_API_KEY']);?>" required/><br>
+      <p>Set your Flickr API key to enable the display of bird images next to detections. <a href="https://www.flickr.com/services/api/misc.api_keys.html">Get your free key here.</a></p>
       <h3>Localization</h3>
       <label for="language">Database Language: </label>
       <select name="language">

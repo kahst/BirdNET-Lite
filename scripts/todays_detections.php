@@ -77,7 +77,15 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
 
   ?> <table>
    <?php
+   $images = [];
   $iterations = 0;
+
+  if (file_exists('./scripts/thisrun.txt')) {
+    $config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
+  } 
+
   while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
   {
     $iterations++;
@@ -86,13 +94,35 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   $comname = preg_replace('/\'/', '_', $comname);
   $filename = "/By_Date/".date('Y-m-d')."/".$comname."/".$todaytable['File_Name'];
   $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
+
+  if (!empty($config["FLICKR_API_KEY"])) {
+    // if we already searched flickr for this species before, use the previous image rather than doing an unneccesary api call
+    $key = array_search($comname, array_column($images, 0));
+    if($key !== false) {
+      $image = $images[$key];
+    } else {
+      $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".$comname."&license=7%2C9%2C10&sort=relevance&per_page=5&orientation=landscape,square&format=json&nojsoncallback=1"), true)["photos"]["photo"][0];
+      $modaltext = "https://flickr.com/photos/".$flickrjson["owner"]."/".$flickrjson["id"];
+      $authorlink = "https://flickr.com/people/".$flickrjson["owner"];
+      $imageurl = 'http://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
+      array_push($images, array($comname,$imageurl,$flickrjson["title"], $modaltext, $authorlink));
+      $image = $images[count($images)-1];
+    }
+  }
   ?>
         <?php if(isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])){ ?>
           <tr class="relative" id="<?php echo $iterations; ?>">
-          <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a><?php echo $todaytable['Time'];?><br>
+          <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" width=25 src="images/copy.png"></a>
+            
+          <div class="centered_image_container">
+            <?php if(!empty($config["FLICKR_API_KEY"])) { ?>
+              <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo $image[2] ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
+            <?php } ?>
+
+            <?php echo $todaytable['Time'];?><br> 
           <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
           <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
-          <b>Confidence:</b> <?php echo round($todaytable['Confidence'],2);?><br>
+          <b>Confidence:</b> <?php echo round($todaytable['Confidence'],2);?><br></div><br>
           <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
           </td>
         <?php } else { //legacy mode ?>
@@ -132,6 +162,29 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
 </style>
 </head>
 <div class="viewdb">
+  <dialog id="attribution-dialog">
+    <h1 id="modalHeading"></h1>
+    <p id="modalText"></p>
+    <button onclick="hideDialog()">Close</button>
+  </dialog>
+  <script>
+  var dialog = document.querySelector('dialog');
+  dialogPolyfill.registerDialog(dialog);
+
+  function showDialog() {
+    document.getElementById('attribution-dialog').showModal();
+  }
+
+  function hideDialog() {
+    document.getElementById('attribution-dialog').close();
+  }
+
+  function setModalText(iter, title, text, authorlink) {
+    document.getElementById('modalHeading').innerHTML = "Photo "+iter+": \""+title+"\" Attribution";
+    document.getElementById('modalText').innerHTML = "Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a>";
+    showDialog();
+  }
+  </script>  
     <h3>Number of Detections</h3>
     <table>
       <tr>

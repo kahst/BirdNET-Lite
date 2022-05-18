@@ -117,14 +117,37 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
   </tr>
 </table>
 </div>
+<dialog id="attribution-dialog">
+  <h1 id="modalHeading"></h1>
+  <p id="modalText"></p>
+  <button onclick="hideDialog()">Close</button>
+</dialog>
+<script>
+var dialog = document.querySelector('dialog');
+dialogPolyfill.registerDialog(dialog);
+
+function showDialog() {
+  document.getElementById('attribution-dialog').showModal();
+}
+
+function hideDialog() {
+  document.getElementById('attribution-dialog').close();
+}
+
+function setModalText(iter, title, text, authorlink) {
+  document.getElementById('modalHeading').innerHTML = "Photo "+iter+": \""+title+"\" Attribution";
+  document.getElementById('modalText').innerHTML = "Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a>";
+  showDialog();
+}
+</script>  
 <div class="column center">
 <?php if(!isset($_GET['species'])){
-?><p class="centered">Choose a species to load images from Wikimedia Commons.</p>
+?><p class="centered">Choose a species to load images from Flickr.</p>
 <?php
 };?>
 <?php if(isset($_GET['species'])){
   $species = $_GET['species'];
-   
+  $iter=0;
 while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   $count = $results['COUNT(*)'];
   $maxconf = round($results['MAX(Confidence)'],2);
@@ -147,20 +170,19 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" title=\"$filename\"><source src=\"$filename\"></video></td>
   </tr>
     </table>
-  <p>Loading Images from <a href=\"https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image\" target=\"_blank\">Wikimedia Commons</a></p>", '6096');
+  <p>Loading Images from Flickr</p>", '6096');
   
   echo "<script>document.getElementsByTagName(\"h3\")[0].scrollIntoView();</script>";
   
   ob_flush();
   flush();
-  $imagelink = "https://commons.wikimedia.org/w/index.php?search=$linkname&title=Special:MediaSearch&go=Go&type=image";
-  $homepage = file_get_contents($imagelink);
-  preg_match_all("{<img\\s*(.*?)src=('.*?'|\".*?\"|[^\\s]+)(.*?)\\s*/?>}ims", $homepage, $matches, PREG_SET_ORDER);
-  foreach ($matches as $val) {
-      $pos = strpos($val[2],"/");
-      $link = substr($val[2],1,-1);
-      if($pos !== 1 && strpos($link, "upload") == true && strpos($link, "CentralAutoLogin") == false)
-          echo "<img src=\"$link\">";
+  $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=2158f6c5d66e89778bd0d340953f1bcf&text=\"".str_replace('_', '+', $comname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
+  foreach ($flickrjson as $val) {
+      $iter++;
+      $modaltext = "https://flickr.com/photos/".$val["owner"]."/".$val["id"];
+      $authorlink = "https://flickr.com/people/".$val["owner"];
+      $imageurl = 'http://farm' .$val["farm"]. '.static.flickr.com/' .$val["server"]. '/' .$val["id"]. '_'  .$val["secret"].  '.jpg';
+      echo "<img style='vertical-align:top' src=\"$imageurl\"><span style='cursor:pointer;color:blue;text-decoration:underline;' onclick='setModalText(".$iter.",\"".$val["title"]."\",\"".$modaltext."\", \"".$authorlink."\")'>".$iter."</span>";
   }
 }
 }
