@@ -206,7 +206,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       ?>
       <label for="appt">Select a Date and Time:</label><br>
       <span>If connected to the internet, retrieve time automatically?</span>
-      <input type="checkbox" onchange='handleChange(this)' name="apprise_notify_each_detection" <?php echo $checkedvalue; ?> ><br>
+      <input type="checkbox" onchange='handleChange(this)' <?php echo $checkedvalue; ?> ><br>
       <input onclick="this.showPicker()" type="date" id="date" name="date" value="<?php echo date('Y-m-d') ?>" <?php echo $disabledvalue; ?>>
       <input onclick="this.showPicker()" type="time" id="time" name="time" value="<?php echo date('H:i') ?>" <?php echo $disabledvalue; ?>>
       <br><br><br>

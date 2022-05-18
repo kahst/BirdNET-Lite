@@ -22,6 +22,7 @@ Check out birds from around the world
 - [Norman, Oklahoma, United States](https://normanok.birdnetpi.com)<br>
 - [Nijmegen, the Netherlands](https://nijmegen.birdnetpi.com)<br>
 - [Murrysville, Pennsylvania, United States](https://murrysvillepa.birdnetpi.com/)
+- [Berowra, New South Wales, Australia](https://berowra.birdnetpi.com/)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 
