@@ -2,12 +2,54 @@
 # Update BirdNET-Pi's Git Repo
 source /etc/birdnet/birdnet.conf
 trap 'exit 1' SIGINT SIGHUP
+
+usage() { echo "Usage: $0 [-r <remote name>] [-b <branch name>]" 1>&2; exit 1; }
+
+# Defaults
+remote="origin"
+branch="main"
+
+while getopts ":r:b:" o; do
+  case "${o}" in
+    r)
+      remote=${OPTARG}
+
+      # Ensure that git remote is configured
+      git remote show $remote 2&> /dev/null || {
+        echo "Error: remote '$remote' not found. Add the upstream remote to your repository and try again."
+        exit 1
+      }
+      ;;
+    b)
+      branch=${OPTARG}
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND-1))
+
 USER=$(awk -F: '/1000/ {print $1}' /etc/passwd)
 HOME=$(awk -F: '/1000/ {print $6}' /etc/passwd)
 my_dir=$HOME/BirdNET-Pi/scripts
 
-sudo -u$USER git -C $my_dir rm privacy_server.py
-sudo -u${USER} git -C $my_dir pull -f
+
+sudo_with_user () {
+  set -x
+  sudo -u $USER "$@"
+  set +x
+}
+
+# Reset current HEAD to remove any local changes
+sudo_with_user git reset --hard
+
+# Fetches latest changes
+sudo_with_user git fetch $remote $branch
+
+# Switches git to specified branch
+sudo_with_user git switch -C $branch --track $remote/$branch
+
 sudo systemctl daemon-reload
 sudo ln -sf $my_dir/* /usr/local/bin/
 
