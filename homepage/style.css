@@ -611,6 +611,7 @@ dialog::backdrop {
   right:110%;
   top:0px;
   border-radius: 5px;
+  width:unset;
 }
 .centered_image_container * {
   font-size:19px !important;
