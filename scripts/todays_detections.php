@@ -116,7 +116,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
             
           <div class="centered_image_container">
             <?php if(!empty($config["FLICKR_API_KEY"])) { ?>
-              <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo $image[2] ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
+              <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo $image[2] ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
             <?php } ?>
 
             <?php echo $todaytable['Time'];?><br> 
@@ -179,9 +179,9 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
     document.getElementById('attribution-dialog').close();
   }
 
-  function setModalText(iter, title, text, authorlink) {
-    document.getElementById('modalHeading').innerHTML = "Photo "+iter+": \""+title+"\" Attribution";
-    document.getElementById('modalText').innerHTML = "Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a>";
+  function setModalText(iter, title, text, authorlink, photolink) {
+    document.getElementById('modalHeading').innerHTML = "Photo: \""+title+"\" Attribution";
+    document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
     showDialog();
   }
   </script>  
