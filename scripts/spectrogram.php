@@ -20,7 +20,7 @@ function initialize() {
   const ACTX = new AudioContext();
   const ANALYSER = ACTX.createAnalyser();
 
-  ANALYSER.fftSize = 4096;  
+  ANALYSER.fftSize = 2048;  
   
   process();
 
@@ -44,7 +44,7 @@ function initialize() {
       CTX.putImageData(imgData, 0, 0);
       ANALYSER.getByteFrequencyData(DATA);
       for (let i = 0; i < LEN; i++) {
-        let rat = DATA[i] / 255;
+        let rat = DATA[i] / 128;
         let hue = Math.round((rat * 120) + 280 % 360);
         let sat = '100%';
         let lit = 10 + (70 * rat) + '%';
