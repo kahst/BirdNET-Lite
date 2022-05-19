@@ -20,30 +20,46 @@ $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 
 if(isset($_GET['excludefile'])) {
-  if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")) {
-    file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end");
-  }
-  if(isset($_GET['exclude_add'])) {
-    $myfile = fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "a") or die("Unable to open file!");
-      $txt = $_GET['excludefile'];
-      fwrite($myfile, $txt."\n");
-      fwrite($myfile, $txt.".png\n");
-      fclose($myfile);
-      echo "OK";
-      die();
-  } else {
-    $lines  = file($home."/BirdNET-Pi/scripts/disk_check_exclude.txt");
-    $search = $_GET['excludefile'];
+  if(isset($_SERVER['PHP_AUTH_USER'])) {
+    $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+    $submitteduser = $_SERVER['PHP_AUTH_USER'];
+    if($submittedpwd == $config['CADDY_PWD'] && $submitteduser == 'birdnet'){
+      if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")) {
+        file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end");
+      }
+      if(isset($_GET['exclude_add'])) {
+        $myfile = fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "a") or die("Unable to open file!");
+          $txt = $_GET['excludefile'];
+          fwrite($myfile, $txt."\n");
+          fwrite($myfile, $txt.".png\n");
+          fclose($myfile);
+          echo "OK";
+          die();
+      } else {
+        $lines  = file($home."/BirdNET-Pi/scripts/disk_check_exclude.txt");
+        $search = $_GET['excludefile'];
 
-    $result = '';
-    foreach($lines as $line) {
-        if(stripos($line, $search) === false && stripos($line, $search.".png") === false) {
-            $result .= $line;
+        $result = '';
+        foreach($lines as $line) {
+            if(stripos($line, $search) === false && stripos($line, $search.".png") === false) {
+                $result .= $line;
+            }
         }
+        file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", $result);
+        echo "OK";
+        die();
+      }
+    } else {
+      header('WWW-Authenticate: Basic realm="My Realm"');
+      header('HTTP/1.0 401 Unauthorized');
+      echo 'You must be authenticated to change the protection of files.';
+      exit;
     }
-    file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", $result);
-    echo "OK";
-    die();
+  } else {
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'You must be authenticated to change the protection of files.';
+    exit;
   }
 }
 
@@ -121,14 +137,16 @@ if(isset($_GET['bydate'])){
 function toggleLock(filename, type, elem) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
-    if(type == "add") {
-     elem.setAttribute("src","images/lock.svg");
-     elem.setAttribute("title", "This file is delete protected.");
-     elem.setAttribute("onclick", elem.getAttribute("onclick").replace("add","del"));
-    } else {
-     elem.setAttribute("src","images/unlock.svg");
-     elem.setAttribute("title", "This file is not delete protected.");
-     elem.setAttribute("onclick", elem.getAttribute("onclick").replace("del","add"));
+    if(this.responseText == "OK"){
+      if(type == "add") {
+       elem.setAttribute("src","images/lock.svg");
+       elem.setAttribute("title", "This file is delete protected.");
+       elem.setAttribute("onclick", elem.getAttribute("onclick").replace("add","del"));
+      } else {
+       elem.setAttribute("src","images/unlock.svg");
+       elem.setAttribute("title", "This file is not delete protected.");
+       elem.setAttribute("onclick", elem.getAttribute("onclick").replace("del","add"));
+      }
     }
   }
   if(type == "add") {
