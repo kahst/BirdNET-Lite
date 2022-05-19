@@ -260,7 +260,7 @@ if(isset($_GET['species'])){ ?>
       $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
       $sci_name = $results['Sci_Name'];
       $time = $results['Time'];
-      $confidence = $results['Confidence'];
+      $confidence = round((float)round($results['Confidence'],2) * 100 ) . '%';
       $filename_formatted = $date."/".$comname."/".$results['File_Name'];
 
       // file was deleted by disk check, no need to show the detection in recordings
@@ -316,7 +316,7 @@ if(isset($_GET['filename'])){
       $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
       $sci_name = $results['Sci_Name'];
       $time = $results['Time'];
-      $confidence = $results['Confidence'];
+      $confidence = round((float)round($results['Confidence'],2) * 100 ) . '%';
       $filename_formatted = $date."/".$comname."/".$results['File_Name'];
 
       // add disk_check_exclude.txt lines into an array for grepping
