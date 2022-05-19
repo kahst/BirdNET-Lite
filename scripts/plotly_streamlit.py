@@ -8,6 +8,7 @@ from datetime import timedelta, datetime
 from pathlib import Path
 import sqlite3
 from sqlite3 import Connection
+import plotly.express as px
 
 userDir = os.path.expanduser('~')
 URI_SQLITE_DB = userDir + '/BirdNET-Pi/scripts/birds.db'
@@ -122,42 +123,43 @@ filt=df2['Com_Name']==specie
 
 df_counts=sum(df5==specie)
 
-fig = make_subplots(
+
+
+
+if resample_time != '1D':
+    fig = make_subplots(
                     rows=3, cols =2,
                     specs= [[{"type":"xy","rowspan":3}, {"type":"polar","rowspan":2}], [{"rowspan":1}, {"rowspan":1} ], [None, {"type":"xy","rowspan":1}]],
-                    subplot_titles=('<b>Top '+ str(top_N) + ' Species in Date Range '+str(Date_Slider[0])+' to '+str(Date_Slider[1])+'</b>',
+                    subplot_titles=('<b>Top '+ str(top_N) + ' Species in Date Range '+str(Date_Slider[0])+' to '+str(Date_Slider[1])+' for '+str(resample_sel)+' sampling interval.'+'</b>',
                                     'Total Detect:'+str('{:,}'.format(df_counts))+
                                     '   Confidence Max:'+str('{:.2f}%'.format(max(df2[df2['Com_Name']==specie]['Confidence'])*100))+
                                     '   '+'   Median:'+str('{:.2f}%'.format(np.median(df2[df2['Com_Name']==specie]['Confidence'])*100))
                                     )
-                    )
-fig.layout.annotations[1].update(x=0.7,y=0.25, font_size=15)
+                        )
+    fig.layout.annotations[1].update(x=0.7,y=0.25, font_size=15)
 
-#Plot seen species for selected date range and number of species
-fig.add_trace(go.Bar(y=top_N_species.index, x=top_N_species, orientation='h'), row=1,col=1)
+    #Plot seen species for selected date range and number of species
+    fig.add_trace(go.Bar(y=top_N_species.index, x=top_N_species, orientation='h'), row=1,col=1)
 
-fig.update_layout(
-    margin=dict(l=0, r=0, t=50, b=0),
-    yaxis={'categoryorder':'total ascending'})
-
-
-# Set 360 degrees, 24 hours for polar plot
-theta = np.linspace(0.0, 360, 24, endpoint=False)
-
-specie_filt= df5==specie
-df3=df5[specie_filt]
-
-detections2= pd.crosstab(df3, df3.index.hour)
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=50, b=0),
+        yaxis={'categoryorder':'total ascending'})
 
 
+    # Set 360 degrees, 24 hours for polar plot
+    theta = np.linspace(0.0, 360, 24, endpoint=False)
+
+    specie_filt= df5==specie
+    df3=df5[specie_filt]
+
+    detections2= pd.crosstab(df3, df3.index.hour)
 
 
-d=pd.DataFrame(np.zeros((23,1))).squeeze()
-detections = hourly.loc[specie]
-detections=(d+detections).fillna(0)
 
 
-if resample_time != '1D':
+    d=pd.DataFrame(np.zeros((23,1))).squeeze()
+    detections = hourly.loc[specie]
+    detections=(d+detections).fillna(0)
     fig.add_trace(go.Barpolar(r = detections, theta=theta), row=1, col=2)
     fig.update_layout(
         autosize=False,
@@ -191,15 +193,18 @@ if resample_time != '1D':
 else:
     fig = make_subplots(
                     rows=1, cols =2,
-#                     specs= [[{"type":"xy","rowspan":1}],
-#                             [{"rowspan":1}],
-#                             ],
-#                     subplot_titles=('<b>Top '+ str(top_N) + ' Species in Date Range '+str(Date_Slider[0])+' to '+str(Date_Slider[1])+'</b>',
+                    specs= [[{"type":"xy","rowspan":1},{"type":"xy","rowspan":1}]],
+                           
+
+                    subplot_titles=('<b>Daily Top '+ str(top_N) + ' Species in Date Range '+str(Date_Slider[0])+' to '+str(Date_Slider[1])+'</b>',
+                                    '<b>Daily ' + specie+ ' Detections on 15 minute intervals </b>'),
 #                                     'Total Detect:'+str('{:,}'.format(df_counts))+
 #                                     '   Confidence Max:'+str('{:.2f}%'.format(max(df2[df2['Com_Name']==specie]['Confidence'])*100))+
 #                                     '   '+'   Median:'+str('{:.2f}%'.format(np.median(df2[df2['Com_Name']==specie]['Confidence'])*100))
 #                                     )
                     )
+
+    fig.add_trace(go.Bar(y=top_N_species.index, x=top_N_species, orientation='h'), row=1,col=1)
     df4=df2['Com_Name'][df2['Com_Name']==specie].resample('15min').count()
     df4.index=[df4.index.date, df4.index.time]
     day_hour_freq=df4.unstack().fillna(0)
@@ -208,11 +213,13 @@ else:
     fig_y = [h.strftime('%H:%M') for h in day_hour_freq.columns.tolist()]
     fig_z = day_hour_freq.values.transpose()
     fig_heatmap = go.Figure(data=go.Heatmap(x=fig_x,y=fig_y,z=fig_z))
-    fig.add_trace(go.Bar(y=top_N_species.index, x=top_N_species, orientation='h'), row=1,col=1)
+
     fig.update_layout(
     margin=dict(l=0, r=0, t=50, b=0),
     yaxis={'categoryorder':'total ascending'})
-    fig.add_trace(go.Heatmap(x=fig_x,y=fig_y,z=fig_z, autocolorscale = False, colorscale = 'blackbody'), row=1, col=2)
+    color_pals= px.colors.named_colorscales()
+    selected_pal = cols2.selectbox('Select Color Pallet for Daily Detections', color_pals)
+    fig.add_trace(go.Heatmap(x=fig_x,y=fig_y,z=fig_z, autocolorscale = False, colorscale = selected_pal), row=1, col=2)
 # container=st.container()
 # config={'displayModelBar': False}
 st.plotly_chart(fig, use_container_width=True) #, config=config)
