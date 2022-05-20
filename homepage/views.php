@@ -47,6 +47,17 @@ body::-webkit-scrollbar {
   } else {
     topbuttons[0].classList.add("button-hover");
   }
+  function copyOutput(elem) {
+    elem.innerHTML = 'Copied!';
+    const copyText = document.getElementsByTagName("pre")[0].textContent;
+    const textArea = document.createElement('textarea');
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-100%';
+    textArea.textContent = copyText;
+    document.body.append(textArea);
+    textArea.select();
+    document.execCommand("copy");
+  }
 </script>
 
 <div class="views">
@@ -80,7 +91,7 @@ if(isset($_GET['view'])){
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
         $url = $_SERVER['SERVER_NAME']."/scripts/adminer.php";
         echo "<div class=\"centered\">
-	<form action=\"\" method=\"GET\" id=\"views\">
+  <form action=\"\" method=\"GET\" id=\"views\">
         <button type=\"submit\" name=\"view\" value=\"Settings\" form=\"views\">Settings</button>
         <button type=\"submit\" name=\"view\" value=\"System Info\" form=\"views\">System Info</button>
         <button type=\"submit\" name=\"view\" value=\"System Controls\" form=\"views\">System Controls</button>
@@ -90,8 +101,8 @@ if(isset($_GET['view'])){
         <button type=\"submit\" name=\"view\" value=\"Webterm\" form=\"views\">Web Terminal</button>
         <button type=\"submit\" name=\"view\" value=\"Included\" form=\"views\">Custom Species List</button>
         <button type=\"submit\" name=\"view\" value=\"Excluded\" form=\"views\">Excluded Species List</button>
-	</form>
-	</div>";
+  </form>
+  </div>";
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
@@ -175,7 +186,7 @@ if(isset($_GET['view'])){
       $submitteduser = $_SERVER['PHP_AUTH_USER'];
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
         #ACCESS THE WEB TERMINAL
-      	echo "<iframe src='/terminal'></iframe>";
+        echo "<iframe src='/terminal'></iframe>";
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
@@ -201,9 +212,20 @@ if(isset($_GET['view'])){
       $submitteduser = $_SERVER['PHP_AUTH_USER'];
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
         $command = $_GET['submit'];
-	if(isset($command)){
+  if(isset($command)){
+        $initcommand = $command;
+         if (strpos($command, "systemctl") !== false) {
+            $tmp = explode(" ",trim($command));
+            $command .= "& sleep 3;sudo systemctl status ".end($tmp);
+         }
          $results = shell_exec("$command 2>&1");
-         echo "<pre>$results</pre>";      
+         $results = str_replace("FAILURE", "<span style='color:red'>FAILURE</span>", $results);
+         $results = str_replace("failed", "<span style='color:red'>failed</span>",$results);
+         $results = str_replace("active (running)", "<span style='color:green'><b>active (running)</b></span>",$results);
+         if(strlen($results) == 0) {
+          $results = "This command has no output.";
+         }
+         echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$initcommand."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td><pre style='text-align:left'>$results</pre></td></tr></table>"; 
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
