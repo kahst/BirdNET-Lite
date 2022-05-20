@@ -30,7 +30,7 @@ function initialize() {
     SOURCE.connect(ACTX.destination)
     const DATA = new Uint8Array(ANALYSER.frequencyBinCount);
     const LEN = DATA.length;
-    const h = (H / LEN + .8);
+    const h = (H / LEN + .9);
     const x = W - 1;
     CTX.fillStyle = 'hsl(280, 100%, 10%)';
     CTX.fillRect(0, 0, W, H);
@@ -44,7 +44,7 @@ function initialize() {
       CTX.putImageData(imgData, 0, 0);
       ANALYSER.getByteFrequencyData(DATA);
       for (let i = 0; i < LEN; i++) {
-        let rat = DATA[i] / 128;
+        let rat = DATA[i] / 196 ;
         let hue = Math.round((rat * 120) + 280 % 360);
         let sat = '100%';
         let lit = 10 + (70 * rat) + '%';
