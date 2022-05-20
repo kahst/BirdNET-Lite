@@ -45,6 +45,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
       // we've found our valid detection! ignore everything else from the database loop
       if(strpos($headers[0],'200')) {
           if($_GET['previous_detection_identifier'] == $filename) { die(); }
+          if($_GET['only_name'] == "true") { echo $comname.",".$filename;die(); }
 
       if (!empty($config["FLICKR_API_KEY"])) {
         // if we already searched flickr for this species before, use the previous image rather than doing an unneccesary api call

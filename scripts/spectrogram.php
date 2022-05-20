@@ -1,10 +1,11 @@
-<script>
+<script>  
 // CREDITS: https://codepen.io/jakealbaugh/pen/jvQweW
 
 // UPDATE: there is a problem in chrome with starting audio context
 //  before a user gesture. This fixes it.
 var started = null;
 var player = null;
+const ctx = null;
 window.onload = function(){
   var audioelement =  window.parent.document.getElementsByTagName("audio")[0];
   if (typeof(audioelement) != 'undefined') {
@@ -20,10 +21,37 @@ window.onload = function(){
   initialize();
 };
 
+function applyText(text) {
+    CTX.fillStyle = 'white';
+  CTX.font = '25px Roboto Flex';
+  CTX.fillText(text, 1200, 200);
+  CTX.fillStyle = 'hsl(280, 100%, 10%)';
+}
+
+var previous_detection_identifier = null;
+function loadDetectionIfNewExists() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    // if there's a new detection that needs to be updated to the page
+    if(this.responseText.length > 0 && !this.responseText.includes("Database")) {
+      if(previous_detection_identifier != null){
+          applyText(this.responseText.split(",")[0].replace("_"," "));
+      }
+      previous_detection_identifier = this.responseText.split(",")[1];
+    }
+  }
+  xhttp.open("GET", "overview.php?ajax_detections=true&previous_detection_identifier="+previous_detection_identifier+"&only_name=true", true);
+  xhttp.send();
+}
+
+window.setInterval(function(){
+   loadDetectionIfNewExists();
+}, 5000);
+
 function initialize() {
   document.body.querySelector('h1').remove();
   const CVS = document.body.querySelector('canvas');
-  const CTX = CVS.getContext('2d');
+  CTX = CVS.getContext('2d');
   const W = CVS.width = window.innerWidth;
   const H = CVS.height = window.innerHeight;
 
@@ -40,7 +68,7 @@ function initialize() {
     SOURCE.connect(ACTX.destination)
     const DATA = new Uint8Array(ANALYSER.frequencyBinCount);
     const LEN = DATA.length;
-    const h = (H / LEN + .9);
+    const h = (H / LEN + 0.9);
     const x = W - 1;
     CTX.fillStyle = 'hsl(280, 100%, 10%)';
     CTX.fillRect(0, 0, W, H);
@@ -50,6 +78,7 @@ function initialize() {
     function loop() {
       window.requestAnimationFrame(loop);
       let imgData = CTX.getImageData(1, 0, W - 1, H);
+
       CTX.fillRect(0, 0, W, H);
       CTX.putImageData(imgData, 0, 0);
       ANALYSER.getByteFrequencyData(DATA);
@@ -93,4 +122,7 @@ h1 {
 <audio style="display:none" controls="" crossorigin="anonymous" id='player' autoplay=""><source src="/stream"></audio>
 <h1>Loading...</h1>
 <canvas></canvas>
+
+<br>
+<span style="display:inline-block;">hi</span>
 
