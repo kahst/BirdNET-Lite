@@ -12,13 +12,12 @@ branch="main"
 while getopts ":r:b:" o; do
   case "${o}" in
     r)
-      remote=${OPTARG}
-
-      # Ensure that git remote is configured
-      git remote show $remote > /dev/null 2>&1 || {
+      if git remote show $remote &>/dev/null;then
+        remote=${OPTARG}
+      else
         echo "Error: remote '$remote' not found. Add the upstream remote to your repository and try again."
         exit 1
-      }
+      fi
       ;;
     b)
       branch=${OPTARG}
