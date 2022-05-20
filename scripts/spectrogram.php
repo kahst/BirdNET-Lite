@@ -4,7 +4,17 @@
 // UPDATE: there is a problem in chrome with starting audio context
 //  before a user gesture. This fixes it.
 var started = null;
+var player = null;
 window.onload = function(){
+  var audioelement =  window.parent.document.getElementsByTagName("audio")[0];
+  if (typeof(audioelement) != 'undefined') {
+
+    document.getElementById('player').remove();
+
+    player = audioelement;
+  } else {
+    player = document.getElementById('player');
+  }
   if (started) return;
   started = true;
   initialize();
@@ -25,7 +35,7 @@ function initialize() {
   process();
 
   function process() {
-    const SOURCE = ACTX.createMediaElementSource(document.getElementById('player'));
+    const SOURCE = ACTX.createMediaElementSource(player);
     SOURCE.connect(ANALYSER);
     SOURCE.connect(ACTX.destination)
     const DATA = new Uint8Array(ANALYSER.frequencyBinCount);
@@ -78,6 +88,7 @@ h1 {
   margin: 0;
 }
 </style>
+
 
 <audio style="display:none" controls="" crossorigin="anonymous" id='player' autoplay=""><source src="/stream"></audio>
 <h1>Loading...</h1>
