@@ -59,15 +59,6 @@ $home = trim($home);
 if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")) {
   file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end");
 }
-function editfile( $sourcefile, $start='##start', $end='##end', $data=array() ){
-    $lines=array_filter( file( $sourcefile , FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES ) );
-    $output=array_merge(
-        array_splice( $lines, 0, array_search( strtolower( $start ), array_map('strtolower', $lines ) ) + 1 ),
-        $data,
-        array_splice( $lines, array_search( strtolower( $end ), array_map('strtolower', $lines ) ) )
-    );
-    file_put_contents( $sourcefile, implode( PHP_EOL, $output ) );
-}
 ?>
 
 <html lang="en">
@@ -210,8 +201,10 @@ array_push($excludelines, $results['Date']."/".$comname."/".$results['File_Name'
       <b>Best Recording:</b> <?php echo $results['Date']." ".$results['Time'];?><br><video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
       </tr>
 <?php
-editfile($home."/BirdNET-Pi/scripts/disk_check_exclude.txt","##start","##end",$excludelines);
 }
+
+$file = file_get_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt");
+file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start"."\n".implode("\n",$excludelines)."\n".substr($file, strpos($file, "##end")));
 ?>
     </table>
       </form>
