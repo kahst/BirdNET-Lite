@@ -30,7 +30,7 @@ function initialize() {
     SOURCE.connect(ACTX.destination)
     const DATA = new Uint8Array(ANALYSER.frequencyBinCount);
     const LEN = DATA.length;
-    const h = H / LEN;
+    const h = (H / LEN + .8);
     const x = W - 1;
     CTX.fillStyle = 'hsl(280, 100%, 10%)';
     CTX.fillRect(0, 0, W, H);
