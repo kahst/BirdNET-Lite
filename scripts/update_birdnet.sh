@@ -15,7 +15,7 @@ while getopts ":r:b:" o; do
       remote=${OPTARG}
 
       # Ensure that git remote is configured
-      git remote show $remote 1&> /dev/null || {
+      git remote show $remote > /dev/null 2>&1 || {
         echo "Error: remote '$remote' not found. Add the upstream remote to your repository and try again."
         exit 1
       }
