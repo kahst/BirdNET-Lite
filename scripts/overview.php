@@ -86,7 +86,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
             <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $mostrecent['File_Name']; ?>"><img class="copyimage" width="25" height="25" src="images/copy.png"></a>
             <div class="centered_image_container" style="margin-bottom: 0px !important;">
               <?php if(!empty($config["FLICKR_API_KEY"])) { ?>
-                <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo $image[2] ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
+                <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
               <?php } ?>
               <form action="" method="GET">
                   <input type="hidden" name="view" value="Species Stats">
@@ -199,7 +199,7 @@ body::-webkit-scrollbar {
   }
 
   function setModalText(iter, title, text, authorlink, photolink) {
-    document.getElementById('modalHeading').innerHTML = "Photo: \""+title+"\" Attribution";
+    document.getElementById('modalHeading').innerHTML = "Photo: \""+decodeURIComponent(title).replace("+"," ")+"\" Attribution";
     document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
     showDialog();
   }

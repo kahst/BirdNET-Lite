@@ -116,13 +116,13 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
             
           <div class="centered_image_container">
             <?php if(!empty($config["FLICKR_API_KEY"])) { ?>
-              <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo $image[2] ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
+              <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
             <?php } ?>
 
             <?php echo $todaytable['Time'];?><br> 
           <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
           <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
-          <b>Confidence:</b> <?php echo round($todaytable['Confidence'],2);?><br></div><br>
+          <b>Confidence:</b> <?php echo round((float)round($todaytable['Confidence'],2) * 100 ) . '%';?><br></div><br>
           <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
           </td>
         <?php } else { //legacy mode ?>
@@ -130,7 +130,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
           <td><?php echo $todaytable['Time'];?><br></td><td>
           <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
           <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br></td>
-          <td><b>Confidence:</b> <?php echo $todaytable['Confidence'];?><br></td>
+          <td><b>Confidence:</b> <?php echo round((float)round($todaytable['Confidence'],2) * 100 ) . '%';?><br></td>
           <td style="min-width:180px"><audio controls preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
           </td>
         <?php } ?>
@@ -180,7 +180,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   }
 
   function setModalText(iter, title, text, authorlink, photolink) {
-    document.getElementById('modalHeading').innerHTML = "Photo: \""+title+"\" Attribution";
+    document.getElementById('modalHeading').innerHTML = "Photo: \""+decodeURIComponent(title).replace("+"," ")+"\" Attribution";
     document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
     showDialog();
   }
@@ -211,7 +211,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
 
     <h3>Today's Detections — <input autocomplete="off" size="11" type="text" placeholder="Search..." id="searchterm" name="searchterm"></h3>
 
-    <div style="padding-bottom:10px" id="detections_table"></div>
+    <div style="padding-bottom:10px" id="detections_table"><h3>Loading...</h3></div>
 
     <button onclick="switchViews(this);" class="legacyview">Legacy view</button>
 
