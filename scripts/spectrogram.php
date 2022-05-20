@@ -123,6 +123,3 @@ h1 {
 <h1>Loading...</h1>
 <canvas></canvas>
 
-<br>
-<span style="display:inline-block;">hi</span>
-
