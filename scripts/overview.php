@@ -239,7 +239,7 @@ function loadDetectionIfNewExists(previous_detection_identifier=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
     // if there's a new detection that needs to be updated to the page
-    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy.")) {
+    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy")) {
       document.getElementById("most_recent_detection").innerHTML = this.responseText;
 
       // only going to load left chart if there's a new detection
