@@ -181,7 +181,7 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
       $modaltext = "https://flickr.com/photos/".$val["owner"]."/".$val["id"];
       $authorlink = "https://flickr.com/people/".$val["owner"];
       $imageurl = 'https://farm' .$val["farm"]. '.static.flickr.com/' .$val["server"]. '/' .$val["id"]. '_'  .$val["secret"].  '.jpg';
-      echo "<img style='vertical-align:top' src=\"$imageurl\"><span style='cursor:pointer;color:blue;text-decoration:underline;' onclick='setModalText(".$iter.",\"".$val["title"]."\",\"".$modaltext."\", \"".$authorlink."\")'>".$iter."</span>";
+      echo "<span style='cursor:pointer;color:blue;text-decoration:underline;' onclick='setModalText(".$iter.",\"".$val["title"]."\",\"".$modaltext."\", \"".$authorlink."\")'><img style='vertical-align:top' src=\"$imageurl\"></span>";
     }
   }
 }
