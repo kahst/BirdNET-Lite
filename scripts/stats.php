@@ -168,7 +168,13 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   
   ob_flush();
   flush();
-  $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=2158f6c5d66e89778bd0d340953f1bcf&text=\"".str_replace('_', '+', $comname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
+  if (file_exists('./scripts/thisrun.txt')) {
+    $config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+    $config = parse_ini_file('./scripts/firstrun.ini');
+  }
+  $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace('_', '+', $comname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
+
   foreach ($flickrjson as $val) {
       $iter++;
       $modaltext = "https://flickr.com/photos/".$val["owner"]."/".$val["id"];
