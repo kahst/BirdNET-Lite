@@ -56,7 +56,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
          $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace("_", "%20", $comname)."&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=5&orientation=square,portrait&format=json&media=photos&nojsoncallback=1"), true)["photos"]["photo"][0];
           $modaltext = "https://flickr.com/photos/".$flickrjson["owner"]."/".$flickrjson["id"];
           $authorlink = "https://flickr.com/people/".$flickrjson["owner"];
-          $imageurl = 'http://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
+          $imageurl = 'https://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
           array_push($images, array($comname,$imageurl,$flickrjson["title"], $modaltext, $authorlink));
           $image = $images[count($images)-1];
         }
