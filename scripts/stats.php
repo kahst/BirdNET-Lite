@@ -173,14 +173,16 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   } elseif (file_exists('./scripts/firstrun.ini')) {
     $config = parse_ini_file('./scripts/firstrun.ini');
   }
-  $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace('_', '+', $comname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
+  if (! empty($config["FLICKR_API_KEY"])) {
+    $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace('_', '+', $comname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
 
-  foreach ($flickrjson as $val) {
+    foreach ($flickrjson as $val) {
       $iter++;
       $modaltext = "https://flickr.com/photos/".$val["owner"]."/".$val["id"];
       $authorlink = "https://flickr.com/people/".$val["owner"];
       $imageurl = 'http://farm' .$val["farm"]. '.static.flickr.com/' .$val["server"]. '/' .$val["id"]. '_'  .$val["secret"].  '.jpg';
       echo "<img style='vertical-align:top' src=\"$imageurl\"><span style='cursor:pointer;color:blue;text-decoration:underline;' onclick='setModalText(".$iter.",\"".$val["title"]."\",\"".$modaltext."\", \"".$authorlink."\")'>".$iter."</span>";
+    }
   }
 }
 }
