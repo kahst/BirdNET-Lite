@@ -24,7 +24,7 @@ window.onload = function(){
 function applyText(text) {
     CTX.fillStyle = 'white';
   CTX.font = '25px Roboto Flex';
-  CTX.fillText(text, document.body.querySelector('canvas').scrollWidth - (document.body.querySelector('canvas').scrollWidth * 0.50), document.body.querySelector('canvas').scrollHeight * 0.35);
+  CTX.fillText(text, document.body.querySelector('canvas').scrollWidth - (document.body.querySelector('canvas').scrollWidth * 0.20), document.body.querySelector('canvas').scrollHeight * 0.35);
   CTX.fillStyle = 'hsl(280, 100%, 10%)';
 }
 
@@ -122,7 +122,3 @@ h1 {
 <audio style="display:none" controls="" crossorigin="anonymous" id='player' autoplay=""><source src="/stream"></audio>
 <h1>Loading...</h1>
 <canvas></canvas>
-
-<br>
-<span style="display:inline-block;">hi</span>
-
