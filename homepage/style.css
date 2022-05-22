@@ -70,11 +70,16 @@ label {
   font-weight: bold;
 }
 
+hr { 
+  border-color:black;
+}
+
 button {
   background-color: transparent;
   border: none;
   color: black;
   cursor: pointer;
+  transition:background-color 0.2s;
 }
 
 button:hover {
@@ -546,7 +551,7 @@ button:hover {
   font-size:x-large;
   background:#dbffeb;
   padding:5px;
-  
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.10);
 }
 button.legacyview {
   color:gray;
@@ -605,6 +610,7 @@ dialog::backdrop {
   margin-bottom:3px;
 }
 .centered_image_container img.img1 {
+  box-shadow:0px 2px 3px 0px rgb(0 0 0 / 29%);
   cursor:pointer;
   height:95%;
   position:absolute;
@@ -613,9 +619,18 @@ dialog::backdrop {
   border-radius: 5px;
   width:unset;
 }
+.centered_image_container img.img1:hover{
+  opacity:0.8;
+}
 .centered_image_container * {
   font-size:19px !important;
 }
 .centered_image_container form {
   margin-bottom:0px;
+}
+.brbanner {
+  padding:15px;
+  background-color:rgb(159, 226, 155);
+  text-align:center;
+  font-size:large;
 }

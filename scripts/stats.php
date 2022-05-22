@@ -81,10 +81,10 @@ if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt") || strpos(fi
     <input type="hidden" name="sort" value="<?php if(isset($_GET['sort'])){echo $_GET['sort'];}?>">
       <input type="hidden" name="view" value="Species Stats">
       <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "alphabetical"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="alphabetical">
-         <img src="images/sort_abc.svg" alt="Sort by alphabetical">
+         <img src="images/sort_abc.svg" title="Sort by alphabetical" alt="Sort by alphabetical">
       </button>
       <button <?php if(isset($_GET['sort']) && $_GET['sort'] == "occurrences"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="occurrences">
-         <img src="images/sort_occ.svg" alt="Sort by occurrences">
+         <img src="images/sort_occ.svg" title="Sort by occurrences" alt="Sort by occurrences">
       </button>
    </form>
 </div>
@@ -187,7 +187,12 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
 }
 }
 ?>
-<br><br><br>
+<?php if(isset($_GET['species'])){?>
+<br><br>
+<div class="brbanner">Best Recordings for Other Species:</div><br>
+<?php } else {?>
+<hr><br>
+<?php } ?>
 
     <table>
 <?php
