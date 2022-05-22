@@ -7,8 +7,8 @@ var started = null;
 var player = null;
 const ctx = null;
 window.onload = function(){
-  // if user agent includes iPhone or Mac, AND is not chrome, use legacy mode
-  if( (window.navigator.userAgent.includes("iPhone") || window.navigator.userAgent.includes("Mac")) && !window.navigator.userAgent.includes("CriOS")) {
+  // if user agent includes iPhone or Mac use legacy mode
+  if(window.navigator.userAgent.includes("iPhone") || window.navigator.userAgent.includes("Mac")) {
     document.getElementById("spectrogramimage").style.display="";
     document.body.querySelector('canvas').remove();
     document.getElementById('player').remove();
