@@ -7,6 +7,29 @@ var started = null;
 var player = null;
 const ctx = null;
 window.onload = function(){
+  // if user agent includes iPhone or Mac, AND is not chrome, use legacy mode
+  if( (window.navigator.userAgent.includes("iPhone") || window.navigator.userAgent.includes("Mac")) && !window.navigator.userAgent.includes("CriOS")) {
+    document.getElementById("spectrogramimage").style.display="";
+    document.body.querySelector('canvas').remove();
+    document.getElementById('player').remove();
+    document.body.querySelector('h1').remove();
+
+    <?php 
+    if (file_exists('./scripts/thisrun.txt')) {
+    $config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+    $config = parse_ini_file('./scripts/firstrun.ini');
+  }
+  $refresh = $config['RECORDING_LENGTH'];
+  $time = time();
+  ?>
+    // every $refresh seconds, this loop will run and refresh the spectrogram image
+  window.setInterval(function(){
+    document.getElementById("spectrogramimage").src = "/spectrogram.png?nocache="+Date.now();
+  }, <?php echo $refresh; ?>*1000);
+  } else {
+    document.getElementById("spectrogramimage").remove();
+
   var audioelement =  window.parent.document.getElementsByTagName("audio")[0];
   if (typeof(audioelement) != 'undefined') {
 
@@ -16,15 +39,27 @@ window.onload = function(){
   } else {
     player = document.getElementById('player');
   }
+  player.play();
   if (started) return;
-  started = true;
-  initialize();
+    started = true;
+    initialize();
+  }
 };
+
+function fitTextOnCanvas(text,fontface,yPosition){    
+    var fontsize=300;
+    do{
+        fontsize--;
+        CTX.font=fontsize+"px "+fontface;
+    }while(CTX.measureText(text).width>document.body.querySelector('canvas').width)
+    CTX.font = CTX.font=(fontsize*0.35)+"px "+fontface;
+    CTX.fillText(text,document.body.querySelector('canvas').width - (document.body.querySelector('canvas').width * 0.50),yPosition);
+}
 
 function applyText(text) {
     CTX.fillStyle = 'white';
   CTX.font = '25px Roboto Flex';
-  CTX.fillText(text, document.body.querySelector('canvas').scrollWidth - (document.body.querySelector('canvas').scrollWidth * 0.20), document.body.querySelector('canvas').scrollHeight * 0.35);
+  fitTextOnCanvas(text,"Roboto Flex",document.body.querySelector('canvas').scrollHeight * 0.35)
   CTX.fillStyle = 'hsl(280, 100%, 10%)';
 }
 
@@ -46,7 +81,7 @@ function loadDetectionIfNewExists() {
 
 window.setInterval(function(){
    loadDetectionIfNewExists();
-}, 5000);
+}, 2500);
 
 function initialize() {
   document.body.querySelector('h1').remove();
@@ -118,7 +153,8 @@ h1 {
 }
 </style>
 
+<img id="spectrogramimage" style="width:100%;height:100%;display:none" src="/spectrogram.png?nocache=<?php echo $time;?>">
 
-<audio style="display:none" controls="" crossorigin="anonymous" id='player' autoplay=""><source src="/stream"></audio>
+<audio style="display:none" controls="" crossorigin="anonymous" id='player' preload="none"><source src="/stream"></audio>
 <h1>Loading...</h1>
 <canvas></canvas>
