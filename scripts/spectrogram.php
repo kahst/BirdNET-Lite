@@ -118,7 +118,7 @@ function initialize() {
       CTX.putImageData(imgData, 0, 0);
       ANALYSER.getByteFrequencyData(DATA);
       for (let i = 0; i < LEN; i++) {
-        let rat = DATA[i] / 196 ;
+        let rat = DATA[i] / 128 ;
         let hue = Math.round((rat * 120) + 280 % 360);
         let sat = '100%';
         let lit = 10 + (70 * rat) + '%';
