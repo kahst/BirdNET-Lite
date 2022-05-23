@@ -247,7 +247,7 @@ document.getElementById("searchterm").onkeydown = (function(e) {
 });
 
 function switchViews(element) {
-  document.getElementById("detections_table").innerHTML = "";
+  document.getElementById("detections_table").innerHTML = "<h3>Loading <?php echo $todaycount['COUNT(*)']; ?> detections...</h3>";
   if(element.innerHTML == "Legacy view") {
     element.innerHTML = "Normal view";
     loadDetections(undefined);
