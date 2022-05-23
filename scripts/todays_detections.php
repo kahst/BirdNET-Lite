@@ -70,7 +70,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
     $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') '.$searchquery.' ORDER BY Time DESC LIMIT '.(intval($_GET['display_limit'])-40).',40');
   } else {
     // legacy mode
-    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') '.$searchquery.' ORDER BY Time DESC '.$searchquery);
+    $statement0 = $db->prepare('SELECT Time, Com_Name, Sci_Name, Confidence, File_Name FROM detections WHERE Date == Date(\'now\', \'localtime\') '.$searchquery.' ORDER BY Time DESC');
   }
   if($statement0 == False){
     echo "Database is busy";
@@ -259,7 +259,11 @@ function switchViews(element) {
 function searchDetections(searchvalue) {
     document.getElementById("detections_table").innerHTML = "<h3>Loading...</h3>";
     searchterm = searchvalue;
-    loadDetections(40,undefined);
+    if(document.getElementsByClassName('legacyview')[0].innerHTML == "Normal view") {
+      loadDetections(undefined,undefined);  
+    } else {
+      loadDetections(40,undefined);
+    }
 }
 function loadDetections(detections_limit, element=undefined) {
   const xhttp = new XMLHttpRequest();
