@@ -74,13 +74,6 @@
     <button type="submit" name="submit" value="sudo systemctl enable --now spectrogram_viewer.service">Enable</button>
   </form>
   <form action="" method="GET">
-    <h3>Pushed Notifications</h3>
-    <button type="submit" name="submit" value="sudo systemctl stop pushed_notifications.service">Stop</button>
-    <button type="submit" name="submit" value="sudo systemctl restart pushed_notifications.service">Restart</button>
-    <button type="submit" name="submit" value="sudo systemctl disable --now pushed_notifications.service">Disable</button>
-    <button type="submit" name="submit" value="sudo systemctl enable --now pushed_notifications.service">Enable</button>
-  </form>
-  <form action="" method="GET">
     <button type="submit" name="submit" value="stop_core_services.sh">Stop Core Services</button>
   </form>	
   <form action="" method="GET">

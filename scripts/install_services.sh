@@ -91,22 +91,6 @@ EOF
   systemctl enable extraction.service
 }
 
-install_pushed_notifications() {
-  cat << EOF > $HOME/BirdNET-Pi/templates/pushed_notifications.service
-[Unit]
-Description=BirdNET-Pi Pushed.co Notifications
-[Service]
-Restart=on-success
-RestartSec=3
-Type=simple
-User=$USER
-ExecStart=/usr/local/bin/species_notifier.sh
-[Install]
-WantedBy=multi-user.target
-EOF
-  ln -sf $HOME/BirdNET-Pi/templates/pushed_notifications.service /usr/lib/systemd/system
-}
-
 create_necessary_dirs() {
   echo "Creating necessary directories"
   [ -d ${EXTRACTED} ] || sudo -u ${USER} mkdir -p ${EXTRACTED}
@@ -436,7 +420,6 @@ install_services() {
   install_recording_service
   install_custom_recording_service # But does not enable
   install_extraction_service
-  install_pushed_notifications
   install_spectrogram_service
   install_chart_viewer_service
   install_gotty_logs
