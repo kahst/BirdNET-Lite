@@ -97,7 +97,7 @@ if(isset($_GET['view'])){
           <button type=\"submit\" name=\"view\" value=\"System Controls\" form=\"views\">System Controls</button>
           <button type=\"submit\" name=\"view\" value=\"Services\" form=\"views\">Services</button>
           <button type=\"submit\" name=\"view\" value=\"File\" form=\"views\">File Manager</button>
-          <a href=\"scripts/adminer.php\" target=\"_top\"><button type=\"submit\" form=\"\">Database Maintenanace</button></a>
+          <a href=\"scripts/adminer.php\" target=\"_top\"><button type=\"submit\" form=\"\">Database Maintenance</button></a>
           <button type=\"submit\" name=\"view\" value=\"Webterm\" form=\"views\">Web Terminal</button>
           <button type=\"submit\" name=\"view\" value=\"Included\" form=\"views\">Custom Species List</button>
           <button type=\"submit\" name=\"view\" value=\"Excluded\" form=\"views\">Excluded Species List</button>
