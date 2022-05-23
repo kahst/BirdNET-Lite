@@ -1,4 +1,7 @@
 <?php
+ini_set('session.gc_maxlifetime', 7200);
+session_set_cookie_params(7200);
+session_start();
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -77,7 +80,10 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
 
   ?> <table>
    <?php
-   $images = [];
+
+  if(!isset($_SESSION['images'])) {
+    $_SESSION['images'] = [];
+  }
   $iterations = 0;
 
   if (file_exists('./scripts/thisrun.txt')) {
@@ -97,16 +103,16 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
 
   if (!empty($config["FLICKR_API_KEY"])) {
     // if we already searched flickr for this species before, use the previous image rather than doing an unneccesary api call
-    $key = array_search($comname, array_column($images, 0));
+    $key = array_search($comname, array_column($_SESSION['images'], 0));
     if($key !== false) {
-      $image = $images[$key];
+      $image = $_SESSION['images'][$key];
     } else {
       $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace("_", "%20", $comname)."&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=5&orientation=square,portrait&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"][0];
       $modaltext = "https://flickr.com/photos/".$flickrjson["owner"]."/".$flickrjson["id"];
       $authorlink = "https://flickr.com/people/".$flickrjson["owner"];
       $imageurl = 'http://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
-      array_push($images, array($comname,$imageurl,$flickrjson["title"], $modaltext, $authorlink));
-      $image = $images[count($images)-1];
+      array_push($_SESSION['images'], array($comname,$imageurl,$flickrjson["title"], $modaltext, $authorlink));
+      $image = $_SESSION['images'][count($_SESSION['images'])-1];
     }
   }
   ?>
