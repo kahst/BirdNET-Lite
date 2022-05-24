@@ -246,6 +246,7 @@ def sendAppriseNotifications(species,confidence):
         if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_NEW_SPECIES')]).split('=')[1]).split('\\')[0]) == "1":
             try: 
                 con = sqlite3.connect(userDir + '/BirdNET-Pi/scripts/birds.db')
+                con.row_factory = lambda cursor, row: row[0]
                 cur = con.cursor()
                 cur.execute("SELECT DISTINCT(Com_Name) FROM detections")
                 known_species = cur.fetchall()
