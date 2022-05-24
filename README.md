@@ -46,7 +46,7 @@ Currently listening in these countries . . . that I know of . . .
 * 24/7 recording and BirdNET-Lite analysis
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
-* Live audio stream
+* Live audio stream & spectrogram
 * [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
 * Web interface access to all data and logs provided by [Caddy](https://caddyserver.com)
 * Web Terminal
