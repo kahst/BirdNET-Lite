@@ -46,7 +46,7 @@ Currently listening in these countries . . . that I know of . . .
 * 24/7 recording and BirdNET-Lite analysis
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
 * Spectrograms available for all extractions
-* Live audio stream
+* Live audio stream & spectrogram
 * [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
 * Web interface access to all data and logs provided by [Caddy](https://caddyserver.com)
 * Web Terminal
@@ -110,6 +110,7 @@ I hope that if you find BirdNET-Pi has been worth your time, you will share your
 
 - [Marie Lelouche's <i>Out of Spaces</i>](https://www.lestanneries.fr/exposition/marie-lelouche-out-of-spaces/) using BirdNET-Pi in post-sculpture VR! [Press Kit](https://github.com/mcguirepr89/BirdNET-Pi-assets/blob/main/dp_out_of_spaces_marie_lelouche_digital_05_01_22.pdf)
 - [Research on noded BirdNET-Pi networks for farming](https://github.com/mcguirepr89/BirdNET-Pi-assets/blob/main/G23_Report_ModelBasedSysEngineering_FarmMarkBirdDetector_V1__Copy_.pdf)
+- [PixCams Build Guide](https://pixcams.com/building-a-birdnet-pi-real-time-acoustic-bird-id-station/)
 - <ins>[Core-Electronics](https://core-electronics.com.au/projects/bird-calls-raspberry-pi)</ins> Build Article
 
 
