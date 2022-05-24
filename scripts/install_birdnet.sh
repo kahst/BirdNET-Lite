@@ -29,8 +29,6 @@ install_birdnet() {
   python3 -m venv birdnet
   source ./birdnet/bin/activate
   pip3 install -U -r $HOME/BirdNET-Pi/requirements.txt
-  echo "Ensure all python scripts use the virtual environment"
-  sed -si "1 i\\#\!$HOME/BirdNET-Pi/birdnet/bin/python3" $my_dir/scripts/*.py
 }
 
 [ -d ${RECS_DIR} ] || mkdir -p ${RECS_DIR} &> /dev/null
