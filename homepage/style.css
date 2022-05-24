@@ -1,6 +1,10 @@
+@font-face {
+   font-family: 'Roboto Flex' ;
+   src: url('static/RobotoFlex-Regular.ttf') format('truetype');
+}
+
 * {
-  font-family: 'Arial', 'Gill Sans', 'Gill Sans MT',
-  ' Calibri', 'Trebuchet MS', 'sans-serif';
+  font-family: 'Roboto Flex', sans-serif;
   box-sizing: border-box;
   font-size: medium;
 }
@@ -37,6 +41,9 @@ table {
   border-spacing: 0;
   margin-left: auto;
   margin-right: auto;
+  box-shadow: 0px 0px 17px 1px rgba(0, 0, 0, 0.10);
+  border-radius:3px;
+  overflow: hidden;
 }
 
 td {
@@ -44,7 +51,6 @@ td {
   vertical-align: top;
   background-color: rgb(219, 255, 235);
   font-weight: lighter;
-  border: 2px solid black;
   text-align: center;
 }
 
@@ -64,11 +70,16 @@ label {
   font-weight: bold;
 }
 
+hr { 
+  border-color:black;
+}
+
 button {
   background-color: transparent;
   border: none;
   color: black;
   cursor: pointer;
+  transition:background-color 0.2s;
 }
 
 button:hover {
@@ -132,6 +143,13 @@ button:hover {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 15px;
+  box-shadow: 0px 0px 28px 1px rgba(0, 0, 0, 0.10); !important;
+  border-radius: 4px;
+}
+
+.topimage {
+  width:175px;
+  display:initial !important;
 }
 
 .topnav form {
@@ -173,12 +191,11 @@ button:hover {
 }
 
 .stats table {
-  width: 75%;
+  width: 60%;
 }
 
 .overview th {
   background-color: rgb(219, 255, 235);
-  border: 2px solid black;
   text-align: center;
   padding: 12px;
 }
@@ -238,14 +255,16 @@ button:hover {
 }
 
 .views .centered button {
-  border: 2px solid black;
   background-color: rgb(219, 255, 235);
   padding: 12px;
+  transition:box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
 }
 
 .views .centered button:hover {
   background-color: rgb(159, 226, 155);
   color: black;
+  box-shadow:0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
 }
 
 .settings {
@@ -257,7 +276,6 @@ button:hover {
 }
 
 .settings button {
-  border: 2px solid black;
   background-color: rgb(219, 255, 235);
   padding: 12px;
 }
@@ -284,7 +302,7 @@ button:hover {
 .customlabels button,.customlabels2 button {
   padding: 12px;
   background-color: rgb(219, 255, 235);
-  border: 2px solid black;
+  
   width: 100%;
 }
 
@@ -339,7 +357,7 @@ button:hover {
 }
 
 .systemcontrols button,.servicecontrols button {
-  border: 2px solid black;
+  
   background-color: rgb(219, 255, 235);
   padding: 12px;
   width: 50%;
@@ -541,7 +559,7 @@ button:hover {
   font-size:x-large;
   background:#dbffeb;
   padding:5px;
-  border: 2px solid black;
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.10);
 }
 button.legacyview {
   color:gray;
@@ -552,12 +570,98 @@ button.legacyview {
   font-size:small;
   background:#dbffeb;
   padding:5px;
-  border: 2px solid black;
+  transition:box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
 }
+button.legacyview:hover  { 
+  box-shadow:0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+}
+
 button.loadmore {
   margin-top:10px;
   font-size:x-large;
   background:#dbffeb;
   padding:10px;
-  border: 2px solid black;
+  transition:box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  
+}
+button.loadmore:hover { 
+  box-shadow:0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+}
+#searchterm {
+  transition:box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+#searchterm:hover {
+  box-shadow:0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+}
+
+tr {
+  background-color:#9fe29b;
+}
+.history.centered form {
+  display:flex;
+  justify-content: center;
+}
+.history.centered input {
+  margin-right:5px;
+  border:0px;
+}
+.centered form#views button {
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.10);
+  margin:2px;
+  transition:box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+}
+.centered form#views button:hover {
+  box-shadow:0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+}
+input {
+  box-shadow: 0px 0px 17px 1px rgba(0, 0, 0, 0.10);
+}
+dialog {
+  border:none;
+}
+dialog::backdrop {
+  background: repeating-linear-gradient(
+    30deg,
+    rgba(24, 194, 236, 0.2),
+    rgba(24, 194, 236, 0.2) 1px,
+    rgba(24, 194, 236, 0.3) 1px,
+    rgba(24, 194, 236, 0.3) 20px
+  );
+  backdrop-filter: blur(1px)
+}
+.centered_image_container {
+  font-size:19px !important;
+  display:inline-block;
+  position:relative;
+  margin-bottom:3px;
+}
+.centered_image_container img.img1 {
+  transition:box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  cursor:pointer;
+  height:95%;
+  position:absolute;
+  right:110%;
+  top:0px;
+  border-radius: 5px;
+  width:unset;
+}
+.centered_image_container img.img1:hover{
+  opacity:0.8;
+  box-shadow:0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+}
+.centered_image_container * {
+  font-size:19px !important;
+}
+.centered_image_container form {
+  margin-bottom:0px;
+}
+.brbanner {
+  padding:15px;
+  background-color:rgb(159, 226, 155);
+  text-align:center;
+  font-size:large;
 }

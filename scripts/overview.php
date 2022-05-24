@@ -1,4 +1,7 @@
 <?php
+ini_set('session.gc_maxlifetime', 7200);
+session_set_cookie_params(7200);
+session_start();
 $myDate = date('Y-m-d');
 $chart = "Combo-$myDate.png";
 
@@ -6,6 +9,12 @@ $db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READW
 if($db == False) {
   echo "Database is busy";
   header("refresh: 0;");
+}
+
+if (file_exists('./scripts/thisrun.txt')) {
+  $config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
 }
 
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['previous_detection_identifier'])) {
@@ -16,6 +25,10 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
     header("refresh: 0;");
   }
   $result4 = $statement4->execute();
+  if(!isset($_SESSION['images'])) {
+    $_SESSION['images'] = [];
+  }
+  $iterations = 0;
   // hopefully one of the 5 most recent detections has an image that is valid, we'll use that one as the most recent detection until the newer ones get their images created
   while($mostrecent = $result4->fetchArray(SQLITE3_ASSOC)) {
     $comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
@@ -37,6 +50,23 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
       // we've found our valid detection! ignore everything else from the database loop
       if(strpos($headers[0],'200')) {
           if($_GET['previous_detection_identifier'] == $filename) { die(); }
+          if($_GET['only_name'] == "true") { echo $comname.",".$filename;die(); }
+
+      if (!empty($config["FLICKR_API_KEY"])) {
+        // if we already searched flickr for this species before, use the previous image rather than doing an unneccesary api call
+        $key = array_search($comname, array_column($_SESSION['images'], 0));
+        if($key !== false) {
+          $image = $_SESSION['images'][$key];
+        } else {
+         $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace("_", "%20", $comname)."&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=5&orientation=square,portrait&format=json&media=photos&nojsoncallback=1"), true)["photos"]["photo"][0];
+          $modaltext = "https://flickr.com/photos/".$flickrjson["owner"]."/".$flickrjson["id"];
+          $authorlink = "https://flickr.com/people/".$flickrjson["owner"];
+          $imageurl = 'https://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
+          array_push($_SESSION['images'], array($comname,$imageurl,$flickrjson["title"], $modaltext, $authorlink));
+          $image = $_SESSION['images'][count($_SESSION['images'])-1];
+        }
+      }
+
       ?>
         <style>
         .fade-in {
@@ -60,13 +90,17 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
           <h3>Most Recent Detection: <span style="font-weight: normal;"><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></span></h3>
           <tr>
             <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $mostrecent['File_Name']; ?>"><img class="copyimage" width="25" height="25" src="images/copy.png"></a>
-            <form action="" method="GET">
-                <input type="hidden" name="view" value="Species Stats">
-                <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button></br>
-                <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a>
-                <br>Confidence: <?php echo $mostrecent['Confidence'];?><br>
-                <video style="margin-top:10px" onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>"></video></td>
-            </form>
+            <div class="centered_image_container" style="margin-bottom: 0px !important;">
+              <?php if(!empty($config["FLICKR_API_KEY"])) { ?>
+                <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
+              <?php } ?>
+              <form action="" method="GET">
+                  <input type="hidden" name="view" value="Species Stats">
+                  <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button></br>
+                  <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a>
+                  <br>Confidence: <?php echo $percent = round((float)round($mostrecent['Confidence'],2) * 100 ) . '%';?><br></div><br>
+                  <video style="margin-top:10px" onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>"></video></td>
+              </form>
           </tr>
         </table> <?php break;
       }
@@ -153,17 +187,35 @@ body::-webkit-scrollbar {
 </style>
 </head>
 <div class="overview">
+  <dialog id="attribution-dialog">
+    <h1 id="modalHeading"></h1>
+    <p id="modalText"></p>
+    <button onclick="hideDialog()">Close</button>
+  </dialog>
+  <script>
+  var dialog = document.querySelector('dialog');
+  dialogPolyfill.registerDialog(dialog);
+
+  function showDialog() {
+    document.getElementById('attribution-dialog').showModal();
+  }
+
+  function hideDialog() {
+    document.getElementById('attribution-dialog').close();
+  }
+
+  function setModalText(iter, title, text, authorlink, photolink) {
+    document.getElementById('modalHeading').innerHTML = "Photo: \""+decodeURIComponent(title.replace("+"," "))+"\" Attribution";
+    document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
+    showDialog();
+  }
+  </script>  
 <div class="overview-stats">
 <div class="left-column">
 </div>
 <div class="right-column">
 <div class="chart">
 <?php
-if (file_exists('./scripts/thisrun.txt')) {
-  $config = parse_ini_file('./scripts/thisrun.txt');
-} elseif (file_exists('./scripts/firstrun.ini')) {
-  $config = parse_ini_file('./scripts/firstrun.ini');
-}
 $refresh = $config['RECORDING_LENGTH'];
 $time = time();
 if (file_exists('./Charts/'.$chart)) {
@@ -192,7 +244,7 @@ function loadDetectionIfNewExists(previous_detection_identifier=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
     // if there's a new detection that needs to be updated to the page
-    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy.")) {
+    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy")) {
       document.getElementById("most_recent_detection").innerHTML = this.responseText;
 
       // only going to load left chart if there's a new detection

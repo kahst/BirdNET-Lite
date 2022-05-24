@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from datetime import datetime
 import textwrap
+import matplotlib.font_manager as font_manager
+from matplotlib import rcParams
 
 userDir = os.path.expanduser('~')
 conn = sqlite3.connect(userDir + '/BirdNET-Pi/scripts/birds.db')
@@ -28,6 +30,14 @@ df['Hour of Day'] = [r.hour for r in df.Time]
 
 #Create separate dataframes for separate locations
 df_plt=df #Default to use the whole Dbase
+
+# Add every font at the specified location
+font_dir = [userDir+'/BirdNET-Pi/homepage/static']
+for font in font_manager.findSystemFonts(font_dir):
+    font_manager.fontManager.addfont(font)
+
+# Set font family globally
+rcParams['font.family'] = 'Roboto Flex'
 
 #Get todays readings
 now = datetime.now()

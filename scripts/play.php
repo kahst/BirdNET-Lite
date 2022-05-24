@@ -1,7 +1,5 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_reporting(E_ERROR);
 
 $db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 if($db == False){
@@ -9,18 +7,62 @@ if($db == False){
   header("refresh: 0;");
 }
 
-#By Date
-if(isset($_GET['byfilename'])){
-  $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date');
-  if($statement == False){
-    echo "Database is busy";
-    header("refresh: 0;");
+if (file_exists('./scripts/thisrun.txt')) {
+  $config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('firstrun.ini')) {
+  $config = parse_ini_file('firstrun.ini');
+}
+
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
+
+if(isset($_GET['excludefile'])) {
+  if(isset($_SERVER['PHP_AUTH_USER'])) {
+    $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+    $submitteduser = $_SERVER['PHP_AUTH_USER'];
+    if($submittedpwd == $config['CADDY_PWD'] && $submitteduser == 'birdnet'){
+      if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")) {
+        file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end");
+      }
+      if(isset($_GET['exclude_add'])) {
+        $myfile = fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "a") or die("Unable to open file!");
+          $txt = $_GET['excludefile'];
+          fwrite($myfile, $txt."\n");
+          fwrite($myfile, $txt.".png\n");
+          fclose($myfile);
+          echo "OK";
+          die();
+      } else {
+        $lines  = file($home."/BirdNET-Pi/scripts/disk_check_exclude.txt");
+        $search = $_GET['excludefile'];
+
+        $result = '';
+        foreach($lines as $line) {
+            if(stripos($line, $search) === false && stripos($line, $search.".png") === false) {
+                $result .= $line;
+            }
+        }
+        file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", $result);
+        echo "OK";
+        die();
+      }
+    } else {
+      header('WWW-Authenticate: Basic realm="My Realm"');
+      header('HTTP/1.0 401 Unauthorized');
+      echo 'You must be authenticated to change the protection of files.';
+      exit;
+    }
+  } else {
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'You must be authenticated to change the protection of files.';
+    exit;
   }
-  $result = $statement->execute();
-  $view = "bydate";
-  #By Date
-}elseif(isset($_GET['bydate'])){
-  $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date');
+}
+
+if(isset($_GET['bydate'])){
+  $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date ORDER BY Date DESC');
   if($statement == False){
     echo "Database is busy";
     header("refresh: 0;");
@@ -79,7 +121,6 @@ if(isset($_GET['byfilename'])){
   session_unset();
   $view = "choose";
 }
-
 ?>
 
 <html>
@@ -89,6 +130,31 @@ if(isset($_GET['byfilename'])){
     <style>
     </style>
   </head>
+
+<script>
+function toggleLock(filename, type, elem) {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    if(this.responseText == "OK"){
+      if(type == "add") {
+       elem.setAttribute("src","images/lock.svg");
+       elem.setAttribute("title", "This file is delete protected.");
+       elem.setAttribute("onclick", elem.getAttribute("onclick").replace("add","del"));
+      } else {
+       elem.setAttribute("src","images/unlock.svg");
+       elem.setAttribute("title", "This file is not delete protected.");
+       elem.setAttribute("onclick", elem.getAttribute("onclick").replace("del","add"));
+      }
+    }
+  }
+  if(type == "add") {
+    xhttp.open("GET", "play.php?excludefile="+filename+"&exclude_add=true", true);
+  } else {
+    xhttp.open("GET", "play.php?excludefile="+filename+"&exclude_del=true", true);  
+  }
+  xhttp.send();
+}
+</script>
 
 <?php
 #If no specific species
@@ -102,15 +168,14 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
       <input type="hidden" name="view" value="Recordings">
       <input type="hidden" name="<?php echo $view; ?>" value="<?php echo $_GET['date']; ?>">
       <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "alphabetical"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="alphabetical">
-         <img src="images/sort_abc.svg" alt="Sort by alphabetical">
+         <img src="images/sort_abc.svg" title="Sort by alphabetical" alt="Sort by alphabetical">
       </button>
       <button <?php if(isset($_GET['sort']) && $_GET['sort'] == "occurrences"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="occurrences">
-         <img src="images/sort_occ.svg" alt="Sort by occurrences">
+         <img src="images/sort_occ.svg" title="Sort by occurrences" alt="Sort by occurrences">
       </button>
    </form>
 </div>
 <?php } ?>
-
 
 <table>
   <tr>
@@ -121,13 +186,15 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
   if($view == "bydate") {
     while($results=$result->fetchArray(SQLITE3_ASSOC)){
       $date = $results['Date'];
+      if(realpath($home."/BirdSongs/Extracted/By_Date/".$date) !== false){
       echo "<td>
-        <button action=\"submit\" name=\"date\" value=\"$date\">$date</button></td></tr>";}
+        <button action=\"submit\" name=\"date\" value=\"$date\">$date</button></td></tr>";}}
 
   #By Species
   } elseif($view == "byspecies") {
     while($results=$result->fetchArray(SQLITE3_ASSOC)){
       $name = $results['Com_Name'];
+      
       echo "<td>
         <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";}
 
@@ -135,8 +202,11 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
   } elseif($view == "date") {
     while($results=$result->fetchArray(SQLITE3_ASSOC)){
       $name = $results['Com_Name'];
-      echo "<td>
-        <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";}
+      if(realpath($home."/BirdSongs/Extracted/By_Date/".$date."/".str_replace(" ", "_",$name)) !== false){
+         echo "<td>
+            <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";
+      }
+    }
 
   #Choose
   } else {
@@ -151,13 +221,42 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
 }
 
 #Specific Species
-if(isset($_GET['species'])){
+if(isset($_GET['species'])){ ?>
+<div style="width: auto;
+   text-align: center">
+   <form action="" method="GET">
+      <input type="hidden" name="view" value="Recordings">
+      <input type="hidden" name="species" value="<?php echo $_GET['species']; ?>">
+      <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "date"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="date">
+         <img width=35px src="images/sort_date.svg" title="Sort by date" alt="Sort by date">
+      </button>
+      <button <?php if(isset($_GET['sort']) && $_GET['sort'] == "confidence"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="confidence">
+         <img src="images/sort_occ.svg" title="Sort by confidence" alt="Sort by confidence">
+      </button>
+   </form>
+</div>
+<?php
+  // add disk_check_exclude.txt lines into an array for grepping
+  $fp = @fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", 'r'); 
+  if ($fp) {
+     $disk_check_exclude_arr = explode("\n", fread($fp, filesize($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")));
+  }
+  
   $name = $_GET['species'];
   if(isset($_SESSION['date'])) {
     $date = $_SESSION['date'];
-    $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Time DESC");
+    if(isset($_GET['sort']) && $_GET['sort'] == "confidence") {
+        $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Confidence DESC");
+    } else {
+        $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Time DESC");
+    }
   } else {
-  $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Date DESC, Time DESC");}
+      if(isset($_GET['sort']) && $_GET['sort'] == "confidence") {
+        $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Confidence DESC");
+    } else {
+       $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Date DESC, Time DESC");
+    }
+  }
   if($statement2 == False){
     echo "Database is busy";
     header("refresh: 0;");
@@ -167,6 +266,7 @@ if(isset($_GET['species'])){
     <tr>
     <th>$name</th>
     </tr>";
+    $iter=0;
     while($results=$result2->fetchArray(SQLITE3_ASSOC))
     {
       $comname = preg_replace('/ /', '_', $results['Com_Name']);
@@ -176,13 +276,40 @@ if(isset($_GET['species'])){
       $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
       $sci_name = $results['Sci_Name'];
       $time = $results['Time'];
-      $confidence = $results['Confidence'];
-      echo "<tr>
-        <td class=\"relative\"><a target=\"_blank\" href=\"index.php?filename=".$results['File_Name']."\"><img class=\"copyimage\" width=25 src=\"images/copy.png\"></a>$date $time<br>$confidence<br>
-        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
-        </tr>";
+      $confidence = round((float)round($results['Confidence'],2) * 100 ) . '%';
+      $filename_formatted = $date."/".$comname."/".$results['File_Name'];
 
-    }echo "</table>";}
+      // file was deleted by disk check, no need to show the detection in recordings
+      if(!file_exists($home."/BirdSongs/Extracted/".$filename)) {
+        continue;
+      }
+      $iter++;
+
+      if($config["FULL_DISK"] == "purge") {
+        if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
+          $imageicon = "images/unlock.svg";
+          $title = "This file is not delete protected.";
+          $type = "add";
+        } else {
+          $imageicon = "images/lock.svg";
+          $title = "This file is delete protected.";
+          $type = "del";
+        }
+
+        echo "<tr>
+          <td class='relative'>$date $time<br>$confidence<br><img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">
+          <a href=\"$filename\"><img src=\"$filename.png\"></a>
+          </td>
+          </tr>";
+      } else {
+        echo "<tr>
+          <td class='relative'>$date $time<br>$confidence<br>
+          <a href=\"$filename\"><img src=\"$filename.png\"></a>
+          </td>
+          </tr>";
+      }
+
+    }if($iter == 0){ echo "<tr><td><b>No recordings were found.</b><br><br><span style='font-size:small'>They may have been deleted to make space for new recordings. You can modify this setting for the future in Tools -> Settings -> Advanced Settings -> Full Disk Behavior.</small></td></tr>";}echo "</table>";}
 
 if(isset($_GET['filename'])){
   $name = $_GET['filename'];
@@ -205,11 +332,36 @@ if(isset($_GET['filename'])){
       $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
       $sci_name = $results['Sci_Name'];
       $time = $results['Time'];
-      $confidence = $results['Confidence'];
-      echo "<tr>
-        <td>$date $time<br>$confidence<br>
-        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
-        </tr>";
+      $confidence = round((float)round($results['Confidence'],2) * 100 ) . '%';
+      $filename_formatted = $date."/".$comname."/".$results['File_Name'];
+
+      // add disk_check_exclude.txt lines into an array for grepping
+      $fp = @fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", 'r'); 
+      if ($fp) {
+         $disk_check_exclude_arr = explode("\n", fread($fp, filesize($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")));
+      }
+
+      if($config["FULL_DISK"] == "purge") {
+        if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
+          $imageicon = "images/unlock.svg";
+          $title = "This file is not delete protected.";
+          $type = "add";
+        } else {
+          $imageicon = "images/lock.svg";
+          $title = "This file is delete protected.";
+          $type = "del";
+        }
+
+       echo "<tr>
+          <td class=\"relative\"><img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
+          <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+          </tr>";
+      } else {
+        echo "<tr>
+          <td class=\"relative\">$date $time<br>$confidence<br>
+          <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+          </tr>";
+      }
 
     }echo "</table>";}?>
 </div>

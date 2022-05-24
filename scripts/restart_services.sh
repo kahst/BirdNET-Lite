@@ -9,7 +9,6 @@ sudo pkill server.py
 sudo systemctl stop birdnet_recording.service
 services=(web_terminal.service
 spectrogram_viewer.service
-pushed_notifications.service
 livestream.service
 icecast2.service
 extraction.service
@@ -22,6 +21,6 @@ sudo systemctl restart "${i}"
 done
 until grep 5050 <(netstat -tulpn 2>&1);do
 sudo systemctl restart birdnet_server.service
-sleep 20 
+sleep 45
 done
 sudo systemctl restart birdnet_analysis.service
