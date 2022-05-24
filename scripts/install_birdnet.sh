@@ -31,7 +31,14 @@ install_birdnet() {
   pip3 install -U -r $HOME/BirdNET-Pi/requirements.txt
 }
 
+unpack_labels() {
+  unzip $HOME/BirdNET-Pi/model/labels_l18n.zip labels_en.txt \
+    -d $HOME/BirdNET-Pi/model
+  mv $HOME/BirdNET-Pi/model/labels_en.txt $HOME/BirdNET-Pi/model/labels.txt
+}
+
 [ -d ${RECS_DIR} ] || mkdir -p ${RECS_DIR} &> /dev/null
 
 install_birdnet 
+unpack_labels
 exit 0
