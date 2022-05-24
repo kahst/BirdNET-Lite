@@ -66,3 +66,9 @@ if systemctl list-unit-files pushed_notifications.service;then
   sudo rm -f /usr/lib/systemd/system/pushed_notifications.service
   sudo rm $HOME/BirdNET-Pi/templates/pushed_notifications.service
 fi
+if [ ! -f $HOME/BirdNET-Pi/model/labels.txt ]
+then
+  unzip $HOME/BirdNET-Pi/model/labels_l18n.zip labels_en.txt \
+    -d $HOME/BirdNET-Pi/model
+  mv $HOME/BirdNET-Pi/model/labels_en.txt $HOME/BirdNET-Pi/model/labels.txt
+fi
