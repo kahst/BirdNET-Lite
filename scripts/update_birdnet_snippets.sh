@@ -56,3 +56,8 @@ fi
 if ! grep FLICKR_API_KEY /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "FLICKR_API_KEY=" >> /etc/birdnet/birdnet.conf
 fi
+if systemctl list-unit-files pushed_notifications.service;then
+  sudo systemctl disable --now pushed_notifications.service
+  sudo rm -f /usr/lib/systemd/system/pushed_notifications.service
+  sudo rm $HOME/BirdNET-Pi/templates/pushed_notifications.service
+fi
