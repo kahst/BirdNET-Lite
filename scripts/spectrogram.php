@@ -36,13 +36,19 @@ window.onload = function(){
     document.getElementById('player').remove();
 
     player = audioelement;
-  } else {
-    player = document.getElementById('player');
-  }
-  player.play();
-  if (started) return;
+    if (started) return;
     started = true;
     initialize();
+  } else {
+    player = document.getElementById('player');
+    player.oncanplay = function() {
+      if (started) return;
+        started = true;
+        initialize();
+    };
+  }
+  player.play();
+  
   }
 };
 
@@ -95,7 +101,12 @@ function initialize() {
 
   ANALYSER.fftSize = 2048;  
   
-  process();
+
+  try{
+    process();
+  } catch(e) {
+    window.top.location.reload();
+  }
 
   function process() {
     const SOURCE = ACTX.createMediaElementSource(player);

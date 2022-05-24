@@ -13,6 +13,9 @@ body::-webkit-scrollbar {
   <button type="submit" name="view" value="Today's Detections" form="views">Today's Detections</button>
 </form>
 <form action="" method="GET" id="views">
+  <button type="submit" name="view" value="Spectrogram" form="views">Spectrogram</button>
+</form>
+<form action="" method="GET" id="views">
   <button type="submit" name="view" value="Species Stats" form="views">Best Recordings</button>
 </form>
 <form action="" method="GET" id="views">
@@ -23,9 +26,6 @@ body::-webkit-scrollbar {
 </form>
 <form action="" method="GET" id="views">
   <button type="submit" name="view" value="Recordings" form="views">Recordings</button>
-</form>
-<form action="" method="GET" id="views">
-  <button type="submit" name="view" value="Spectrogram" form="views">Spectrogram</button>
 </form>
 <form action="" method="GET" id="views">
   <button type="submit" name="view" value="View Log" form="views">View Log</button>
