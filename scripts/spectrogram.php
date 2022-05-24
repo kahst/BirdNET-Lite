@@ -5,6 +5,7 @@
 //  before a user gesture. This fixes it.
 var started = null;
 var player = null;
+var gain = 128;
 const ctx = null;
 window.onload = function(){
   // if user agent includes iPhone or Mac use legacy mode
@@ -129,7 +130,7 @@ function initialize() {
       CTX.putImageData(imgData, 0, 0);
       ANALYSER.getByteFrequencyData(DATA);
       for (let i = 0; i < LEN; i++) {
-        let rat = DATA[i] / 128 ;
+        let rat = DATA[i] / gain ;
         let hue = Math.round((rat * 120) + 280 % 360);
         let sat = '100%';
         let lit = 10 + (70 * rat) + '%';
@@ -166,6 +167,26 @@ h1 {
 
 <img id="spectrogramimage" style="width:100%;height:100%;display:none" src="/spectrogram.png?nocache=<?php echo $time;?>">
 
+<div id="gain" class="centered">
+<label>Gain: </label>
+<span class="slidecontainer">
+  <input name="gain_input" type="range" min="0" max="255" value="128" class="slider" id="gain_input">
+  <span id="gain_value"></span>%
+</span>
+</div>
+
 <audio style="display:none" controls="" crossorigin="anonymous" id='player' preload="none"><source src="/stream"></audio>
 <h1>Loading...</h1>
 <canvas></canvas>
+
+<script>
+var slider = document.getElementById("gain_input");
+var output = document.getElementById("gain_value");
+output.innerHTML = slider.value; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+  output.innerHTML = this.value;
+  gain=Math.abs(this.value - 255);
+}
+</script>
