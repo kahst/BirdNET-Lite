@@ -247,7 +247,11 @@ document.getElementById("searchterm").onkeydown = (function(e) {
 });
 
 function switchViews(element) {
-  document.getElementById("detections_table").innerHTML = "<h3>Loading <?php echo $todaycount['COUNT(*)']; ?> detections...</h3>";
+  if(searchterm == ""){
+    document.getElementById("detections_table").innerHTML = "<h3>Loading <?php echo $todaycount['COUNT(*)']; ?> detections...</h3>";
+  } else {
+    document.getElementById("detections_table").innerHTML = "<h3>Loading...</h3>";
+  }
   if(element.innerHTML == "Legacy view") {
     element.innerHTML = "Normal view";
     loadDetections(undefined);
@@ -277,7 +281,7 @@ function loadDetections(detections_limit, element=undefined) {
     }
     
   }
-  if(searchterm !== ""){
+  if(searchterm != ""){
     xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit+"&searchterm="+searchterm, true);
   } else {
     xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit, true);
