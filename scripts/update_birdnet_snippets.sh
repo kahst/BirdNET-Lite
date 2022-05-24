@@ -30,7 +30,10 @@ if ! grep APPRISE_NOTIFICATION_BODY /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "APPRISE_NOTIFICATION_BODY=\"A \$sciname \$comname was just detected with a confidence of \$confidence\"" >> /etc/birdnet/birdnet.conf
 fi
 if ! grep APPRISE_NOTIFY_EACH_DETECTION /etc/birdnet/birdnet.conf &>/dev/null;then
-  sudo -u$USER echo "APPRISE_NOTIFY_EACH_DETECTION=false" >> /etc/birdnet/birdnet.conf
+  sudo -u$USER echo "APPRISE_NOTIFY_EACH_DETECTION=0 " >> /etc/birdnet/birdnet.conf
+fi
+if ! grep APPRISE_NOTIFY_NEW_SPECIES /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "APPRISE_NOTIFY_EACH_DETECTION=0 " >> /etc/birdnet/birdnet.conf
 fi
 apprise_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("apprise") else "not installed")')
 if [[ "$apprise_installation_status" = "not installed" ]];then
@@ -52,4 +55,9 @@ fi
 [ -L ~/BirdSongs/Extracted/static ] || ln -sf ~/BirdNET-Pi/homepage/static ~/BirdSongs/Extracted
 if ! grep FLICKR_API_KEY /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "FLICKR_API_KEY=" >> /etc/birdnet/birdnet.conf
+fi
+if systemctl list-unit-files pushed_notifications.service;then
+  sudo systemctl disable --now pushed_notifications.service
+  sudo rm -f /usr/lib/systemd/system/pushed_notifications.service
+  sudo rm $HOME/BirdNET-Pi/templates/pushed_notifications.service
 fi
