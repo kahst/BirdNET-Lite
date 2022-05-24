@@ -37,27 +37,27 @@ body::-webkit-scrollbar {
 </div>
 
 <script>
-  var topbuttons = document.querySelectorAll("button[form='views']");
-  if(window.location.search.substr(1) != '') {
-    for (var i = 0; i < topbuttons.length; i++) {
-       if(topbuttons[i].value == decodeURIComponent(window.location.search.substr(1)).replace(/\+/g,' ').split('=').pop()) {
-            topbuttons[i].classList.add("button-hover");
-       }
-     }
-  } else {
-    topbuttons[0].classList.add("button-hover");
+var topbuttons = document.querySelectorAll("button[form='views']");
+if(window.location.search.substr(1) != '') {
+  for (var i = 0; i < topbuttons.length; i++) {
+    if(topbuttons[i].value == decodeURIComponent(window.location.search.substr(1)).replace(/\+/g,' ').split('=').pop()) {
+      topbuttons[i].classList.add("button-hover");
+    }
   }
-  function copyOutput(elem) {
-    elem.innerHTML = 'Copied!';
-    const copyText = document.getElementsByTagName("pre")[0].textContent;
-    const textArea = document.createElement('textarea');
-    textArea.style.position = 'absolute';
-    textArea.style.left = '-100%';
-    textArea.textContent = copyText;
-    document.body.append(textArea);
-    textArea.select();
-    document.execCommand("copy");
-  }
+} else {
+  topbuttons[0].classList.add("button-hover");
+}
+function copyOutput(elem) {
+  elem.innerHTML = 'Copied!';
+  const copyText = document.getElementsByTagName("pre")[0].textContent;
+  const textArea = document.createElement('textarea');
+  textArea.style.position = 'absolute';
+  textArea.style.left = '-100%';
+  textArea.textContent = copyText;
+  document.body.append(textArea);
+  textArea.select();
+  document.execCommand("copy");
+}
 </script>
 
 <div class="views">
@@ -70,7 +70,7 @@ if(isset($_GET['view'])){
   if($_GET['view'] == "View Log"){echo "<body style=\"scroll:no;overflow-x:hidden;\"><iframe style=\"width:calc( 100% + 1em);\" src=\"/log\"></iframe></body>";}
   if($_GET['view'] == "Overview"){include('overview.php');}
   if($_GET['view'] == "Today's Detections"){include('todays_detections.php');}
-  if($_GET['view'] == "Species Stats"){echo "<br><br>";include('stats.php');}
+  if($_GET['view'] == "Species Stats"){include('stats.php');}
   if($_GET['view'] == "Streamlit"){echo "<iframe src=\"/stats\"></iframe>";}
   if($_GET['view'] == "Daily Charts"){include('history.php');}
   if($_GET['view'] == "Tools"){
@@ -91,18 +91,18 @@ if(isset($_GET['view'])){
       if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
         $url = $_SERVER['SERVER_NAME']."/scripts/adminer.php";
         echo "<div class=\"centered\">
-  <form action=\"\" method=\"GET\" id=\"views\">
-        <button type=\"submit\" name=\"view\" value=\"Settings\" form=\"views\">Settings</button>
-        <button type=\"submit\" name=\"view\" value=\"System Info\" form=\"views\">System Info</button>
-        <button type=\"submit\" name=\"view\" value=\"System Controls\" form=\"views\">System Controls</button>
-        <button type=\"submit\" name=\"view\" value=\"Services\" form=\"views\">Services</button>
-        <button type=\"submit\" name=\"view\" value=\"File\" form=\"views\">File Manager</button>
-        <a href=\"scripts/adminer.php\" target=\"_top\"><button type=\"submit\" form=\"\">Database Maintenanace</button></a>
-        <button type=\"submit\" name=\"view\" value=\"Webterm\" form=\"views\">Web Terminal</button>
-        <button type=\"submit\" name=\"view\" value=\"Included\" form=\"views\">Custom Species List</button>
-        <button type=\"submit\" name=\"view\" value=\"Excluded\" form=\"views\">Excluded Species List</button>
-  </form>
-  </div>";
+          <form action=\"\" method=\"GET\" id=\"views\">
+          <button type=\"submit\" name=\"view\" value=\"Settings\" form=\"views\">Settings</button>
+          <button type=\"submit\" name=\"view\" value=\"System Info\" form=\"views\">System Info</button>
+          <button type=\"submit\" name=\"view\" value=\"System Controls\" form=\"views\">System Controls</button>
+          <button type=\"submit\" name=\"view\" value=\"Services\" form=\"views\">Services</button>
+          <button type=\"submit\" name=\"view\" value=\"File\" form=\"views\">File Manager</button>
+          <a href=\"scripts/adminer.php\" target=\"_top\"><button type=\"submit\" form=\"\">Database Maintenance</button></a>
+          <button type=\"submit\" name=\"view\" value=\"Webterm\" form=\"views\">Web Terminal</button>
+          <button type=\"submit\" name=\"view\" value=\"Included\" form=\"views\">Custom Species List</button>
+          <button type=\"submit\" name=\"view\" value=\"Excluded\" form=\"views\">Excluded Species List</button>
+          </form>
+          </div>";
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
@@ -196,36 +196,82 @@ if(isset($_GET['view'])){
     }
   }
 } elseif(isset($_GET['submit'])) {
-    if (file_exists('./scripts/thisrun.txt')) {
-      $config = parse_ini_file('./scripts/thisrun.txt');
-    } elseif (file_exists('./scripts/firstrun.ini')) {
-      $config = parse_ini_file('./scripts/firstrun.ini');
-    }
-    $caddypwd = $config['CADDY_PWD'];
-    if (!isset($_SERVER['PHP_AUTH_USER'])) {
-      header('WWW-Authenticate: Basic realm="My Realm"');
-      header('HTTP/1.0 401 Unauthorized');
-      echo 'You cannot access the web terminal';
-      exit;
-    } else {
-      $submittedpwd = $_SERVER['PHP_AUTH_PW'];
-      $submitteduser = $_SERVER['PHP_AUTH_USER'];
-      if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
-        $command = $_GET['submit'];
-  if(isset($command)){
+  if (file_exists('./scripts/thisrun.txt')) {
+    $config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+    $config = parse_ini_file('./scripts/firstrun.ini');
+  }
+  $caddypwd = $config['CADDY_PWD'];
+  if (!isset($_SERVER['PHP_AUTH_USER'])) {
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'You cannot access the web terminal';
+    exit;
+  } else {
+    $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+    $submitteduser = $_SERVER['PHP_AUTH_USER'];
+    $allowedCommands = array('sudo systemctl stop livestream.service && sudo /etc/init.d/icecast2 stop',
+                       'sudo systemctl restart livestream.service && sudo /etc/init.d/icecast2 restart',
+                       'sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo /etc/init.d/icecast2 stop',
+                       'sudo systemctl enable icecast2 && sudo /etc/init.d/icecast2 start && sudo systemctl enable --now livestream.service',
+                       'sudo systemctl stop web_terminal.service',
+                       'sudo systemctl restart web_terminal.service',
+                       'sudo systemctl disable --now web_terminal.service',
+                       'sudo systemctl enable --now web_terminal.service',
+                       'sudo systemctl stop birdnet_log.service',
+                       'sudo systemctl restart birdnet_log.service',
+                       'sudo systemctl disable --now birdnet_log.service',
+                       'sudo systemctl enable --now birdnet_log.service',
+                       'sudo systemctl stop extraction.service',
+                       'sudo systemctl restart extraction.service',
+                       'sudo systemctl disable --now extraction.service',
+                       'sudo systemctl enable --now extraction.service',
+                       'sudo systemctl stop birdnet_server.service',
+                       'sudo systemctl restart birdnet_server.service',
+                       'sudo systemctl disable --now birdnet_server.service',
+                       'sudo systemctl enable --now birdnet_server.service',
+                       'sudo systemctl stop birdnet_analysis.service',
+                       'sudo systemctl restart birdnet_analysis.service',
+                       'sudo systemctl disable --now birdnet_analysis.service',
+                       'sudo systemctl enable --now birdnet_analysis.service',
+                       'sudo systemctl stop birdnet_stats.service',
+                       'sudo systemctl restart birdnet_stats.service',
+                       'sudo systemctl disable --now birdnet_stats.service',
+                       'sudo systemctl enable --now birdnet_stats.service',
+                       'sudo systemctl stop birdnet_recording.service',
+                       'sudo systemctl restart birdnet_recording.service',
+                       'sudo systemctl disable --now birdnet_recording.service',
+                       'sudo systemctl enable --now birdnet_recording.service',
+                       'sudo systemctl stop chart_viewer.service',
+                       'sudo systemctl restart chart_viewer.service',
+                       'sudo systemctl disable --now chart_viewer.service',
+                       'sudo systemctl enable --now chart_viewer.service',
+                       'sudo systemctl stop spectrogram_viewer.service',
+                       'sudo systemctl restart spectrogram_viewer.service',
+                       'sudo systemctl disable --now spectrogram_viewer.service',
+                       'sudo systemctl enable --now spectrogram_viewer.service',
+                       'stop_core_services.sh',
+                       'restart_services.sh',
+                       'sudo reboot',
+                       'update_birdnet.sh',
+                       'sudo shutdown now',
+                       'sudo clear_all_data.sh');
+      $command = $_GET['submit'];
+    if($submittedpwd == $caddypwd && $submitteduser == 'birdnet' && in_array($command,$allowedCommands)){
+      if(isset($command)){
         $initcommand = $command;
-         if (strpos($command, "systemctl") !== false) {
-            $tmp = explode(" ",trim($command));
-            $command .= "& sleep 3;sudo systemctl status ".end($tmp);
-         }
-         $results = shell_exec("$command 2>&1");
-         $results = str_replace("FAILURE", "<span style='color:red'>FAILURE</span>", $results);
-         $results = str_replace("failed", "<span style='color:red'>failed</span>",$results);
-         $results = str_replace("active (running)", "<span style='color:green'><b>active (running)</b></span>",$results);
-         if(strlen($results) == 0) {
+        if (strpos($command, "systemctl") !== false) {
+          $tmp = explode(" ",trim($command));
+          $command .= "& sleep 3;sudo systemctl status ".end($tmp);
+        }
+        $results = shell_exec("$command 2>&1");
+        $results = str_replace("FAILURE", "<span style='color:red'>FAILURE</span>", $results);
+        $results = str_replace("failed", "<span style='color:red'>failed</span>",$results);
+        $results = str_replace("active (running)", "<span style='color:green'><b>active (running)</b></span>",$results);
+        if(strlen($results) == 0) {
           $results = "This command has no output.";
-         }
-         echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$initcommand."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td><pre style='text-align:left'>$results</pre></td></tr></table>"; 
+        }
+        echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$initcommand."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td><pre style='text-align:left'>$results</pre></td></tr></table>"; 
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');

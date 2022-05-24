@@ -32,7 +32,7 @@ df['Hour of Day'] = [r.hour for r in df.Time]
 df_plt=df #Default to use the whole Dbase
 
 # Add every font at the specified location
-font_dir = ['$HOME/BirdNET-Pi/homepage/static']
+font_dir = [userDir+'/BirdNET-Pi/homepage/static']
 for font in font_manager.findSystemFonts(font_dir):
     font_manager.fontManager.addfont(font)
 

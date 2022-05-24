@@ -1,4 +1,7 @@
 <?php
+ini_set('session.gc_maxlifetime', 7200);
+session_set_cookie_params(7200);
+session_start();
 $myDate = date('Y-m-d');
 $chart = "Combo-$myDate.png";
 
@@ -22,7 +25,9 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
     header("refresh: 0;");
   }
   $result4 = $statement4->execute();
-  $images = [];
+  if(!isset($_SESSION['images'])) {
+    $_SESSION['images'] = [];
+  }
   $iterations = 0;
   // hopefully one of the 5 most recent detections has an image that is valid, we'll use that one as the most recent detection until the newer ones get their images created
   while($mostrecent = $result4->fetchArray(SQLITE3_ASSOC)) {
@@ -45,19 +50,20 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
       // we've found our valid detection! ignore everything else from the database loop
       if(strpos($headers[0],'200')) {
           if($_GET['previous_detection_identifier'] == $filename) { die(); }
+          if($_GET['only_name'] == "true") { echo $comname.",".$filename;die(); }
 
       if (!empty($config["FLICKR_API_KEY"])) {
         // if we already searched flickr for this species before, use the previous image rather than doing an unneccesary api call
-        $key = array_search($comname, array_column($images, 0));
+        $key = array_search($comname, array_column($_SESSION['images'], 0));
         if($key !== false) {
-          $image = $images[$key];
+          $image = $_SESSION['images'][$key];
         } else {
          $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace("_", "%20", $comname)."&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=5&orientation=square,portrait&format=json&media=photos&nojsoncallback=1"), true)["photos"]["photo"][0];
           $modaltext = "https://flickr.com/photos/".$flickrjson["owner"]."/".$flickrjson["id"];
           $authorlink = "https://flickr.com/people/".$flickrjson["owner"];
-          $imageurl = 'http://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
-          array_push($images, array($comname,$imageurl,$flickrjson["title"], $modaltext, $authorlink));
-          $image = $images[count($images)-1];
+          $imageurl = 'https://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
+          array_push($_SESSION['images'], array($comname,$imageurl,$flickrjson["title"], $modaltext, $authorlink));
+          $image = $_SESSION['images'][count($_SESSION['images'])-1];
         }
       }
 
@@ -238,7 +244,7 @@ function loadDetectionIfNewExists(previous_detection_identifier=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
     // if there's a new detection that needs to be updated to the page
-    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy.")) {
+    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy")) {
       document.getElementById("most_recent_detection").innerHTML = this.responseText;
 
       // only going to load left chart if there's a new detection

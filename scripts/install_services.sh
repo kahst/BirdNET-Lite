@@ -13,7 +13,7 @@ export PYTHON_VIRTUAL_ENV="$HOME/BirdNET-Pi/birdnet/bin/python3"
 
 install_depends() {
   apt install -y debian-keyring debian-archive-keyring apt-transport-https
-  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo tee /etc/apt/trusted.gpg.d/caddy-stable.asc
+  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
   curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
   apt -qqq update && apt -qqy upgrade
   echo "icecast2 icecast2/icecast-setup boolean false" | debconf-set-selections
@@ -91,22 +91,6 @@ WantedBy=multi-user.target
 EOF
   ln -sf $HOME/BirdNET-Pi/templates/extraction.service /usr/lib/systemd/system
   systemctl enable extraction.service
-}
-
-install_pushed_notifications() {
-  cat << EOF > $HOME/BirdNET-Pi/templates/pushed_notifications.service
-[Unit]
-Description=BirdNET-Pi Pushed.co Notifications
-[Service]
-Restart=on-success
-RestartSec=3
-Type=simple
-User=$USER
-ExecStart=/usr/local/bin/species_notifier.sh
-[Install]
-WantedBy=multi-user.target
-EOF
-  ln -sf $HOME/BirdNET-Pi/templates/pushed_notifications.service /usr/lib/systemd/system
 }
 
 create_necessary_dirs() {
@@ -438,7 +422,6 @@ install_services() {
   install_recording_service
   install_custom_recording_service # But does not enable
   install_extraction_service
-  install_pushed_notifications
   install_spectrogram_service
   install_chart_viewer_service
   install_gotty_logs

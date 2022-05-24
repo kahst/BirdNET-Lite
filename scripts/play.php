@@ -1,7 +1,5 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_reporting(E_ERROR);
 
 $db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 if($db == False){
@@ -170,10 +168,10 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
       <input type="hidden" name="view" value="Recordings">
       <input type="hidden" name="<?php echo $view; ?>" value="<?php echo $_GET['date']; ?>">
       <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "alphabetical"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="alphabetical">
-         <img src="images/sort_abc.svg" alt="Sort by alphabetical">
+         <img src="images/sort_abc.svg" title="Sort by alphabetical" alt="Sort by alphabetical">
       </button>
       <button <?php if(isset($_GET['sort']) && $_GET['sort'] == "occurrences"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="occurrences">
-         <img src="images/sort_occ.svg" alt="Sort by occurrences">
+         <img src="images/sort_occ.svg" title="Sort by occurrences" alt="Sort by occurrences">
       </button>
    </form>
 </div>
@@ -230,10 +228,10 @@ if(isset($_GET['species'])){ ?>
       <input type="hidden" name="view" value="Recordings">
       <input type="hidden" name="species" value="<?php echo $_GET['species']; ?>">
       <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "date"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="date">
-         <img width=35px src="images/sort_date.svg" alt="Sort by date">
+         <img width=35px src="images/sort_date.svg" title="Sort by date" alt="Sort by date">
       </button>
       <button <?php if(isset($_GET['sort']) && $_GET['sort'] == "confidence"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="confidence">
-         <img src="images/sort_occ.svg" alt="Sort by confidence">
+         <img src="images/sort_occ.svg" title="Sort by confidence" alt="Sort by confidence">
       </button>
    </form>
 </div>

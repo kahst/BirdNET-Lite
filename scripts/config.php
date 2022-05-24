@@ -16,10 +16,10 @@ if(isset($_GET['apprise_notify_each_detection'])) {
 } else {
   $apprise_notify_each_detection = 0;
 }
-if(isset($_GET['apprise_notify_each_species'])) {
-  exec('sudo systemctl start pushed_notifications.service');
+if(isset($_GET['apprise_notify_new_species'])) {
+  $apprise_notify_new_species = 1;
 } else {
-  exec('sudo systemctl stop pushed_notifications.service');
+  $apprise_notify_new_species = 0;
 }
 
 // logic for setting the date and time based on user inputs from the form below
@@ -46,6 +46,7 @@ $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id"
 $contents = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents);
 $contents = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=\"$apprise_notification_body\"", $contents);
 $contents = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents);
+$contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents);
 $contents = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents);
 
 
@@ -56,6 +57,7 @@ $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id
 $contents2 = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents2);
 $contents2 = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=\"$apprise_notification_body\"", $contents2);
 $contents2 = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents2);
+$contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents2);
 $contents2 = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents2);
 
 
@@ -80,7 +82,7 @@ if ($language != "none"){
   $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
   $home = trim($home);
   $command = "sudo -u".$user." mv ".$home."/BirdNET-Pi/model/labels.txt ".$home."/BirdNET-Pi/model/labels.txt.old && sudo -u".$user." unzip ".$home."/BirdNET-Pi/model/labels_l18n.zip ".$language." -d ".$home."/BirdNET-Pi/model && sudo -u".$user." mv ".$home."/BirdNET-Pi/model/".$language." ".$home."/BirdNET-Pi/model/labels.txt";
-  $command_output = `sudo $command`;
+  $command_output = `$command`;
   `sudo restart_services.sh`;
 }
 }
@@ -144,8 +146,8 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <input name="apprise_notification_title" type="text" value="<?php print($config['APPRISE_NOTIFICATION_TITLE']);?>" /><br>
       <label for="apprise_notification_body">Notification Body (use variables $sciname, $comname, or $confidence): </label>
       <input name="apprise_notification_body" type="text" value="<?php print($config['APPRISE_NOTIFICATION_BODY']);?>" /><br>
-      <input type="checkbox" name="apprise_notify_each_species" <?php $output = shell_exec("service pushed_notifications status"); if (!strpos($output, 'dead') !== false && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; } ?>>
-      <label for="apprise_notify_each_species">Notify each new species</label><br>
+      <input type="checkbox" name="apprise_notify_new_species" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
+      <label for="apprise_notify_new_species">Notify each new species</label><br>
       <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_notify_each_detection">Notify each new detection</label><br><br>
       <h3>Bird Photos from Flickr</h3>

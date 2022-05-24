@@ -5,7 +5,7 @@ body::-webkit-scrollbar {
   display:none
 }
 </style>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=14">
 <body>
 <div class="banner">
   <div class="logo">
@@ -36,7 +36,7 @@ if(isset($_GET['stream'])){
       echo "
   <audio controls autoplay><source src=\"/stream\"></audio>
   </div>
-  <h1><a href=\"/\">BirdNET-Pi</a></h1>
+  <h1><a href=\"/\"><img class=\"topimage\" src=\"images/bnp.png\"></a></h1>
   </div>";
     } else {
       header('WWW-Authenticate: Basic realm="My Realm"');
@@ -46,12 +46,12 @@ if(isset($_GET['stream'])){
     }
   }
 } else {
-	  echo "
+    echo "
   <form action=\"\" method=\"GET\">
     <button type=\"submit\" name=\"stream\" value=\"play\">Live Audio</button>
   </form>
   </div>
-  <h1><a href=\"/\">BirdNET-Pi</a></h1>
+  <h1><a href=\"/\"><img class=\"topimage\" src=\"images/bnp.png\"></a></h1>
 </div>";
 }
 if(isset($_GET['filename'])) {

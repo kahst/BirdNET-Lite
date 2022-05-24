@@ -56,17 +56,9 @@ if(isset($_GET['species'])){
 $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
-if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")) {
-  file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end");
-}
-function editfile( $sourcefile, $start='##start', $end='##end', $data=array() ){
-    $lines=array_filter( file( $sourcefile , FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES ) );
-    $output=array_merge(
-        array_splice( $lines, 0, array_search( strtolower( $start ), array_map('strtolower', $lines ) ) + 1 ),
-        $data,
-        array_splice( $lines, array_search( strtolower( $end ), array_map('strtolower', $lines ) ) )
-    );
-    file_put_contents( $sourcefile, implode( PHP_EOL, $output ) );
+if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt") || strpos(file_get_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt"),"##start") === false) {
+  file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "");
+  file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end\n");
 }
 ?>
 
@@ -89,10 +81,10 @@ function editfile( $sourcefile, $start='##start', $end='##end', $data=array() ){
     <input type="hidden" name="sort" value="<?php if(isset($_GET['sort'])){echo $_GET['sort'];}?>">
       <input type="hidden" name="view" value="Species Stats">
       <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "alphabetical"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="alphabetical">
-         <img src="images/sort_abc.svg" alt="Sort by alphabetical">
+         <img src="images/sort_abc.svg" title="Sort by alphabetical" alt="Sort by alphabetical">
       </button>
       <button <?php if(isset($_GET['sort']) && $_GET['sort'] == "occurrences"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="occurrences">
-         <img src="images/sort_occ.svg" alt="Sort by occurrences">
+         <img src="images/sort_occ.svg" title="Sort by occurrences" alt="Sort by occurrences">
       </button>
    </form>
 </div>
@@ -177,23 +169,31 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   ob_flush();
   flush();
   if (file_exists('./scripts/thisrun.txt')) {
-  $config = parse_ini_file('./scripts/thisrun.txt');
+    $config = parse_ini_file('./scripts/thisrun.txt');
   } elseif (file_exists('./scripts/firstrun.ini')) {
-  $config = parse_ini_file('./scripts/firstrun.ini');
+    $config = parse_ini_file('./scripts/firstrun.ini');
   }
-  $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace('_', '+', $comname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
+  if (! empty($config["FLICKR_API_KEY"])) {
+    $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace('_', '+', $comname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
 
-  foreach ($flickrjson as $val) {
+    foreach ($flickrjson as $val) {
+
       $iter++;
       $modaltext = "https://flickr.com/photos/".$val["owner"]."/".$val["id"];
       $authorlink = "https://flickr.com/people/".$val["owner"];
-      $imageurl = 'http://farm' .$val["farm"]. '.static.flickr.com/' .$val["server"]. '/' .$val["id"]. '_'  .$val["secret"].  '.jpg';
-      echo "<img style='vertical-align:top' src=\"$imageurl\"><span style='cursor:pointer;color:blue;text-decoration:underline;' onclick='setModalText(".$iter.",\"".$val["title"]."\",\"".$modaltext."\", \"".$authorlink."\")'>".$iter."</span>";
+      $imageurl = 'https://farm' .$val["farm"]. '.static.flickr.com/' .$val["server"]. '/' .$val["id"]. '_'  .$val["secret"].  '.jpg';
+      echo "<span style='cursor:pointer;' onclick='setModalText(".$iter.",\"".$val["title"]."\",\"".$modaltext."\", \"".$authorlink."\")'><img style='vertical-align:top' src=\"$imageurl\"></span>";
+    }
   }
 }
 }
 ?>
-<br><br><br>
+<?php if(isset($_GET['species'])){?>
+<br><br>
+<div class="brbanner">Best Recordings for Other Species:</div><br>
+<?php } else {?>
+<hr><br>
+<?php } ?>
 
     <table>
 <?php
@@ -216,8 +216,10 @@ array_push($excludelines, $results['Date']."/".$comname."/".$results['File_Name'
       <b>Best Recording:</b> <?php echo $results['Date']." ".$results['Time'];?><br><video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>" type="audio/mp3"></video></td>
       </tr>
 <?php
-editfile($home."/BirdNET-Pi/scripts/disk_check_exclude.txt","##start","##end",$excludelines);
 }
+
+$file = file_get_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt");
+file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start"."\n".implode("\n",$excludelines)."\n".substr($file, strpos($file, "##end")));
 ?>
     </table>
       </form>

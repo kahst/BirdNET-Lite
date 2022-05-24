@@ -20,11 +20,13 @@ make_thisrun() {
 make_thisrun &> /dev/null
 if ! diff ${LAST_RUN} ${THIS_RUN};then
   echo "The birdnet.conf file has changed"
-  echo "Reloading services"
+  if grep REC <(diff $LAST_RUN $THIS_RUN);then
+    echo "Recording element changed -- restarting 'birdnet_recording.service'"
+    sudo systemctl stop birdnet_recording.service
+    sudo rm -rf ${RECS_DIR}/$(date +%B-%Y/%d-%A)/*
+    sudo systemctl start birdnet_recording.service
+  fi
   cat ${THIS_RUN} > ${LAST_RUN}
-  sudo systemctl stop birdnet_recording.service
-  sudo rm -rf ${RECS_DIR}/$(date +%B-%Y/%d-%A)/*
-  sudo systemctl start birdnet_recording.service
 fi
 
 INCLUDE_LIST="$HOME/BirdNET-Pi/include_species_list.txt"
