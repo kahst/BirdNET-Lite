@@ -31,8 +31,8 @@ fi
 
 INCLUDE_LIST="$HOME/BirdNET-Pi/include_species_list.txt"
 EXCLUDE_LIST="$HOME/BirdNET-Pi/exclude_species_list.txt"
-if [ ! -f ${INCLUDE_LIST} ];then 
-  touch ${INCLUDE_LIST} && 
+if [ ! -f ${INCLUDE_LIST} ];then
+  touch ${INCLUDE_LIST} &&
     chmod g+rw ${INCLUDE_LIST}
 fi
 if [ ! -f ${EXCLUDE_LIST} ];then
@@ -61,8 +61,8 @@ get_files() {
 # Takes one argument:
 #   - {DIRECTORY}
 move_analyzed() {
-  for i in "${files[@]}";do 
-    j="${i}.csv" 
+  for i in "${files[@]}";do
+    j="${i}.csv"
     if [ -f "${1}/${j}" ];then
       if [ ! -d "${1}-Analyzed" ];then
         mkdir -p "${1}-Analyzed" && echo "'Analyzed' directory created"
@@ -77,7 +77,10 @@ move_analyzed() {
 # Uses one argument:
 #   - {DIRECTORY}
 run_analysis() {
-  sleep .5 
+  PYTHON_VIRTUAL_ENV="$HOME/BirdNET-Pi/birdnet/bin/python3"
+  DIR="$HOME/BirdNET-Pi/scripts"
+
+  sleep .5
 
   ### TESTING NEW WEEK CALCULATION
   WEEK_OF_YEAR="$(echo "($(date +%m)-1) * 4" | bc -l)"
@@ -125,7 +128,7 @@ run_analysis() {
       BIRDWEATHER_ID_PARAM=""
       BIRDWEATHER_ID_LOG=""
     fi
-    echo analyze.py \
+    echo $PYTHON_VIRTUAL_ENV "$DIR\analyze.py" \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat "${LATITUDE}" \
@@ -137,7 +140,7 @@ run_analysis() {
 ${INCLUDEPARAM} \
 ${EXCLUDEPARAM} \
 ${BIRDWEATHER_ID_LOG}
-    analyze.py \
+    $PYTHON_VIRTUAL_ENV $DIR/analyze.py \
       --i "${1}/${i}" \
       --o "${1}/${i}.csv" \
       --lat "${LATITUDE}" \

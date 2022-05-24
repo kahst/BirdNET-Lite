@@ -9,6 +9,8 @@ config_file=$my_dir/birdnet.conf
 export USER=$USER
 export HOME=$HOME
 
+export PYTHON_VIRTUAL_ENV="$HOME/BirdNET-Pi/birdnet/bin/python3"
+
 install_depends() {
   apt install -y debian-keyring debian-archive-keyring apt-transport-https
   curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
@@ -66,7 +68,7 @@ Restart=always
 Type=simple
 RestartSec=10
 User=${USER}
-ExecStart=/usr/local/bin/server.py
+ExecStart=$PYTHON_VIRTUAL_ENV /usr/local/bin/server.py
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -100,7 +102,7 @@ create_necessary_dirs() {
 
   sudo -u ${USER} ln -fs $my_dir/exclude_species_list.txt $my_dir/scripts
   sudo -u ${USER} ln -fs $my_dir/include_species_list.txt $my_dir/scripts
-  sudo -u ${USER} ln -fs $my_dir/homepage/* ${EXTRACTED}  
+  sudo -u ${USER} ln -fs $my_dir/homepage/* ${EXTRACTED}
   sudo -u ${USER} ln -fs $my_dir/model/labels.txt ${my_dir}/scripts
   sudo -u ${USER} ln -fs $my_dir/scripts ${EXTRACTED}
   sudo -u ${USER} ln -fs $my_dir/scripts/play.php ${EXTRACTED}
@@ -309,7 +311,7 @@ Restart=always
 RestartSec=120
 Type=simple
 User=$USER
-ExecStart=/usr/local/bin/daily_plot.py
+ExecStart=$PYTHON_VIRTUAL_ENV /usr/local/bin/daily_plot.py
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -370,7 +372,7 @@ install_phpsysinfo() {
 }
 
 config_icecast() {
-  if [ -f /etc/icecast2/icecast.xml ];then 
+  if [ -f /etc/icecast2/icecast.xml ];then
     cp /etc/icecast2/icecast.xml{,.prebirdnetpi}
   fi
   sed -i 's/>admin</>birdnet</g' /etc/icecast2/icecast.xml
@@ -434,7 +436,7 @@ install_services() {
   USER=$USER HOME=$HOME ${my_dir}/scripts/createdb.sh
 }
 
-if [ -f ${config_file} ];then 
+if [ -f ${config_file} ];then
   source ${config_file}
   install_services
 else

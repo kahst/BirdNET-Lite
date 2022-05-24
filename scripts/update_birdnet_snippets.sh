@@ -5,18 +5,23 @@ trap 'exit 1' SIGINT SIGHUP
 USER=$(awk -F: '/1000/ {print $1}' /etc/passwd)
 HOME=$(awk -F: '/1000/ {print $6}' /etc/passwd)
 my_dir=$HOME/BirdNET-Pi/scripts
-if ! grep python3 <(head -n1 $my_dir/analyze.py) &>/dev/null;then
-  echo "Ensure all python scripts use the virtual environment"
-  sudo -u$USER sed -si "1 i\\#\!$HOME/BirdNET-Pi/birdnet/bin/python3" $my_dir/*.py
-fi
+
 if ! grep PRIVACY_THRESHOLD /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "PRIVACY_THRESHOLD=0" >> /etc/birdnet/birdnet.conf
-  git -C $HOME/BirdNET-Pi rm $my_dir/privacy_server.py 
+  git -C $HOME/BirdNET-Pi rm $my_dir/privacy_server.py
 fi
 if [ -f $my_dir/privacy_server ] || [ -L /usr/local/bin/privacy_server.py ];then
   rm -f $my_dir/privacy_server.py
   rm -f /usr/local/bin/privacy_server.py
 fi
+
+# Adds python virtual-env to the python systemd services
+if ! grep 'BirdNET-Pi/birdnet/' $HOME/BirdNET-Pi/templates/birdnet_server.service || ! grep 'BirdNET-Pi/birdnet' $HOME/BirdNET-Pi/templates/chart_viewer.service;then
+  sudo -E sed -i "s|ExecStart=.*|ExecStart=$HOME/BirdNET-Pi/birdnet/bin/python3 /usr/local/bin/server.py|" ~/BirdNET-Pi/templates/birdnet_server.service
+  sudo -E sed -i "s|ExecStart=.*|ExecStart=$HOME/BirdNET-Pi/birdnet/bin/python3 /usr/local/bin/daily_plot.py|" ~/BirdNET-Pi/templates/chart_viewer.service
+  sudo systemctl daemon-reload && restart_services.sh
+fi
+
 if grep privacy ~/BirdNET-Pi/templates/birdnet_server.service &>/dev/null;then
   sudo -E sed -i 's/privacy_server.py/server.py/g' \
     ~/BirdNET-Pi/templates/birdnet_server.service
