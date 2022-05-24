@@ -13,7 +13,7 @@ while getopts ":r:b:" o; do
   case "${o}" in
     r)
       remote=${OPTARG}
-      git remote show $remote > /dev/null 2>&1
+      git -C $HOME/BirdNET-Pi remote show $remote > /dev/null 2>&1
       ret_val=$?
 
       if [ $ret_val -ne 0 ]; then
@@ -43,13 +43,13 @@ sudo_with_user () {
 }
 
 # Reset current HEAD to remove any local changes
-sudo_with_user git reset --hard
+sudo_with_user git -C $HOME/BirdNET-Pi reset --hard
 
 # Fetches latest changes
-sudo_with_user git fetch $remote $branch
+sudo_with_user git -C $HOME/BirdNET-Pi fetch $remote $branch
 
 # Switches git to specified branch
-sudo_with_user git switch -C $branch --track $remote/$branch
+sudo_with_user git -C $HOME/BirdNET-Pi switch -C $branch --track $remote/$branch
 
 sudo systemctl daemon-reload
 sudo ln -sf $my_dir/* /usr/local/bin/
