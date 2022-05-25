@@ -33,7 +33,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
     $_SESSION['images'] = [];
   }
   $iterations = 0;
-  //$lines;
+  $lines;
   // hopefully one of the 5 most recent detections has an image that is valid, we'll use that one as the most recent detection until the newer ones get their images created
   while($mostrecent = $result4->fetchArray(SQLITE3_ASSOC)) {
     $comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
