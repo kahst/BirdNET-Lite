@@ -140,6 +140,7 @@ function setModalText(iter, title, text, authorlink) {
 <?php if(isset($_GET['species'])){
   $species = $_GET['species'];
   $iter=0;
+  $lines;
 while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   $count = $results['COUNT(*)'];
   $maxconf = round((float)round($results['MAX(Confidence)'],2) * 100 ) . '%';
@@ -174,7 +175,19 @@ while($results=$result3->fetchArray(SQLITE3_ASSOC)){
     $config = parse_ini_file('./scripts/firstrun.ini');
   }
   if (! empty($config["FLICKR_API_KEY"])) {
-    $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace('_', '+', $comname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
+    // only open the file once per script execution
+    if(!isset($lines)) {
+      $lines = file($home."/BirdNET-Pi/model/labels_flickr.txt");
+    }
+    // convert sci name to English name
+    foreach($lines as $line){ 
+      if(strpos($line, $results['Sci_Name']) !== false){
+        $engname = trim(explode("_", $line)[1]);
+        break;
+      }
+    }
+
+    $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace(' ', '%20', $engname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
 
     foreach ($flickrjson as $val) {
 
