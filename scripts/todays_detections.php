@@ -120,7 +120,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
       // convert sci name to English name
       foreach($lines as $line){ 
         if(strpos($line, $todaytable['Sci_Name']) !== false){
-          $engname = explode("_", $line)[1];
+          $engname = trim(explode("_", $line)[1]);
           break;
         }
       }
