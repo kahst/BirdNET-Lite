@@ -1,6 +1,5 @@
 *.pyc
 *.flac
-model/*
 .vscode
 datasets/
 birdnet.conf
