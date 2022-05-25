@@ -23,6 +23,7 @@ Check out birds from around the world
 - [Nijmegen, the Netherlands](https://nijmegen.birdnetpi.com)<br>
 - [Murrysville, Pennsylvania, United States](https://murrysvillepa.birdnetpi.com/)
 - [Berowra, New South Wales, Australia](https://berowra.birdnetpi.com/)
+- [Fairview, Tennessee, United States](https://fairviewtennessee.birdnetpi.com/)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 
@@ -106,12 +107,13 @@ Submit an issue or discussion.
 Please join a Discussion!! and please join [BirdWeather!!](https://app.birdweather.com)
 I hope that if you find BirdNET-Pi has been worth your time, you will share your setup, results, customizations, etc. [HERE](https://github.com/mcguirepr89/BirdNET-Pi/discussions/69) and will consider [making your installation public](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi).
 
-## Project Links
+## Cool Links
 
 - [Marie Lelouche's <i>Out of Spaces</i>](https://www.lestanneries.fr/exposition/marie-lelouche-out-of-spaces/) using BirdNET-Pi in post-sculpture VR! [Press Kit](https://github.com/mcguirepr89/BirdNET-Pi-assets/blob/main/dp_out_of_spaces_marie_lelouche_digital_05_01_22.pdf)
 - [Research on noded BirdNET-Pi networks for farming](https://github.com/mcguirepr89/BirdNET-Pi-assets/blob/main/G23_Report_ModelBasedSysEngineering_FarmMarkBirdDetector_V1__Copy_.pdf)
 - [PixCams Build Guide](https://pixcams.com/building-a-birdnet-pi-real-time-acoustic-bird-id-station/)
 - <ins>[Core-Electronics](https://core-electronics.com.au/projects/bird-calls-raspberry-pi)</ins> Build Article
+- [RaspberryPi.com Blog Post](https://www.raspberrypi.com/news/classify-birds-acoustically-with-birdnet-pi/)
 
 
 ### Internationalization:
