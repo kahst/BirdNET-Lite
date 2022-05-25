@@ -69,7 +69,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
           }
           // convert sci name to English name
           foreach($lines as $line){ 
-            if(strpos($line, $todaytable['Sci_Name']) !== false){
+            if(strpos($line, $mostrecent['Sci_Name']) !== false){
               $engname = trim(explode("_", $line)[1]);
               break;
             }
