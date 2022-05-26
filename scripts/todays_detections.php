@@ -2,9 +2,8 @@
 ini_set('session.gc_maxlifetime', 7200);
 session_set_cookie_params(7200);
 session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_reporting(0);
+ini_set('display_errors', 0);
 
 $db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 if($db == False){
