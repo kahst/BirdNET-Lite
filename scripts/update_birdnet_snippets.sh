@@ -72,3 +72,5 @@ then
     -d $HOME/BirdNET-Pi/model
   mv $HOME/BirdNET-Pi/model/labels_en.txt $HOME/BirdNET-Pi/model/labels.txt
 fi
+
+sudo systemctl daemon-reload
