@@ -688,3 +688,15 @@ dialog::backdrop {
 #gain.centered {
   margin-bottom:10px;
 }
+
+.updatenumber {
+  margin-left:5px;
+  position:absolute;
+  display:inline-block;
+  background-color:#c8191a;
+  color:white;
+  width:20px;
+  line-height:20px;
+  border-radius:12px;
+  text-align:center;
+}
