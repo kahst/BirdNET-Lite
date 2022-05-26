@@ -127,24 +127,29 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
 
 if(isset($_GET['ajax_left_chart']) && $_GET['ajax_left_chart'] == "true") {
 
-$totalcount = 0;
-$todaycount = 0;
-$hourcount = 0;
-$statement = $db->prepare('SELECT * FROM detections ORDER BY Date DESC, Time DESC');
+$statement = $db->prepare('SELECT COUNT(*) FROM detections');
 if($statement == False) {
   echo "Database is busy";
   header("refresh: 0;");
 }
 $result = $statement->execute();
-while($detection=$result->fetchArray(SQLITE3_ASSOC))
-{
-  $totalcount++;
-  if(strtotime($detection["Date"]." ".$detection["Time"]) > (time() - 3600)){ 
-    $hourcount++;
-  } if(strtotime($detection["Date"]." ".$detection["Time"]) > (time() - (time() - strtotime("today"))) ){ 
-    $todaycount++;
-  } 
+$totalcount = $result->fetchArray(SQLITE3_ASSOC);
+
+$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\', \'localtime\')');
+if($statement2 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
 }
+$result2 = $statement2->execute();
+$todaycount = $result2->fetchArray(SQLITE3_ASSOC);
+
+$statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == Date(\'now\', \'localtime\') AND TIME >= TIME(\'now\', \'localtime\', \'-1 hour\')');
+if($statement3 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
+$result3 = $statement3->execute();
+$hourcount = $result3->fetchArray(SQLITE3_ASSOC);
 
 $statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date == Date(\'now\',\'localtime\')');
 if($statement5 == False) {
@@ -166,17 +171,17 @@ $totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
 <table>
   <tr>
     <th>Total</th>
-    <td><?php echo $totalcount;?></td>
+    <td><?php echo $totalcount['COUNT(*)'];?></td>
   </tr>
   <tr>
     <th>Today</th>
     
-    <td><form action="" method="GET"><button type="submit" name="view" value="Today's Detections"><?php echo $todaycount;?></button></td>
+    <td><form action="" method="GET"><button type="submit" name="view" value="Today's Detections"><?php echo $todaycount['COUNT(*)'];?></button></td>
     </form>
   </tr>
   <tr>
     <th>Last Hour</th>
-    <td><?php echo $hourcount;?></td>
+    <td><?php echo $hourcount['COUNT(*)'];?></td>
   </tr>
   <tr>
     <th>Species Detected Today</th>
