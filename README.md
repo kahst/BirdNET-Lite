@@ -54,7 +54,7 @@ Currently listening in these countries . . . that I know of . . .
 * [Tiny File Manager](https://tinyfilemanager.github.io/)
 * FTP server included
 * SQLite3 Database
-* [Adminer]([url](https://www.adminer.org/)) database maintenance
+* [Adminer](https://www.adminer.org/) database maintenance
 * [phpSysInfo](https://github.com/phpsysinfo/phpsysinfo)
 * [Apprise Notifications](https://github.com/caronc/apprise) supporting 70+ notification platforms
 * Localization supported
