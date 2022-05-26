@@ -268,6 +268,7 @@ if(isset($_GET['view'])){
         $results = str_replace("FAILURE", "<span style='color:red'>FAILURE</span>", $results);
         $results = str_replace("failed", "<span style='color:red'>failed</span>",$results);
         $results = str_replace("active (running)", "<span style='color:green'><b>active (running)</b></span>",$results);
+        $results = str_replace("Your branch is up to date", "<span style='color:limegreen'><b>Your branch is up to date</b></span>",$results);
         if(strlen($results) == 0) {
           $results = "This command has no output.";
         }
