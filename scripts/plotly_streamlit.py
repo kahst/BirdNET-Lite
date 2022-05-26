@@ -19,7 +19,7 @@ userDir = os.path.expanduser('~')
 URI_SQLITE_DB = userDir + '/BirdNET-Pi/scripts/birds.db'
 
 st.set_page_config(layout='wide')
-
+#
 # Remove whitespace from the top of the page
 st.markdown("""
         <style>
