@@ -40,6 +40,14 @@ fi
 if ! grep APPRISE_NOTIFY_NEW_SPECIES /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "APPRISE_NOTIFY_NEW_SPECIES=0 " >> /etc/birdnet/birdnet.conf
 fi
+
+# If the config does not contain the DATABASE_LANG setting, we'll want to add it.
+# Defaults to not-selected, which config.php will know to render as a language option.
+# The user can then select a language in the web interface and update with that.
+if ! grep DATABASE_LANG /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "DATABASE_LANG=not-selected" >> /etc/birdnet/birdnet.conf
+fi
+
 apprise_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("apprise") else "not installed")')
 if [[ "$apprise_installation_status" = "not installed" ]];then
   ~/BirdNET-Pi/birdnet/bin/pip3 install -U pip
@@ -66,11 +74,11 @@ if systemctl list-unit-files pushed_notifications.service &>/dev/null;then
   sudo rm -f /usr/lib/systemd/system/pushed_notifications.service
   sudo rm $HOME/BirdNET-Pi/templates/pushed_notifications.service
 fi
+
 if [ ! -f $HOME/BirdNET-Pi/model/labels.txt ]
 then
-  unzip $HOME/BirdNET-Pi/model/labels_l18n.zip labels_en.txt \
-    -d $HOME/BirdNET-Pi/model
-  mv $HOME/BirdNET-Pi/model/labels_en.txt $HOME/BirdNET-Pi/model/labels.txt
+  $my_dir/install_language_label.sh -l $DATABASE_LANG \
+  && logger "[$0] Installed new language label file for '$DATABASE_LANG'";
 fi
 
 sudo systemctl daemon-reload

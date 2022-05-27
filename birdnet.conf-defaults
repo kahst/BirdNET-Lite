@@ -150,6 +150,10 @@ EXTRACTION_LENGTH=
 
 AUDIOFMT=mp3
 
+## DATABASE_LANG is used to set the language for the database
+
+DATABASE_LANG=en
+
 ## These are just for debugging
 LAST_RUN=
 THIS_RUN=
