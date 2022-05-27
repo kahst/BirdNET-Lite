@@ -21,7 +21,7 @@ if (($handle = fopen($home."/BirdSongs/".date('F-Y')."/".date('j-l')."/".$newest
           $num = count($data);
           for ($c=0; $c < $num; $c++) {
               $exp = explode(';',$data[$c]);
-              echo $exp[0].",".$exp[3]."\n";
+              echo $exp[0].",".$exp[3].",".$exp[4]."\n";
           }
         }
         $row++;
@@ -99,16 +99,22 @@ function fitTextOnCanvas(text,fontface,yPosition){
     CTX.fillText(text,document.body.querySelector('canvas').width - (document.body.querySelector('canvas').width * 0.50),yPosition);
 }
 
-function applyText(text,x,y) {
+function applyText(text,x,y,opacity) {
+  console.log("conf: "+opacity)
   console.log(text+" "+parseInt(x)+" "+y)
-    CTX.fillStyle = 'white';
+  if(opacity < 0.2) {
+    opacity = 0.2;
+  }
+    CTX.fillStyle = "rgba(255, 255, 255, "+opacity+")";
   CTX.font = '15px Roboto Flex';
   //fitTextOnCanvas(text,"Roboto Flex",document.body.querySelector('canvas').scrollHeight * 0.35)
   CTX.fillText(text,parseInt(x),y)
   CTX.fillStyle = 'hsl(280, 100%, 10%)';
 }
 
+var add =0;
 var newest_file;
+var lastbird;
 function loadDetectionIfNewExists() {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
@@ -126,10 +132,21 @@ function loadDetectionIfNewExists() {
           console.log(d1)
           d2 = new Date();
           timeDiff = (d2-d1)/1000;
+
+          // stagger Y placement if a new bird
+          if(split[i].split(",")[1] != lastbird) {
+            if(add >= 60) {
+              add = 0
+            } else {
+              add += 20;
+            }
+          }
+
           // Date csv file was created + relative detection time of bird + mic delay
           secago = Math.abs(timeDiff) - split[i].split(",")[0] - 6.8;
           console.log(Math.abs(timeDiff) + " - " + split[i].split(",")[0] + " - 6.8"); 
-          applyText(split[i].split(",")[1],document.body.querySelector('canvas').width - ((parseInt(secago))*avgfps), (document.body.querySelector('canvas').height * 0.50))
+          applyText(split[i].split(",")[1],document.body.querySelector('canvas').width - ((parseInt(secago))*avgfps), ((document.body.querySelector('canvas').height * 0.50) + add ), split[i].split(",")[2])
+          lastbird = split[i].split(",")[1]
         }
         
       }
