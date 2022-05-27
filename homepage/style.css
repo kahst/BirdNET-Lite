@@ -82,6 +82,12 @@ button {
   transition:background-color 0.2s;
 }
 
+.disabled{
+  cursor: not-allowed;
+  pointer-events: none; 
+  opacity:0.5;
+}
+
 button:hover {
   color: blue;
 }

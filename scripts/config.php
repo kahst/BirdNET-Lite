@@ -117,7 +117,7 @@ if(isset($_GET["latitude"])){
   </head>
 <div class="settings">
       <h2>Basic Settings</h2>
-    <form action="" method="GET">
+    <form id="basicform" action=""  method="GET">
 <?php
 if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/thisrun.txt');
@@ -261,7 +261,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
 
       <input type="hidden" name="status" value="success">
       <input type="hidden" name="submit" value="settings">
-      <button type="submit" name="view" value="Settings">
+      <button type="submit" id="basicformsubmit" onclick="if(document.getElementById('basicform').checkValidity()){this.innerHTML = 'Updating... please wait.';this.classList.add('disabled')}" name="view" value="Settings">
 <?php
 if(isset($_GET['status'])){
   echo "Success!";
