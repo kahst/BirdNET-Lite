@@ -701,3 +701,8 @@ dialog::backdrop {
   text-align:center;
   font-size:small;
 }
+
+form#views button .updatenumber {
+  position:initial;
+  margin-left:0px;
+}

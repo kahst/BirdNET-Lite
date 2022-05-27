@@ -1,3 +1,19 @@
+<?php 
+session_start();
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
+if(!isset($_SESSION['behind'])) {
+  $_SESSION['behind'] = trim(shell_exec("sudo git -C ".$home."/BirdNET-Pi fetch > /dev/null 2>&1 && git -C ".$home."/BirdNET-Pi status | sed -n '2 p' | cut -d ' ' -f 7"));
+}
+if(intval($_SESSION['behind']) >= 99) {?>
+<style>
+.updatenumber { 
+  width:30px !important;
+}
+</style>
+<?php }
+?>
 <link rel="stylesheet" href="style.css">
 <style>
 body::-webkit-scrollbar {
@@ -31,7 +47,7 @@ body::-webkit-scrollbar {
   <button type="submit" name="view" value="View Log" form="views">View Log</button>
 </form>
 <form action="" method="GET" id="views">
-  <button type="submit" name="view" value="Tools" form="views">Tools</button>
+  <button type="submit" name="view" value="Tools" form="views">Tools<?php if(intval($_SESSION['behind']) >= 50){ $updatediv = ' <div class="updatenumber">'.$_SESSION["behind"].'</div>'; } else { $updatediv = ""; } echo $updatediv; ?></button>
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>
@@ -94,7 +110,7 @@ if(isset($_GET['view'])){
           <form action=\"\" method=\"GET\" id=\"views\">
           <button type=\"submit\" name=\"view\" value=\"Settings\" form=\"views\">Settings</button>
           <button type=\"submit\" name=\"view\" value=\"System Info\" form=\"views\">System Info</button>
-          <button type=\"submit\" name=\"view\" value=\"System Controls\" form=\"views\">System Controls</button>
+          <button type=\"submit\" name=\"view\" value=\"System Controls\" form=\"views\">System Controls".$updatediv."</button>
           <button type=\"submit\" name=\"view\" value=\"Services\" form=\"views\">Services</button>
           <button type=\"submit\" name=\"view\" value=\"File\" form=\"views\">File Manager</button>
           <a href=\"scripts/adminer.php\" target=\"_top\"><button type=\"submit\" form=\"\">Database Maintenance</button></a>
@@ -263,6 +279,9 @@ if(isset($_GET['view'])){
         if (strpos($command, "systemctl") !== false) {
           $tmp = explode(" ",trim($command));
           $command .= "& sleep 3;sudo systemctl status ".end($tmp);
+        }
+        if($initcommand == "update_birdnet.sh") {
+          unset($_SESSION['behind']);
         }
         $results = shell_exec("$command 2>&1");
         $results = str_replace("FAILURE", "<span style='color:red'>FAILURE</span>", $results);
