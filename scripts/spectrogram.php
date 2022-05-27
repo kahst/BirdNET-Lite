@@ -1,3 +1,36 @@
+<?php
+if(isset($_GET['ajax_csv'])) {
+
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
+$files = scandir($home."/BirdSongs/".date('F-Y')."/".date('j-l')."/", SCANDIR_SORT_ASCENDING);
+$newest_file = $files[2];
+
+
+if($newest_file == $_GET['newest_file']) {
+  die();
+} 
+
+echo "file,".$newest_file."\n";
+
+$row = 1;
+if (($handle = fopen($home."/BirdSongs/".date('F-Y')."/".date('j-l')."/".$newest_file.".csv", "r")) !== FALSE) {
+    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        if($row != 1){
+          $num = count($data);
+          for ($c=0; $c < $num; $c++) {
+              $exp = explode(';',$data[$c]);
+              echo $exp[0].",".$exp[3]."\n";
+          }
+        }
+        $row++;
+    }
+    fclose($handle);
+}
+die();
+}
+?>
 <script>  
 // CREDITS: https://codepen.io/jakealbaugh/pen/jvQweW
 
@@ -7,6 +40,9 @@ var started = null;
 var player = null;
 var gain = 128;
 const ctx = null;
+let fps =[];
+let avgfps;
+let requestTime;
 window.onload = function(){
   // if user agent includes iPhone or Mac use legacy mode
   if(window.navigator.userAgent.includes("iPhone") || window.navigator.userAgent.includes("Mac")) {
@@ -63,32 +99,49 @@ function fitTextOnCanvas(text,fontface,yPosition){
     CTX.fillText(text,document.body.querySelector('canvas').width - (document.body.querySelector('canvas').width * 0.50),yPosition);
 }
 
-function applyText(text) {
+function applyText(text,x,y) {
+  console.log(text+" "+parseInt(x)+" "+y)
     CTX.fillStyle = 'white';
-  CTX.font = '25px Roboto Flex';
-  fitTextOnCanvas(text,"Roboto Flex",document.body.querySelector('canvas').scrollHeight * 0.35)
+  CTX.font = '15px Roboto Flex';
+  //fitTextOnCanvas(text,"Roboto Flex",document.body.querySelector('canvas').scrollHeight * 0.35)
+  CTX.fillText(text,parseInt(x),y)
   CTX.fillStyle = 'hsl(280, 100%, 10%)';
 }
 
-var previous_detection_identifier = null;
+var newest_file;
 function loadDetectionIfNewExists() {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
     // if there's a new detection that needs to be updated to the page
     if(this.responseText.length > 0 && !this.responseText.includes("Database")) {
-      if(previous_detection_identifier != null){
-          applyText(this.responseText.split(",")[0].replace("_"," "));
+      
+      var split = this.responseText.split("\n")
+      for(var i = 1;i < split.length; i++) {
+        if(parseInt(split[i].split(",")[0]) >= 0){
+
+          newest_file =  split[0].split(",")[1]
+          //applyText(split[i].split(",")[1],document.body.querySelector('canvas').width - ((parseInt(split[i].split(",")[0]))*avgfps), (document.body.querySelector('canvas').height * 0.50))
+          
+          d1 = new Date(newest_file.split("-")[0]+"/"+newest_file.split("-")[1]+"/"+newest_file.split("-")[2]+ " "+newest_file.split("-")[4].replace(".wav",""))
+          console.log(d1)
+          d2 = new Date();
+          timeDiff = (d2-d1)/1000;
+          // Date csv file was created + relative detection time of bird + mic delay
+          secago = Math.abs(timeDiff) - split[i].split(",")[0] - 6.8;
+          console.log(Math.abs(timeDiff) + " - " + split[i].split(",")[0] + " - 6.8"); 
+          applyText(split[i].split(",")[1],document.body.querySelector('canvas').width - ((parseInt(secago))*avgfps), (document.body.querySelector('canvas').height * 0.50))
+        }
+        
       }
-      previous_detection_identifier = this.responseText.split(",")[1];
     }
   }
-  xhttp.open("GET", "overview.php?ajax_detections=true&previous_detection_identifier="+previous_detection_identifier+"&only_name=true", true);
+  xhttp.open("GET", "spectrogram.php?ajax_csv=true&newest_file="+newest_file, true);
   xhttp.send();
 }
 
 window.setInterval(function(){
    loadDetectionIfNewExists();
-}, 2500);
+}, 500);
 
 function initialize() {
   document.body.querySelector('h1').remove();
@@ -102,7 +155,6 @@ function initialize() {
 
   ANALYSER.fftSize = 2048;  
   
-
   try{
     process();
   } catch(e) {
@@ -122,8 +174,18 @@ function initialize() {
 
     loop();
 
-    function loop() {
-      window.requestAnimationFrame(loop);
+    function loop(time) {
+      if (requestTime) {
+          fpsval = Math.round(1000/((performance.now() - requestTime)))
+          if(fpsval > 0){
+              fps.push( fpsval);
+          }
+      }
+      if(fps.length > 0){
+          avgfps = fps.reduce((a, b) => a + b) / fps.length;
+      }
+      requestTime = time;
+      window.requestAnimationFrame((timeRes) => loop(timeRes));
       let imgData = CTX.getImageData(1, 0, W - 1, H);
 
       CTX.fillRect(0, 0, W, H);
