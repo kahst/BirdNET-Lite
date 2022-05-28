@@ -2,7 +2,7 @@
   BirdNET-Pi
 </h1>
 <p align="center">
-A realtime acoustic bird classification system for the Raspberry Pi 4B
+A realtime acoustic bird classification system for the Raspberry Pi 4B, 3B+, and 0W2
 </p>
 <p align="center">
   <img src="https://user-images.githubusercontent.com/60325264/140656397-bf76bad4-f110-467c-897d-992ff0f96476.png" />
@@ -50,22 +50,23 @@ Currently listening in these countries . . . that I know of . . .
 * Live audio stream & spectrogram
 * [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
 * Web interface access to all data and logs provided by [Caddy](https://caddyserver.com)
-* Web Terminal
+* [GoTTY](https://github.com/yudai/gotty) Web Terminal
 * [Tiny File Manager](https://tinyfilemanager.github.io/)
 * FTP server included
 * SQLite3 Database
-* Adminer database maintenance
+* [Adminer](https://www.adminer.org/) database maintenance
 * [phpSysInfo](https://github.com/phpsysinfo/phpsysinfo)
 * [Apprise Notifications](https://github.com/caronc/apprise) supporting 70+ notification platforms
 * Localization supported
 
 ## Requirements
-* A Raspberry Pi 4B or Raspberry Pi 3B+ (The 3B+ must run on RaspiOS-ARM64-**Lite**)
-* An SD Card with the **_64-bit version of RaspiOS_** installed (please use Bullseye) -- Lite is recommended, but the installation works on RaspiOS-ARM64-Full as well. [(Download the latest here)](https://downloads.raspberrypi.org/raspios_lite_arm64/images/)
+* A Raspberry Pi 4B, Raspberry Pi 3B+, or Raspberry Pi 0W2 (The 3B+ and 0W2 must run on RaspiOS-ARM64-**Lite**)
+* An SD Card with the **_64-bit version of RaspiOS_** installed (please use Bullseye) -- Lite is recommended, but the installation works on RaspiOS-ARM64-Full as well. Downloads available within the [Raspberry Pi Imager](https://www.raspberrypi.com/software/).
 * A USB Microphone or Sound Card
 
 ## Installation
 [A comprehensive installation guide is available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Installation-Guide).
+[Raspberry Pi 0W2 installation guide available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/RPi0W2-Installation-Guide)
 
 The system can be installed with:
 ```

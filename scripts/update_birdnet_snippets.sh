@@ -16,7 +16,7 @@ if [ -f $my_dir/privacy_server ] || [ -L /usr/local/bin/privacy_server.py ];then
 fi
 
 # Adds python virtual-env to the python systemd services
-if ! grep 'BirdNET-Pi/birdnet/' $HOME/BirdNET-Pi/templates/birdnet_server.service || ! grep 'BirdNET-Pi/birdnet' $HOME/BirdNET-Pi/templates/chart_viewer.service;then
+if ! grep 'BirdNET-Pi/birdnet/' $HOME/BirdNET-Pi/templates/birdnet_server.service &>/dev/null || ! grep 'BirdNET-Pi/birdnet' $HOME/BirdNET-Pi/templates/chart_viewer.service &>/dev/null;then
   sudo -E sed -i "s|ExecStart=.*|ExecStart=$HOME/BirdNET-Pi/birdnet/bin/python3 /usr/local/bin/server.py|" ~/BirdNET-Pi/templates/birdnet_server.service
   sudo -E sed -i "s|ExecStart=.*|ExecStart=$HOME/BirdNET-Pi/birdnet/bin/python3 /usr/local/bin/daily_plot.py|" ~/BirdNET-Pi/templates/chart_viewer.service
   sudo systemctl daemon-reload && restart_services.sh
@@ -40,6 +40,14 @@ fi
 if ! grep APPRISE_NOTIFY_NEW_SPECIES /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "APPRISE_NOTIFY_NEW_SPECIES=0 " >> /etc/birdnet/birdnet.conf
 fi
+
+# If the config does not contain the DATABASE_LANG setting, we'll want to add it.
+# Defaults to not-selected, which config.php will know to render as a language option.
+# The user can then select a language in the web interface and update with that.
+if ! grep DATABASE_LANG /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "DATABASE_LANG=not-selected" >> /etc/birdnet/birdnet.conf
+fi
+
 apprise_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("apprise") else "not installed")')
 if [[ "$apprise_installation_status" = "not installed" ]];then
   ~/BirdNET-Pi/birdnet/bin/pip3 install -U pip
@@ -52,7 +60,7 @@ fi
 if ! grep RTSP_STREAM /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "RTSP_STREAM=" >> /etc/birdnet/birdnet.conf
 fi
-if grep bash $HOME/BirdNET-Pi/templates/web_terminal.service;then
+if grep bash $HOME/BirdNET-Pi/templates/web_terminal.service &>/dev/null;then
   sudo sed -i '/User/d;s/bash/login/g' $HOME/BirdNET-Pi/templates/web_terminal.service
   sudo systemctl daemon-reload
   sudo systemctl restart web_terminal.service
@@ -61,16 +69,15 @@ fi
 if ! grep FLICKR_API_KEY /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "FLICKR_API_KEY=" >> /etc/birdnet/birdnet.conf
 fi
-if systemctl list-unit-files pushed_notifications.service;then
+if systemctl list-unit-files pushed_notifications.service &>/dev/null;then
   sudo systemctl disable --now pushed_notifications.service
   sudo rm -f /usr/lib/systemd/system/pushed_notifications.service
   sudo rm $HOME/BirdNET-Pi/templates/pushed_notifications.service
 fi
-if [ ! -f $HOME/BirdNET-Pi/model/labels.txt ]
-then
-  unzip $HOME/BirdNET-Pi/model/labels_l18n.zip labels_en.txt \
-    -d $HOME/BirdNET-Pi/model
-  mv $HOME/BirdNET-Pi/model/labels_en.txt $HOME/BirdNET-Pi/model/labels.txt
+
+if [ ! -f $HOME/BirdNET-Pi/model/labels.txt ];then
+  $my_dir/install_language_label.sh -l $DATABASE_LANG \
+  && logger "[$0] Installed new language label file for '$DATABASE_LANG'";
 fi
 
 sudo systemctl daemon-reload

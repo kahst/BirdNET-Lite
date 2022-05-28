@@ -2,89 +2,112 @@
 error_reporting(E_ERROR);
 ini_set('display_errors',1);
 
-# Basic Settings
-if(isset($_GET["latitude"])){
-$latitude = $_GET["latitude"];
-$longitude = $_GET["longitude"];
-$birdweather_id = $_GET["birdweather_id"];
-$apprise_input = $_GET['apprise_input'];
-$apprise_notification_title = $_GET['apprise_notification_title'];
-$apprise_notification_body = $_GET['apprise_notification_body'];
-$flickr_api_key = $_GET['flickr_api_key'];
-if(isset($_GET['apprise_notify_each_detection'])) {
-  $apprise_notify_each_detection = 1;
-} else {
-  $apprise_notify_each_detection = 0;
-}
-if(isset($_GET['apprise_notify_new_species'])) {
-  $apprise_notify_new_species = 1;
-} else {
-  $apprise_notify_new_species = 0;
-}
+function syslog_shell_exec($cmd, $sudo_user = null) {
+  if ($sudo_user) {
+    $cmd = "sudo -u $sudo_user $cmd";
+  }
+  $output = shell_exec($cmd);
 
-// logic for setting the date and time based on user inputs from the form below
-if(isset($_GET['date']) && isset($_GET['time'])) {
-  // can't set the date manually if it's getting it from the internet, disable ntp
-  exec("sudo timedatectl set-ntp false");
-
-  exec("sudo date -s '".$_GET['date']." ".$_GET['time']."'");
-} else {
-  // user checked 'use time from internet if available,' so make sure that's on
-  if(strlen(trim(exec("sudo timedatectl | grep \"NTP service: active\""))) == 0){
-    exec("sudo timedatectl set-ntp true");
-    sleep(3);
+  if (strlen($output) > 0) {
+    syslog(LOG_INFO, $output);
   }
 }
 
+# Basic Settings
+if(isset($_GET["latitude"])){
+  $latitude = $_GET["latitude"];
+  $longitude = $_GET["longitude"];
+  $birdweather_id = $_GET["birdweather_id"];
+  $apprise_input = $_GET['apprise_input'];
+  $apprise_notification_title = $_GET['apprise_notification_title'];
+  $apprise_notification_body = $_GET['apprise_notification_body'];
+  $flickr_api_key = $_GET['flickr_api_key'];
+  $language = $_GET["language"];
+
+  if(isset($_GET['apprise_notify_each_detection'])) {
+    $apprise_notify_each_detection = 1;
+  } else {
+    $apprise_notify_each_detection = 0;
+  }
+  if(isset($_GET['apprise_notify_new_species'])) {
+    $apprise_notify_new_species = 1;
+  } else {
+    $apprise_notify_new_species = 0;
+  }
+
+  // logic for setting the date and time based on user inputs from the form below
+  if(isset($_GET['date']) && isset($_GET['time'])) {
+    // can't set the date manually if it's getting it from the internet, disable ntp
+    exec("sudo timedatectl set-ntp false");
+
+    exec("sudo date -s '".$_GET['date']." ".$_GET['time']."'");
+  } else {
+    // user checked 'use time from internet if available,' so make sure that's on
+    if(strlen(trim(exec("sudo timedatectl | grep \"NTP service: active\""))) == 0){
+      exec("sudo timedatectl set-ntp true");
+      sleep(3);
+    }
+  }
+
+  // Update Language settings only if a change is requested
+  if (file_exists('./scripts/thisrun.txt')) {
+    $lang_config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+    $lang_config = parse_ini_file('./scripts/firstrun.ini');
+  }
+  if ($language != $lang_config['DATABASE_LANG']){
+    $user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
+    $home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
+
+    // Archive old language file
+    syslog_shell_exec("cp -f $home/BirdNET-Pi/model/labels.txt $home/BirdNET-Pi/model/labels.txt.old", $user);
+
+    // Install new language label file
+    syslog_shell_exec("$home/BirdNET-Pi/scripts/install_language_label.sh -l $language", $user);
+
+    syslog(LOG_INFO, "Successfully changed language to '$language'");
+  }
 
 
+  $contents = file_get_contents("/etc/birdnet/birdnet.conf");
+  $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
+  $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
+  $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
+  $contents = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents);
+  $contents = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=\"$apprise_notification_body\"", $contents);
+  $contents = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents);
+  $contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents);
+  $contents = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents);
+  $contents = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents);
 
-$contents = file_get_contents("/etc/birdnet/birdnet.conf");
-$contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
-$contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
-$contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
-$contents = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents);
-$contents = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=\"$apprise_notification_body\"", $contents);
-$contents = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents);
-$contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents);
-$contents = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents);
-
-
-$contents2 = file_get_contents("./scripts/thisrun.txt");
-$contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
-$contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
-$contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
-$contents2 = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents2);
-$contents2 = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=\"$apprise_notification_body\"", $contents2);
-$contents2 = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents2);
-$contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents2);
-$contents2 = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents2);
-
-
-$fh = fopen("/etc/birdnet/birdnet.conf", "w");
-$fh2 = fopen("./scripts/thisrun.txt", "w");
-fwrite($fh, $contents);
-fwrite($fh2, $contents2);
-
-if(isset($apprise_input)){
-  $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-  $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-  $home = trim($home);
-
-  $appriseconfig = fopen($home."/BirdNET-Pi/apprise.txt", "w");
-  fwrite($appriseconfig, $apprise_input);
-}
+  $contents2 = file_get_contents("./scripts/thisrun.txt");
+  $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
+  $contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
+  $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
+  $contents2 = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents2);
+  $contents2 = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=\"$apprise_notification_body\"", $contents2);
+  $contents2 = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents2);
+  $contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents2);
+  $contents2 = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents2);
+  $contents2 = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents2);
 
 
-$language = $_GET["language"];
-if ($language != "none"){
-  $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-  $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-  $home = trim($home);
-  $command = "sudo -u".$user." mv ".$home."/BirdNET-Pi/model/labels.txt ".$home."/BirdNET-Pi/model/labels.txt.old && sudo -u".$user." unzip ".$home."/BirdNET-Pi/model/labels_l18n.zip ".$language." -d ".$home."/BirdNET-Pi/model && sudo -u".$user." mv ".$home."/BirdNET-Pi/model/".$language." ".$home."/BirdNET-Pi/model/labels.txt";
-  $command_output = `$command`;
-  `sudo restart_services.sh`;
-}
+  $fh = fopen("/etc/birdnet/birdnet.conf", "w");
+  $fh2 = fopen("./scripts/thisrun.txt", "w");
+  fwrite($fh, $contents);
+  fwrite($fh2, $contents2);
+
+  if(isset($apprise_input)){
+    $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+    $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+    $home = trim($home);
+
+    $appriseconfig = fopen($home."/BirdNET-Pi/apprise.txt", "w");
+    fwrite($appriseconfig, $apprise_input);
+  }
+
+  syslog(LOG_INFO, "Restarting Services");
+  shell_exec("sudo restart_services.sh");
 }
 
 ?>
@@ -94,13 +117,13 @@ if ($language != "none"){
   </head>
 <div class="settings">
       <h2>Basic Settings</h2>
-    <form action="" method="GET">
-<?php 
+    <form id="basicform" action=""  method="GET">
+<?php
 if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/thisrun.txt');
 } elseif (file_exists('./scripts/firstrun.ini')) {
   $config = parse_ini_file('./scripts/firstrun.ini');
-} 
+}
 $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
@@ -157,36 +180,51 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <h3>Localization</h3>
       <label for="language">Database Language: </label>
       <select name="language">
-        <option value="none">Select your language</option>
-        <option value="labels_af.txt">Afrikaans</option>
-        <option value="labels_ca.txt">Catalan</option>
-        <option value="labels_cs.txt">Czech</option>
-        <option value="labels_zh.txt">Chinese</option>
-        <option value="labels_hr.txt">Croatian</option>
-        <option value="labels_da.txt">Danish</option>
-        <option value="labels_nl.txt">Dutch</option>
-        <option value="labels_en.txt">English</option>
-        <option value="labels_et.txt">Estonian</option>
-        <option value="labels_fi.txt">Finnish</option>
-        <option value="labels_fr.txt">French</option>
-        <option value="labels_de.txt">German</option>
-        <option value="labels_hu.txt">Hungarian</option>
-        <option value="labels_is.txt">Icelandic</option>
-        <option value="labels_id.txt">Indonesia</option>
-        <option value="labels_it.txt">Italian</option>
-        <option value="labels_ja.txt">Japanese</option>
-        <option value="labels_lv.txt">Latvian</option>
-        <option value="labels_lt.txt">Lithuania</option>
-        <option value="labels_no.txt">Norwegian</option>
-        <option value="labels_pl.txt">Polish</option>
-        <option value="labels_pt.txt">Portugues</option>
-        <option value="labels_ru.txt">Russian</option>
-        <option value="labels_sk.txt">Slovak</option>
-        <option value="labels_sl.txt">Slovenian</option>
-        <option value="labels_es.txt">Spanish</option>
-        <option value="labels_sv.txt">Swedish</option>
-        <option value="labels_th.txt">Thai</option>
-        <option value="labels_uk.txt">Ukrainian</option>
+      <?php
+        $langs = array(
+          'not-selected' => 'Not Selected',
+          "af" => "Afrikaans",
+          "ca" => "Catalan",
+          "cs" => "Czech",
+          "zh" => "Chinese",
+          "hr" => "Croatian",
+          "da" => "Danish",
+          "nl" => "Dutch",
+          "en" => "English",
+          "et" => "Estonian",
+          "fi" => "Finnish",
+          "fr" => "French",
+          "de" => "German",
+          "hu" => "Hungarian",
+          "is" => "Icelandic",
+          "id" => "Indonesia",
+          "it" => "Italian",
+          "ja" => "Japanese",
+          "lv" => "Latvian",
+          "lt" => "Lithuania",
+          "no" => "Norwegian",
+          "pl" => "Polish",
+          "pt" => "Portugues",
+          "ru" => "Russian",
+          "sk" => "Slovak",
+          "sl" => "Slovenian",
+          "es" => "Spanish",
+          "sv" => "Swedish",
+          "th" => "Thai",
+          "uk" => "Ukrainian"
+        );
+
+        // Create options for each language
+        foreach($langs as $langTag => $langName){
+          $isSelected = "";
+          if($config['DATABASE_LANG'] == $langTag){
+            $isSelected = 'selected="selected"';
+          }
+
+          echo "<option value='{$langTag}' $isSelected>$langName</option>";
+        }
+      ?>
+
       </select>
       <br><br>
       <script>
@@ -194,19 +232,19 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
           // this disables the input of manual date and time if the user wants to use the internet time
           var date=document.getElementById("date");
           var time=document.getElementById("time");
-          if(checkbox.checked) { 
-            date.setAttribute("disabled", "disabled"); 
-            time.setAttribute("disabled", "disabled"); 
-          } else { 
+          if(checkbox.checked) {
+            date.setAttribute("disabled", "disabled");
+            time.setAttribute("disabled", "disabled");
+          } else {
             date.removeAttribute("disabled");
-            time.removeAttribute("disabled"); 
+            time.removeAttribute("disabled");
           }
         }
       </script>
-      <?php 
+      <?php
       // if NTP service is active, show the checkboxes as checked, and disable the manual input
       $tdc = trim(exec("sudo timedatectl | grep \"NTP service: active\""));
-      if (strlen($tdc) > 0) { 
+      if (strlen($tdc) > 0) {
         $checkedvalue = "checked";
         $disabledvalue = "disabled";
       } else {
@@ -223,7 +261,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
 
       <input type="hidden" name="status" value="success">
       <input type="hidden" name="submit" value="settings">
-      <button type="submit" name="view" value="Settings">
+      <button type="submit" id="basicformsubmit" onclick="if(document.getElementById('basicform').checkValidity()){this.innerHTML = 'Updating... please wait.';this.classList.add('disabled')}" name="view" value="Settings">
 <?php
 if(isset($_GET['status'])){
   echo "Success!";

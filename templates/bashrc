@@ -114,7 +114,7 @@ fi
 cd ~/BirdNET-Pi
 function remove() {
   source /etc/birdnet/birdnet.conf
-  find $RECS_DIR -iname *${1}* -exec rm -drfv {} +
+  find $EXTRACTED -iname *${1}* -exec rm -drfv {} +
 }
 alias rerc="source ~/.bashrc"
 alias vimrc="vim ~/.bashrc"

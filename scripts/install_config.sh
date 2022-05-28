@@ -163,6 +163,8 @@ EXTRACTION_LENGTH=
 
 AUDIOFMT=mp3
 
+## DATABASE_LANG is the language used for the bird species database
+DATABASE_LANG=en
 
 ## These are just for debugging
 LAST_RUN=
@@ -171,7 +173,7 @@ IDFILE=$HOME/BirdNET-Pi/IdentifiedSoFar.txt
 EOF
 }
 
-# Checks for a birdnet.conf file 
+# Checks for a birdnet.conf file
 if ! [ -f ${birdnet_conf} ];then
   install_config
 fi
