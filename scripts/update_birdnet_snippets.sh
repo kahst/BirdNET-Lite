@@ -81,3 +81,4 @@ if [ ! -f $HOME/BirdNET-Pi/model/labels.txt ];then
 fi
 
 sudo systemctl daemon-reload
+restart_services.sh
