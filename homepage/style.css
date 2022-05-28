@@ -82,6 +82,12 @@ button {
   transition:background-color 0.2s;
 }
 
+.disabled{
+  cursor: not-allowed;
+  pointer-events: none; 
+  opacity:0.5;
+}
+
 button:hover {
   color: blue;
 }
@@ -687,4 +693,22 @@ dialog::backdrop {
 
 #gain.centered {
   margin-bottom:10px;
+}
+
+.updatenumber {
+  margin-left:5px;
+  position:absolute;
+  display:inline-block;
+  background-color:#c8191a;
+  color:white;
+  width:20px;
+  line-height:20px;
+  border-radius:12px;
+  text-align:center;
+  font-size:small;
+}
+
+form#views button .updatenumber {
+  position:initial;
+  margin-left:0px;
 }

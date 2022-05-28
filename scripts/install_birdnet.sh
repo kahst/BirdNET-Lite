@@ -11,7 +11,7 @@ cd $my_dir/scripts || exit 1
 
 if [ "$(uname -m)" != "aarch64" ];then
   echo "BirdNET-Pi requires a 64-bit OS.
-It looks like your operating system is using $(uname -m), 
+It looks like your operating system is using $(uname -m),
 but would need to be aarch64.
 Please take a look at https://birdnetwiki.pmcgui.xyz for more
 information"
@@ -31,14 +31,12 @@ install_birdnet() {
   pip3 install -U -r $HOME/BirdNET-Pi/requirements.txt
 }
 
-unpack_labels() {
-  unzip $HOME/BirdNET-Pi/model/labels_l18n.zip labels_en.txt \
-    -d $HOME/BirdNET-Pi/model
-  mv $HOME/BirdNET-Pi/model/labels_en.txt $HOME/BirdNET-Pi/model/labels.txt
-}
-
 [ -d ${RECS_DIR} ] || mkdir -p ${RECS_DIR} &> /dev/null
 
-install_birdnet 
-unpack_labels
+install_birdnet
+
+cd $my_dir/scripts || exit 1
+
+./install_language_label.sh -l $DATABASE_LANG || exit 1
+
 exit 0
