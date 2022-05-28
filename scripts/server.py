@@ -250,19 +250,19 @@ def sendAppriseNotifications(species, confidence):
         if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_NEW_SPECIES')]).split('=')[1]).split('\\')[0]) == "1":
             try:
                 con = sqlite3.connect(userDir + '/BirdNET-Pi/scripts/birds.db')
-                con.row_factory = lambda cursor, row: row[0]
                 cur = con.cursor()
-                cur.execute("SELECT DISTINCT(Com_Name) FROM detections")
+                cur.execute("SELECT DISTINCT(Com_Name), count(Com_Name) FROM detections WHERE date > (SELECT DATETIME('now', '-7 day')) GROUP BY Com_Name")
                 known_species = cur.fetchall()
                 sciName, comName = species.split("_")
+                numberDetections = [d[1] for d in known_species if d[0] == comName.replace("'","")][0]
 
-                if comName not in known_species:
+                if numberDetections <= 5:
                     apobj = apprise.Apprise()
                     config = apprise.AppriseConfig()
                     config.add(userDir + '/BirdNET-Pi/apprise.txt')
                     apobj.add(config)
                     apobj.notify(
-                        body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence),
+                        body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence) + " (only seen "+str(int(numberDetections)+1)+" times in last 7d)",
                         title=title,
                     )
 
