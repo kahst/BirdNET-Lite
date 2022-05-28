@@ -6,8 +6,6 @@ from numpy import ma
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.io as pio
-from datetime import timedelta, datetime
-from pathlib import Path
 import sqlite3
 from sqlite3 import Connection
 import plotly.express as px
@@ -171,7 +169,7 @@ top_N_species = (df5.value_counts()[:top_N])
 
 font_size = 15
 
-if daily == False:
+if daily is False:
     specie = st.selectbox(
         'Which bird would you like to explore for the dates '
         + str(start_date) + ' to ' + str(end_date) + '?',
@@ -258,7 +256,6 @@ if daily == False:
     # #                                     '   Confidence Max:'+str('{:.2f}%'.format(max(df2[df2['Com_Name']==specie]['Confidence'])*100))+
     # #                                     '   '+'   Median:'+str('{:.2f}%'.format(np.median(df2[df2['Com_Name']==specie]['Confidence'])*100))
     # #                                     )
-    #                     )
 
 #        fig.add_trace(go.Bar(y=top_N_species.index, x=top_N_species, orientation='h'), row=1,col=1)
         df4 = df2['Com_Name'][df2['Com_Name'] == specie].resample('15min').count()
