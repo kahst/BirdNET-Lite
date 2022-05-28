@@ -258,7 +258,7 @@ def sendAppriseNotifications(species, confidence):
 
                 print("\ncomName: ", comName)
                 print("\nknown_species: ", known_species)
-                if comName not in known_species:
+                if comName.replace("'","") not in known_species:
                     apobj = apprise.Apprise()
                     config = apprise.AppriseConfig()
                     config.add(userDir + '/BirdNET-Pi/apprise.txt')
