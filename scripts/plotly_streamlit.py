@@ -39,7 +39,6 @@ st.markdown("""
         """, unsafe_allow_html=True)
 
 
-
 # @st.cache(hash_funcs={Connection: id})
 @st.cache(allow_output_mutation=True)
 def get_connection(path: str):
@@ -57,19 +56,19 @@ df2 = df.copy()
 df2['DateTime'] = pd.to_datetime(df2['Date'] + " " + df2['Time'])
 df2 = df2.set_index('DateTime')
 
-daily = st.sidebar.checkbox('Single Day View', help= 'Select if you want single day view, unselect for multi-day views')
+daily = st.sidebar.checkbox('Single Day View', help='Select if you want single day view, unselect for multi-day views')
 
 if daily:
-# Date as slider
+    # Date as slider
     Start_Date = pd.to_datetime(df2.index.min()).date()
     End_Date = pd.to_datetime(df2.index.max()).date()
 #     cols1, cols2 = st.columns((1, 1))
     end_date = st.sidebar.slider('Date to View',
-                            min_value = Start_Date,
-                            max_value = End_Date,
-                            value=(End_Date),
-                            help= 'Select date for single day view'                                     
-                            )
+                                 min_value=Start_Date,
+                                 max_value=End_Date,
+                                 value=(End_Date),
+                                 help='Select date for single day view'
+                                 )
     start_date = end_date
 else:
     Start_Date = pd.to_datetime(df2.index.min()).date()
@@ -77,11 +76,11 @@ else:
 
 #    cols1, cols2 = st.columns((1, 1))
     start_date, end_date = st.sidebar.slider('Date Range',
-                                    min_value = Start_Date-timedelta(days=1),
-                                    max_value = End_Date,
-                                    value=(Start_Date, End_Date),
-                                    help= 'Select start and end date, if same date get a clockplot for a single day'                                        
-                                    )
+                                             min_value=Start_Date - timedelta(days=1),
+                                             max_value=End_Date,
+                                             value=(Start_Date, End_Date),
+                                             help='Select start and end date, if same date get a clockplot for a single day'
+                                             )
 
 # start_date, end_date = cols1.date_input(
 #     "Date Input for Analysis - select Range for single specie analysis, select single date for daily view",
@@ -92,11 +91,13 @@ else:
 # start_date = datetime(2022 ,5 ,17).date()
 # end_date = datetime(2022 ,5 ,17).date()
 
+
 @st.cache()
 def date_filter(df, start_date, end_date):
     filt = (df2.index >= pd.Timestamp(start_date)) & (df2.index <= pd.Timestamp(end_date + timedelta(days=1)))
     df = df[filt]
     return(df)
+
 
 df2 = date_filter(df2, start_date, end_date)
 
@@ -111,7 +112,7 @@ st.write('<style>div.st-bf{flex-direction:column;} div.st-ag{font-weight:bold;pa
 if start_date == end_date:
     resample_sel = st.sidebar.radio(
         "Resample Resolution",
-        ('Raw', '15 minutes', 'Hourly'), index=1, help= 'Select resolution for single day - larger times run faster' )
+        ('Raw', '15 minutes', 'Hourly'), index=1, help='Select resolution for single day - larger times run faster')
 
     resample_times = {'Raw': 'Raw',
                       '1 minute': '1min',
@@ -123,7 +124,7 @@ if start_date == end_date:
 else:
     resample_sel = st.sidebar.radio(
         "Resample Resolution",
-        ('Raw', '15 minutes', 'Hourly', 'DAILY'), index=1, help= 'Select resolution for species - DAILY provides time series')
+        ('Raw', '15 minutes', 'Hourly', 'DAILY'), index=1, help='Select resolution for species - DAILY provides time series')
 
     resample_times = {'Raw': 'Raw',
                       '1 minute': '1min',
@@ -132,6 +133,7 @@ else:
                       'DAILY': '1D'
                       }
     resample_time = resample_times[resample_sel]
+
 
 @st.cache()
 def time_resample(df, resample_time):
@@ -142,6 +144,8 @@ def time_resample(df, resample_time):
         df_resample = df.resample(resample_time)['Com_Name'].aggregate('unique').explode()
 
     return(df_resample)
+
+
 top_bird = df2['Com_Name'].mode()[0]
 df5 = time_resample(df2, resample_time)
 
@@ -169,10 +173,10 @@ font_size = 15
 
 if daily == False:
     specie = st.selectbox(
-        'Which bird would you like to explore for the dates ' 
-        + str(start_date) + ' to ' + str(end_date) + '?', 
+        'Which bird would you like to explore for the dates '
+        + str(start_date) + ' to ' + str(end_date) + '?',
         species,
-        index = species.index(top_bird))
+        index=species.index(top_bird))
 
     filt = df2['Com_Name'] == specie
 
@@ -191,7 +195,7 @@ if daily == False:
                                 '{:.2f}%'.format(max(df2[df2['Com_Name'] == specie]['Confidence']) * 100)) +
                             '   ' + '   Median:' + str(
                                 '{:.2f}%'.format(np.median(df2[df2['Com_Name'] == specie]['Confidence']) * 100))
-                            )
+            )
         )
         fig.layout.annotations[1].update(x=0.7, y=0.25, font_size=15)
 
@@ -245,9 +249,8 @@ if daily == False:
     else:
         fig = st.container()
         fig = make_subplots(
-                        rows=1, cols =1)
+            rows=1, cols=1)
     #                     specs= [[{"type":"xy","rowspan":1},{"type":"heatmap","rowspan":1}]],
-                            
 
     #                     subplot_titles=('<b>Daily Top '+ str(top_N) + ' Species in Date Range '+ str(start_date) +' to '+ str(end_date) +'</b>',
     #                                     '<b>Daily ' + specie+ ' Detections on 15 minute intervals </b>'),
@@ -258,9 +261,9 @@ if daily == False:
     #                     )
 
 #        fig.add_trace(go.Bar(y=top_N_species.index, x=top_N_species, orientation='h'), row=1,col=1)
-        df4=df2['Com_Name'][df2['Com_Name']==specie].resample('15min').count()
-        df4.index=[df4.index.date, df4.index.time]
-        day_hour_freq=df4.unstack().fillna(0)
+        df4 = df2['Com_Name'][df2['Com_Name'] == specie].resample('15min').count()
+        df4.index = [df4.index.date, df4.index.time]
+        day_hour_freq = df4.unstack().fillna(0)
 
         fig_x = [d.strftime('%d-%m-%Y') for d in day_hour_freq.index.tolist()]
         fig_y = [h.strftime('%H:%M') for h in day_hour_freq.columns.tolist()]
@@ -270,9 +273,9 @@ if daily == False:
         # fig.update_layout(
         # margin=dict(l=0, r=0, t=50, b=0),
         # yaxis={'categoryorder':'total ascending'})
-        color_pals= px.colors.named_colorscales()
+        color_pals = px.colors.named_colorscales()
         selected_pal = st.sidebar.selectbox('Select Color Pallet for Daily Detections', color_pals)
-        fig.add_trace(go.Heatmap(x=fig_x,y=fig_y,z=fig_z, autocolorscale = False, colorscale = selected_pal), row=1, col=1)
+        fig.add_trace(go.Heatmap(x=fig_x, y=fig_y, z=fig_z, autocolorscale=False, colorscale=selected_pal), row=1, col=1)
 
 else:
     fig = make_subplots(
@@ -329,9 +332,9 @@ else:
 st.plotly_chart(fig, use_container_width=True)  # , config=config)
 
 # cols3,cols4=st.columns((1,1))
-# 
+#
 # extract_date=Date_Slider
-# 
+#
 # audio_file = open('/home/*/BirdSongs/Extracted/By_Date/2022-03-22/Yellow-streaked_Greenbul/Yellow-streaked_Greenbul-77-2022-03-22-birdnet-15:04:28.mp3', 'rb')
 # audio_bytes = audio_file.read()
 # cols4.audio(audio_bytes, format='audio/mp3')
