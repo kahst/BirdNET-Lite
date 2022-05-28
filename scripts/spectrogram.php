@@ -105,6 +105,7 @@ function applyText(text,x,y,opacity) {
   if(opacity < 0.2) {
     opacity = 0.2;
   }
+  CTX.textAlign = "center";
     CTX.fillStyle = "rgba(255, 255, 255, "+opacity+")";
   CTX.font = '15px Roboto Flex';
   //fitTextOnCanvas(text,"Roboto Flex",document.body.querySelector('canvas').scrollHeight * 0.35)
@@ -134,18 +135,34 @@ function loadDetectionIfNewExists() {
           timeDiff = (d2-d1)/1000;
 
           // stagger Y placement if a new bird
-          if(split[i].split(",")[1] != lastbird) {
-            if(add >= 60) {
-              add = 0
+          if(split[i].split(",")[1] != lastbird || split[i].split(",")[1].length > 15) {
+            if(add >= 80) {
+              add -= 40;
             } else {
               add += 20;
+            }
+
+            if(parseFloat(add + document.body.querySelector('canvas').height * 0.50) > document.body.querySelector('canvas').height || parseFloat(add + document.body.querySelector('canvas').height * 0.50) <= 0) {
+              add = 0;
             }
           }
 
           // Date csv file was created + relative detection time of bird + mic delay
           secago = Math.abs(timeDiff) - split[i].split(",")[0] - 6.8;
-          console.log(Math.abs(timeDiff) + " - " + split[i].split(",")[0] + " - 6.8"); 
-          applyText(split[i].split(",")[1],document.body.querySelector('canvas').width - ((parseInt(secago))*avgfps), ((document.body.querySelector('canvas').height * 0.50) + add ), split[i].split(",")[2])
+
+          x = document.body.querySelector('canvas').width - ((parseInt(secago))*avgfps);
+          // if the text is too close to the right side of the canvas and will be cut off, wait 3 seconds before adding text
+          if(x > document.body.querySelector('canvas').width - (3*avgfps)) {
+        setTimeout(function (split,i,x) {
+          console.log(split[i])
+          console.log("originally at "+x+", now waiting 2 sec and at "+(x-(3*avgfps)))
+        applyText(split[i].split(",")[1],(x - (3*avgfps)), ((document.body.querySelector('canvas').height * 0.50) + add ), split[i].split(",")[2]);
+      }, 2000, split, i, x)
+      } else {
+        applyText(split[i].split(",")[1],x, ((document.body.querySelector('canvas').height * 0.50) + add ), split[i].split(",")[2])
+      }
+  
+
           lastbird = split[i].split(",")[1]
         }
         
