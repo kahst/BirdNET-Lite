@@ -6,8 +6,7 @@ from numpy import ma
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.io as pio
-from datetime import timedelta, datetime
-from pathlib import Path
+from datetime import timedelta
 import sqlite3
 from sqlite3 import Connection
 import plotly.express as px
@@ -159,7 +158,7 @@ hourly = pd.crosstab(df5, df5.index.hour, dropna=False)
 # Filter on species
 species = list(hourly.index)
 
-#cols1, cols2 = st.columns((1, 1))
+# cols1, cols2 = st.columns((1, 1))
 top_N = st.sidebar.slider(
     'Select Number of Birds to Show',
     min_value=1,
