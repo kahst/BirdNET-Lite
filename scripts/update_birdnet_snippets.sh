@@ -60,7 +60,7 @@ fi
 if ! grep RTSP_STREAM /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "RTSP_STREAM=" >> /etc/birdnet/birdnet.conf
 fi
-if grep bash $HOME/BirdNET-Pi/templates/web_terminal.service;then
+if grep bash $HOME/BirdNET-Pi/templates/web_terminal.service &>/dev/null;then
   sudo sed -i '/User/d;s/bash/login/g' $HOME/BirdNET-Pi/templates/web_terminal.service
   sudo systemctl daemon-reload
   sudo systemctl restart web_terminal.service
@@ -75,8 +75,7 @@ if systemctl list-unit-files pushed_notifications.service &>/dev/null;then
   sudo rm $HOME/BirdNET-Pi/templates/pushed_notifications.service
 fi
 
-if [ ! -f $HOME/BirdNET-Pi/model/labels.txt ]
-then
+if [ ! -f $HOME/BirdNET-Pi/model/labels.txt ];then
   $my_dir/install_language_label.sh -l $DATABASE_LANG \
   && logger "[$0] Installed new language label file for '$DATABASE_LANG'";
 fi
