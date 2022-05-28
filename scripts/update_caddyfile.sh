@@ -63,4 +63,5 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
 EOF
 fi
 
+sudo caddy fmt --overwrite /etc/caddy/Caddyfile
 sudo systemctl reload caddy
