@@ -19,7 +19,7 @@ information"
 fi
 
 #Install/Configure /etc/birdnet/birdnet.conf
-./install_config.sh || exit 1
+install_config.sh || exit 1
 sudo -E HOME=$HOME USER=$USER ./install_services.sh || exit 1
 source /etc/birdnet/birdnet.conf
 
