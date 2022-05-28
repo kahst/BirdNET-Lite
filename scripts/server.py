@@ -256,14 +256,11 @@ def sendAppriseNotifications(species, confidence):
                 known_species = cur.fetchall()
                 sciName, comName = species.split("_")
 
-                print("\ncomName: ", comName)
-                print("\nknown_species: ", known_species)
-                if comName.replace("'","") not in known_species:
+                if comName not in known_species:
                     apobj = apprise.Apprise()
                     config = apprise.AppriseConfig()
                     config.add(userDir + '/BirdNET-Pi/apprise.txt')
                     apobj.add(config)
-
                     apobj.notify(
                         body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence),
                         title=title,
