@@ -77,6 +77,6 @@
     <button type="submit" name="submit" value="stop_core_services.sh">Stop Core Services</button>
   </form>	
   <form action="" method="GET">
-    <button type="submit" name="submit" value="restart_services.sh">Restart All Services</button>
+    <button type="submit" name="submit" value="restart_services.sh">Restart Core Services</button>
   </form>	
 </div>
