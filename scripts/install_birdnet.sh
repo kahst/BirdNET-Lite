@@ -19,7 +19,7 @@ information"
 fi
 
 #Install/Configure /etc/birdnet/birdnet.conf
-install_config.sh || exit 1
+./install_config.sh || exit 1
 sudo -E HOME=$HOME USER=$USER ./install_services.sh || exit 1
 source /etc/birdnet/birdnet.conf
 
@@ -34,6 +34,8 @@ install_birdnet() {
 [ -d ${RECS_DIR} ] || mkdir -p ${RECS_DIR} &> /dev/null
 
 install_birdnet
+
+cd $my_dir/scripts || exit 1
 
 ./install_language_label.sh -l $DATABASE_LANG || exit 1
 
