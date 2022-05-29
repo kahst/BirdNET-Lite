@@ -23,7 +23,7 @@ if(isset($_GET['excludefile'])) {
     $submitteduser = $_SERVER['PHP_AUTH_USER'];
     if($submittedpwd == $config['CADDY_PWD'] && $submitteduser == 'birdnet'){
       if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")) {
-        file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end");
+        file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end\n");
       }
       if(isset($_GET['exclude_add'])) {
         $myfile = fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "a") or die("Unable to open file!");
