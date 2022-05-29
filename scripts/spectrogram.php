@@ -135,16 +135,15 @@ function loadDetectionIfNewExists() {
           timeDiff = (d2-d1)/1000;
 
           // stagger Y placement if a new bird
-          if(split[i].split(",")[1] != lastbird || split[i].split(",")[1].length > 15) {
-            if(add >= 80) {
-              add -= 40;
-            } else {
-              add += 20;
+          if(split[i].split(",")[1] != lastbird || split[i].split(",")[1].length > 13) {
+            add+= 15;
+            if(add >= 120) {
+             add = 0;
             }
 
-            if(parseFloat(add + document.body.querySelector('canvas').height * 0.50) > document.body.querySelector('canvas').height || parseFloat(add + document.body.querySelector('canvas').height * 0.50) <= 0) {
-              add = 0;
-            }
+            //if(parseFloat(add + document.body.querySelector('canvas').height * 0.50) > document.body.querySelector('canvas').height || parseFloat(add + document.body.querySelector('canvas').height * 0.50) <= 0) {
+             // add = 0;
+            //}
           }
 
           // Date csv file was created + relative detection time of bird + mic delay
