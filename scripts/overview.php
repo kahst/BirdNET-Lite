@@ -285,7 +285,9 @@ function loadDetectionIfNewExists(previous_detection_identifier=undefined) {
 function loadLeftChart() {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
-    document.getElementsByClassName("left-column")[0].innerHTML = this.responseText;
+    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy")) {
+      document.getElementsByClassName("left-column")[0].innerHTML = this.responseText;
+    }
   }
   xhttp.open("GET", "overview.php?ajax_left_chart=true", true);
   xhttp.send();
@@ -306,7 +308,9 @@ window.setInterval(function(){
 function loadFiveMostRecentDetections() {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
-    document.getElementById("detections_table").innerHTML= this.responseText;
+    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy")) {
+      document.getElementById("detections_table").innerHTML= this.responseText;
+    }
   }
   if (window.innerWidth > 500) {
     xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit=undefined&hard_limit=5", true);
