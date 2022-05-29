@@ -177,6 +177,32 @@ window.setInterval(function(){
    loadDetectionIfNewExists();
 }, 500);
 
+var compressor = undefined;
+var SOURCE;
+var ACTX;
+var ANALYSER;
+
+function toggleCompression(state) {
+  //var biquadFilter = ACTX.createBiquadFilter();
+  //biquadFilter.type = "highpass";
+ // biquadFilter.frequency.setValueAtTime(13000, ACTX.currentTime);
+  if(state == true) {
+    SOURCE.disconnect(ANALYSER);
+    SOURCE.disconnect(ACTX.destination);
+    SOURCE.connect(compressor);
+    compressor.connect(ANALYSER);
+    compressor.connect(ACTX.destination);
+    //biquadFilter.connect(ANALYSER);
+    //biquadFilter.connect(ACTX.destination);
+  } else {
+    SOURCE.disconnect(compressor);
+    compressor.disconnect(ACTX.destination);
+    compressor.disconnect(ANALYSER);
+    SOURCE.connect(ANALYSER);
+    SOURCE.connect(ACTX.destination);
+  }
+}
+
 function initialize() {
   document.body.querySelector('h1').remove();
   const CVS = document.body.querySelector('canvas');
@@ -184,21 +210,34 @@ function initialize() {
   const W = CVS.width = window.innerWidth;
   const H = CVS.height = window.innerHeight;
 
-  const ACTX = new AudioContext();
-  const ANALYSER = ACTX.createAnalyser();
+  ACTX = new AudioContext();
+  ANALYSER = ACTX.createAnalyser();
 
   ANALYSER.fftSize = 2048;  
   
   try{
     process();
   } catch(e) {
+    console.log(e)
     window.top.location.reload();
   }
 
+
+
   function process() {
-    const SOURCE = ACTX.createMediaElementSource(player);
+    SOURCE = ACTX.createMediaElementSource(player);
     SOURCE.connect(ANALYSER);
-    SOURCE.connect(ACTX.destination)
+    SOURCE.connect(ACTX.destination);
+
+    compressor = ACTX.createDynamicsCompressor();
+    compressor.threshold.setValueAtTime(-50, ACTX.currentTime);
+    compressor.knee.setValueAtTime(40, ACTX.currentTime);
+    compressor.ratio.setValueAtTime(12, ACTX.currentTime);
+    compressor.attack.setValueAtTime(0, ACTX.currentTime);
+    compressor.release.setValueAtTime(0.25, ACTX.currentTime);
+    document.getElementById("compression").removeAttribute("disabled");
+
+    console.log(SOURCE);
     const DATA = new Uint8Array(ANALYSER.frequencyBinCount);
     const LEN = DATA.length;
     const h = (H / LEN + 0.9);
@@ -263,12 +302,19 @@ h1 {
 
 <img id="spectrogramimage" style="width:100%;height:100%;display:none" src="/spectrogram.png?nocache=<?php echo $time;?>">
 
-<div id="gain" class="centered">
-<label>Gain: </label>
-<span class="slidecontainer">
-  <input name="gain_input" type="range" min="0" max="255" value="128" class="slider" id="gain_input">
-  <span id="gain_value"></span>%
-</span>
+<div class="centered">
+  <div style="display:inline" id="gain" >
+  <label>Gain: </label>
+  <span class="slidecontainer">
+    <input name="gain_input" type="range" min="0" max="255" value="128" class="slider" id="gain_input">
+    <span id="gain_value"></span>%
+  </span>
+  </div>
+  —
+  <div style="display:inline" id="comp" >
+  <label>Compression: </label>
+    <input name="compression" type="checkbox" id="compression" disabled>
+  </div>
 </div>
 
 <audio style="display:none" controls="" crossorigin="anonymous" id='player' preload="none"><source src="/stream"></audio>
@@ -284,5 +330,10 @@ output.innerHTML = slider.value; // Display the default slider value
 slider.oninput = function() {
   output.innerHTML = this.value;
   gain=Math.abs(this.value - 255);
+}
+
+var compression = document.getElementById("compression");
+compression.onclick = function() {
+  toggleCompression(this.checked);
 }
 </script>
