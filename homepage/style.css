@@ -676,6 +676,18 @@ dialog::backdrop {
   box-shadow:0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
 }
 
+#birdimage {
+  transition:box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  cursor:pointer;
+  border-radius: 5px;
+}
+
+#birdimage:hover {
+  opacity:0.8;
+  box-shadow:0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+}
+
 .centered_image_container * {
   font-size:19px !important;
 }
@@ -711,4 +723,22 @@ dialog::backdrop {
 form#views button .updatenumber {
   position:initial;
   margin-left:0px;
+}
+
+#detections_table_overview table {
+  width:944px;
+}
+
+#recent_detection_middle_td{
+  width:33%;
+}
+@media screen and (max-width:500px) {
+  #recent_detection_middle_td{
+    width:66%;
+  }
+}
+#recent_detection_middle_td img{
+  width:unset !important;
+  height:75px;
+  float:left;
 }

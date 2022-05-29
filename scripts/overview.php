@@ -251,6 +251,9 @@ if (file_exists('./Charts/'.$chart)) {
 </div>
 
 <div id="most_recent_detection"></div>
+<br>
+<h3>5 Most Recent Detections</h3>
+<div style="padding-bottom:10px;" id="detections_table"><h3>Loading...</h3></div>
 
 <h3>Currently Analyzing</h3>
 <?php
@@ -271,8 +274,9 @@ function loadDetectionIfNewExists(previous_detection_identifier=undefined) {
     if(this.responseText.length > 0 && !this.responseText.includes("Database is busy")) {
       document.getElementById("most_recent_detection").innerHTML = this.responseText;
 
-      // only going to load left chart if there's a new detection
+      // only going to load left chart & 5 most recents if there's a new detection
       loadLeftChart();
+      loadFiveMostRecentDetections();
     }
   }
   xhttp.open("GET", "overview.php?ajax_detections=true&previous_detection_identifier="+previous_detection_identifier, true);
@@ -298,10 +302,25 @@ window.setInterval(function(){
     loadDetectionIfNewExists();
   }
 }, <?php echo intval($refresh/4); ?>*1000);
+
+function loadFiveMostRecentDetections() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    document.getElementById("detections_table").innerHTML= this.responseText;
+  }
+  if (window.innerWidth > 500) {
+    xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit=undefined&hard_limit=5", true);
+  } else {
+    xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit=undefined&hard_limit=5&mobile=true", true);
+  }
+  xhttp.send();
+}
 window.addEventListener("load", function(){
+  loadFiveMostRecentDetections();
   loadDetectionIfNewExists();
   loadLeftChart();
 });
+
 // every $refresh seconds, this loop will run and refresh the spectrogram image
 window.setInterval(function(){
   document.getElementById("chart").src = "/Charts/<?php echo $chart;?>?nocache="+Date.now();
