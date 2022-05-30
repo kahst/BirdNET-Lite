@@ -110,7 +110,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   $filename = "/By_Date/".date('Y-m-d')."/".$comname."/".$todaytable['File_Name'];
   $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
 
-  if (!empty($config["FLICKR_API_KEY"])) {
+  if (!empty($config["FLICKR_API_KEY"]) && (isset($_GET['display_limit']) || isset($_GET['hard_limit']))) {
 
     // if we already searched flickr for this species before, use the previous image rather than doing an unneccesary api call
     $key = array_search($comname, array_column($_SESSION['images'], 0));
@@ -158,7 +158,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
           <td><?php echo $todaytable['Time'];?><br></td><td id="recent_detection_middle_td">
           <div>
             <div>
-            <?php if(!empty($config["FLICKR_API_KEY"])) { ?>
+            <?php if(!empty($config["FLICKR_API_KEY"]) && isset($_GET['hard_limit'])) { ?>
               <img style="float:left;height:75px;" onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" id="birdimage" class="img1">
             <?php } ?>
           </div>
