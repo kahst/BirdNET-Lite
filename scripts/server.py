@@ -234,6 +234,7 @@ def sendAppriseNotifications(species, confidence):
             this_run = f.readlines()
             title = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_TITLE')]).split('=')[1]).split('\\')[0]).replace('"', '')
             body = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_BODY')]).split('=')[1]).split('\\')[0]).replace('"', '')
+            listenurl = str(str(str([i for i in this_run if i.startswith('BIRDNETPI_URL')]).split('=')[1]).split('\\')[0]).replace('"', '')+"?filename="+species.split("_")[1].replace(" ","_")+"-"+str(round(float(confidence)*100))+"-"+path.split("/")[len(path.split("/"))-1].split(".")[0]+".mp3"
 
         if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_EACH_DETECTION')]).split('=')[1]).split('\\')[0]) == "1":
 
@@ -243,7 +244,7 @@ def sendAppriseNotifications(species, confidence):
             apobj.add(config)
 
             apobj.notify(
-                body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence),
+                body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl),
                 title=title,
             )
 
@@ -262,7 +263,7 @@ def sendAppriseNotifications(species, confidence):
                     config.add(userDir + '/BirdNET-Pi/apprise.txt')
                     apobj.add(config)
                     apobj.notify(
-                        body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence) + " (only seen "+str(int(numberDetections)+1)+" times in last 7d)",
+                        body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections)+1)+" times in last 7d)",
                         title=title,
                     )
 
