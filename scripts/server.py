@@ -228,13 +228,21 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
     return detections
 
 
-def sendAppriseNotifications(species, confidence):
+def sendAppriseNotifications(species, confidence, path):
     if os.path.exists(userDir + '/BirdNET-Pi/apprise.txt') and os.path.getsize(userDir + '/BirdNET-Pi/apprise.txt') > 0:
         with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
             this_run = f.readlines()
             title = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_TITLE')]).split('=')[1]).split('\\')[0]).replace('"', '')
             body = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_BODY')]).split('=')[1]).split('\\')[0]).replace('"', '')
-            listenurl = str(str(str([i for i in this_run if i.startswith('BIRDNETPI_URL')]).split('=')[1]).split('\\')[0]).replace('"', '')+"?filename="+species.split("_")[1].replace(" ","_")+"-"+str(round(float(confidence)*100))+"-"+path.split("/")[len(path.split("/"))-1].split(".")[0]+".mp3"
+            
+            try:
+                websiteurl = str(str(str([i for i in this_run if i.startswith('BIRDNETPI_URL')]).split('=')[1]).split('\\')[0]).replace('"', '')
+                if len(websiteurl) == 0:
+                    raise ValueError('Blank URL')
+            except Exception as e:
+                websiteurl = "http://"+socket.gethostname()+".local"
+
+            listenurl = websiteurl+"?filename="+species.split("_")[1].replace(" ","_")+"-"+str(round(float(confidence)*100))+"-"+path.split("/")[len(path.split("/"))-1].split(".")[0]+".mp3"
 
         if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_EACH_DETECTION')]).split('=')[1]).split('\\')[0]) == "1":
 
