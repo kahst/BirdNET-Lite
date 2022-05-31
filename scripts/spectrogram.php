@@ -180,25 +180,30 @@ var compressor = undefined;
 var SOURCE;
 var ACTX;
 var ANALYSER;
+var gainNode;
 
 function toggleCompression(state) {
   //var biquadFilter = ACTX.createBiquadFilter();
   //biquadFilter.type = "highpass";
  // biquadFilter.frequency.setValueAtTime(13000, ACTX.currentTime);
   if(state == true) {
-    SOURCE.disconnect(ANALYSER);
-    SOURCE.disconnect(ACTX.destination);
+    SOURCE.disconnect(gainNode)
+    gainNode.disconnect(ANALYSER);
+    gainNode.disconnect(ACTX.destination);
     SOURCE.connect(compressor);
     compressor.connect(ANALYSER);
-    compressor.connect(ACTX.destination);
+    ANALYSER.connect(gainNode);
+    gainNode.connect(ACTX.destination);
     //biquadFilter.connect(ANALYSER);
     //biquadFilter.connect(ACTX.destination);
   } else {
     SOURCE.disconnect(compressor);
-    compressor.disconnect(ACTX.destination);
     compressor.disconnect(ANALYSER);
-    SOURCE.connect(ANALYSER);
-    SOURCE.connect(ACTX.destination);
+    ANALYSER.disconnect(gainNode);
+    gainNode.disconnect(ACTX.destination);
+    SOURCE.connect(gainNode);
+    gainNode.connect(ANALYSER);
+    gainNode.connect(ACTX.destination);
   }
 }
 
@@ -225,8 +230,7 @@ function initialize() {
 
   function process() {
     SOURCE = ACTX.createMediaElementSource(player);
-    SOURCE.connect(ANALYSER);
-    SOURCE.connect(ACTX.destination);
+    
 
     compressor = ACTX.createDynamicsCompressor();
     compressor.threshold.setValueAtTime(-50, ACTX.currentTime);
@@ -234,6 +238,12 @@ function initialize() {
     compressor.ratio.setValueAtTime(12, ACTX.currentTime);
     compressor.attack.setValueAtTime(0, ACTX.currentTime);
     compressor.release.setValueAtTime(0.25, ACTX.currentTime);
+    gainNode = ACTX.createGain();
+    gainNode.gain = 1;
+    SOURCE.connect(gainNode);
+    gainNode.connect(ANALYSER);
+    gainNode.connect(ACTX.destination);
+
     document.getElementById("compression").removeAttribute("disabled");
 
     console.log(SOURCE);
@@ -264,7 +274,7 @@ function initialize() {
       CTX.putImageData(imgData, 0, 0);
       ANALYSER.getByteFrequencyData(DATA);
       for (let i = 0; i < LEN; i++) {
-        let rat = DATA[i] / gain ;
+        let rat = DATA[i] / 255 ;
         let hue = Math.round((rat * 120) + 280 % 360);
         let sat = '100%';
         let lit = 10 + (70 * rat) + '%';
@@ -305,7 +315,7 @@ h1 {
   <div style="display:inline" id="gain" >
   <label>Gain: </label>
   <span class="slidecontainer">
-    <input name="gain_input" type="range" min="0" max="255" value="128" class="slider" id="gain_input">
+    <input name="gain_input" type="range" min="0" max="250" value="100" class="slider" id="gain_input">
     <span id="gain_value"></span>%
   </span>
   </div>
@@ -328,6 +338,7 @@ output.innerHTML = slider.value; // Display the default slider value
 // Update the current slider value (each time you drag the slider handle)
 slider.oninput = function() {
   output.innerHTML = this.value;
+  gainNode.gain.setValueAtTime((this.value/(100/2)), ACTX.currentTime);
   gain=Math.abs(this.value - 255);
 }
 
