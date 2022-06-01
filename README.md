@@ -102,7 +102,7 @@ Use the web interface and go to "Tools" > "System Controls" > "Update." If you e
 ```
 
 ## Troubleshooting and Ideas
-Submit an issue or discussion.
+Having trouble or have an idea? Submit an issue for trouble and a discussion for ideas.
 
 ## Sharing
 Please join a Discussion!! and please join [BirdWeather!!](https://app.birdweather.com)
