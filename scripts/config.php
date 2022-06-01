@@ -164,10 +164,21 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 tgram://{bot_token}/{chat_id}
 twitter://{ConsumerKey}/{ConsumerSecret}/{AccessToken}/{AccessSecret}
 https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
-..." style="vertical-align: top" name="apprise_input" cols="140" rows="5" type="text" ><?php print($apprise_config);?></textarea><br><br>
-      <label for="apprise_notification_title">Notification Title (use variables $sciname, $comname, $confidence, or $listenurl): </label>
+..." style="vertical-align: top" name="apprise_input" cols="140" rows="5" type="text" ><?php print($apprise_config);?></textarea>
+      <dl>
+      <dt>$sciname</dt>
+      <dd>Scientific Name</dd>
+      <dt>$comname</dt>
+      <dd>Common Name</dd>
+      <dt>$confidence</dt>
+      <dd>Confidence Score</dd>
+      <dt>$listenurl</dt>
+      <dd>A link to the detection</dd>
+      </dl>
+      <p>Use the variables defined above to customize your notification title and body.</p>
+      <label for="apprise_notification_title">Notification Title: </label>
       <input name="apprise_notification_title" type="text" value="<?php print($config['APPRISE_NOTIFICATION_TITLE']);?>" /><br>
-      <label for="apprise_notification_body">Notification Body (use variables $sciname, $comname, $confidence, or $listenurl): </label>
+      <label for="apprise_notification_body">Notification Body: </label>
       <input name="apprise_notification_body" type="text" value="<?php print($config['APPRISE_NOTIFICATION_BODY']);?>" /><br>
       <input type="checkbox" name="apprise_notify_new_species" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_notify_new_species">Notify each new infrequent species detection (<5 visits per week)</label><br>
