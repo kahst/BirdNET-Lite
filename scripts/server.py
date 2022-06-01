@@ -253,7 +253,7 @@ def sendAppriseNotifications(species, confidence, path):
 
             apobj.notify(
                 body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl),
-                title=title,
+                title=title.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl),
             )
 
         if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_NEW_SPECIES')]).split('=')[1]).split('\\')[0]) == "1":
@@ -272,7 +272,7 @@ def sendAppriseNotifications(species, confidence, path):
                     apobj.add(config)
                     apobj.notify(
                         body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections)+1)+" times in last 7d)",
-                        title=title,
+                        title=title.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections)+1)+" times in last 7d)",
                     )
 
                 con.close()

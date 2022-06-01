@@ -165,7 +165,7 @@ tgram://{bot_token}/{chat_id}
 twitter://{ConsumerKey}/{ConsumerSecret}/{AccessToken}/{AccessSecret}
 https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
 ..." style="vertical-align: top" name="apprise_input" cols="140" rows="5" type="text" ><?php print($apprise_config);?></textarea><br><br>
-      <label for="apprise_notification_title">Notification Title: </label>
+      <label for="apprise_notification_title">Notification Title (use variables $sciname, $comname, $confidence, or $listenurl): </label>
       <input name="apprise_notification_title" type="text" value="<?php print($config['APPRISE_NOTIFICATION_TITLE']);?>" /><br>
       <label for="apprise_notification_body">Notification Body (use variables $sciname, $comname, $confidence, or $listenurl): </label>
       <input name="apprise_notification_body" type="text" value="<?php print($config['APPRISE_NOTIFICATION_BODY']);?>" /><br>
