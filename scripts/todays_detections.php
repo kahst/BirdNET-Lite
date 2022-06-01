@@ -65,7 +65,16 @@ $home = trim($home);
 
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   if(isset($_GET['searchterm'])) {
-    $searchquery = "AND (Com_name LIKE '%".$_GET['searchterm']."%' OR Sci_name LIKE '%".$_GET['searchterm']."%' OR Confidence LIKE '%".$_GET['searchterm']."%' OR File_Name LIKE '%".$_GET['searchterm']."%' OR Time LIKE '%".$_GET['searchterm']."%')";
+    if(strtolower(explode(" ", $_GET['searchterm'])[0]) == "not") {
+      $not = "NOT ";
+      $operator = "AND";
+      $_GET['searchterm'] =  str_replace("not ", "", $_GET['searchterm']);
+      $_GET['searchterm'] =  str_replace("NOT ", "", $_GET['searchterm']);
+    } else {
+      $not = "";
+      $operator = "OR";
+    }
+    $searchquery = "AND (Com_name ".$not."LIKE '%".$_GET['searchterm']."%' ".$operator." Sci_name ".$not."LIKE '%".$_GET['searchterm']."%' ".$operator." Confidence ".$not."LIKE '%".$_GET['searchterm']."%' ".$operator." File_Name ".$not."LIKE '%".$_GET['searchterm']."%' ".$operator." Time ".$not."LIKE '%".$_GET['searchterm']."%')";
   } else {
     $searchquery = "";
   }
