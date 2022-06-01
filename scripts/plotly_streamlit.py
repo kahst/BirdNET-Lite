@@ -186,7 +186,7 @@ if daily == False:
                 specs=[[{"type": "xy", "rowspan": 3}, {"type": "polar", "rowspan": 2}], [{"rowspan": 1}, {"rowspan": 1}],
                     [None, {"type": "xy", "rowspan": 1}]],
                 subplot_titles=('<b>Top ' + str(top_N) + ' Species in Date Range ' + str(start_date) + ' to ' + str(
-                    end_date) + ' for ' + str(resample_sel) + ' sampling interval.' + '</b>',
+                    end_date) + '<br>for ' + str(resample_sel) + ' sampling interval.' + '</b>',
                                 'Total Detect:' + str('{:,}'.format(df_counts)) 
                                 # +   '   Confidence Max:' + str(
                                 #     '{:.2f}%'.format(max(df2[df2['Com_Name'] == specie]['Confidence']) * 100)) +
