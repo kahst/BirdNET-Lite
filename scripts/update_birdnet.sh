@@ -5,6 +5,10 @@ trap 'exit 1' SIGINT SIGHUP
 
 usage() { echo "Usage: $0 [-r <remote name>] [-b <branch name>]" 1>&2; exit 1; }
 
+USER=$(awk -F: '/1000/ {print $1}' /etc/passwd)
+HOME=$(awk -F: '/1000/ {print $6}' /etc/passwd)
+my_dir=$HOME/BirdNET-Pi/scripts
+
 # Defaults
 remote="origin"
 branch="main"
@@ -30,11 +34,6 @@ while getopts ":r:b:" o; do
   esac
 done
 shift $((OPTIND-1))
-
-USER=$(awk -F: '/1000/ {print $1}' /etc/passwd)
-HOME=$(awk -F: '/1000/ {print $6}' /etc/passwd)
-my_dir=$HOME/BirdNET-Pi/scripts
-
 
 sudo_with_user () {
   set -x
