@@ -328,7 +328,7 @@ if daily == False:
                         df_unknown= pd.DataFrame({"Sci_Name":["UNKNOWN"],"Com_Name":["UNKNOWN"]})
                         df_names = pd.concat([df_unknown,df_names], ignore_index=True)
                         with cold:
-                            corrected = st.selectbox('What specie?', df_names['Com_Name'])
+                            corrected = st.selectbox('What species?', df_names['Com_Name'])
             #     cur.execute("UPDATE detections SET  Seen = seen WHERE File_Name = recording")
             #     con.commit()
             #     con.close()
