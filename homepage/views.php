@@ -1,25 +1,21 @@
 <?php 
 session_start();
 $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$user = trim($user);
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 if(!isset($_SESSION['behind'])) {
   $fetch = shell_exec("sudo -u".$user." git -C ".$home."/BirdNET-Pi fetch 2>&1");
-  // some kind of error
   if(strlen($fetch) > 0) {
-    $fetch = shell_exec("sudo git -C ".$home."/BirdNET-Pi fetch 2>&1");
-    $_SESSION['behind'] = trim(shell_exec("sudo git -C ".$home."/BirdNET-Pi status | sed -n '2 p' | cut -d ' ' -f 7"));
-  } else {
     $_SESSION['behind'] = trim(shell_exec("sudo -u".$user." git -C ".$home."/BirdNET-Pi status | sed -n '2 p' | cut -d ' ' -f 7"));
   }
-}
-if(intval($_SESSION['behind']) >= 99) {?>
-<style>
-.updatenumber { 
-  width:30px !important;
-}
-</style>
-<?php }
+  if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>
+  <style>
+  .updatenumber { 
+    width:30px !important;
+  }
+  </style>
+<?php }}
 ?>
 <link rel="stylesheet" href="style.css">
 <style>
@@ -54,7 +50,7 @@ body::-webkit-scrollbar {
   <button type="submit" name="view" value="View Log" form="views">View Log</button>
 </form>
 <form action="" method="GET" id="views">
-  <button type="submit" name="view" value="Tools" form="views">Tools<?php if(intval($_SESSION['behind']) >= 50){ $updatediv = ' <div class="updatenumber">'.$_SESSION["behind"].'</div>'; } else { $updatediv = ""; } echo $updatediv; ?></button>
+  <button type="submit" name="view" value="Tools" form="views">Tools<?php if(isset($_SESSION['behind']) && intval($_SESSION['behind']) >= 50){ $updatediv = ' <div class="updatenumber">'.$_SESSION["behind"].'</div>'; } else { $updatediv = ""; } echo $updatediv; ?></button>
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>

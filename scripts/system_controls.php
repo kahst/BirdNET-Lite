@@ -1,14 +1,11 @@
 <?php
 session_start();
 $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$user = trim($user);
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 $fetch = shell_exec("sudo -u".$user." git -C ".$home."/BirdNET-Pi fetch 2>&1");
-// some kind of error
 if(strlen($fetch) > 0) {
-  $fetch = shell_exec("sudo git -C ".$home."/BirdNET-Pi fetch 2>&1");
-  $_SESSION['behind'] = trim(shell_exec("sudo git -C ".$home."/BirdNET-Pi status | sed -n '2 p' | cut -d ' ' -f 7"));
-} else {
   $_SESSION['behind'] = trim(shell_exec("sudo -u".$user." git -C ".$home."/BirdNET-Pi status | sed -n '2 p' | cut -d ' ' -f 7"));
 }
 ?><html>
@@ -20,7 +17,7 @@ if(strlen($fetch) > 0) {
     <button type="submit" name="submit" value="sudo reboot" onclick="return confirm('Are you sure you want to reboot?')">Reboot</button>
   </form>
   <form action="" method="GET">
-    <button type="submit" name="submit" value="update_birdnet.sh" onclick="return confirm('Are you sure you want to update?')">Update <?php if($_SESSION['behind'] != "0" && $_SESSION['behind'] != "with"){?><div class="updatenumber"><?php echo $_SESSION['behind']; ?></div><?php } ?></button>
+    <button type="submit" name="submit" value="update_birdnet.sh" onclick="return confirm('Are you sure you want to update?')">Update <?php if(isset($_SESSION['behind']) && $_SESSION['behind'] != "0" && $_SESSION['behind'] != "with"){?><div class="updatenumber"><?php echo $_SESSION['behind']; ?></div><?php } ?></button>
   </form>
   <form action="" method="GET">
     <button type="submit" name="submit" value="sudo shutdown now" onclick="return confirm('Are you sure you want to shutdown?')">Shutdown</button>
