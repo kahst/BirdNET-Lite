@@ -76,7 +76,7 @@ if systemctl list-unit-files pushed_notifications.service &>/dev/null;then
 fi
 
 if [ ! -f $HOME/BirdNET-Pi/model/labels.txt ];then
-  [[ $DATABASE_LANG ~= 'not-selected' ]] && $DATABASE_LANG=en
+  [ $DATABASE_LANG == 'not-selected' ] && $DATABASE_LANG=en
   $my_dir/install_language_label.sh -l $DATABASE_LANG \
   && logger "[$0] Installed new language label file for '$DATABASE_LANG'";
 fi
