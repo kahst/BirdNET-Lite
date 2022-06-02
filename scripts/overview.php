@@ -327,7 +327,7 @@ window.addEventListener("load", function(){
 
 // every $refresh seconds, this loop will run and refresh the spectrogram image
 window.setInterval(function(){
-  document.getElementById("chart").src = "/Charts/<?php echo $chart;?>?nocache="+Date.now();
+  document.getElementById("chart").src = "/Charts/Combo-"+new Date().toISOString().slice(0, 10)+".png?nocache="+Date.now();
   document.getElementById("spectrogramimage").src = "/spectrogram.png?nocache="+Date.now();
 }, <?php echo $refresh; ?>*1000);
 </script>
