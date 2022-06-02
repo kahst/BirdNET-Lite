@@ -128,7 +128,6 @@ generate_BirdDB() {
   elif ! grep Date $my_dir/BirdDB.txt;then
     sudo -u ${USER} sed -i '1 i\Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap' $my_dir/BirdDB.txt
   fi
-  ln -sf $my_dir/BirdDB.txt ${my_dir}/BirdDB.txt &&
   chown $USER:$USER ${my_dir}/BirdDB.txt && chmod g+rw ${my_dir}/BirdDB.txt
 }
 
@@ -407,6 +406,10 @@ install_cleanup_cron() {
   sed "s/\$USER/$USER/g" $my_dir/templates/cleanup.cron >> /etc/crontab
 }
 
+chown_things() {
+  chown -R $USER:$USER $HOME/Bird*
+}
+
 install_services() {
   set_hostname
   update_etc_hosts
@@ -439,6 +442,7 @@ install_services() {
 if [ -f ${config_file} ];then
   source ${config_file}
   install_services
+  chown_things
 else
   echo "Unable to find a configuration file. Please make sure that $config_file exists."
 fi
