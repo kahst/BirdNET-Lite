@@ -42,6 +42,7 @@ Currently listening in these countries . . . that I know of . . .
 - Australia
 - Canada
 - Switzerland
+- Romania
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
