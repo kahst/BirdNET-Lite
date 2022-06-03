@@ -23,6 +23,13 @@ $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 
+if(isset($_GET['fetch_chart_string']) && $_GET['fetch_chart_string'] == "true") {
+  $myDate = date('Y-m-d');
+  $chart = "Combo-$myDate.png";
+  echo $chart;
+  die();
+}
+
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['previous_detection_identifier'])) {
 
   $statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 5');
@@ -277,6 +284,7 @@ function loadDetectionIfNewExists(previous_detection_identifier=undefined) {
       // only going to load left chart & 5 most recents if there's a new detection
       loadLeftChart();
       loadFiveMostRecentDetections();
+      refreshTopTen();
     }
   }
   xhttp.open("GET", "overview.php?ajax_detections=true&previous_detection_identifier="+previous_detection_identifier, true);
@@ -290,6 +298,16 @@ function loadLeftChart() {
     }
   }
   xhttp.open("GET", "overview.php?ajax_left_chart=true", true);
+  xhttp.send();
+}
+function refreshTopTen() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+  if(this.responseText.length > 0 && !this.responseText.includes("Database is busy")) {
+    document.getElementById("chart").src = "/Charts/"+this.responseText+"?nocache="+Date.now();
+  }
+  }
+  xhttp.open("GET", "overview.php?fetch_chart_string=true", true);
   xhttp.send();
 }
 window.setInterval(function(){
@@ -327,7 +345,6 @@ window.addEventListener("load", function(){
 
 // every $refresh seconds, this loop will run and refresh the spectrogram image
 window.setInterval(function(){
-  document.getElementById("chart").src = "/Charts/Combo-"+new Date().toISOString().slice(0, 10)+".png?nocache="+Date.now();
   document.getElementById("spectrogramimage").src = "/spectrogram.png?nocache="+Date.now();
 }, <?php echo $refresh; ?>*1000);
 </script>
