@@ -145,6 +145,7 @@ button:hover {
   display: flex;
   flex: 65%;
   width: 65%;
+  min-width: min-content;
   justify-content: space-between;
   margin-left: auto;
   margin-right: auto;
