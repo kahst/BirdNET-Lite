@@ -13,9 +13,8 @@ source /etc/birdnet/birdnet.conf
 
 # Set Variables
 TMPFILE=$(mktemp)
-ANALYZED=${RECS_DIR}/*/*Analyzed
 #SCAN_DIRS are all directories marked "Analyzed"
-SCAN_DIRS=($(find $ANALYZED -type d -name '*Analyzed' 2>/dev/null | sort ))
+SCAN_DIRS=($(find $RECS_DIR -type d -name '*Analyzed' 2>/dev/null | sort ))
 
 for h in "${SCAN_DIRS[@]}";do
   # The TMPFILE is created from each .csv file BirdNET creates
