@@ -168,9 +168,9 @@ until grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;do
   sleep 1
 done
 
-if [ $(find ${RECS_DIR} -maxdepth 1 -name '*wav' | wc -l) -gt 0 ];then
+if [ $(find ${RECS_DIR}/StreamData -maxdepth 1 -name '*wav' | wc -l) -gt 0 ];then
   find $RECS_DIR -maxdepth 1 -name '*wav' -type f -size 0 -delete
-  run_birdnet "${RECS_DIR}"
+  run_birdnet "${RECS_DIR}/StreamData"
 fi
 
 YESTERDAY="$RECS_DIR/$(date --date="yesterday" "+%B-%Y/%d-%A")"
