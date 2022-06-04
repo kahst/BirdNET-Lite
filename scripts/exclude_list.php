@@ -16,7 +16,7 @@
     $eachline = file($filename, FILE_IGNORE_NEW_LINES);
     
     foreach($eachline as $lines){echo 
-  "<option value='".$lines."'>$lines</option>";}
+  "<option value=\"".$lines."\">$lines</option>";}
   ?>
   </select>
   <input type="hidden" name="add" value="add">
@@ -43,7 +43,7 @@
   $eachline = file($filename, FILE_IGNORE_NEW_LINES);
   foreach($eachline as $lines){
     echo 
-  "<option value='".$lines."'>$lines</option>";
+  "<option value=\"".$lines."\">$lines</option>";
 }?>
   </select>
   <input type="hidden" name="del" value="del">

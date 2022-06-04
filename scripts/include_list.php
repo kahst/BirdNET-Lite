@@ -23,7 +23,7 @@ $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
     <option selected value="base">Please Select</option>
       <?php   
         foreach($eachlines as $lines){echo 
-    "<option value='".$lines."'>$lines</option>";}
+    "<option value=\"".$lines."\">$lines</option>";}
        ?>
   </select>
   <input type="hidden" name="add" value="add">
@@ -50,7 +50,7 @@ $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
         $filename = './scripts/include_species_list.txt';
         $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
         foreach($eachlines as $lines){echo 
-    "<option value='".$lines."'>$lines</option>";}
+    "<option value=\"".$lines."\">$lines</option>";}
       ?>
   </select>
   <input type="hidden" name="del" value="del">
