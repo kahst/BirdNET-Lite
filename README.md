@@ -45,6 +45,8 @@ Currently listening in these countries . . . that I know of . . .
 - Switzerland
 - Romania
 
+Come on, Ireland!! From one McGuire to another, let's get an installation on the Emerald Isle :)
+
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
 * Automatic extraction of detected data (creating audio clips of detected bird sounds)
