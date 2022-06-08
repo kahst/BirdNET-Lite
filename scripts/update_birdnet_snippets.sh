@@ -81,5 +81,9 @@ if [ ! -f $HOME/BirdNET-Pi/model/labels.txt ];then
   && logger "[$0] Installed new language label file for '$DATABASE_LANG'";
 fi
 
+if ! grep FLICKR_FILTER_EMAIL /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "FLICKR_FILTER_EMAIL=" >> /etc/birdnet/birdnet.conf
+fi
+
 sudo systemctl daemon-reload
 restart_services.sh

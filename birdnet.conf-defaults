@@ -64,8 +64,12 @@ APPRISE_NOTIFY_EACH_DETECTION=0
 APPRISE_NOTIFY_NEW_SPECIES=0
 
 #----------------------  Flickr Images API Configuration -----------------------#
+## If FLICKR_API_KEY is set, the web interface will try and display bird images 
+## for each detection. If FLICKR_FILTER_EMAIL is set, the images will only be 
+## displayed from a particular Flickr user (e.g. yourself).
 
 FLICKR_API_KEY=
+FLICKR_FILTER_EMAIL=
 
 ################################################################################
 #--------------------------------  Defaults  ----------------------------------#

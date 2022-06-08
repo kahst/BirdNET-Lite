@@ -22,6 +22,7 @@ if(isset($_GET["latitude"])){
   $apprise_notification_title = $_GET['apprise_notification_title'];
   $apprise_notification_body = $_GET['apprise_notification_body'];
   $flickr_api_key = $_GET['flickr_api_key'];
+  $flickr_filter_email = $_GET["flickr_filter_email"];
   $language = $_GET["language"];
 
   if(isset($_GET['apprise_notify_each_detection'])) {
@@ -79,6 +80,7 @@ if(isset($_GET["latitude"])){
   $contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents);
   $contents = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents);
   $contents = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents);
+  $contents = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents);
 
   $contents2 = file_get_contents("./scripts/thisrun.txt");
   $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
@@ -90,6 +92,7 @@ if(isset($_GET["latitude"])){
   $contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents2);
   $contents2 = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents2);
   $contents2 = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents2);
+  $contents2 = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents2);
 
 
   $fh = fopen("/etc/birdnet/birdnet.conf", "w");
@@ -187,6 +190,8 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <h3>Bird Photos from Flickr</h3>
       <label for="flickr_api_key">Flickr API Key: </label>
       <input name="flickr_api_key" type="text" value="<?php print($config['FLICKR_API_KEY']);?>"/><br>
+      <label for="flickr_filter_email">Only search photos from this Flickr user?: </label>
+      <input name="flickr_filter_email" type="email" placeholder="myflickraccount@gmail.com" value="<?php print($config['FLICKR_FILTER_EMAIL']);?>"/><br>
       <p>Set your Flickr API key to enable the display of bird images next to detections. <a target="_blank" href="https://www.flickr.com/services/api/misc.api_keys.html">Get your free key here.</a></p>
       <h3>Localization</h3>
       <label for="language">Database Language: </label>

@@ -67,6 +67,21 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
           if($_GET['only_name'] == "true") { echo $comname.",".$filename;die(); }
 
       if (!empty($config["FLICKR_API_KEY"])) {
+
+        if(!empty($config["FLICKR_FILTER_EMAIL"])) {
+          if(!isset($_SESSION["FLICKR_FILTER_EMAIL"])) {
+            unset($_SESSION['images']);
+            $_SESSION['FLICKR_FILTER_EMAIL'] = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.people.findByEmail&api_key=".$config["FLICKR_API_KEY"]."&find_email=".$config["FLICKR_FILTER_EMAIL"]."&format=json&nojsoncallback=1"), true)["user"]["nsid"];
+          }
+          $emailargs = "&user_id=".$_SESSION['FLICKR_FILTER_EMAIL'];
+        } else {
+          if(isset($_SESSION["FLICKR_FILTER_EMAIL"])) {
+            unset($_SESSION["FLICKR_FILTER_EMAIL"]);
+            unset($_SESSION['images']);
+          }
+        }
+   
+
         // if we already searched flickr for this species before, use the previous image rather than doing an unneccesary api call
         $key = array_search($comname, array_column($_SESSION['images'], 0));
         if($key !== false) {
@@ -84,7 +99,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
             }
           }
 
-         $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace(" ", "%20", $engname)."&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=5&orientation=square,portrait&format=json&media=photos&nojsoncallback=1"), true)["photos"]["photo"][0];
+         $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace(" ", "%20", $engname)."&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance".$emailargs."&per_page=5&orientation=square,portrait&format=json&media=photos&nojsoncallback=1"), true)["photos"]["photo"][0];
           $modaltext = "https://flickr.com/photos/".$flickrjson["owner"]."/".$flickrjson["id"];
           $authorlink = "https://flickr.com/people/".$flickrjson["owner"];
           $imageurl = 'https://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
@@ -117,7 +132,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
           <tr>
             <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $mostrecent['File_Name']; ?>"><img class="copyimage" width="25" height="25" src="images/copy.png"></a>
             <div class="centered_image_container" style="margin-bottom: 0px !important;">
-              <?php if(!empty($config["FLICKR_API_KEY"])) { ?>
+              <?php if(!empty($config["FLICKR_API_KEY"]) && strlen($image[2]) > 0) { ?>
                 <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
               <?php } ?>
               <form action="" method="GET">
