@@ -18,7 +18,7 @@ $newest_file = $files[2];
 if($newest_file == $_GET['newest_file']) {
   die();
 } 
-echo time()."\n";
+echo shell_exec("date +%s");
 echo "file,".$newest_file."\n";
 
 $row = 1;
