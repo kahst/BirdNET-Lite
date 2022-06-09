@@ -1,10 +1,17 @@
 <?php
 if(isset($_GET['ajax_csv'])) {
 
+if (file_exists('./scripts/thisrun.txt')) {
+  $config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
+}
+$RECS_DIR = $config["RECS_DIR"];
+
 $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
-$files = scandir($home."/BirdSongs/".date('F-Y')."/".date('d-l')."/", SCANDIR_SORT_ASCENDING);
+$files = scandir($RECS_DIR."/".date('F-Y')."/".date('d-l')."/", SCANDIR_SORT_ASCENDING);
 $newest_file = $files[2];
 
 
@@ -15,7 +22,7 @@ if($newest_file == $_GET['newest_file']) {
 echo "file,".$newest_file."\n";
 
 $row = 1;
-if (($handle = fopen($home."/BirdSongs/".date('F-Y')."/".date('d-l')."/".$newest_file.".csv", "r")) !== FALSE) {
+if (($handle = fopen($RECS_DIR."/".date('F-Y')."/".date('d-l')."/".$newest_file.".csv", "r")) !== FALSE) {
     while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
         if($row != 1){
           $num = count($data);
