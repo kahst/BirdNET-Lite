@@ -138,7 +138,7 @@ function loadDetectionIfNewExists() {
           
           d1 = new Date(newest_file.split("-")[0]+"/"+newest_file.split("-")[1]+"/"+newest_file.split("-")[2]+ " "+newest_file.split("-")[4].replace(".wav",""))
           console.log("d1 "+d1)
-          d2 = new Date();
+          d2 = new Date(xhttp.getResponseHeader("Date"));
           console.log("d2 "+d2)
           timeDiff = (d2-d1)/1000;
 
@@ -178,6 +178,7 @@ function loadDetectionIfNewExists() {
   }
   xhttp.open("GET", "spectrogram.php?ajax_csv=true&newest_file="+newest_file, true);
   xhttp.send();
+  
 }
 
 window.setInterval(function(){
