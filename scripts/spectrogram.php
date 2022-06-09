@@ -18,7 +18,7 @@ $newest_file = $files[2];
 if($newest_file == $_GET['newest_file']) {
   die();
 } 
-
+echo time()."\n";
 echo "file,".$newest_file."\n";
 
 $row = 1;
@@ -130,15 +130,15 @@ function loadDetectionIfNewExists() {
     if(this.responseText.length > 0 && !this.responseText.includes("Database")) {
       
       var split = this.responseText.split("\n")
-      for(var i = 1;i < split.length; i++) {
+      for(var i = 2;i < split.length; i++) {
         if(parseInt(split[i].split(",")[0]) >= 0){
 
-          newest_file =  split[0].split(",")[1]
+          newest_file =  split[1].split(",")[1]
           //applyText(split[i].split(",")[1],document.body.querySelector('canvas').width - ((parseInt(split[i].split(",")[0]))*avgfps), (document.body.querySelector('canvas').height * 0.50))
           
           d1 = new Date(newest_file.split("-")[0]+"/"+newest_file.split("-")[1]+"/"+newest_file.split("-")[2]+ " "+newest_file.split("-")[4].replace(".wav",""))
           console.log("d1 "+d1)
-          d2 = new Date(xhttp.getResponseHeader("Date"));
+          d2 = new Date(parseInt(split[0])*1000);
           console.log("d2 "+d2)
           timeDiff = (d2-d1)/1000;
 
