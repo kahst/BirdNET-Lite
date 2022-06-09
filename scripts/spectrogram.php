@@ -137,8 +137,9 @@ function loadDetectionIfNewExists() {
           //applyText(split[i].split(",")[1],document.body.querySelector('canvas').width - ((parseInt(split[i].split(",")[0]))*avgfps), (document.body.querySelector('canvas').height * 0.50))
           
           d1 = new Date(newest_file.split("-")[0]+"/"+newest_file.split("-")[1]+"/"+newest_file.split("-")[2]+ " "+newest_file.split("-")[4].replace(".wav",""))
-          console.log(d1)
+          console.log("d1 "+d1)
           d2 = new Date();
+          console.log("d2 "+d2)
           timeDiff = (d2-d1)/1000;
 
           // stagger Y placement if a new bird
