@@ -9,7 +9,7 @@ fi
 if ! [ -z ${CADDY_PWD} ];then
 HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
 cat << EOF > /etc/caddy/Caddyfile
-http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
+http:// http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   handle /By_Date/* {
@@ -45,7 +45,7 @@ http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
 EOF
 else
   cat << EOF > /etc/caddy/Caddyfile
-http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
+http:// http://localhost http://$(hostname).local ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
   handle /By_Date/* {
