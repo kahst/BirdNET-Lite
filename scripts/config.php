@@ -284,11 +284,16 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
         Select a timezone
       </option>
       <?php
+      $current_timezone = trim(shell_exec("cat /etc/timezone"));
       $timezone_identifiers = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
         
       $n = 425;
       for($i = 0; $i < $n; $i++) {
-          echo "<option value='".$timezone_identifiers[$i]."'>".$timezone_identifiers[$i]."</option>";
+          $isSelected = "";
+          if($timezone_identifiers[$i] == $current_timezone) {
+            $isSelected = 'selected="selected"';
+          }
+          echo "<option $isSelected value='".$timezone_identifiers[$i]."'>".$timezone_identifiers[$i]."</option>";
       }
       ?>
       </select>
