@@ -195,7 +195,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <h3>Bird Photos from Flickr</h3>
       <label for="flickr_api_key">Flickr API Key: </label>
       <input name="flickr_api_key" type="text" value="<?php print($config['FLICKR_API_KEY']);?>"/><br>
-      <label for="flickr_filter_email">Only search photos from this Flickr user?: </label>
+      <label for="flickr_filter_email">Only search photos from this Flickr user: </label>
       <input name="flickr_filter_email" type="email" placeholder="myflickraccount@gmail.com" value="<?php print($config['FLICKR_FILTER_EMAIL']);?>"/><br>
       <p>Set your Flickr API key to enable the display of bird images next to detections. <a target="_blank" href="https://www.flickr.com/services/api/misc.api_keys.html">Get your free key here.</a></p>
       <h3>Localization</h3>
