@@ -13,6 +13,11 @@ function syslog_shell_exec($cmd, $sudo_user = null) {
   }
 }
 
+if(isset($_GET['restart_php']) && $_GET['restart_php'] == "true") {
+  shell_exec("sudo service php7.4-fpm restart");
+  die();
+}
+
 # Basic Settings
 if(isset($_GET["latitude"])){
   $latitude = $_GET["latitude"];
@@ -39,6 +44,13 @@ if(isset($_GET["latitude"])){
 
   if(isset($timezone)) {
     shell_exec("sudo timedatectl set-timezone ".$timezone);
+    date_default_timezone_set($timezone);
+    echo "<script>setTimeout(
+    function() {
+      const xhttp = new XMLHttpRequest();
+    xhttp.open(\"GET\", \"scripts/config.php?restart_php=true\", true);
+    xhttp.send();
+    }, 1000);</script>";
   }
 
   // logic for setting the date and time based on user inputs from the form below
