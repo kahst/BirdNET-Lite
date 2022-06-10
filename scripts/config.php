@@ -13,6 +13,11 @@ function syslog_shell_exec($cmd, $sudo_user = null) {
   }
 }
 
+if(isset($_GET['restart_php']) && $_GET['restart_php'] == "true") {
+  shell_exec("sudo service php7.4-fpm restart");
+  die();
+}
+
 # Basic Settings
 if(isset($_GET["latitude"])){
   $latitude = $_GET["latitude"];
@@ -24,6 +29,7 @@ if(isset($_GET["latitude"])){
   $flickr_api_key = $_GET['flickr_api_key'];
   $flickr_filter_email = $_GET["flickr_filter_email"];
   $language = $_GET["language"];
+  $timezone = $_GET["timezone"];
 
   if(isset($_GET['apprise_notify_each_detection'])) {
     $apprise_notify_each_detection = 1;
@@ -34,6 +40,17 @@ if(isset($_GET["latitude"])){
     $apprise_notify_new_species = 1;
   } else {
     $apprise_notify_new_species = 0;
+  }
+
+  if(isset($timezone)) {
+    shell_exec("sudo timedatectl set-timezone ".$timezone);
+    date_default_timezone_set($timezone);
+    echo "<script>setTimeout(
+    function() {
+      const xhttp = new XMLHttpRequest();
+    xhttp.open(\"GET\", \"scripts/config.php?restart_php=true\", true);
+    xhttp.send();
+    }, 1000);</script>";
   }
 
   // logic for setting the date and time based on user inputs from the form below
@@ -190,7 +207,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <h3>Bird Photos from Flickr</h3>
       <label for="flickr_api_key">Flickr API Key: </label>
       <input name="flickr_api_key" type="text" value="<?php print($config['FLICKR_API_KEY']);?>"/><br>
-      <label for="flickr_filter_email">Only search photos from this Flickr user?: </label>
+      <label for="flickr_filter_email">Only search photos from this Flickr user: </label>
       <input name="flickr_filter_email" type="email" placeholder="myflickraccount@gmail.com" value="<?php print($config['FLICKR_FILTER_EMAIL']);?>"/><br>
       <p>Set your Flickr API key to enable the display of bird images next to detections. <a target="_blank" href="https://www.flickr.com/services/api/misc.api_keys.html">Get your free key here.</a></p>
       <h3>Localization</h3>
@@ -272,7 +289,27 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <span>If connected to the internet, retrieve time automatically?</span>
       <input type="checkbox" onchange='handleChange(this)' <?php echo $checkedvalue; ?> ><br>
       <input onclick="this.showPicker()" type="date" id="date" name="date" value="<?php echo date('Y-m-d') ?>" <?php echo $disabledvalue; ?>>
-      <input onclick="this.showPicker()" type="time" id="time" name="time" value="<?php echo date('H:i') ?>" <?php echo $disabledvalue; ?>>
+      <input onclick="this.showPicker()" type="time" id="time" name="time" value="<?php echo date('H:i') ?>" <?php echo $disabledvalue; ?>><br>
+      <label for="timezone">Select a Timezone: </label>
+      <select name="timezone">
+      <option disabled selected>
+        Select a timezone
+      </option>
+      <?php
+      $current_timezone = trim(shell_exec("cat /etc/timezone"));
+      $timezone_identifiers = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+        
+      $n = 425;
+      for($i = 0; $i < $n; $i++) {
+          $isSelected = "";
+          if($timezone_identifiers[$i] == $current_timezone) {
+            $isSelected = 'selected="selected"';
+          }
+          echo "<option $isSelected value='".$timezone_identifiers[$i]."'>".$timezone_identifiers[$i]."</option>";
+      }
+      ?>
+      </select>
+
       <br><br><br>
 
       <input type="hidden" name="status" value="success">
