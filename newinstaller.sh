@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+if [ "$EUID" == 0 ]
+  then echo "Please run as a non-root user."
+  exit
+fi
+
 # Simple new installer
 HOME=$HOME
 USER=$USER
