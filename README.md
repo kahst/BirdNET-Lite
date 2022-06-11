@@ -25,6 +25,7 @@ Check out birds from around the world
 - [Berowra, New South Wales, Australia](https://berowra.birdnetpi.com)
 - [Fairview, Tennessee, United States](https://fairviewtennessee.birdnetpi.com)
 - [Dundas, Ontario, Canada](https://dundasontario.birdnetpi.com)
+- [Bungendor, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 
