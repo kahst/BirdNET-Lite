@@ -50,13 +50,28 @@ const ctx = null;
 let fps =[];
 let avgfps;
 let requestTime;
+
+<?php 
+if(isset($_GET['legacy']) && $_GET['legacy'] == "true") {
+  echo "var legacy = true;";
+} else {
+  echo "var legacy = false;";
+}
+?>
+
 window.onload = function(){
+  var player =  document.getElementById('playersrc');
+  player.onerror = function() {
+    window.location="http://birdnetpi.local/views.php?view=Spectrogram&legacy=true";
+  };
+
   // if user agent includes iPhone or Mac use legacy mode
-  if(window.navigator.userAgent.includes("iPhone") || window.navigator.userAgent.includes("Mac")) {
+  if(window.navigator.userAgent.includes("iPhone") || window.navigator.userAgent.includes("Mac") || legacy == true) {
     document.getElementById("spectrogramimage").style.display="";
     document.body.querySelector('canvas').remove();
     document.getElementById('player').remove();
     document.body.querySelector('h1').remove();
+    document.getElementsByClassName("centered")[0].remove()
 
     <?php 
     if (file_exists('./scripts/thisrun.txt')) {
@@ -335,7 +350,7 @@ h1 {
   </div>
 </div>
 
-<audio style="display:none" controls="" crossorigin="anonymous" id='player' preload="none"><source src="/stream"></audio>
+<audio style="display:none" controls="" crossorigin="anonymous" id='player' preload="none"><source id="playersrc" src="/stream"></audio>
 <h1>Loading...</h1>
 <canvas></canvas>
 
