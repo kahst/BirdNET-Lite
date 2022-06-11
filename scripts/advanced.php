@@ -13,7 +13,7 @@ $caddypwd = $config['CADDY_PWD'];
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
   header('WWW-Authenticate: Basic realm="My Realm"');
   header('HTTP/1.0 401 Unauthorized');
-  echo 'You cannot edit the settings for this installation';
+  echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
   exit;
 } else {
   $submittedpwd = $_SERVER['PHP_AUTH_PW'];
@@ -21,7 +21,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
   if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
     header('WWW-Authenticate: Basic realm="My Realm"');
     header('HTTP/1.0 401 Unauthorized');
-    echo 'You cannot edit the settings for this installation';
+    echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
     exit;
   }
 }

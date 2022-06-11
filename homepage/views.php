@@ -102,7 +102,7 @@ if(isset($_GET['view'])){
     if (!isset($_SERVER['PHP_AUTH_USER'])) {
       header('WWW-Authenticate: Basic realm="My Realm"');
       header('HTTP/1.0 401 Unauthorized');
-      echo 'You cannot edit the settings for this installation';
+      echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
       exit;
     } else {
       $submittedpwd = $_SERVER['PHP_AUTH_PW'];
@@ -125,7 +125,7 @@ if(isset($_GET['view'])){
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
-        echo 'You cannot edit the settings for this installation';
+        echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
         exit;
       }
     }
@@ -198,7 +198,7 @@ if(isset($_GET['view'])){
     if (!isset($_SERVER['PHP_AUTH_USER'])) {
       header('WWW-Authenticate: Basic realm="My Realm"');
       header('HTTP/1.0 401 Unauthorized');
-      echo 'You cannot access the web terminal';
+      echo '<table><tr><td>You cannot access the web terminal</td></tr></table>';
       exit;
     } else {
       $submittedpwd = $_SERVER['PHP_AUTH_PW'];
@@ -209,7 +209,7 @@ if(isset($_GET['view'])){
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
-        echo 'You cannot access the web terminal';
+        echo '<table><tr><td>You cannot access the web terminal</td></tr></table>';
         exit;
       }
     }
