@@ -7,6 +7,7 @@ assignees: ''
 
 ---
 
+### PLEASE READ THE DOCUMENTATION BEFORE SUBMITTING AN ISSUE
 **Describe the bug**
 A clear and concise description of what the bug is.
 
