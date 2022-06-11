@@ -60,9 +60,9 @@ if(isset($_GET['legacy']) && $_GET['legacy'] == "true") {
 ?>
 
 window.onload = function(){
-  var player =  document.getElementById('playersrc');
-  player.onerror = function() {
-    window.location="http://birdnetpi.local/views.php?view=Spectrogram&legacy=true";
+  var playersrc =  document.getElementById('playersrc');
+  playersrc.onerror = function() {
+    window.location="views.php?view=Spectrogram&legacy=true";
   };
 
   // if user agent includes iPhone or Mac use legacy mode
