@@ -18,14 +18,13 @@ Check out birds from around the world
 - [BirdWeather](https://app.birdweather.com)<br>
 - [NatureStation.net in Johannesburg, South Africa](https://joburg.birdnetpi.com)<br>
 - [BirdNET-Pi in Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
-- [Private Nature Garden, Grevenbroich, Germany](http://grevenbroich-elsen.birdnetpi.com)<br>
 - [Norman, Oklahoma, United States](https://normanok.birdnetpi.com)<br>
 - [Nijmegen, the Netherlands](https://nijmegen.birdnetpi.com)<br>
 - [Murrysville, Pennsylvania, United States](https://murrysvillepa.birdnetpi.com)
 - [Berowra, New South Wales, Australia](https://berowra.birdnetpi.com)
 - [Fairview, Tennessee, United States](https://fairviewtennessee.birdnetpi.com)
 - [Dundas, Ontario, Canada](https://dundasontario.birdnetpi.com)
-- [Bungendor, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
+- [Bungendore, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 
