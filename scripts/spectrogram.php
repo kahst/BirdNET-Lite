@@ -28,7 +28,7 @@ if (($handle = fopen($RECS_DIR."/".date('F-Y')."/".date('d-l')."/".$newest_file.
           $num = count($data);
           for ($c=0; $c < $num; $c++) {
               $exp = explode(';',$data[$c]);
-              echo $exp[0].",".$exp[3].",".$exp[4]."\n";
+              echo (($exp[0]+$exp[1])/2).",".$exp[3].",".$exp[4]."\n";
           }
         }
         $row++;
