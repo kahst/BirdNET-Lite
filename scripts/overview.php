@@ -353,9 +353,7 @@ function loadFiveMostRecentDetections() {
   xhttp.send();
 }
 window.addEventListener("load", function(){
-  loadFiveMostRecentDetections();
   loadDetectionIfNewExists();
-  loadLeftChart();
 });
 
 // every $refresh seconds, this loop will run and refresh the spectrogram image
