@@ -121,6 +121,7 @@ if(isset($_GET['bydate'])){
   session_unset();
   $view = "choose";
 }
+$lazyload = "";
 ?>
 
 <html>
@@ -132,6 +133,12 @@ if(isset($_GET['bydate'])){
   </head>
 
 <script>
+window.onload = function(){
+  if(!window.navigator.userAgent.includes("iPhone") && !window.navigator.userAgent.includes("Mac")) {
+    <?php $lazyload = "loading=\"lazy\""; ?>
+  }
+};
+
 function toggleLock(filename, type, elem) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
@@ -298,13 +305,13 @@ if(isset($_GET['species'])){ ?>
 
         echo "<tr>
           <td class='relative'>$date $time<br>$confidence<br><img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">
-          <a href=\"$filename\"><img src=\"$filename.png\"></a>
+          <a href=\"$filename\"><img ".$lazyload." src=\"$filename.png\"></a>
           </td>
           </tr>";
       } else {
         echo "<tr>
           <td class='relative'>$date $time<br>$confidence<br>
-          <a href=\"$filename\"><img src=\"$filename.png\"></a>
+          <a href=\"$filename\"><img ".$lazyload." src=\"$filename.png\"></a>
           </td>
           </tr>";
       }
