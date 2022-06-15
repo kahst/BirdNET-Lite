@@ -49,20 +49,8 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
     $sciname = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
     $comname = preg_replace('/\'/', '', $comname);
     $filename = "/By_Date/".$mostrecent['Date']."/".$comname."/".$mostrecent['File_Name'];
-
-      // check to make sure the image actually exists, sometimes it takes a minute to be created
-      if (isset($_SERVER['HTTPS']) &&
-          ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
-          isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
-          $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
-        $protocol = 'https://';
-      }
-      else {
-        $protocol = 'http://';
-      }
-      $headers = @get_headers($protocol.$_SERVER['HTTP_HOST'].$filename.".png");
-      // we've found our valid detection! ignore everything else from the database loop
-      if(strpos($headers[0],'200')) {
+      // check to make sure the image actually exists, sometimes it takes a minute to be created\
+      if(file_exists($home."/BirdSongs/Extracted".$filename.".png")){
           if($_GET['previous_detection_identifier'] == $filename) { die(); }
           if($_GET['only_name'] == "true") { echo $comname.",".$filename;die(); }
 
