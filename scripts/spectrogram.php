@@ -160,7 +160,7 @@ function loadDetectionIfNewExists() {
           // stagger Y placement if a new bird
           if(split[i].split(",")[1] != lastbird || split[i].split(",")[1].length > 13) {
             add+= 15;
-            if(add >= 120) {
+            if(add >= 60) {
              add = 0;
             }
 
@@ -168,6 +168,7 @@ function loadDetectionIfNewExists() {
              // add = 0;
             //}
           }
+          console.log(add)
 
           // Date csv file was created + relative detection time of bird + mic delay
           secago = Math.abs(timeDiff) - split[i].split(",")[0] - 6.8;
@@ -175,11 +176,12 @@ function loadDetectionIfNewExists() {
           x = document.body.querySelector('canvas').width - ((parseInt(secago))*avgfps);
           // if the text is too close to the right side of the canvas and will be cut off, wait 3 seconds before adding text
           if(x > document.body.querySelector('canvas').width - (3*avgfps)) {
-        setTimeout(function (split,i,x) {
+        setTimeout(function (split,i,x,add) {
+          console.log("ADD:"+add)
           console.log(split[i])
           console.log("originally at "+x+", now waiting 2 sec and at "+(x-(3*avgfps)))
         applyText(split[i].split(",")[1],(x - (3*avgfps)), ((document.body.querySelector('canvas').height * 0.50) + add ), split[i].split(",")[2]);
-      }, 2000, split, i, x)
+      }, 2000, split, i, x, add)
       } else {
         applyText(split[i].split(",")[1],x, ((document.body.querySelector('canvas').height * 0.50) + add ), split[i].split(",")[2])
       }
