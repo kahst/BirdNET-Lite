@@ -136,7 +136,7 @@ if(isset($_GET["latitude"])){
   </style>
   </head>
 <div class="settings">
-      <h2>Basic Settings</h2>
+      <div class="brbanner"><h1>Basic Settings</h1></div><br>
     <form id="basicform" action=""  method="GET">
 <?php
 if (file_exists('./scripts/thisrun.txt')) {
@@ -168,23 +168,31 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
     exit;
   }
 }
-?>
+?>    
+
+      <table class="settingstable"><tr><td>
+      <h2>Location</h2>
       <label for="latitude">Latitude: </label>
       <input name="latitude" type="number" max="90" min="-90" step="0.0001" value="<?php print($config['LATITUDE']);?>" required/><br>
       <label for="longitude">Longitude: </label>
       <input name="longitude" type="number" max="180" min="-180" step="0.0001" value="<?php print($config['LONGITUDE']);?>" required/><br>
       <p>Set your Latitude and Longitude to 4 decimal places. Get your coordinates <a href="https://latlong.net" target="_blank">here</a>.</p>
+      </td></tr></table><br>
+      <table class="settingstable"><tr><td>
+      <h2>BirdWeather</h2>
       <label for="birdweather_id">BirdWeather ID: </label>
       <input name="birdweather_id" type="text" value="<?php print($config['BIRDWEATHER_ID']);?>" /><br>
-      <p><a href="https://app.birdweather.com" target="_blank">BirdWeather.com</a> is a weather map for bird sounds. Stations around the world supply audio and video streams to BirdWeather where they are then analyzed by BirdNET and compared to eBird Grid data. BirdWeather catalogues the bird audio and spectrogram visualizations so that you can listen to, view, and read about birds throughout the world. <a href="mailto:tim@birdweather.com?subject=Request%20BirdWeather%20ID&body=<?php include('./scripts/birdweather_request.php'); ?>" target="_blank">Email Tim</a> to request a BirdWeather ID</p><br>
-      <h3>Notifications</h3>
+      <p><a href="https://app.birdweather.com" target="_blank">BirdWeather.com</a> is a weather map for bird sounds. Stations around the world supply audio and video streams to BirdWeather where they are then analyzed by BirdNET and compared to eBird Grid data. BirdWeather catalogues the bird audio and spectrogram visualizations so that you can listen to, view, and read about birds throughout the world. <a href="mailto:tim@birdweather.com?subject=Request%20BirdWeather%20ID&body=<?php include('./scripts/birdweather_request.php'); ?>" target="_blank">Email Tim</a> to request a BirdWeather ID</p>
+      </td></tr></table><br>
+      <table class="settingstable" style="width:100%"><tr><td>
+      <h2>Notifications</h2>
       <p><a target="_blank" href="https://github.com/caronc/apprise/wiki">Apprise Notifications</a> can be setup and enabled for 70+ notification services. Each service should be on its own line.</p>
-      <label for="apprise_input">Apprise Notifications Configuration: </label>
+      <label for="apprise_input">Apprise Notifications Configuration: </label><br>
       <textarea placeholder="mailto://{user}:{password}@gmail.com
 tgram://{bot_token}/{chat_id}
 twitter://{ConsumerKey}/{ConsumerSecret}/{AccessToken}/{AccessSecret}
 https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
-..." style="vertical-align: top" name="apprise_input" cols="140" rows="5" type="text" ><?php print($apprise_config);?></textarea>
+..." style="vertical-align: top" name="apprise_input" rows="5" type="text" ><?php print($apprise_config);?></textarea>
       <dl>
       <dt>$sciname</dt>
       <dd>Scientific Name</dd>
@@ -204,13 +212,17 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <label for="apprise_notify_new_species">Notify each new infrequent species detection (<5 visits per week)</label><br>
       <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_notify_each_detection">Notify each new detection</label><br><br>
-      <h3>Bird Photos from Flickr</h3>
+      </td></tr></table><br>
+      <table class="settingstable"><tr><td>
+      <h2>Bird Photos from Flickr</h2>
       <label for="flickr_api_key">Flickr API Key: </label>
       <input name="flickr_api_key" type="text" value="<?php print($config['FLICKR_API_KEY']);?>"/><br>
       <label for="flickr_filter_email">Only search photos from this Flickr user: </label>
       <input name="flickr_filter_email" type="email" placeholder="myflickraccount@gmail.com" value="<?php print($config['FLICKR_FILTER_EMAIL']);?>"/><br>
       <p>Set your Flickr API key to enable the display of bird images next to detections. <a target="_blank" href="https://www.flickr.com/services/api/misc.api_keys.html">Get your free key here.</a></p>
-      <h3>Localization</h3>
+      </td></tr></table><br>
+      <table class="settingstable"><tr><td>
+      <h2>Localization</h2>
       <label for="language">Database Language: </label>
       <select name="language">
       <?php
@@ -259,7 +271,8 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       ?>
 
       </select>
-      <br><br>
+      </td></tr></table>
+      <br>
       <script>
         function handleChange(checkbox) {
           // this disables the input of manual date and time if the user wants to use the internet time
@@ -285,7 +298,8 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
         $disabledvalue = "";
       }
       ?>
-      <label for="appt">Select a Date and Time:</label><br>
+      <table class="settingstable"><tr><td>
+      <h2>Time and Date</h2>
       <span>If connected to the internet, retrieve time automatically?</span>
       <input type="checkbox" onchange='handleChange(this)' <?php echo $checkedvalue; ?> ><br>
       <input onclick="this.showPicker()" type="date" id="date" name="date" value="<?php echo date('Y-m-d') ?>" <?php echo $disabledvalue; ?>>
@@ -309,8 +323,9 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       }
       ?>
       </select>
+      </td></tr></table><br>
 
-      <br><br><br>
+      <br><br>
 
       <input type="hidden" name="status" value="success">
       <input type="hidden" name="submit" value="settings">
