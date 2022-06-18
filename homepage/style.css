@@ -758,3 +758,24 @@ form#views button .updatenumber {
   height:75px;
   float:left;
 }
+
+.settingstable {
+  margin-left:unset;
+  margin-right:unset;
+}
+.settingstable td {
+  text-align:unset;
+}
+.settingstable textarea {
+  width:100%;
+  margin-top:10px;
+}
+h1 {
+  font-size: xx-large;
+}
+h2 {
+  font-size:x-large;
+}
+.brbanner h1 {
+  margin:0px;
+}
