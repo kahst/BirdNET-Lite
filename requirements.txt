@@ -11,3 +11,5 @@ seaborn
 streamlit
 plotly
 apprise
+pytest==7.1.2
+pytest-mock==3.7.0

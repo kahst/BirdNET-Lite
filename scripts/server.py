@@ -13,6 +13,9 @@ import operator
 import socket
 import threading
 import os
+
+from notifications import sendAppriseNotifications
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
@@ -228,59 +231,6 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
     return detections
 
 
-def sendAppriseNotifications(species, confidence, path):
-    if os.path.exists(userDir + '/BirdNET-Pi/apprise.txt') and os.path.getsize(userDir + '/BirdNET-Pi/apprise.txt') > 0:
-        with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
-            this_run = f.readlines()
-            title = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_TITLE')]).split('=')[1]).split('\\')[0]).replace('"', '')
-            body = str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFICATION_BODY')]).split('=')[1]).split('\\')[0]).replace('"', '')
-            
-            try:
-                websiteurl = str(str(str([i for i in this_run if i.startswith('BIRDNETPI_URL')]).split('=')[1]).split('\\')[0]).replace('"', '')
-                if len(websiteurl) == 0:
-                    raise ValueError('Blank URL')
-            except Exception as e:
-                websiteurl = "http://"+socket.gethostname()+".local"
-
-            listenurl = websiteurl+"?filename="+path
-
-        if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_EACH_DETECTION')]).split('=')[1]).split('\\')[0]) == "1":
-
-            apobj = apprise.Apprise()
-            config = apprise.AppriseConfig()
-            config.add(userDir + '/BirdNET-Pi/apprise.txt')
-            apobj.add(config)
-
-            apobj.notify(
-                body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl),
-                title=title.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl),
-            )
-
-        if str(str(str([i for i in this_run if i.startswith('APPRISE_NOTIFY_NEW_SPECIES')]).split('=')[1]).split('\\')[0]) == "1":
-            try:
-                con = sqlite3.connect(userDir + '/BirdNET-Pi/scripts/birds.db')
-                cur = con.cursor()
-                cur.execute("SELECT DISTINCT(Com_Name), count(Com_Name) FROM detections WHERE date > (SELECT DATETIME('now', '-7 day')) GROUP BY Com_Name")
-                known_species = cur.fetchall()
-                sciName, comName = species.split("_")
-                numberDetections = [d[1] for d in known_species if d[0] == comName.replace("'","")][0]
-
-                if numberDetections <= 5:
-                    apobj = apprise.Apprise()
-                    config = apprise.AppriseConfig()
-                    config.add(userDir + '/BirdNET-Pi/apprise.txt')
-                    apobj.add(config)
-                    apobj.notify(
-                        body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections)+1)+" times in last 7d)",
-                        title=title.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections)+1)+" times in last 7d)",
-                    )
-
-                con.close()
-            except BaseException:
-                print("Database busy")
-                time.sleep(2)
-
-
 def writeResultsToFile(detections, min_conf, path):
 
     print('WRITING RESULTS TO', path, '...', end=' ')
@@ -408,13 +358,16 @@ def handle_client(conn, addr):
 
                 with open(userDir + '/BirdNET-Pi/BirdDB.txt', 'a') as rfile:
                     for d in detections:
+                        species_apprised_this_run = []
                         for entry in detections[d]:
                             if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0)
                                                          and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0)):
+                                # Write to text file.
                                 rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';'
                                             + str(entry[1]) + ";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';'
                                             + str(args.sensitivity) + ';' + str(args.overlap) + '\n')
 
+                                # Write to database
                                 Date = str(current_date)
                                 Time = str(current_time)
                                 species = entry[0]
@@ -445,8 +398,12 @@ def handle_client(conn, addr):
                                     except BaseException:
                                         print("Database busy")
                                         time.sleep(2)
-                                        
-                                sendAppriseNotifications(str(entry[0]), str(entry[1]), File_Name)
+                                
+                                # Apprise of detection if not already alerted this run.
+                                if not str(entry[0] in species_apprised_this_run:
+                                    sendAppriseNotifications(str(entry[0]), str(entry[1]), File_Name)
+                                
+                                species_apprised_this_run.append(str(entry[0])
 
                                 print(str(current_date) +
                                       ';' +
