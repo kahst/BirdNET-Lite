@@ -271,8 +271,8 @@ def sendAppriseNotifications(species, confidence, path):
                     config.add(userDir + '/BirdNET-Pi/apprise.txt')
                     apobj.add(config)
                     apobj.notify(
-                        body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections)+1)+" times in last 7d)",
-                        title=title.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections)+1)+" times in last 7d)",
+                        body=body.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections))+" times in last 7d)",
+                        title=title.replace("$sciname", species.split("_")[0]).replace("$comname", species.split("_")[1]).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections))+" times in last 7d)",
                     )
 
                 con.close()
