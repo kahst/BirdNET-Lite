@@ -118,6 +118,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   $comname = preg_replace('/\'/', '_', $comname);
   $filename = "/By_Date/".date('Y-m-d')."/".$comname."/".$todaytable['File_Name'];
   $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
+  $args = "&license=2%2C3%2C4%2C5%2C6%2C9&orientation=square,portrait";
 
   if (!empty($config["FLICKR_API_KEY"]) && (isset($_GET['display_limit']) || isset($_GET['hard_limit']))) {
 
@@ -126,7 +127,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
         unset($_SESSION['images']);
         $_SESSION['FLICKR_FILTER_EMAIL'] = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.people.findByEmail&api_key=".$config["FLICKR_API_KEY"]."&find_email=".$config["FLICKR_FILTER_EMAIL"]."&format=json&nojsoncallback=1"), true)["user"]["nsid"];
       }
-      $emailargs = "&user_id=".$_SESSION['FLICKR_FILTER_EMAIL'];
+      $args = "&user_id=".$_SESSION['FLICKR_FILTER_EMAIL'];
     } else {
       if(isset($_SESSION["FLICKR_FILTER_EMAIL"])) {
         unset($_SESSION["FLICKR_FILTER_EMAIL"]);
@@ -150,8 +151,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
           break;
         }
       }
-      
-      $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace(" ", "%20", $engname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance".$emailargs."&per_page=5&orientation=square,portrait&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"][0];
+      $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace(" ", "%20", $engname)."\"&sort=relevance".$args."&per_page=5&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"][0];
       $modaltext = "https://flickr.com/photos/".$flickrjson["owner"]."/".$flickrjson["id"];
       $authorlink = "https://flickr.com/people/".$flickrjson["owner"];
       $imageurl = 'https://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
