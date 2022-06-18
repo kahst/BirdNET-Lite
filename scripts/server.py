@@ -15,6 +15,7 @@ import threading
 import os
 
 from notifications import sendAppriseNotifications
+from utils.parse_settings import config_to_settings
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
@@ -49,6 +50,7 @@ with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
     priv_thresh = float("." + str(str(str([i for i in this_run if i.startswith('PRIVACY_THRESHOLD')]).split('=')[1]).split('\\')[0])) / 10
 
+settings_dict = config_to_settings(userDir + '/BirdNET-Pi/scripts/thisrun.txt')
 
 def loadModel():
 
@@ -401,7 +403,7 @@ def handle_client(conn, addr):
                                 
                                 # Apprise of detection if not already alerted this run.
                                 if not str(entry[0] in species_apprised_this_run:
-                                    sendAppriseNotifications(str(entry[0]), str(entry[1]), File_Name)
+                                    sendAppriseNotifications(str(entry[0]), str(entry[1]), File_Name, settings_dict)
                                 
                                 species_apprised_this_run.append(str(entry[0])
 
