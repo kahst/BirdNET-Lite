@@ -402,10 +402,10 @@ def handle_client(conn, addr):
                                         time.sleep(2)
                                 
                                 # Apprise of detection if not already alerted this run.
-                                if not str(entry[0] in species_apprised_this_run:
+                                if not str(entry[0]) in species_apprised_this_run:
                                     sendAppriseNotifications(str(entry[0]), str(entry[1]), File_Name, settings_dict)
                                 
-                                species_apprised_this_run.append(str(entry[0])
+                                species_apprised_this_run.append(str(entry[0]))
 
                                 print(str(current_date) +
                                       ';' +
