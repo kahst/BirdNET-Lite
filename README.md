@@ -48,6 +48,7 @@ Currently listening in these countries . . . that I know of . . .
 - New Zealand
 - Russia
 - Croatia
+- Belgium
 
 Come on, Ireland!! From one McGuire to another, let's get an installation on the Emerald Isle :)
 
