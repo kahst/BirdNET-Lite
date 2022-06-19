@@ -5,7 +5,7 @@ body::-webkit-scrollbar {
   display:none
 }
 </style>
-<link rel="stylesheet" href="style.css?v=14">
+<link rel="stylesheet" href="style.css?v=14.0.6">
 <body>
 <div class="banner">
   <div class="logo">
