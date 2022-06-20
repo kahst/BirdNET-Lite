@@ -22,7 +22,8 @@ def create_test_db(db_file):
               VALUES(?,?) '''
         
         cur = conn.cursor()
-        cur.execute(sql, ["Great Crested Flycatcher", datetime.now()])
+        today = datetime.now().strftime("%Y-%m-%d") # SQLite stores date as YYYY-MM-DD
+        cur.execute(sql, ["Great Crested Flycatcher", today])
         conn.commit()
 
     except Error as e:
@@ -58,7 +59,7 @@ def test_notifications(mocker):
     sendAppriseNotifications("Myiarchus crinitus_Great Crested Flycatcher", "91", "filename", settings_dict, "test.db")
     assert(notify_call.call_count == 1)
     assert(
-        notify_call.call_args_list[0][0][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence of 91 (only seen 1 times today)"
+        notify_call.call_args_list[0][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence of 91 (first time today)"
     )
 
     # Add new species notification.
@@ -67,7 +68,7 @@ def test_notifications(mocker):
     sendAppriseNotifications("Myiarchus crinitus_Great Crested Flycatcher", "91", "filename", settings_dict, "test.db")
     assert(notify_call.call_count == 2)
     assert(
-        notify_call.call_args_list[0][0][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence of 91 (only seen 1 times today)"
+        notify_call.call_args_list[0][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence of 91 (first time today)"
     )
     assert(
         notify_call.call_args_list[1][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence of 91 (only seen 1 times in last 7d)"

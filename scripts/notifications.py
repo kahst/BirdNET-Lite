@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 
 userDir = os.path.expanduser('~')
 APPRISE_CONFIG = userDir + '/BirdNET-Pi/apprise.txt'
-THIS_RUN_PATH = userDir + '/BirdNET-Pi/scripts/thisrun.txt'
 DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
 
 def notify(body, title):
@@ -22,7 +21,8 @@ def notify(body, title):
     )
 
 def sendAppriseNotifications(species, confidence, path, settings_dict, db_path=DB_PATH):
-    # print(settings_dict)
+    print(sendAppriseNotifications)
+    print(settings_dict)
     if os.path.exists(APPRISE_CONFIG) and os.path.getsize(APPRISE_CONFIG) > 0:
 
         title = settings_dict.get('APPRISE_NOTIFICATION_TITLE')
@@ -48,12 +48,17 @@ def sendAppriseNotifications(species, confidence, path, settings_dict, db_path=D
             try:
                 con = sqlite3.connect(db_path)
                 cur = con.cursor()
-                cur.execute("SELECT DISTINCT(Com_Name), count(Com_Name) FROM detections WHERE date > (SELECT DATETIME('now', '-1 day')) GROUP BY Com_Name")
+                today = datetime.now().strftime("%Y-%m-%d")
+                cur.execute(f"SELECT DISTINCT(Com_Name), count(Com_Name) FROM detections WHERE Date = date('{today}') GROUP BY Com_Name")
                 known_species = cur.fetchall()
-                numberDetections = [d[1] for d in known_species if d[0] == comName.replace("'","")][0]
-                if numberDetections <= APPRISE_NOTIFICATION_NEW_SPECIES_DAILY_COUNT_LIMIT:
-                    notify_body=body.replace("$sciname", sciName).replace("$comname", comName).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections))+" times today)",
-                    notify_title=title.replace("$sciname", sciName).replace("$comname", comName).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections))+" times today)",
+                detections = [d[1] for d in known_species if d[0] == comName.replace("'","")]
+                numberDetections = 0
+                if len(detections):
+                    numberDetections = detections[0]
+                if numberDetections > 0 and numberDetections <= APPRISE_NOTIFICATION_NEW_SPECIES_DAILY_COUNT_LIMIT:
+                    print("send the notification")
+                    notify_body=body.replace("$sciname", sciName).replace("$comname", comName).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (first time today)"
+                    notify_title=title.replace("$sciname", sciName).replace("$comname", comName).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (first time today)"
                     notify(notify_body, notify_title)
                 con.close()
             except sqlite3.Error as e:
@@ -65,10 +70,14 @@ def sendAppriseNotifications(species, confidence, path, settings_dict, db_path=D
             try:
                 con = sqlite3.connect(db_path)
                 cur = con.cursor()
-                cur.execute("SELECT DISTINCT(Com_Name), count(Com_Name) FROM detections WHERE date > (SELECT DATETIME('now', '-7 day')) GROUP BY Com_Name")
+                today = datetime.now().strftime("%Y-%m-%d")
+                cur.execute(f"SELECT DISTINCT(Com_Name), count(Com_Name) FROM detections WHERE Date >= date('{today}', '-7 day') GROUP BY Com_Name")
                 known_species = cur.fetchall()
-                numberDetections = [d[1] for d in known_species if d[0] == comName.replace("'","")][0]
-                if numberDetections <= 5:
+                detections = [d[1] for d in known_species if d[0] == comName.replace("'","")]
+                numberDetections = 0
+                if len(detections):
+                    numberDetections = detections[0]
+                if numberDetections > 0 and numberDetections <= 5:
                     notify_body=body.replace("$sciname", sciName).replace("$comname", comName).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections))+" times in last 7d)"
                     notify_title=title.replace("$sciname", sciName).replace("$comname", comName).replace("$confidence", confidence).replace("$listenurl", listenurl) + " (only seen "+str(int(numberDetections))+" times in last 7d)"
                     notify(notify_body, notify_title)
