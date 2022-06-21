@@ -50,8 +50,7 @@ Currently listening in these countries . . . that I know of . . .
 - Croatia
 - Belgium
 - Israel
-
-Come on, Ireland!! From one McGuire to another, let's get an installation on the Emerald Isle :)
+- Ireland
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
