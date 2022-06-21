@@ -21,8 +21,8 @@ def notify(body, title):
     )
 
 def sendAppriseNotifications(species, confidence, path, settings_dict, db_path=DB_PATH):
-    print(sendAppriseNotifications)
-    print(settings_dict)
+    # print(sendAppriseNotifications)
+    # print(settings_dict)
     if os.path.exists(APPRISE_CONFIG) and os.path.getsize(APPRISE_CONFIG) > 0:
 
         title = settings_dict.get('APPRISE_NOTIFICATION_TITLE')
