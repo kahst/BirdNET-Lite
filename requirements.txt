@@ -11,3 +11,4 @@ seaborn
 streamlit
 plotly
 apprise
+paho-mqtt
