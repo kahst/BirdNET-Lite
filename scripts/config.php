@@ -150,7 +150,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
     $body = str_replace("\$confidence", "0.85", $body);
     $body = str_replace("\$listenurl", "http://example.com/listenurl=", $body);
 
-  shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv -t '".$title."' -b '".$body."' ".$cf." ");
+  echo "<pre class=\"bash\">".shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv -t '".$title."' -b '".$body."' ".$cf." ")."</pre>";
 
   die();
 }
@@ -197,6 +197,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 
 <script>
 function sendTestNotification(e) {
+  document.getElementById("testsuccessmsg").innerHTML = "";
   e.classList.add("disabled");
 
   var apprise_notification_title = document.getElementsByName("apprise_notification_title")[0].value;
@@ -206,7 +207,7 @@ function sendTestNotification(e) {
   var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            document.getElementById("testsuccessmsg").innerHTML = "Test sent! Make sure to Update Settings below."
+            document.getElementById("testsuccessmsg").innerHTML = this.responseText+" Test sent! Make sure to <b>Update Settings</b> below."
             e.classList.remove("disabled");
         }
     }
