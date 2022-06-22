@@ -779,5 +779,8 @@ form#views button .updatenumber {
 }
 
 .testbtn {
-  background:#77c487;
+  background:#77c487 !important;
+}
+#testsuccessmsg {
+  font-size:small;
 }

@@ -206,7 +206,7 @@ function sendTestNotification(e) {
   var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-
+            document.getElementById("testsuccessmsg").innerHTML = "Test sent! Make sure to Update Settings below."
             e.classList.remove("disabled");
         }
     }
@@ -258,7 +258,8 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_notify_each_detection">Notify each new detection</label><br><br>
 
-      <button type="button" class="testbtn" onclick="sendTestNotification(this)">Send Test Notification</button>
+      <button type="button" class="testbtn" onclick="sendTestNotification(this)">Send Test Notification</button><br>
+      <span id="testsuccessmsg"></span>
       </td></tr></table><br>
       <table class="settingstable"><tr><td>
       <h2>Bird Photos from Flickr</h2>
