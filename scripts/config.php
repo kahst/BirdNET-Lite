@@ -130,6 +130,31 @@ if(isset($_GET["latitude"])){
   shell_exec("sudo restart_services.sh");
 }
 
+if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
+  $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+    $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+    $home = trim($home);
+    $cf = explode("\n",$_GET['apprise_config']);
+    $cf = "'".implode("' '", $cf)."'";
+
+    $title = $_GET['apprise_notification_title'];
+    $body = $_GET['apprise_notification_body'];
+
+    $title = str_replace("\$comname", "Common Name", $title);
+    $title = str_replace("\$sciname", "Scientific Name", $title);
+    $title = str_replace("\$confidence", "0.8", $title);
+    $title = str_replace("\$listenurl", "http://example.com", $title);
+
+    $body = str_replace("\$comname", "Common Name", $body);
+    $body = str_replace("\$sciname", "Scientific Name", $body);
+    $body = str_replace("\$confidence", "0.85", $body);
+    $body = str_replace("\$listenurl", "http://example.com/listenurl=", $body);
+
+  shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv -t '".$title."' -b '".$body."' ".$cf." ");
+
+  die();
+}
+
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -169,6 +194,26 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
   }
 }
 ?>    
+
+<script>
+function sendTestNotification(e) {
+  e.classList.add("disabled");
+
+  var apprise_notification_title = document.getElementsByName("apprise_notification_title")[0].value;
+  var apprise_notification_body = document.getElementsByName("apprise_notification_body")[0].value;
+  var apprise_config = encodeURIComponent(document.getElementsByName("apprise_input")[0].value);
+
+  var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+
+            e.classList.remove("disabled");
+        }
+    }
+    xmlHttp.open("GET", "scripts/config.php?sendtest=true&apprise_notification_title="+apprise_notification_title+"&apprise_notification_body="+apprise_notification_body+"&apprise_config="+apprise_config, true); // true for asynchronous 
+    xmlHttp.send(null);
+}
+</script>
 
       <table class="settingstable"><tr><td>
       <h2>Location</h2>
@@ -212,6 +257,8 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <label for="apprise_notify_new_species">Notify each new infrequent species detection (<5 visits per week)</label><br>
       <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_notify_each_detection">Notify each new detection</label><br><br>
+
+      <button type="button" class="testbtn" onclick="sendTestNotification(this)">Send Test Notification</button>
       </td></tr></table><br>
       <table class="settingstable"><tr><td>
       <h2>Bird Photos from Flickr</h2>
