@@ -17,7 +17,7 @@ if(!isset($_SESSION['behind'])) {
   </style>
 <?php }}
 ?>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=6.22.22">
 <style>
 body::-webkit-scrollbar {
   display:none
