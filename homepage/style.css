@@ -781,3 +781,12 @@ form#views button .updatenumber {
 .testbtn {
   background:#77c487 !important;
 }
+
+pre.bash {
+  background-color: black;
+  color: white;
+  font-size: medium ; 
+  font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+  width: 100%;
+  display: inline-block;
+}
