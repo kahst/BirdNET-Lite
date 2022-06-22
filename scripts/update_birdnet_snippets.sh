@@ -53,6 +53,7 @@ if [[ "$apprise_installation_status" = "not installed" ]];then
   ~/BirdNET-Pi/birdnet/bin/pip3 install -U pip
   ~/BirdNET-Pi/birdnet/bin/pip3 install apprise
 fi
+[ -f $HOME/BirdNET-Pi/apprise.txt ] || sudo -E -u$USER touch $HOME/BirdNET-Pi/apprise.txt
 if ! which lsof &>/dev/null;then
   sudo apt update && sudo apt -y install lsof
 fi
