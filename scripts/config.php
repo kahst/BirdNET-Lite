@@ -2,6 +2,8 @@
 error_reporting(E_ERROR);
 ini_set('display_errors',1);
 
+$db = new SQLite3('./birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+
 function syslog_shell_exec($cmd, $sudo_user = null) {
   if ($sudo_user) {
     $cmd = "sudo -u $sudo_user $cmd";
@@ -132,23 +134,47 @@ if(isset($_GET["latitude"])){
 
 if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-    $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-    $home = trim($home);
-    $cf = explode("\n",$_GET['apprise_config']);
-    $cf = "'".implode("' '", $cf)."'";
+  $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+  $home = trim($home);
 
-    $title = $_GET['apprise_notification_title'];
-    $body = $_GET['apprise_notification_body'];
+  if (file_exists('./thisrun.txt')) {
+    $config = parse_ini_file('./thisrun.txt');
+  } elseif (file_exists('./firstrun.ini')) {
+    $config = parse_ini_file('./firstrun.ini');
+  }
 
-    $title = str_replace("\$comname", "Common Name", $title);
-    $title = str_replace("\$sciname", "Scientific Name", $title);
-    $title = str_replace("\$confidence", "0.8", $title);
-    $title = str_replace("\$listenurl", "http://example.com", $title);
+  $cf = explode("\n",$_GET['apprise_config']);
+  $cf = "'".implode("' '", $cf)."'";
 
-    $body = str_replace("\$comname", "Common Name", $body);
-    $body = str_replace("\$sciname", "Scientific Name", $body);
-    $body = str_replace("\$confidence", "0.85", $body);
-    $body = str_replace("\$listenurl", "http://example.com/listenurl=", $body);
+  $statement0 = $db->prepare('SELECT * FROM detections WHERE Date == DATE(\'now\', \'localtime\') ORDER BY TIME DESC LIMIT 1');
+  $result0 = $statement0->execute();
+  while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
+  {
+    $comname = preg_replace('/ /', '_', $todaytable['Com_Name']);
+    $comname = preg_replace('/\'/', '_', $comname);
+    $filename = $todaytable['File_Name'];
+    $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
+    $confidence = $todaytable["Confidence"];
+  }
+
+  $title = $_GET['apprise_notification_title'];
+  $body = $_GET['apprise_notification_body'];
+
+  if($config["BIRDNETPI_URL"] != "") {
+    $filename = $config["BIRDNETPI_URL"]."?filename=".$filename;
+  } else{
+    $filename = "http://birdnetpi.local/"."?filename=".$filename;
+  }
+
+  $title = str_replace("\$comname", $comname, $title);
+  $title = str_replace("\$sciname", $sciname, $title);
+  $title = str_replace("\$confidence", $confidence, $title);
+  $title = str_replace("\$listenurl", $filename, $title);
+
+  $body = str_replace("\$comname", $comname, $body);
+  $body = str_replace("\$sciname", $sciname, $body);
+  $body = str_replace("\$confidence", $confidence, $body);
+  $body = str_replace("\$listenurl", $filename, $body);
 
   echo "<pre class=\"bash\">".shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv -t '".$title."' -b '".$body."' ".$cf." ")."</pre>";
 
