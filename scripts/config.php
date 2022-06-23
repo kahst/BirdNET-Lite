@@ -150,10 +150,9 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   $result0 = $statement0->execute();
   while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
   {
-    $comname = preg_replace('/ /', '_', $todaytable['Com_Name']);
-    $comname = preg_replace('/\'/', '_', $comname);
+    $comname = $todaytable['Com_Name'];
     $filename = $todaytable['File_Name'];
-    $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
+    $sciname = $todaytable['Sci_Name'];
     $confidence = $todaytable["Confidence"];
   }
 
