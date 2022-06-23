@@ -2,6 +2,8 @@
 error_reporting(E_ERROR);
 ini_set('display_errors',1);
 
+$db = new SQLite3('./birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+
 function syslog_shell_exec($cmd, $sudo_user = null) {
   if ($sudo_user) {
     $cmd = "sudo -u $sudo_user $cmd";
@@ -137,6 +139,54 @@ if(isset($_GET["latitude"])){
   shell_exec("sudo restart_services.sh");
 }
 
+if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
+  $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+  $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+  $home = trim($home);
+
+  if (file_exists('./thisrun.txt')) {
+    $config = parse_ini_file('./thisrun.txt');
+  } elseif (file_exists('./firstrun.ini')) {
+    $config = parse_ini_file('./firstrun.ini');
+  }
+
+  $cf = explode("\n",$_GET['apprise_config']);
+  $cf = "'".implode("' '", $cf)."'";
+
+  $statement0 = $db->prepare('SELECT * FROM detections WHERE Date == DATE(\'now\', \'localtime\') ORDER BY TIME DESC LIMIT 1');
+  $result0 = $statement0->execute();
+  while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
+  {
+    $comname = $todaytable['Com_Name'];
+    $filename = $todaytable['File_Name'];
+    $sciname = $todaytable['Sci_Name'];
+    $confidence = $todaytable["Confidence"];
+  }
+
+  $title = $_GET['apprise_notification_title'];
+  $body = $_GET['apprise_notification_body'];
+
+  if($config["BIRDNETPI_URL"] != "") {
+    $filename = $config["BIRDNETPI_URL"]."?filename=".$filename;
+  } else{
+    $filename = "http://birdnetpi.local/"."?filename=".$filename;
+  }
+
+  $title = str_replace("\$comname", $comname, $title);
+  $title = str_replace("\$sciname", $sciname, $title);
+  $title = str_replace("\$confidence", $confidence, $title);
+  $title = str_replace("\$listenurl", $filename, $title);
+
+  $body = str_replace("\$comname", $comname, $body);
+  $body = str_replace("\$sciname", $sciname, $body);
+  $body = str_replace("\$confidence", $confidence, $body);
+  $body = str_replace("\$listenurl", $filename, $body);
+
+  echo "<pre class=\"bash\">".shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv -t '".$title."' -b '".$body."' ".$cf." ")."</pre>";
+
+  die();
+}
+
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -176,6 +226,27 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
   }
 }
 ?>    
+
+<script>
+function sendTestNotification(e) {
+  document.getElementById("testsuccessmsg").innerHTML = "";
+  e.classList.add("disabled");
+
+  var apprise_notification_title = document.getElementsByName("apprise_notification_title")[0].value;
+  var apprise_notification_body = document.getElementsByName("apprise_notification_body")[0].value;
+  var apprise_config = encodeURIComponent(document.getElementsByName("apprise_input")[0].value);
+
+  var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            document.getElementById("testsuccessmsg").innerHTML = this.responseText+" Test sent! Make sure to <b>Update Settings</b> below."
+            e.classList.remove("disabled");
+        }
+    }
+    xmlHttp.open("GET", "scripts/config.php?sendtest=true&apprise_notification_title="+apprise_notification_title+"&apprise_notification_body="+apprise_notification_body+"&apprise_config="+apprise_config, true); // true for asynchronous 
+    xmlHttp.send(null);
+}
+</script>
 
       <table class="settingstable"><tr><td>
       <h2>Location</h2>
@@ -221,6 +292,9 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <label for="apprise_notify_new_species_each_day">Notify each new species detection of the day</label><br>
       <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_notify_each_detection">Notify each new detection</label><br><br>
+
+      <button type="button" class="testbtn" onclick="sendTestNotification(this)">Send Test Notification</button><br>
+      <span id="testsuccessmsg"></span>
       </td></tr></table><br>
       <table class="settingstable"><tr><td>
       <h2>Bird Photos from Flickr</h2>
