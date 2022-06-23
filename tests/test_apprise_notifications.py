@@ -2,7 +2,7 @@ import os
 import sqlite3
 import pytest
 
-from scripts.notifications import sendAppriseNotifications
+from scripts.utils.notifications import sendAppriseNotifications
 from datetime import datetime, timedelta
 
 def create_test_db(db_file):
@@ -38,8 +38,9 @@ def clean_up_after_each_test():
     yield
     os.remove("test.db")
 
+
 def test_notifications(mocker):
-    notify_call = mocker.patch('scripts.notifications.notify')
+    notify_call = mocker.patch('scripts.utils.notifications.notify')
     create_test_db("test.db")
     settings_dict = {
         "APPRISE_NOTIFICATION_TITLE": "New backyard bird!",

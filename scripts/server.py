@@ -14,7 +14,7 @@ import socket
 import threading
 import os
 
-from notifications import sendAppriseNotifications
+from utils.notifications import sendAppriseNotifications
 from utils.parse_settings import config_to_settings
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
