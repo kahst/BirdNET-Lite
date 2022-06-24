@@ -3,7 +3,8 @@ import sqlite3
 import pytest
 
 from scripts.utils.notifications import sendAppriseNotifications
-from datetime import datetime, timedelta
+from datetime import datetime
+
 
 def create_test_db(db_file):
     """ create a database connection to a SQLite database """
@@ -20,13 +21,13 @@ def create_test_db(db_file):
         cur.execute(sql_create_detections_table)
         sql = ''' INSERT INTO detections(Com_Name, Date)
               VALUES(?,?) '''
-        
+
         cur = conn.cursor()
-        today = datetime.now().strftime("%Y-%m-%d") # SQLite stores date as YYYY-MM-DD
+        today = datetime.now().strftime("%Y-%m-%d")  # SQLite stores date as YYYY-MM-DD
         cur.execute(sql, ["Great Crested Flycatcher", today])
         conn.commit()
 
-    except Error as e:
+    except Exception as e:
         print(e)
     finally:
         if conn:
@@ -52,7 +53,7 @@ def test_notifications(mocker):
 
     # No active apprise notifcations configured. Confirm no notifications.
     sendAppriseNotifications("Myiarchus crinitus_Great Crested Flycatcher", "91", "filename", settings_dict, "test.db")
-    assert(notify_call.call_count == 0) # No notification should be sent.
+    assert(notify_call.call_count == 0)  # No notification should be sent.
 
     # Add daily notification.
     notify_call.reset_mock()
@@ -72,7 +73,8 @@ def test_notifications(mocker):
         notify_call.call_args_list[0][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence of 91 (first time today)"
     )
     assert(
-        notify_call.call_args_list[1][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence of 91 (only seen 1 times in last 7d)"
+        notify_call.call_args_list[1][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) \
+                was just detected with a confidence of 91 (only seen 1 times in last 7d)"
     )
 
     # Add each species notification.
