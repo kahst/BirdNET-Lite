@@ -1,4 +1,3 @@
-import apprise
 from pathlib import Path
 from tzlocal import get_localzone
 import datetime
@@ -49,6 +48,7 @@ with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     this_run = f.readlines()
     audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
     priv_thresh = float("." + str(str(str([i for i in this_run if i.startswith('PRIVACY_THRESHOLD')]).split('=')[1]).split('\\')[0])) / 10
+
 
 def loadModel():
 
@@ -389,8 +389,8 @@ def handle_client(conn, addr):
                                     try:
                                         con = sqlite3.connect(userDir + '/BirdNET-Pi/scripts/birds.db')
                                         cur = con.cursor()
-                                        cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Date, Time,
-                                                    Sci_Name, Com_Name, str(score), Lat, Lon, Cutoff, Week, Sens, Overlap, File_Name))
+                                        cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Date, Time,
+                                                    Sci_Name, Com_Name, str(score), Lat, Lon, Cutoff, Week, Sens, Overlap, File_Name, "UNVERIFIED"))
 
                                         con.commit()
                                         con.close()
@@ -398,7 +398,7 @@ def handle_client(conn, addr):
                                     except BaseException:
                                         print("Database busy")
                                         time.sleep(2)
-                                
+
                                 # Apprise of detection if not already alerted this run.
                                 if not entry[0] in species_apprised_this_run:
                                     settings_dict = config_to_settings(userDir + '/BirdNET-Pi/scripts/thisrun.txt')
