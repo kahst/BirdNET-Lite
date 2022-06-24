@@ -1,7 +1,6 @@
 import os
 import sqlite3
 import pytest
-
 from scripts.utils.notifications import sendAppriseNotifications
 from datetime import datetime
 
