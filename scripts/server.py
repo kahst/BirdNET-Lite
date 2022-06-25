@@ -32,6 +32,10 @@ ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 
+userDir = os.path.expanduser('~')
+DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
+ 
+
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -43,7 +47,6 @@ except BaseException:
 
 
 # Open most recent Configuration and grab DB_PWD as a python variable
-userDir = os.path.expanduser('~')
 with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     this_run = f.readlines()
     audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
@@ -387,7 +390,7 @@ def handle_client(conn, addr):
                                 # Connect to SQLite Database
                                 for attempt_number in range(3):
                                     try:
-                                        con = sqlite3.connect(userDir + '/BirdNET-Pi/scripts/birds.db')
+                                        con = sqlite3.connect(DB_PATH)
                                         cur = con.cursor()
                                         cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Date, Time,
                                                     Sci_Name, Com_Name, str(score), Lat, Lon, Cutoff, Week, Sens, Overlap, File_Name))
@@ -402,7 +405,7 @@ def handle_client(conn, addr):
                                 # Apprise of detection if not already alerted this run.
                                 if not entry[0] in species_apprised_this_run:
                                     settings_dict = config_to_settings(userDir + '/BirdNET-Pi/scripts/thisrun.txt')
-                                    sendAppriseNotifications(str(entry[0]), str(entry[1]), File_Name, settings_dict)
+                                    sendAppriseNotifications(species, str(score), File_Name, Date, Time, Week, Lat, Lon, Cutoff, Sens, Overlap, settings_dict, DB_PATH)
                                     species_apprised_this_run.append(entry[0])
 
                                 print(str(current_date) +
@@ -424,14 +427,8 @@ def handle_client(conn, addr):
                                       str(args.sensitivity) +
                                       ';' +
                                       str(args.overlap) +
-                                      Com_Name.replace(" ", "_") +
-                                      '-' +
-                                      str(score) +
-                                      '-' +
-                                      str(current_date) +
-                                      '-birdnet-' +
-                                      str(current_time) +
-                                      audiofmt +
+                                      ';' +
+                                      File_Name +
                                       '\n')
 
                                 if birdweather_id != "99999":

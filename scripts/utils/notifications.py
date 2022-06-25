@@ -21,7 +21,7 @@ def notify(body, title):
     )
 
 
-def sendAppriseNotifications(species, confidence, path, settings_dict, db_path=DB_PATH):
+def sendAppriseNotifications(species, confidence, path, date, time, week, latitude, longitude, cutoff, sens, overlap, settings_dict, db_path=DB_PATH):
     # print(sendAppriseNotifications)
     # print(settings_dict)
     if os.path.exists(APPRISE_CONFIG) and os.path.getsize(APPRISE_CONFIG) > 0:
@@ -40,8 +40,30 @@ def sendAppriseNotifications(species, confidence, path, settings_dict, db_path=D
         listenurl = websiteurl+"?filename="+path
 
         if settings_dict.get('APPRISE_NOTIFY_EACH_DETECTION') == "1":
-            notify_body = body.replace("$sciname", sciName).replace("$comname", comName).replace("$confidence", confidence).replace("$listenurl", listenurl)
-            notify_title = title.replace("$sciname", sciName).replace("$comname", comName).replace("$confidence", confidence).replace("$listenurl", listenurl)
+            notify_body = body.replace("$sciname", sciName)\
+                .replace("$comname", comName)\
+                .replace("$confidence", confidence)\
+                .replace("$listenurl", listenurl)\
+                .replace("$date", date)\
+                .replace("$time", time)\
+                .replace("$week", week)\
+                .replace("$latitude", latitude)\
+                .replace("$longitude", longitude)\
+                .replace("$cutoff", cutoff)\
+                .replace("$sens", sens)\
+                .replace("$overlap", overlap)
+            notify_title = title.replace("$sciname", sciName)\
+                .replace("$comname", comName)\
+                .replace("$confidence", confidence)\
+                .replace("$listenurl", listenurl)\
+                .replace("$date", date)\
+                .replace("$time", time)\
+                .replace("$week", week)\
+                .replace("$latitude", latitude)\
+                .replace("$longitude", longitude)\
+                .replace("$cutoff", cutoff)\
+                .replace("$sens", sens)\
+                .replace("$overlap", overlap)
             notify(notify_body, notify_title)
 
         APPRISE_NOTIFICATION_NEW_SPECIES_DAILY_COUNT_LIMIT = 1  # Notifies the first N per day.
@@ -50,7 +72,7 @@ def sendAppriseNotifications(species, confidence, path, settings_dict, db_path=D
                 con = sqlite3.connect(db_path)
                 cur = con.cursor()
                 today = datetime.now().strftime("%Y-%m-%d")
-                cur.execute(f"SELECT DISTINCT(Com_Name), count(Com_Name) FROM detections WHERE Date = date('{today}') GROUP BY Com_Name")
+                cur.execute(f"SELECT DISTINCT(Com_Name), COUNT(Com_Name) FROM detections WHERE Date = DATE('{today}') GROUP BY Com_Name")
                 known_species = cur.fetchall()
                 detections = [d[1] for d in known_species if d[0] == comName.replace("'", "")]
                 numberDetections = 0
@@ -58,11 +80,31 @@ def sendAppriseNotifications(species, confidence, path, settings_dict, db_path=D
                     numberDetections = detections[0]
                 if numberDetections > 0 and numberDetections <= APPRISE_NOTIFICATION_NEW_SPECIES_DAILY_COUNT_LIMIT:
                     print("send the notification")
-                    notify_body = body.replace("$sciname", sciName).replace("$comname", comName)\
-                        .replace("$confidence", confidence).replace("$listenurl", listenurl)\
+                    notify_body = body.replace("$sciname", sciName)\
+                        .replace("$comname", comName)\
+                        .replace("$confidence", confidence)\
+                        .replace("$listenurl", listenurl)\
+                        .replace("$date", date)\
+                        .replace("$time", time)\
+                        .replace("$week", week)\
+                        .replace("$latitude", latitude)\
+                        .replace("$longitude", longitude)\
+                        .replace("$cutoff", cutoff)\
+                        .replace("$sens", sens)\
+                        .replace("$overlap", overlap)\
                         + " (first time today)"
-                    notify_title = title.replace("$sciname", sciName).replace("$comname", comName)\
-                        .replace("$confidence", confidence).replace("$listenurl", listenurl)\
+                    notify_title = title.replace("$sciname", sciName)\
+                        .replace("$comname", comName)\
+                        .replace("$confidence", confidence)\
+                        .replace("$listenurl", listenurl)\
+                        .replace("$date", date)\
+                        .replace("$time", time)\
+                        .replace("$week", week)\
+                        .replace("$latitude", latitude)\
+                        .replace("$longitude", longitude)\
+                        .replace("$cutoff", cutoff)\
+                        .replace("$sens", sens)\
+                        .replace("$overlap", overlap)\
                         + " (first time today)"
                     notify(notify_body, notify_title)
                 con.close()
@@ -76,18 +118,38 @@ def sendAppriseNotifications(species, confidence, path, settings_dict, db_path=D
                 con = sqlite3.connect(db_path)
                 cur = con.cursor()
                 today = datetime.now().strftime("%Y-%m-%d")
-                cur.execute(f"SELECT DISTINCT(Com_Name), count(Com_Name) FROM detections WHERE Date >= date('{today}', '-7 day') GROUP BY Com_Name")
+                cur.execute(f"SELECT DISTINCT(Com_Name), COUNT(Com_Name) FROM detections WHERE Date >= DATE('{today}', '-7 day') GROUP BY Com_Name")
                 known_species = cur.fetchall()
                 detections = [d[1] for d in known_species if d[0] == comName.replace("'", "")]
                 numberDetections = 0
                 if len(detections):
                     numberDetections = detections[0]
                 if numberDetections > 0 and numberDetections <= 5:
-                    notify_body = body.replace("$sciname", sciName).replace("$comname", comName)\
-                        .replace("$confidence", confidence).replace("$listenurl", listenurl)\
+                    notify_body = body.replace("$sciname", sciName)\
+                        .replace("$comname", comName)\
+                        .replace("$confidence", confidence)\
+                        .replace("$listenurl", listenurl)\
+                        .replace("$date", date)\
+                        .replace("$time", time)\
+                        .replace("$week", week)\
+                        .replace("$latitude", latitude)\
+                        .replace("$longitude", longitude)\
+                        .replace("$cutoff", cutoff)\
+                        .replace("$sens", sens)\
+                        .replace("$overlap", overlap)\
                         + " (only seen " + str(int(numberDetections)) + " times in last 7d)"
-                    notify_title = title.replace("$sciname", sciName).replace("$comname", comName)\
-                        .replace("$confidence", confidence).replace("$listenurl", listenurl)\
+                    notify_title = title.replace("$sciname", sciName)\
+                        .replace("$comname", comName)\
+                        .replace("$confidence", confidence)\
+                        .replace("$listenurl", listenurl)\
+                        .replace("$date", date)\
+                        .replace("$time", time)\
+                        .replace("$week", week)\
+                        .replace("$latitude", latitude)\
+                        .replace("$longitude", longitude)\
+                        .replace("$cutoff", cutoff)\
+                        .replace("$sens", sens)\
+                        .replace("$overlap", overlap)\
                         + " (only seen " + str(int(numberDetections)) + " times in last 7d)"
                     notify(notify_body, notify_title)
                 con.close()
