@@ -34,7 +34,7 @@ DISCONNECT_MESSAGE = "!DISCONNECT"
 
 userDir = os.path.expanduser('~')
 DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
- 
+
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -405,7 +405,19 @@ def handle_client(conn, addr):
                                 # Apprise of detection if not already alerted this run.
                                 if not entry[0] in species_apprised_this_run:
                                     settings_dict = config_to_settings(userDir + '/BirdNET-Pi/scripts/thisrun.txt')
-                                    sendAppriseNotifications(species, str(score), File_Name, Date, Time, Week, Lat, Lon, Cutoff, Sens, Overlap, settings_dict, DB_PATH)
+                                    sendAppriseNotifications(species,
+                                                             str(score),
+                                                             File_Name,
+                                                             Date,
+                                                             Time,
+                                                             Week,
+                                                             Lat,
+                                                             Lon,
+                                                             Cutoff,
+                                                             Sens,
+                                                             Overlap,
+                                                             settings_dict,
+                                                             DB_PATH)
                                     species_apprised_this_run.append(entry[0])
 
                                 print(str(current_date) +
