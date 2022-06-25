@@ -40,6 +40,9 @@ fi
 if ! grep APPRISE_NOTIFY_NEW_SPECIES /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "APPRISE_NOTIFY_NEW_SPECIES=0 " >> /etc/birdnet/birdnet.conf
 fi
+if ! grep APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=0 " >> /etc/birdnet/birdnet.conf
+fi
 
 # If the config does not contain the DATABASE_LANG setting, we'll want to add it.
 # Defaults to not-selected, which config.php will know to render as a language option.
@@ -50,8 +53,8 @@ fi
 
 apprise_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("apprise") else "not installed")')
 if [[ "$apprise_installation_status" = "not installed" ]];then
-  ~/BirdNET-Pi/birdnet/bin/pip3 install -U pip
-  ~/BirdNET-Pi/birdnet/bin/pip3 install apprise
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install -U pip
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise
 fi
 [ -f $HOME/BirdNET-Pi/apprise.txt ] || sudo -E -ucaddy touch $HOME/BirdNET-Pi/apprise.txt
 if ! which lsof &>/dev/null;then
@@ -84,6 +87,13 @@ fi
 if ! grep FLICKR_FILTER_EMAIL /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "FLICKR_FILTER_EMAIL=" >> /etc/birdnet/birdnet.conf
 fi
+
+pytest_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("pytest") else "not installed")')
+if [[ "$pytest_installation_status" = "not installed" ]];then
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install -U pip
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install pytest==7.1.2 pytest-mock==3.7.0
+fi
+
 
 sudo systemctl daemon-reload
 restart_services.sh

@@ -7,3 +7,14 @@ birdnet.conf
 IdentifiedSoFar.txt
 IdentifiedSoFar.txt.bak
 Birders_Guide_Installer_Configuration.txt
+birdnet/
+templates/*.service
+scripts/*.txt
+scripts/birds.db
+analyzing_now.txt
+apprise.txt
+BirdDB.txt
+exclude_species_list.txt
+firstrun.ini
+HUMAN.txt
+include_species_list.txt
