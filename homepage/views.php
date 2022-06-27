@@ -47,6 +47,9 @@ body::-webkit-scrollbar {
   <button type="submit" name="view" value="Recordings" form="views">Recordings</button>
 </form>
 <form action="" method="GET" id="views">
+  <button type="submit" name="view" value="Weekly Report" form="views">Weekly Report</button>
+</form>
+<form action="" method="GET" id="views">
   <button type="submit" name="view" value="View Log" form="views">View Log</button>
 </form>
 <form action="" method="GET" id="views">
@@ -90,6 +93,7 @@ if(isset($_GET['view'])){
   if($_GET['view'] == "Overview"){include('overview.php');}
   if($_GET['view'] == "Today's Detections"){include('todays_detections.php');}
   if($_GET['view'] == "Species Stats"){include('stats.php');}
+  if($_GET['view'] == "Weekly Report"){include('weekly_report.php');}
   if($_GET['view'] == "Streamlit"){echo "<iframe src=\"/stats\"></iframe>";}
   if($_GET['view'] == "Daily Charts"){include('history.php');}
   if($_GET['view'] == "Tools"){

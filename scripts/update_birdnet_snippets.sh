@@ -94,6 +94,7 @@ if [[ "$pytest_installation_status" = "not installed" ]];then
   $HOME/BirdNET-Pi/birdnet/bin/pip3 install pytest==7.1.2 pytest-mock==3.7.0
 fi
 
+[ -L ~/BirdSongs/Extracted/weekly_report.php ] || ln -sf ~/BirdNET-Pi/scripts/weekly_report.php ~/BirdSongs/Extracted
 
 sudo systemctl daemon-reload
 restart_services.sh
