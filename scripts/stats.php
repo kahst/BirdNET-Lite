@@ -113,6 +113,7 @@ $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
   <p id="modalText"></p>
   <button onclick="hideDialog()">Close</button>
 </dialog>
+<script src="static/dialog-polyfill.js"></script>
 <script>
 var dialog = document.querySelector('dialog');
 dialogPolyfill.registerDialog(dialog);

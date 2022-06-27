@@ -6,6 +6,7 @@ body::-webkit-scrollbar {
 }
 </style>
 <link rel="stylesheet" href="style.css?v=6.22.22">
+<link rel="stylesheet" type="text/css" href="static/dialog-polyfill.css" />
 <body>
 <div class="banner">
   <div class="logo">

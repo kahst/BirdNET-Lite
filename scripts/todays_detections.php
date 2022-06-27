@@ -227,6 +227,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
     <p id="modalText"></p>
     <button onclick="hideDialog()">Close</button>
   </dialog>
+  <script src="static/dialog-polyfill.js"></script>
   <script>
   var dialog = document.querySelector('dialog');
   dialogPolyfill.registerDialog(dialog);
