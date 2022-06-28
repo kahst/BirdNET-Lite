@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+source /etc/birdnet/birdnet.conf
+echo ${APPRISE_WEEKLY_REPORT}
+
 NOTIFICATION=$(curl 'localhost/views.php?view=Weekly%20Report&ascii=true')
 NOTIFICATION=${NOTIFICATION#*#}
 firstLine=`echo "${NOTIFICATION}" | head -1`
