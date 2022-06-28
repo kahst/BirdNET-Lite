@@ -7,6 +7,63 @@ $startdate = strtotime('last sunday') - (7*86400);
 $enddate = strtotime('last sunday') - (1*86400);
 
 $debug = false;
+
+if(isset($_GET['ascii'])) {
+
+	$db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+	if($db == False){
+	  echo "Database is busy";
+	  header("refresh: 0;");
+	}
+
+	$statement1 = $db->prepare('SELECT DISTINCT(Com_Name), COUNT(*) FROM detections WHERE Date BETWEEN "'.date("Y-m-d",$startdate).'" AND "'.date("Y-m-d",$enddate).'" GROUP By Com_Name ORDER BY COUNT(*) DESC');
+	if($statement1 == False){
+	  echo "Database is busy";
+	  header("refresh: 0;");
+	}
+	$result1 = $statement1->execute();
+
+	$detections = [];
+	$i = 0;
+	while($detection=$result1->fetchArray(SQLITE3_ASSOC))
+	{
+		array_push($detections, $detection);
+	}
+
+	echo "# Week ".date('W', $enddate)." Report (".date('F jS, Y',$startdate)." — ".date('F jS, Y',$enddate).")\n";
+
+	echo "= Top 10 Species =\n";
+
+	$i = 0;
+	foreach($detections as $detection)
+	{
+		$i++;
+
+		if($i <= 10) {
+			$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Com_Name == "'.$detection["Com_Name"].'" AND Date BETWEEN "'.date("Y-m-d",$startdate - (7*86400)).'" AND "'.date("Y-m-d",$enddate - (7*86400)).'"');
+			if($statement2 == False){
+			  echo "Database is busy";
+			  header("refresh: 0;");
+			}
+			$result2 = $statement2->execute();
+			$totalcount = $result2->fetchArray(SQLITE3_ASSOC);
+			$priorweekcount = $totalcount['COUNT(*)'];
+
+			$percentagediff = round((1 - $priorweekcount / $detection["COUNT(*)"]) * 100);
+
+			if($percentagediff > 0) {
+				$percentagediff = "+".$percentagediff."%";
+			} else {
+				$percentagediff = "-".abs($percentagediff)."%";
+			}
+
+			echo $detection["Com_Name"]." - ".$detection["COUNT(*)"]." (".$percentagediff.")\n";
+		}
+	}
+
+	die();
+}
+
 ?>
 <div class="brbanner"> <?php
 echo "<h1>Week ".date('W', $enddate)." Report</h1>".date('F jS, Y',$startdate)." — ".date('F jS, Y',$enddate)."<br>";
