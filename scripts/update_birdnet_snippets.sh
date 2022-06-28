@@ -95,8 +95,7 @@ if [[ "$pytest_installation_status" = "not installed" ]];then
 fi
 
 [ -L ~/BirdSongs/Extracted/weekly_report.php ] || ln -sf ~/BirdNET-Pi/scripts/weekly_report.php ~/BirdSongs/Extracted
-[ -L /usr/local/bin/weekly_report.sh ] || sudo chmod +x $HOME/BirdNET-Pi/scripts/weekly_report.sh && ln -sf ~/BirdNET-Pi/scripts/weekly_report.php /usr/local/bin/weekly_report.sh
-sed "s/\$USER/$USER/g" $HOME/BirdNET-Pi/templates/weekly_report.cron >> /etc/crontab
+sed "s/\$USER/$USER/g" $HOME/BirdNET-Pi/templates/weekly_report.cron | sudo tee -a /etc/crontab
 if ! grep APPRISE_WEEKLY_REPORT /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "APPRISE_WEEKLY_REPORT=0" >> /etc/birdnet/birdnet.conf
 fi
