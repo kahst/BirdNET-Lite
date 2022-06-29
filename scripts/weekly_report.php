@@ -58,7 +58,7 @@ if(isset($_GET['ascii'])) {
 		}
 	}
 
-	echo "<br>= Species Detected for the First Time: =<br>";
+	echo "<br>= <b>Species Detected for the First Time</b> =<br>";
 
     $newspeciescount=0;
 	foreach($detections as $com_name=>$scount)
