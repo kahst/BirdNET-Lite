@@ -6,6 +6,10 @@ USER=$(awk -F: '/1000/ {print $1}' /etc/passwd)
 HOME=$(awk -F: '/1000/ {print $6}' /etc/passwd)
 my_dir=$HOME/BirdNET-Pi/scripts
 
+# Sets proper permissions and ownership
+sudo -E chown -R $USER:$USER $HOME/*
+sudo chmod -R g+wr $HOME/*
+
 if ! grep PRIVACY_THRESHOLD /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "PRIVACY_THRESHOLD=0" >> /etc/birdnet/birdnet.conf
   git -C $HOME/BirdNET-Pi rm $my_dir/privacy_server.py
