@@ -100,7 +100,7 @@ if ! grep weekly_report /etc/crontab &>/dev/null;then
   sed "s/\$USER/$USER/g" $HOME/BirdNET-Pi/templates/weekly_report.cron | sudo tee -a /etc/crontab
 fi
 if ! grep APPRISE_WEEKLY_REPORT /etc/birdnet/birdnet.conf &>/dev/null;then
-  sudo -u$USER echo "APPRISE_WEEKLY_REPORT=0" >> /etc/birdnet/birdnet.conf
+  sudo -u$USER echo "APPRISE_WEEKLY_REPORT=1" >> /etc/birdnet/birdnet.conf
 fi
 
 sudo systemctl daemon-reload
