@@ -47,9 +47,6 @@ body::-webkit-scrollbar {
   <button type="submit" name="view" value="Recordings" form="views">Recordings</button>
 </form>
 <form action="" method="GET" id="views">
-  <button type="submit" name="view" value="Weekly Report" form="views">Weekly Report</button>
-</form>
-<form action="" method="GET" id="views">
   <button type="submit" name="view" value="View Log" form="views">View Log</button>
 </form>
 <form action="" method="GET" id="views">

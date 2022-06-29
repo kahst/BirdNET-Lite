@@ -1,4 +1,7 @@
 <?php 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 $startdate = strtotime('last sunday') - (7*86400);
 $enddate = strtotime('last sunday') - (1*86400);
@@ -20,6 +23,53 @@ if(isset($_GET['ascii'])) {
 	}
 	$result1 = $statement1->execute();
 
+	$statement4 = $db->prepare('SELECT DISTINCT(Com_Name), COUNT(*) FROM detections WHERE Date BETWEEN "'.date("Y-m-d",$startdate).'" AND "'.date("Y-m-d",$enddate).'"');
+	if($statement4 == False){
+	  echo "Database is busy";
+	  header("refresh: 0;");
+	}
+	$result4 = $statement4->execute();
+	$totalcount = $result4->fetchArray(SQLITE3_ASSOC)['COUNT(*)'];
+
+	$statement5 = $db->prepare('SELECT DISTINCT(Com_Name), COUNT(*) FROM detections WHERE Date BETWEEN "'.date("Y-m-d",$startdate- (7*86400)).'" AND "'.date("Y-m-d",$enddate- (7*86400)).'"');
+	if($statement5 == False){
+	  echo "Database is busy";
+	  header("refresh: 0;");
+	}
+	$result5 = $statement5->execute();
+	$priortotalcount = $result5->fetchArray(SQLITE3_ASSOC)['COUNT(*)'];
+
+	$statement6 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date BETWEEN "'.date("Y-m-d",$startdate).'" AND "'.date("Y-m-d",$enddate).'"');
+	if($statement6 == False){
+	  echo "Database is busy";
+	  header("refresh: 0;");
+	}
+	$result6 = $statement6->execute();
+	$totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC)['COUNT(DISTINCT(Com_Name))'];
+
+	$statement7 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date BETWEEN "'.date("Y-m-d",$startdate- (7*86400)).'" AND "'.date("Y-m-d",$enddate- (7*86400)).'"');
+	if($statement7 == False){
+	  echo "Database is busy";
+	  header("refresh: 0;");
+	}
+	$result7= $statement7->execute();
+	$priortotalspeciestally = $result7->fetchArray(SQLITE3_ASSOC)['COUNT(DISTINCT(Com_Name))'];
+
+	$percentagedifftotal = round((1 - $priortotalcount / $totalcount) * 100);
+
+	if($percentagedifftotal > 0) {
+		$percentagedifftotal = "<span style='color:green;font-size:small'>+".$percentagedifftotal."%</span>";
+	} else {
+		$percentagedifftotal = "<span style='color:red;font-size:small'>-".abs($percentagedifftotal)."%</span>";
+	}
+
+	$percentagedifftotaldistinctspecies = round((1 - $priortotalspeciestally / $totalspeciestally) * 100);
+	if($percentagedifftotaldistinctspecies > 0) {
+		$percentagedifftotaldistinctspecies = "<span style='color:green;font-size:small'>+".$percentagedifftotaldistinctspecies."%</span>";
+	} else {
+		$percentagedifftotaldistinctspecies = "<span style='color:red;font-size:small'>-".abs($percentagedifftotaldistinctspecies)."%</span>";
+	}
+
 	$detections = [];
 	$i = 0;
 	while($detection=$result1->fetchArray(SQLITE3_ASSOC))
@@ -27,7 +77,10 @@ if(isset($_GET['ascii'])) {
 		$detections[$detection["Com_Name"]] = $detection["COUNT(*)"];
 	}
 
-	echo "# Week ".date('W', $enddate)." Report (".date('F jS, Y',$startdate)." — ".date('F jS, Y',$enddate).")\n";
+	echo "# BirdNET-Pi: Week ".date('W', $enddate)." Report\n";
+
+	echo "Total Detections: <b>".$totalcount."</b> (".$percentagedifftotal.")<br>";
+	echo "Unique Species Detected: <b>".$totalspeciestally."</b> (".$percentagedifftotaldistinctspecies.")<br><br>";
 
 	echo "= <b>Top 10 Species</b> =<br>";
 
@@ -80,6 +133,9 @@ if(isset($_GET['ascii'])) {
 	if($newspeciescount == 0) {
 		echo "No new species were seen this week.";
 	}
+
+	echo "<hr><small>* data from ".date('F jS, Y',$startdate)." — ".date('F jS, Y',$enddate).".</small><br>";
+	echo '<small>* percentages are calculated relative to week '.(date('W', $enddate) - 1).'.</small>';
 
 	die();
 }
@@ -199,5 +255,5 @@ while($detection=$result1->fetchArray(SQLITE3_ASSOC))
 
 <br>
 <div style="text-align:center">
-	<small style="font-size:small">* percentages are calculated relative to week <?php echo date('W', $enddate) - 1; ?></small>
+	<hr><small style="font-size:small">* percentages are calculated relative to week <?php echo date('W', $enddate) - 1; ?></small>
 </div>
