@@ -1,7 +1,4 @@
 <?php 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 $startdate = strtotime('last sunday') - (7*86400);
 $enddate = strtotime('last sunday') - (1*86400);
@@ -27,20 +24,20 @@ if(isset($_GET['ascii'])) {
 	$i = 0;
 	while($detection=$result1->fetchArray(SQLITE3_ASSOC))
 	{
-		array_push($detections, $detection);
+		$detections[$detection["Com_Name"]] = $detection["COUNT(*)"];
 	}
 
 	echo "# Week ".date('W', $enddate)." Report (".date('F jS, Y',$startdate)." — ".date('F jS, Y',$enddate).")\n";
 
-	echo "= Top 10 Species =\n";
+	echo "= <b>Top 10 Species</b> =<br>";
 
 	$i = 0;
-	foreach($detections as $detection)
+	foreach($detections as $com_name=>$scount)
 	{
 		$i++;
 
 		if($i <= 10) {
-			$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Com_Name == "'.$detection["Com_Name"].'" AND Date BETWEEN "'.date("Y-m-d",$startdate - (7*86400)).'" AND "'.date("Y-m-d",$enddate - (7*86400)).'"');
+			$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Com_Name == "'.$com_name.'" AND Date BETWEEN "'.date("Y-m-d",$startdate - (7*86400)).'" AND "'.date("Y-m-d",$enddate - (7*86400)).'"');
 			if($statement2 == False){
 			  echo "Database is busy";
 			  header("refresh: 0;");
@@ -49,16 +46,39 @@ if(isset($_GET['ascii'])) {
 			$totalcount = $result2->fetchArray(SQLITE3_ASSOC);
 			$priorweekcount = $totalcount['COUNT(*)'];
 
-			$percentagediff = round((1 - $priorweekcount / $detection["COUNT(*)"]) * 100);
+			$percentagediff = round((1 - $priorweekcount / $scount) * 100);
 
 			if($percentagediff > 0) {
-				$percentagediff = "+".$percentagediff."%";
+				$percentagediff = "<span style='color:green;font-size:small'>+".$percentagediff."%</span>";
 			} else {
-				$percentagediff = "-".abs($percentagediff)."%";
+				$percentagediff = "<span style='color:red;font-size:small'>-".abs($percentagediff)."%</span>";
 			}
 
-			echo $detection["Com_Name"]." - ".$detection["COUNT(*)"]." (".$percentagediff.")\n";
+			echo $com_name." - ".$scount." (".$percentagediff.")<br>";
 		}
+	}
+
+	echo "<br>= Species Detected for the First Time: =<br>";
+
+    $newspeciescount=0;
+	foreach($detections as $com_name=>$scount)
+	{
+		$statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Com_Name == "'.$com_name.'" AND Date NOT BETWEEN "'.date("Y-m-d",$startdate).'" AND "'.date("Y-m-d",$enddate).'"');
+		if($statement3 == False){
+		  echo "Database is busy";
+		  header("refresh: 0;");
+		}
+		$result3 = $statement3->execute();
+		$totalcount = $result3->fetchArray(SQLITE3_ASSOC);
+		$nonthisweekcount = $totalcount['COUNT(*)'];
+
+		if($nonthisweekcount == 0) {
+			$newspeciescount++;
+			echo $com_name." - ".$scount."<br>";
+		}
+	}
+	if($newspeciescount == 0) {
+		echo "No new species were seen this week.";
 	}
 
 	die();
@@ -96,7 +116,7 @@ while($detection=$result1->fetchArray(SQLITE3_ASSOC))
 		}
 	}
 	$i++;
-	array_push($detections, $detection);
+	$detections[$detection["Com_Name"]] = $detection["COUNT(*)"];
 	
 }
 ?>
@@ -113,12 +133,11 @@ while($detection=$result1->fetchArray(SQLITE3_ASSOC))
 	<?php
 
 	$i = 0;
-	foreach($detections as $detection)
+	foreach($detections as $com_name=>$scount)
 	{
 		$i++;
-
 		if($i <= 10) {
-			$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Com_Name == "'.$detection["Com_Name"].'" AND Date BETWEEN "'.date("Y-m-d",$startdate - (7*86400)).'" AND "'.date("Y-m-d",$enddate - (7*86400)).'"');
+			$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Com_Name == "'.$com_name.'" AND Date BETWEEN "'.date("Y-m-d",$startdate - (7*86400)).'" AND "'.date("Y-m-d",$enddate - (7*86400)).'"');
 			if($statement2 == False){
 			  echo "Database is busy";
 			  header("refresh: 0;");
@@ -127,7 +146,7 @@ while($detection=$result1->fetchArray(SQLITE3_ASSOC))
 			$totalcount = $result2->fetchArray(SQLITE3_ASSOC);
 			$priorweekcount = $totalcount['COUNT(*)'];
 
-			$percentagediff = round((1 - $priorweekcount / $detection["COUNT(*)"]) * 100);
+			$percentagediff = round((1 - $priorweekcount / $scount) * 100);
 
 			if($percentagediff > 0) {
 				$percentagediff = "<span style='color:green;font-size:small'>+".$percentagediff."%</span>";
@@ -135,7 +154,7 @@ while($detection=$result1->fetchArray(SQLITE3_ASSOC))
 				$percentagediff = "<span style='color:red;font-size:small'>-".abs($percentagediff)."%</span>";
 			}
 
-			echo "<tr><td>".$detection["Com_Name"]."<br><small style=\"font-size:small\">".$detection["COUNT(*)"]." (".$percentagediff.")</small><br></td></tr>";
+			echo "<tr><td>".$com_name."<br><small style=\"font-size:small\">".$scount." (".$percentagediff.")</small><br></td></tr>";
 		}
 	}
 	?>
@@ -146,23 +165,16 @@ while($detection=$result1->fetchArray(SQLITE3_ASSOC))
 	<table >
 	<thead>
 		<tr>
-			<th><?php echo "Species Seen for the First Time: <br>"; ?></th>
+			<th><?php echo "Species Detected for the First Time: <br>"; ?></th>
 		</tr>
 	</thead>
 	<tbody>
 	<?php 
-	function searchForId($id, $array) {
-	   foreach ($array as $key => $val) {
-	       if ($val['Com_Name'] === $id) {
-	           return $key;
-	       }
-	   }
-	   return null;
-	}
 
-	foreach($detections as $detection)
+    $newspeciescount=0;
+	foreach($detections as $com_name=>$scount)
 	{
-		$statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Com_Name == "'.$detection["Com_Name"].'" AND Date NOT BETWEEN "'.date("Y-m-d",$startdate).'" AND "'.date("Y-m-d",$enddate).'"');
+		$statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Com_Name == "'.$com_name.'" AND Date NOT BETWEEN "'.date("Y-m-d",$startdate).'" AND "'.date("Y-m-d",$enddate).'"');
 		if($statement3 == False){
 		  echo "Database is busy";
 		  header("refresh: 0;");
@@ -171,12 +183,13 @@ while($detection=$result1->fetchArray(SQLITE3_ASSOC))
 		$totalcount = $result3->fetchArray(SQLITE3_ASSOC);
 		$nonthisweekcount = $totalcount['COUNT(*)'];
 
-	    // TODO: add a "no species were seen for the first time this week", if applicable
-
 		if($nonthisweekcount == 0) {
-			$key = array_search($detection["Com_Name"], array_column($detections, 'Com_Name'));
-			echo "<tr><td>".$detection["Com_Name"]."<br><small style=\"font-size:small\">".$detections[$key]["COUNT(*)"]."</small><br></td></tr>";
+			$newspeciescount++;
+			echo "<tr><td>".$com_name."<br><small style=\"font-size:small\">".$scount."</small><br></td></tr>";
 		}
+	}
+	if($newspeciescount == 0) {
+		echo "<tr><td>No new species were seen this week.</td></tr>";
 	}
 	?>
 	</tbody>
