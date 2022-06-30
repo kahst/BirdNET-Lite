@@ -790,3 +790,7 @@ pre.bash {
   width: 100%;
   display: inline-block;
 }
+
+#toolsbtn {
+  min-width: max-content;
+}

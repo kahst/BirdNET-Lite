@@ -16,6 +16,12 @@ if(!isset($_SESSION['behind'])) {
   }
   </style>
 <?php }}
+
+if (file_exists('./scripts/thisrun.txt')) {
+  $config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
+}
 ?>
 <link rel="stylesheet" href="style.css?v=6.22.22">
 <style>
@@ -49,8 +55,8 @@ body::-webkit-scrollbar {
 <form action="" method="GET" id="views">
   <button type="submit" name="view" value="View Log" form="views">View Log</button>
 </form>
-<form action="" method="GET" id="views">
-  <button type="submit" name="view" value="Tools" form="views">Tools<?php if(isset($_SESSION['behind']) && intval($_SESSION['behind']) >= 50){ $updatediv = ' <div class="updatenumber">'.$_SESSION["behind"].'</div>'; } else { $updatediv = ""; } echo $updatediv; ?></button>
+<form action="" id="toolsbtn" method="GET" id="views">
+  <button type="submit" name="view" value="Tools" form="views">Tools<?php if(isset($_SESSION['behind']) && intval($_SESSION['behind']) >= 50 && ($config['SILENCE_UPDATE_INDICATOR'] != 1)){ $updatediv = ' <div class="updatenumber">'.$_SESSION["behind"].'</div>'; } else { $updatediv = ""; } echo $updatediv; ?></button>
 </form>
 <button href="javascript:void(0);" class="icon" onclick="myFunction()"><img src="images/menu.png"></button>
 </div>
@@ -93,11 +99,6 @@ if(isset($_GET['view'])){
   if($_GET['view'] == "Streamlit"){echo "<iframe src=\"/stats\"></iframe>";}
   if($_GET['view'] == "Daily Charts"){include('history.php');}
   if($_GET['view'] == "Tools"){
-    if (file_exists('./scripts/thisrun.txt')) {
-      $config = parse_ini_file('./scripts/thisrun.txt');
-    } elseif (file_exists('./scripts/firstrun.ini')) {
-      $config = parse_ini_file('./scripts/firstrun.ini');
-    }
     $caddypwd = $config['CADDY_PWD'];
     if (!isset($_SERVER['PHP_AUTH_USER'])) {
       header('WWW-Authenticate: Basic realm="My Realm"');
