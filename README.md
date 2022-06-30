@@ -126,6 +126,7 @@ I hope that if you find BirdNET-Pi has been worth your time, you will share your
 - [PixCams Build Guide](https://pixcams.com/building-a-birdnet-pi-real-time-acoustic-bird-id-station/)
 - <ins>[Core-Electronics](https://core-electronics.com.au/projects/bird-calls-raspberry-pi)</ins> Build Article
 - [RaspberryPi.com Blog Post](https://www.raspberrypi.com/news/classify-birds-acoustically-with-birdnet-pi/)
+- [MagPi Issue 119 Showcase Article](https://magpi.raspberrypi.com/issues/119/pdf)
 
 
 ### Internationalization:
