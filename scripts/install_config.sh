@@ -170,6 +170,12 @@ AUDIOFMT=mp3
 ## DATABASE_LANG is the language used for the bird species database
 DATABASE_LANG=en
 
+## SILENCE_UPDATE_INDICATOR is for quieting the display of how many commits
+## your installation is behind by, relative to the Github repo. This number
+## appears next to "Tools" when you're 50 or more commits behind.
+
+SILENCE_UPDATE_INDICATOR=0
+
 ## These are just for debugging
 LAST_RUN=
 THIS_RUN=
