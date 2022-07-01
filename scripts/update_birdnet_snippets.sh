@@ -102,13 +102,6 @@ if ! grep SILENCE_UPDATE_INDICATOR /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "SILENCE_UPDATE_INDICATOR=0" >> /etc/birdnet/birdnet.conf
 fi
 
-if [[ -s /etc/crontab && -z "$(tail -c 1 /etc/crontab)" ]]
-then
-    echo ""
-else
-    echo "\n" | sudo tee -a /etc/crontab
-fi
-
 
 sudo systemctl daemon-reload
 restart_services.sh
