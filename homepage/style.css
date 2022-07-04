@@ -261,6 +261,11 @@ button:hover {
   margin-right: auto;
 }
 
+.views {
+  transition: opacity 0.3s;
+  -webkit-transition: opacity 0.3s;
+}
+
 .views .centered button {
   background-color: rgb(219, 255, 235);
   padding: 12px;

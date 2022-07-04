@@ -23,7 +23,7 @@ if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/firstrun.ini');
 }
 ?>
-<link rel="stylesheet" href="style.css?v=6.22.22">
+<link rel="stylesheet" href="style.css?v=7.04.22">
 <style>
 body::-webkit-scrollbar {
   display:none
