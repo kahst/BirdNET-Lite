@@ -62,6 +62,17 @@ body::-webkit-scrollbar {
 </div>
 
 <script>
+window.onload = function() {
+  var elements = document.querySelectorAll("button[name=view]");
+
+  var setViewsOpacity = function() {
+      document.getElementsByClassName("views")[0].style.opacity = "0.5";
+  };
+
+  for (var i = 0; i < elements.length; i++) {
+      elements[i].addEventListener('click', setViewsOpacity, false);
+  }
+};
 var topbuttons = document.querySelectorAll("button[form='views']");
 if(window.location.search.substr(1) != '') {
   for (var i = 0; i < topbuttons.length; i++) {
