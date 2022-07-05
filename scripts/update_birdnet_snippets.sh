@@ -107,6 +107,9 @@ if ! grep '\-\-browser.gatherUsageStats false' $HOME/BirdNET-Pi/templates/birdne
   sudo systemctl daemon-reload && restart_services.sh
 fi
 
+# Make IceCast2 a little more secure
+sudo sed -i 's|<!-- <bind-address>.*|<bind-address>127.0.0.1</bind-address>|;s|<!-- <shoutcast-mount>.*|<shoutcast-mount>/stream</shoutcast-mount>|' /etc/icecast2/icecast.xml
+sudo systemctl restart icecast2
 
 sudo systemctl daemon-reload
 restart_services.sh
