@@ -107,6 +107,7 @@ if(isset($_GET['view'])){
   if($_GET['view'] == "Overview"){include('overview.php');}
   if($_GET['view'] == "Today's Detections"){include('todays_detections.php');}
   if($_GET['view'] == "Species Stats"){include('stats.php');}
+  if($_GET['view'] == "Weekly Report"){include('weekly_report.php');}
   if($_GET['view'] == "Streamlit"){echo "<iframe src=\"/stats\"></iframe>";}
   if($_GET['view'] == "Daily Charts"){include('history.php');}
   if($_GET['view'] == "Tools"){

@@ -75,6 +75,7 @@ APPRISE_NOTIFICATION_TITLE="New BirdNET-Pi Detection"
 APPRISE_NOTIFICATION_BODY="A \$sciname \$comname was just detected with a confidence of \$confidence"
 APPRISE_NOTIFY_EACH_DETECTION=0
 APPRISE_NOTIFY_NEW_SPECIES=0
+APPRISE_WEEKLY_REPORT=0
 
 #----------------------  Flickr Images API Configuration -----------------------#
 ## If FLICKR_API_KEY is set, the web interface will try and display bird images 
