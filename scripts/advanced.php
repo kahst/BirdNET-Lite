@@ -157,6 +157,16 @@ if(isset($_GET['submit'])) {
       $contents2 = preg_replace("/AUDIOFMT=.*/", "AUDIOFMT=$audiofmt", $contents2);
     }
   }
+  if(isset($_GET["silence_update_indicator"])) {
+    $silence_update_indicator = 1;
+    if(strcmp($silence_update_indicator,$config['SILENCE_UPDATE_INDICATOR']) !== 0) {
+      $contents = preg_replace("/SILENCE_UPDATE_INDICATOR=.*/", "SILENCE_UPDATE_INDICATOR=$silence_update_indicator", $contents);
+      $contents2 = preg_replace("/SILENCE_UPDATE_INDICATOR=.*/", "SILENCE_UPDATE_INDICATOR=$silence_update_indicator", $contents2);
+    }
+  } else {
+    $contents = preg_replace("/SILENCE_UPDATE_INDICATOR=.*/", "SILENCE_UPDATE_INDICATOR=0", $contents);
+    $contents2 = preg_replace("/SILENCE_UPDATE_INDICATOR=.*/", "SILENCE_UPDATE_INDICATOR=0", $contents2);
+  }
 
   $fh = fopen('/etc/birdnet/birdnet.conf', "w");
   $fh2 = fopen("./scripts/thisrun.txt", "w");
@@ -250,7 +260,8 @@ foreach($formats as $format){
       <label for="sensitivity">Sigmoid Sensitivity: </label>
       <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($newconfig['SENSITIVITY']);?>" required/><br>
       <p>Min=0.5, Max=1.5</p>
-      <br><br>
+      <label for="silence_update_indicator">Silence Update Indicator: </label>
+      <input type="checkbox" name="silence_update_indicator" <?php if($newconfig['SILENCE_UPDATE_INDICATOR'] == 1) { echo "checked"; };?> ><br><br><br>
       <input type="hidden" name="view" value="Advanced">
       <button onclick="if(<?php print($newconfig['PRIVACY_THRESHOLD']);?> != document.getElementById('privacy_threshold').value){return confirm('This will take about 90 seconds.')}" type="submit" name="submit" value="advanced">
 <?php

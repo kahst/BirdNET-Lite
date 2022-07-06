@@ -25,6 +25,7 @@ Check out birds from around the world
 - [Fairview, Tennessee, United States](https://fairviewtennessee.birdnetpi.com)
 - [Dundas, Ontario, Canada](https://dundasontario.birdnetpi.com)
 - [Bungendore, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
+- [Occoquan, Virginia, United States](https://occoquanva.birdnetpi.com)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 
@@ -126,6 +127,7 @@ I hope that if you find BirdNET-Pi has been worth your time, you will share your
 - [PixCams Build Guide](https://pixcams.com/building-a-birdnet-pi-real-time-acoustic-bird-id-station/)
 - <ins>[Core-Electronics](https://core-electronics.com.au/projects/bird-calls-raspberry-pi)</ins> Build Article
 - [RaspberryPi.com Blog Post](https://www.raspberrypi.com/news/classify-birds-acoustically-with-birdnet-pi/)
+- [MagPi Issue 119 Showcase Article](https://magpi.raspberrypi.com/issues/119/pdf)
 
 
 ### Internationalization:

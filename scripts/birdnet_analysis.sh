@@ -131,8 +131,8 @@ run_analysis() {
     echo $PYTHON_VIRTUAL_ENV "$DIR\analyze.py" \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
---lat "${LATITUDE}" \
---lon "${LONGITUDE}" \
+--lat $(echo "${LATITUDE}" | awk '{print int($1+0.5)}').XX \
+--lon $(echo "${LONGITUDE}" | awk '{print int($1+0.5)}').XX \
 --week "${WEEK}" \
 --overlap "${OVERLAP}" \
 --sensitivity "${SENSITIVITY}" \

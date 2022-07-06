@@ -228,6 +228,7 @@ body::-webkit-scrollbar {
     <p id="modalText"></p>
     <button onclick="hideDialog()">Close</button>
   </dialog>
+  <script src="static/dialog-polyfill.js"></script>
   <script>
   var dialog = document.querySelector('dialog');
   dialogPolyfill.registerDialog(dialog);
