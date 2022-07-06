@@ -134,7 +134,7 @@ if(isset($_GET['ascii'])) {
 		echo "No new species were seen this week.";
 	}
 
-	echo "<hr><small>* data from ".date('F jS, Y',$startdate)." — ".date('F jS, Y',$enddate).".</small><br>";
+	echo "<hr><small>* data from ".date('Y-m-d', $startdate)." — ".date('Y-m-d',$enddate).".</small><br>";
 	echo '<small>* percentages are calculated relative to week '.(date('W', $enddate) - 1).'.</small>';
 
 	die();
