@@ -86,7 +86,7 @@ curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/main/newinstall
 ```
 The installer takes care of any and all necessary updates, so you can run that as the very first command upon the first boot, if you'd like.
 
-The installation creates a log in `$HOME/installation$(date "+%F").log`.
+The installation creates a log in `$HOME/installation-$(date "+%F").txt`.
 ## Access
 The BirdNET-Pi can be accessed from any web browser on the same network:
 - http://birdnetpi.local
