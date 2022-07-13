@@ -17,6 +17,18 @@ $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 
+if(isset($_GET['deletefile'])) {
+  $statement1 = $db->prepare('DELETE FROM detections WHERE File_Name = "'.explode("/",$_GET['deletefile'])[2].'" LIMIT 1');
+  if($statement1 == False){
+    echo "Database is busy";
+    header("refresh: 0;");
+  } else {
+    echo "OK";
+  }
+  $result1 = $statement1->execute();
+  die();
+}
+
 if(isset($_GET['excludefile'])) {
   if(isset($_SERVER['PHP_AUTH_USER'])) {
     $submittedpwd = $_SERVER['PHP_AUTH_PW'];
@@ -132,6 +144,25 @@ if(isset($_GET['bydate'])){
   </head>
 
 <script>
+function deleteDetection(filename,copylink=false) {
+  if (confirm("Are you sure you want to delete this detection from the database?") == true) {
+    const xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+      if(this.responseText == "OK"){
+        if(copylink == true) {
+        window.top.close();
+        } else {
+          location.reload();
+        }
+      } else {
+        alert("Database busy.")
+      }
+    }
+    xhttp.open("GET", "play.php?deletefile="+filename, true);
+    xhttp.send();
+  }
+}
+
 function toggleLock(filename, type, elem) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
@@ -296,16 +327,14 @@ if(isset($_GET['species'])){ ?>
           $type = "del";
         }
 
-        echo "<tr>
-          <td class='relative'>$date $time<br>$confidence<br><img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">
-          <a href=\"$filename\"><img src=\"$filename.png\"></a>
-          </td>
+       echo "<tr>
+          <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
+          <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
           </tr>";
       } else {
         echo "<tr>
-          <td class='relative'>$date $time<br>$confidence<br>
-          <a href=\"$filename\"><img src=\"$filename.png\"></a>
-          </td>
+          <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'><br>
+          <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
           </tr>";
       }
 
@@ -353,12 +382,12 @@ if(isset($_GET['filename'])){
         }
 
        echo "<tr>
-          <td class=\"relative\"><img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
+          <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
           <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
           </tr>";
       } else {
         echo "<tr>
-          <td class=\"relative\">$date $time<br>$confidence<br>
+          <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'><br>
           <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
           </tr>";
       }
