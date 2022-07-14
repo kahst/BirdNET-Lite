@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ERROR);
+error_reporting(E_ALL);
 
 $db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 if($db == False){
@@ -20,10 +20,16 @@ $home = trim($home);
 if(isset($_GET['deletefile'])) {
   $statement1 = $db->prepare('DELETE FROM detections WHERE File_Name = "'.explode("/",$_GET['deletefile'])[2].'" LIMIT 1');
   if($statement1 == False){
-    echo "Database is busy";
+    echo "Error";
     header("refresh: 0;");
   } else {
-    echo "OK";
+    $file_pointer = $home."/BirdSongs/Extracted/By_Date/".$_GET['deletefile'];
+    if (!exec("sudo rm $file_pointer && sudo rm $file_pointer.png")) {
+      echo "OK";
+    } else {
+      echo "Error";
+    }
+
   }
   $result1 = $statement1->execute();
   die();
@@ -39,21 +45,21 @@ if(isset($_GET['excludefile'])) {
       }
       if(isset($_GET['exclude_add'])) {
         $myfile = fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "a") or die("Unable to open file!");
-          $txt = $_GET['excludefile'];
-          fwrite($myfile, $txt."\n");
-          fwrite($myfile, $txt.".png\n");
-          fclose($myfile);
-          echo "OK";
-          die();
+        $txt = $_GET['excludefile'];
+        fwrite($myfile, $txt."\n");
+        fwrite($myfile, $txt.".png\n");
+        fclose($myfile);
+        echo "OK";
+        die();
       } else {
         $lines  = file($home."/BirdNET-Pi/scripts/disk_check_exclude.txt");
         $search = $_GET['excludefile'];
 
         $result = '';
         foreach($lines as $line) {
-            if(stripos($line, $search) === false && stripos($line, $search.".png") === false) {
-                $result .= $line;
-            }
+          if(stripos($line, $search) === false && stripos($line, $search.".png") === false) {
+            $result .= $line;
+          }
         }
         file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", $result);
         echo "OK";
@@ -102,7 +108,7 @@ if(isset($_GET['bydate'])){
   #By Species
 } elseif(isset($_GET['byspecies'])) {
   if(isset($_GET['sort']) && $_GET['sort'] == "occurrences") {
-  $statement = $db->prepare('SELECT DISTINCT(Com_Name) FROM detections GROUP BY Com_Name ORDER BY COUNT(*) DESC');
+    $statement = $db->prepare('SELECT DISTINCT(Com_Name) FROM detections GROUP BY Com_Name ORDER BY COUNT(*) DESC');
   } else {
     $statement = $db->prepare('SELECT DISTINCT(Com_Name) FROM detections ORDER BY Com_Name ASC');
   } 
@@ -150,7 +156,7 @@ function deleteDetection(filename,copylink=false) {
     xhttp.onload = function() {
       if(this.responseText == "OK"){
         if(copylink == true) {
-        window.top.close();
+          window.top.close();
         } else {
           location.reload();
         }
@@ -168,13 +174,13 @@ function toggleLock(filename, type, elem) {
   xhttp.onload = function() {
     if(this.responseText == "OK"){
       if(type == "add") {
-       elem.setAttribute("src","images/lock.svg");
-       elem.setAttribute("title", "This file is delete protected.");
-       elem.setAttribute("onclick", elem.getAttribute("onclick").replace("add","del"));
+        elem.setAttribute("src","images/lock.svg");
+        elem.setAttribute("title", "This file is delete protected.");
+        elem.setAttribute("onclick", elem.getAttribute("onclick").replace("add","del"));
       } else {
-       elem.setAttribute("src","images/unlock.svg");
-       elem.setAttribute("title", "This file is not delete protected.");
-       elem.setAttribute("onclick", elem.getAttribute("onclick").replace("del","add"));
+        elem.setAttribute("src","images/unlock.svg");
+        elem.setAttribute("title", "This file is not delete protected.");
+        elem.setAttribute("onclick", elem.getAttribute("onclick").replace("del","add"));
       }
     }
   }
@@ -218,28 +224,28 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
     while($results=$result->fetchArray(SQLITE3_ASSOC)){
       $date = $results['Date'];
       if(realpath($home."/BirdSongs/Extracted/By_Date/".$date) !== false){
-      echo "<td>
-        <button action=\"submit\" name=\"date\" value=\"$date\">$date</button></td></tr>";}}
+        echo "<td>
+          <button action=\"submit\" name=\"date\" value=\"$date\">$date</button></td></tr>";}}
 
-  #By Species
+          #By Species
   } elseif($view == "byspecies") {
     while($results=$result->fetchArray(SQLITE3_ASSOC)){
       $name = $results['Com_Name'];
-      
+
       echo "<td>
         <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";}
 
-  #Specific Date
+    #Specific Date
   } elseif($view == "date") {
     while($results=$result->fetchArray(SQLITE3_ASSOC)){
       $name = $results['Com_Name'];
       if(realpath($home."/BirdSongs/Extracted/By_Date/".$date."/".str_replace(" ", "_",$name)) !== false){
-         echo "<td>
-            <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";
+        echo "<td>
+          <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";
       }
     }
 
-  #Choose
+    #Choose
   } else {
     echo "<td>
       <button action=\"submit\" name=\"byspecies\" value=\"byspecies\">By Species</button></td></tr>
@@ -247,8 +253,8 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
   } 
 
   echo "</form>
-  </tr>
-  </table>";
+    </tr>
+    </table>";
 }
 
 #Specific Species
@@ -269,129 +275,129 @@ if(isset($_GET['species'])){ ?>
 <?php
   // add disk_check_exclude.txt lines into an array for grepping
   $fp = @fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", 'r'); 
-  if ($fp) {
-     $disk_check_exclude_arr = explode("\n", fread($fp, filesize($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")));
-  }
-  
-  $name = $_GET['species'];
-  if(isset($_SESSION['date'])) {
-    $date = $_SESSION['date'];
-    if(isset($_GET['sort']) && $_GET['sort'] == "confidence") {
-        $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Confidence DESC");
-    } else {
-        $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Time DESC");
-    }
+if ($fp) {
+  $disk_check_exclude_arr = explode("\n", fread($fp, filesize($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")));
+}
+
+$name = $_GET['species'];
+if(isset($_SESSION['date'])) {
+  $date = $_SESSION['date'];
+  if(isset($_GET['sort']) && $_GET['sort'] == "confidence") {
+    $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Confidence DESC");
   } else {
-      if(isset($_GET['sort']) && $_GET['sort'] == "confidence") {
-        $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Confidence DESC");
-    } else {
-       $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Date DESC, Time DESC");
+    $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Time DESC");
+  }
+} else {
+  if(isset($_GET['sort']) && $_GET['sort'] == "confidence") {
+    $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Confidence DESC");
+  } else {
+    $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Date DESC, Time DESC");
+  }
+}
+if($statement2 == False){
+  echo "Database is busy";
+  header("refresh: 0;");
+}
+$result2 = $statement2->execute();
+echo "<table>
+  <tr>
+  <th>$name</th>
+  </tr>";
+  $iter=0;
+  while($results=$result2->fetchArray(SQLITE3_ASSOC))
+  {
+    $comname = preg_replace('/ /', '_', $results['Com_Name']);
+    $comname = preg_replace('/\'/', '', $comname);
+    $date = $results['Date'];
+    $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
+    $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
+    $sci_name = $results['Sci_Name'];
+    $time = $results['Time'];
+    $confidence = round((float)round($results['Confidence'],2) * 100 ) . '%';
+    $filename_formatted = $date."/".$comname."/".$results['File_Name'];
+
+    // file was deleted by disk check, no need to show the detection in recordings
+    if(!file_exists($home."/BirdSongs/Extracted/".$filename)) {
+      continue;
     }
-  }
-  if($statement2 == False){
-    echo "Database is busy";
-    header("refresh: 0;");
-  }
-  $result2 = $statement2->execute();
-  echo "<table>
-    <tr>
-    <th>$name</th>
-    </tr>";
-    $iter=0;
-    while($results=$result2->fetchArray(SQLITE3_ASSOC))
-    {
-      $comname = preg_replace('/ /', '_', $results['Com_Name']);
-      $comname = preg_replace('/\'/', '', $comname);
-      $date = $results['Date'];
-      $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
-      $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
-      $sci_name = $results['Sci_Name'];
-      $time = $results['Time'];
-      $confidence = round((float)round($results['Confidence'],2) * 100 ) . '%';
-      $filename_formatted = $date."/".$comname."/".$results['File_Name'];
+    $iter++;
 
-      // file was deleted by disk check, no need to show the detection in recordings
-      if(!file_exists($home."/BirdSongs/Extracted/".$filename)) {
-        continue;
+    if($config["FULL_DISK"] == "purge") {
+      if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
+        $imageicon = "images/unlock.svg";
+        $title = "This file is not delete protected.";
+        $type = "add";
+      } else {
+        $imageicon = "images/lock.svg";
+        $title = "This file is delete protected.";
+        $type = "del";
       }
-      $iter++;
 
-      if($config["FULL_DISK"] == "purge") {
-        if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
-          $imageicon = "images/unlock.svg";
-          $title = "This file is not delete protected.";
-          $type = "add";
-        } else {
-          $imageicon = "images/lock.svg";
-          $title = "This file is delete protected.";
-          $type = "del";
+      echo "<tr>
+        <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
+        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+        </tr>";
+    } else {
+      echo "<tr>
+        <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'><br>
+        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+        </tr>";
+    }
+
+  }if($iter == 0){ echo "<tr><td><b>No recordings were found.</b><br><br><span style='font-size:medium'>They may have been deleted to make space for new recordings. You can prevent this from happening in the future by clicking the <img src='images/unlock.svg' style='width:20px'> icon in the top right of a recording.<br>You can also modify this behavior globally under \"Full Disk Behavior\" <a href='views.php?view=Advanced'>here.</a></span></td></tr>";}echo "</table>";}
+
+  if(isset($_GET['filename'])){
+    $name = $_GET['filename'];
+    $statement2 = $db->prepare("SELECT * FROM detections where File_name == \"$name\" ORDER BY Date DESC, Time DESC");
+    if($statement2 == False){
+      echo "Database is busy";
+      header("refresh: 0;");
+    }
+    $result2 = $statement2->execute();
+    echo "<table>
+      <tr>
+      <th>$name</th>
+      </tr>";
+      while($results=$result2->fetchArray(SQLITE3_ASSOC))
+      {
+        $comname = preg_replace('/ /', '_', $results['Com_Name']);
+        $comname = preg_replace('/\'/', '', $comname);
+        $date = $results['Date'];
+        $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
+        $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
+        $sci_name = $results['Sci_Name'];
+        $time = $results['Time'];
+        $confidence = round((float)round($results['Confidence'],2) * 100 ) . '%';
+        $filename_formatted = $date."/".$comname."/".$results['File_Name'];
+
+        // add disk_check_exclude.txt lines into an array for grepping
+        $fp = @fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", 'r'); 
+        if ($fp) {
+          $disk_check_exclude_arr = explode("\n", fread($fp, filesize($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")));
         }
 
-       echo "<tr>
-          <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
-          <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
-          </tr>";
-      } else {
-        echo "<tr>
-          <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'><br>
-          <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
-          </tr>";
-      }
+        if($config["FULL_DISK"] == "purge") {
+          if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
+            $imageicon = "images/unlock.svg";
+            $title = "This file is not delete protected.";
+            $type = "add";
+          } else {
+            $imageicon = "images/lock.svg";
+            $title = "This file is delete protected.";
+            $type = "del";
+          }
 
-    }if($iter == 0){ echo "<tr><td><b>No recordings were found.</b><br><br><span style='font-size:medium'>They may have been deleted to make space for new recordings. You can prevent this from happening in the future by clicking the <img src='images/unlock.svg' style='width:20px'> icon in the top right of a recording.<br>You can also modify this behavior globally under \"Full Disk Behavior\" <a href='views.php?view=Advanced'>here.</a></span></td></tr>";}echo "</table>";}
-
-if(isset($_GET['filename'])){
-  $name = $_GET['filename'];
-  $statement2 = $db->prepare("SELECT * FROM detections where File_name == \"$name\" ORDER BY Date DESC, Time DESC");
-  if($statement2 == False){
-    echo "Database is busy";
-    header("refresh: 0;");
-  }
-  $result2 = $statement2->execute();
-  echo "<table>
-    <tr>
-    <th>$name</th>
-    </tr>";
-    while($results=$result2->fetchArray(SQLITE3_ASSOC))
-    {
-      $comname = preg_replace('/ /', '_', $results['Com_Name']);
-      $comname = preg_replace('/\'/', '', $comname);
-      $date = $results['Date'];
-      $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
-      $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
-      $sci_name = $results['Sci_Name'];
-      $time = $results['Time'];
-      $confidence = round((float)round($results['Confidence'],2) * 100 ) . '%';
-      $filename_formatted = $date."/".$comname."/".$results['File_Name'];
-
-      // add disk_check_exclude.txt lines into an array for grepping
-      $fp = @fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", 'r'); 
-      if ($fp) {
-         $disk_check_exclude_arr = explode("\n", fread($fp, filesize($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")));
-      }
-
-      if($config["FULL_DISK"] == "purge") {
-        if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
-          $imageicon = "images/unlock.svg";
-          $title = "This file is not delete protected.";
-          $type = "add";
+          echo "<tr>
+            <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
+            <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+            </tr>";
         } else {
-          $imageicon = "images/lock.svg";
-          $title = "This file is delete protected.";
-          $type = "del";
+          echo "<tr>
+            <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'><br>
+            <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+            </tr>";
         }
 
-       echo "<tr>
-          <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
-          <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
-          </tr>";
-      } else {
-        echo "<tr>
-          <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'><br>
-          <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
-          </tr>";
-      }
-
-    }echo "</table>";}?>
+      }echo "</table>";}?>
 </div>
 </html>
