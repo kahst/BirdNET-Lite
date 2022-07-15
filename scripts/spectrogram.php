@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ERROR);
+ini_set('display_errors',1);
 if(isset($_GET['ajax_csv'])) {
 
 if (file_exists('./scripts/thisrun.txt')) {
