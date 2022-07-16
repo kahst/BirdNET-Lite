@@ -1,5 +1,6 @@
 <?php
-error_reporting(E_ALL);
+error_reporting(E_ERROR);
+ini_set('display_errors',1);
 
 $db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 if($db == False){
@@ -175,11 +176,11 @@ function toggleLock(filename, type, elem) {
     if(this.responseText == "OK"){
       if(type == "add") {
         elem.setAttribute("src","images/lock.svg");
-        elem.setAttribute("title", "This file is delete protected.");
+        elem.setAttribute("title", "This file is excluded from being purged.");
         elem.setAttribute("onclick", elem.getAttribute("onclick").replace("add","del"));
       } else {
         elem.setAttribute("src","images/unlock.svg");
-        elem.setAttribute("title", "This file is not delete protected.");
+        elem.setAttribute("title", "This file is not excluded from being purged.");
         elem.setAttribute("onclick", elem.getAttribute("onclick").replace("del","add"));
       }
     }
@@ -325,11 +326,11 @@ echo "<table>
     if($config["FULL_DISK"] == "purge") {
       if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
         $imageicon = "images/unlock.svg";
-        $title = "This file is not delete protected.";
+        $title = "This file is not excluded from being purged.";
         $type = "add";
       } else {
         $imageicon = "images/lock.svg";
-        $title = "This file is delete protected.";
+        $title = "This file is excluded from being purged.";
         $type = "del";
       }
 
@@ -379,11 +380,11 @@ echo "<table>
         if($config["FULL_DISK"] == "purge") {
           if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
             $imageicon = "images/unlock.svg";
-            $title = "This file is not delete protected.";
+            $title = "This file is not excluded from being purged.";
             $type = "add";
           } else {
             $imageicon = "images/lock.svg";
-            $title = "This file is delete protected.";
+            $title = "This file is excluded from being purged.";
             $type = "del";
           }
 

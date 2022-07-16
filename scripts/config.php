@@ -187,6 +187,11 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
     $filename = "http://birdnetpi.local/"."?filename=".$filename;
   }
 
+  $attach="";
+  if (strpos($body, '$flickrimage') !== false) {
+      $attach = "--attach https://live.staticflickr.com/7430/27545810581_8bfa8289a3_c.jpg";
+  }
+
   $title = str_replace("\$sciname", $sciname, $title);
   $title = str_replace("\$comname", $comname, $title);
   $title = str_replace("\$confidence", $confidence, $title);
@@ -199,6 +204,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   $title = str_replace("\$cutoff", $cutoff, $title);
   $title = str_replace("\$sens", $sens, $title);
   $title = str_replace("\$overlap", $overlap, $title);
+  $title = str_replace("\$flickrimage", "", $title);
 
   $body = str_replace("\$sciname", $sciname, $body);
   $body = str_replace("\$comname", $comname, $body);
@@ -212,8 +218,9 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   $body = str_replace("\$cutoff", $cutoff, $body);
   $body = str_replace("\$sens", $sens, $body);
   $body = str_replace("\$overlap", $overlap, $body);
+  $body = str_replace("\$flickrimage", "", $body);
 
-  echo "<pre class=\"bash\">".shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv -t '".$title."' -b '".$body."' ".$cf." ")."</pre>";
+  echo "<pre class=\"bash\">".shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv -t '".$title."' -b '".$body."' ".$attach." ".$cf." ")."</pre>";
 
   die();
 }
@@ -327,6 +334,8 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <dd>Sigmoid Sensitivity set in "Advanced Settings"</dd>
       <dt>$overlap</dt>
       <dd>Overlap set in "Advanced Settings"</dd>
+      <dt>$flickrimage</dt>
+      <dd>A preview image of the detected species from Flickr. Set your API key below.</dd>
       </dl>
       <p>Use the variables defined above to customize your notification title and body.</p>
       <label for="apprise_notification_title">Notification Title: </label>
