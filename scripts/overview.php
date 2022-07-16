@@ -136,6 +136,9 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
         </table> <?php break;
       }
   }
+  if($iterations == 0) {
+    echo "<h3>No Detections For Today.</h3>";
+  }
   die();
 }
 

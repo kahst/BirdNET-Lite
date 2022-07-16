@@ -199,6 +199,10 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
       </table>
 
   <?php 
+  if($iterations == 0) {
+    echo "<h3>No Detections For Today.</h3>";
+  }
+  
   // don't show the button if there's no more detections to be displayed, we're at the end of the list
   if($iterations >= 40 && isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])) { ?>
   <center>
