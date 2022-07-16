@@ -18,22 +18,39 @@ $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 
-if(isset($_GET['deletefile'])) {
-  $statement1 = $db->prepare('DELETE FROM detections WHERE File_Name = "'.explode("/",$_GET['deletefile'])[2].'" LIMIT 1');
-  if($statement1 == False){
-    echo "Error";
-    header("refresh: 0;");
-  } else {
-    $file_pointer = $home."/BirdSongs/Extracted/By_Date/".$_GET['deletefile'];
-    if (!exec("sudo rm $file_pointer && sudo rm $file_pointer.png")) {
-      echo "OK";
-    } else {
-      echo "Error";
-    }
 
+if(isset($_GET['deletefile'])) {
+  if(isset($_SERVER['PHP_AUTH_USER'])) {
+    $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+    $submitteduser = $_SERVER['PHP_AUTH_USER'];
+    if($submittedpwd == $config['CADDY_PWD'] && $submitteduser == 'birdnet'){
+      $statement1 = $db->prepare('DELETE FROM detections WHERE File_Name = "'.explode("/",$_GET['deletefile'])[2].'" LIMIT 1');
+      if($statement1 == False){
+        echo "Error";
+        header("refresh: 0;");
+      } else {
+        $file_pointer = $home."/BirdSongs/Extracted/By_Date/".$_GET['deletefile'];
+        if (!exec("sudo rm $file_pointer && sudo rm $file_pointer.png")) {
+          echo "OK";
+        } else {
+          echo "Error";
+        }
+
+      }
+      $result1 = $statement1->execute();
+      die();
+    } else {
+      header('WWW-Authenticate: Basic realm="My Realm"');
+      header('HTTP/1.0 401 Unauthorized');
+      echo 'You must be authenticated to change the protection of files.';
+      exit;
+    }
+  } else {
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'You must be authenticated to change the protection of files.';
+    exit;
   }
-  $result1 = $statement1->execute();
-  die();
 }
 
 if(isset($_GET['excludefile'])) {
