@@ -128,7 +128,7 @@ run_analysis() {
       BIRDWEATHER_ID_PARAM=""
       BIRDWEATHER_ID_LOG=""
     fi
-    echo $PYTHON_VIRTUAL_ENV "$DIR\analyze.py" \
+    echo $PYTHON_VIRTUAL_ENV "$DIR/analyze.py" \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
 --lat $(echo "${LATITUDE}" | awk '{print int($1+0.5)}').XX \
