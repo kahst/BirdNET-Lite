@@ -282,12 +282,15 @@ if(isset($_GET['species'])){ ?>
    <form action="" method="GET">
       <input type="hidden" name="view" value="Recordings">
       <input type="hidden" name="species" value="<?php echo $_GET['species']; ?>">
-      <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "date"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="date">
+      <input type="hidden" name="sort" value="<?php echo $_GET['sort']; ?>">
+      <button <?php if(!isset($_GET['sort']) || $_GET['sort'] == "" || $_GET['sort'] == "date"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="date">
          <img width=35px src="images/sort_date.svg" title="Sort by date" alt="Sort by date">
       </button>
       <button <?php if(isset($_GET['sort']) && $_GET['sort'] == "confidence"){ echo "style='background:#9fe29b !important;'"; }?> class="sortbutton" type="submit" name="sort" value="confidence">
          <img src="images/sort_occ.svg" title="Sort by confidence" alt="Sort by confidence">
-      </button>
+      </button><br>
+      <input style="margin-top:10px" <?php if(isset($_GET['only_excluded'])){ echo "checked"; }?> type="checkbox" name="only_excluded" onChange="submit()">
+      <label for="onlyverified">Only Show Purge Excluded</label>
    </form>
 </div>
 <?php
@@ -336,6 +339,9 @@ echo "<table>
 
     // file was deleted by disk check, no need to show the detection in recordings
     if(!file_exists($home."/BirdSongs/Extracted/".$filename)) {
+      continue;
+    }
+    if(!in_array($filename_formatted, $disk_check_exclude_arr) && isset($_GET['only_excluded'])) {
       continue;
     }
     $iter++;
