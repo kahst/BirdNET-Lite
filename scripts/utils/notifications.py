@@ -10,12 +10,12 @@ APPRISE_CONFIG = userDir + '/BirdNET-Pi/apprise.txt'
 DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
 
 
-def notify(body, title, attached=None):
+def notify(body, title, attached=""):
     apobj = apprise.Apprise()
     config = apprise.AppriseConfig()
     config.add(APPRISE_CONFIG)
     apobj.add(config)
-    if attached is not None:
+    if attached != "":
         apobj.notify(
             body=body,
             title=title,
@@ -45,7 +45,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
             websiteurl = "http://"+socket.gethostname()+".local"
 
         listenurl = websiteurl+"?filename="+path
-        image_url = None
+        image_url = ""
         flickr_images = {}
 
         if len(settings_dict.get('FLICKR_API_KEY')) > 0 and "$flickrimage" in body:
@@ -59,7 +59,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                     image_url = 'https://farm'+str(data["farm"])+'.static.flickr.com/'+str(data["server"])+'/'+str(data["id"])+'_'+str(data["secret"])+'_n.jpg'
                     flickr_images[comName] = image_url
                 except ValueError:
-                    image_url = None
+                    image_url = ""
             else:
                 image_url = flickr_images[comName]
 
@@ -76,7 +76,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                 .replace("$longitude", longitude)\
                 .replace("$cutoff", cutoff)\
                 .replace("$sens", sens)\
-                .replace("$flickrimage", "")\
+                .replace("$flickrimage", image_url if "{" in body else "")\
                 .replace("$overlap", overlap)
             notify_title = title.replace("$sciname", sciName)\
                 .replace("$comname", comName)\
@@ -89,7 +89,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                 .replace("$longitude", longitude)\
                 .replace("$cutoff", cutoff)\
                 .replace("$sens", sens)\
-                .replace("$flickrimage", "")\
+                .replace("$flickrimage", image_url if "{" in body else "")\
                 .replace("$overlap", overlap)
             notify(notify_body, notify_title, image_url)
 
@@ -118,7 +118,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                         .replace("$longitude", longitude)\
                         .replace("$cutoff", cutoff)\
                         .replace("$sens", sens)\
-                        .replace("$flickrimage", "")\
+                        .replace("$flickrimage", image_url if "{" in body else "")\
                         .replace("$overlap", overlap)\
                         + " (first time today)"
                     notify_title = title.replace("$sciname", sciName)\
@@ -132,7 +132,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                         .replace("$longitude", longitude)\
                         .replace("$cutoff", cutoff)\
                         .replace("$sens", sens)\
-                        .replace("$flickrimage", "")\
+                        .replace("$flickrimage", image_url if "{" in body else "")\
                         .replace("$overlap", overlap)\
                         + " (first time today)"
                     notify(notify_body, notify_title, image_url)
@@ -165,7 +165,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                         .replace("$longitude", longitude)\
                         .replace("$cutoff", cutoff)\
                         .replace("$sens", sens)\
-                        .replace("$flickrimage", "")\
+                        .replace("$flickrimage", image_url if "{" in body else "")\
                         .replace("$overlap", overlap)\
                         + " (only seen " + str(int(numberDetections)) + " times in last 7d)"
                     notify_title = title.replace("$sciname", sciName)\
@@ -179,7 +179,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                         .replace("$longitude", longitude)\
                         .replace("$cutoff", cutoff)\
                         .replace("$sens", sens)\
-                        .replace("$flickrimage", "")\
+                        .replace("$flickrimage", image_url if "{" in body else "")\
                         .replace("$overlap", overlap)\
                         + " (only seen " + str(int(numberDetections)) + " times in last 7d)"
                     notify(notify_body, notify_title, image_url)

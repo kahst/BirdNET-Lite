@@ -188,8 +188,12 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   }
 
   $attach="";
+  $exampleimage = "https://live.staticflickr.com/7430/27545810581_8bfa8289a3_c.jpg";
   if (strpos($body, '$flickrimage') !== false) {
-      $attach = "--attach https://live.staticflickr.com/7430/27545810581_8bfa8289a3_c.jpg";
+      $attach = "--attach ".$exampleimage;
+  }
+  if (strpos($body, '{') === false) {
+      $exampleimage = "";
   }
 
   $title = str_replace("\$sciname", $sciname, $title);
@@ -204,7 +208,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   $title = str_replace("\$cutoff", $cutoff, $title);
   $title = str_replace("\$sens", $sens, $title);
   $title = str_replace("\$overlap", $overlap, $title);
-  $title = str_replace("\$flickrimage", "", $title);
+  $title = str_replace("\$flickrimage", $exampleimage, $title);
 
   $body = str_replace("\$sciname", $sciname, $body);
   $body = str_replace("\$comname", $comname, $body);
@@ -218,7 +222,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   $body = str_replace("\$cutoff", $cutoff, $body);
   $body = str_replace("\$sens", $sens, $body);
   $body = str_replace("\$overlap", $overlap, $body);
-  $body = str_replace("\$flickrimage", "", $body);
+  $body = str_replace("\$flickrimage", $exampleimage, $body);
 
   echo "<pre class=\"bash\">".shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv -t '".$title."' -b '".$body."' ".$attach." ".$cf." ")."</pre>";
 
