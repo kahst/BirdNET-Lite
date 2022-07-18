@@ -68,7 +68,7 @@ window.onload = function(){
   };
 
   // if user agent includes iPhone or Mac use legacy mode
-  if(window.navigator.userAgent.includes("iPhone") || window.navigator.userAgent.includes("Mac") || legacy == true) {
+  if(((window.navigator.userAgent.includes("iPhone") || window.navigator.userAgent.includes("Mac")) && !window.navigator.userAgent.includes("Chrome")) || legacy == true) {
     document.getElementById("spectrogramimage").style.display="";
     document.body.querySelector('canvas').remove();
     document.getElementById('player').remove();
