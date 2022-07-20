@@ -26,6 +26,7 @@ Check out birds from around the world
 - [Dundas, Ontario, Canada](https://dundasontario.birdnetpi.com)
 - [Bungendore, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
 - [Occoquan, Virginia, United States](https://occoquanva.birdnetpi.com)
+- [Rivers Bend, Ohio, United States](https://riversbendoh.birdnetpi.com)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 
