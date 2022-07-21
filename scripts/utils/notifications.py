@@ -59,7 +59,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                     image_url = 'https://farm'+str(data["farm"])+'.static.flickr.com/'+str(data["server"])+'/'+str(data["id"])+'_'+str(data["secret"])+'_n.jpg'
                     flickr_images[comName] = image_url
                 except Exception as e:
-                    print("FLICKR API ERROR: "+e)
+                    print("FLICKR API ERROR: "+str(e)) 
                     image_url = ""
             else:
                 image_url = flickr_images[comName]
