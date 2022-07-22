@@ -1,7 +1,6 @@
 <?php
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_reporting(E_ERROR);
 
 if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/thisrun.txt');
@@ -174,7 +173,10 @@ if(isset($_GET['submit'])) {
   fwrite($fh2, $contents2);
 }
 
-$count_labels = count(file("./scripts/labels.txt"));
+$user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
+$home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
+
+$count_labels = count(file($home."/BirdNET-Pi/model/labels.txt"));
 $count = $count_labels;
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -250,6 +252,8 @@ foreach($formats as $format){
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
       <input style="width:40ch;" name="birdnetpi_url" type="url" value="<?php print($newconfig['BIRDNETPI_URL']);?>" /><br>
       <p>The BirdNET-Pi URL is how the main page will be reached. If you want your installation to respond to an IP address, place that here, but be sure to indicate "<i>http://</i>".<br>Example for IP: <i>http://192.168.0.109</i><br>Example if you own your own domain: <i>https://virginia.birdnetpi.com</i></p>
+      <label for="silence_update_indicator">Silence Update Indicator: </label>
+      <input type="checkbox" name="silence_update_indicator" <?php if($newconfig['SILENCE_UPDATE_INDICATOR'] == 1) { echo "checked"; };?> ><br>
       <h3>BirdNET-Lite Settings</h3>
       <label for="overlap">Overlap: </label>
       <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($newconfig['OVERLAP']);?>" required/><br>
@@ -260,8 +264,7 @@ foreach($formats as $format){
       <label for="sensitivity">Sigmoid Sensitivity: </label>
       <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($newconfig['SENSITIVITY']);?>" required/><br>
       <p>Min=0.5, Max=1.5</p>
-      <label for="silence_update_indicator">Silence Update Indicator: </label>
-      <input type="checkbox" name="silence_update_indicator" <?php if($newconfig['SILENCE_UPDATE_INDICATOR'] == 1) { echo "checked"; };?> ><br><br><br>
+      <br><br>
       <input type="hidden" name="view" value="Advanced">
       <button onclick="if(<?php print($newconfig['PRIVACY_THRESHOLD']);?> != document.getElementById('privacy_threshold').value){return confirm('This will take about 90 seconds.')}" type="submit" name="submit" value="advanced">
 <?php
