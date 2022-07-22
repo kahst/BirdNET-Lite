@@ -1,11 +1,21 @@
 <?php 
 function service_status($name) {
-  if($name)
+  $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+  $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+  $home = trim($home);
+
+  if($name == "birdnet_server.service") {
+    $filesinproc=trim(shell_exec("ls ".$home."/BirdSongs/Processed | wc -l"));
+    if($filesinproc > 200) { 
+       echo "<span style='color:#fc6603'>(stalled - backlog of ".$filesinproc." files in ~/BirdSongs/Processed/)</span>";
+       return;
+    }
+  } 
   $op = shell_exec("sudo systemctl status ".$name." | grep Active | grep ' active\| activating\|running\|waiting\|start'");
   if(strlen($op) > 0) {
     echo "<span style='color:green'>(active)</span>";
   } else {
-    echo "<span style='color:darkorange'>(inactive)</span>";
+    echo "<span style='color:#fc6603'>(inactive)</span>";
   }
 }
 ?>
