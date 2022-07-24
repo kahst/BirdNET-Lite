@@ -799,3 +799,12 @@ pre.bash {
 #toolsbtn {
   min-width: max-content;
 }
+
+#showpassword {
+  cursor:pointer;
+  margin-left:2px;
+  height:5px;
+  line-height:5px;
+  padding:3px;
+  background-color:#9fe29b
+}
