@@ -52,7 +52,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
             if not comName in flickr_images:
                 try:
                     # TODO: Make this work with non-english comnames. Implement the "// convert sci name to English name" logic from overview.php here
-                    url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key='+str(settings_dict.get('FLICKR_API_KEY'))+'&text='+str(comName)+'&sort=relevance&per_page=5&media=photos&format=json&license=2%2C3%2C4%2C5%2C6%2C9&nojsoncallback=1'
+                    url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key='+str(settings_dict.get('FLICKR_API_KEY'))+'&text='+str(comName)+' bird&sort=relevance&per_page=5&media=photos&format=json&license=2%2C3%2C4%2C5%2C6%2C9&nojsoncallback=1'
                     resp = requests.get(url=url)
                     data = resp.json()["photos"]["photo"][0]
 
