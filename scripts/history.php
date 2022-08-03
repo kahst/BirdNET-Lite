@@ -35,39 +35,33 @@ if(isset($_GET['blocation']) ) {
 	$user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
 	$home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
 
-	$list = array (
-	    array('', '', $_GET['blocation']),
-	    array('Latitude', '', $config["LATITUDE"]),
-	    array('Longitude', '', $config["LONGITUDE"]),
-	    array('Date', '', date("m/d/Y", strtotime($theDate))),
-	    array('Start Time', '', '0:00'),
-	    array('State', '', $_GET['state']),
-	    array('Country', '', $_GET['country']),
-	    array('Protocol', '', $_GET['protocol']),
-	    array('Num Observers', '', $_GET['num_observers']),
-	    array('Duration (min)', '', '1440'),
-	    array('All Obs Reported (Y/N)', '', 'Y'),
-	    array('Dist Traveled (Miles)', '', $_GET['dist_traveled']),
-	    array('Area Covered (Acres)', '', ''),
-	    array('Notes', '', $_GET['notes'])
-	);
 
+	//$sunrise = date_sunrise(time(), SUNFUNCS_RET_TIMESTAMP, $config["LATITUDE"], $config["LONGITUDE"]);
+	//$sunset = date_sunset(time(), SUNFUNCS_RET_TIMESTAMP, $config["LATITUDE"], $config["LONGITUDE"]);
 
-	$statement1 = $db->prepare("SELECT DISTINCT(Com_Name), COUNT(*) FROM detections WHERE Date == \"$theDate\" GROUP By Com_Name ORDER BY COUNT(*) DESC");
-	if($statement1 == False){
-	  echo "Database is busy";
-	  header("refresh: 0;");
-	}
-	$result1 = $statement1->execute();
+	$list = array ();
 
-	$detections = [];
-	while($detection=$result1->fetchArray(SQLITE3_ASSOC))
-	{
-		$detections[$detection["Com_Name"]] = $detection["COUNT(*)"];
-	}
-	foreach($detections as $com_name=>$scount)
-	{
-		array_push($list, array($com_name,'',$scount));
+	//$hrsinday = intval(($sunset-$sunrise)/60/60);
+	$hrsinday = 24;
+	for($i=0;$i<$hrsinday;$i++) {
+		$starttime = strtotime("12 AM") + (3600*$i);
+
+		$statement1 = $db->prepare("SELECT DISTINCT(Com_Name), COUNT(*) FROM detections WHERE Date == \"$theDate\" AND Time > '".date("H:i", $starttime)."' AND Time < '".date("H:i",$starttime + 3600)."' AND Confidence > 0.75 GROUP By Com_Name ORDER BY COUNT(*) DESC");
+		if($statement1 == False){
+		  echo "Database is busy";
+		  header("refresh: 0;");
+		}
+		$result1 = $statement1->execute();
+
+		$detections = [];
+		while($detection=$result1->fetchArray(SQLITE3_ASSOC))
+		{
+			$detections[$detection["Com_Name"]] = $detection["COUNT(*)"];
+		}
+		foreach($detections as $com_name=>$scount)
+		{
+			array_push($list, array($com_name,'','','1','',$_GET['blocation'],$config["LATITUDE"],$config["LONGITUDE"],date("m/d/Y", strtotime($theDate)), date("H:i", $starttime), $_GET['state'], $_GET['country'], $_GET['protocol'], $_GET['num_observers'], '60', 'Y', $_GET['dist_traveled'],'',$_GET['notes'] ) );
+		}
 	}
 
 	$output = fopen("php://output", "w");
@@ -136,7 +130,7 @@ function submitID() {
 
   window.open("history.php?blocation="+blocation+"&state="+state+"&country="+country+"&protocol="+protocol+"&num_observers="+num_observers+"&dist_traveled="+dist_traveled+"&notes="+notes+"&date="+"<?php echo $theDate; ?>");
 
-  document.getElementById('attribution-dialog').innerHTML = "<h3>Success!</h3><p>Your checklist will start downloading momentarily.<br><br>Refer to <a target='_blank' href='https://ebird.org/content/eBirdCommon/docs/ebird_import_data_process.pdf'>this guide</a> for information on how to import it in eBird. The checklist file format is: 'eBird Checklist Format'.</p><br><br><button onclick=\"closeDialog()\">Close</button>";
+  document.getElementById('attribution-dialog').innerHTML = "<h3>Success!</h3><p>Your checklist will start downloading momentarily.<br><br>Refer to <a target='_blank' href='https://ebird.org/content/eBirdCommon/docs/ebird_import_data_process.pdf'>this guide</a> for information on how to import it in eBird. The checklist file format is: 'eBird Record Format (Extended)'.<br><br><span style='font-size:small'>Note: Only detections with a confidence > 0.75 were included, and entries have been limited to 1 detection per hour per species, to comply with eBird's data quality guidelines.<br>It's always good practice to manually verify your checklist before submitting, especially for nocturnal hours.</span></p><br><br><button onclick=\"closeDialog()\">Close</button>";
 
 }
 
