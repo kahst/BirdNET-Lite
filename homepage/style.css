@@ -795,7 +795,7 @@ pre.bash {
   width: 100%;
   display: inline-block;
 }
-pre.bash #timer {
+pre#timer.bash {
   display:unset;
   width:unset;
 }
