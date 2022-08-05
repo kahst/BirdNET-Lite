@@ -146,7 +146,7 @@ function submitID() {
 				<td><?php echo $totalcount['COUNT(*)'];?></td>
 			</tr>
 		</table>
-		<br>		<button type="button" onclick="showDialog()">Export as CSV for eBird</button><br><br>
+    	<?php // <br><button type="button" onclick="showDialog()">Export as CSV for eBird</button><br><br> ?>
 <?php
 if (file_exists('./Charts/'.$chart)) {
   echo "<img src=\"/Charts/$chart?nocache=time()\" >";
