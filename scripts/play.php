@@ -358,12 +358,12 @@ echo "<table>
       }
 
       echo "<tr>
-        <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' title=\"Open in new tab\" class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
+        <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
         <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
         </tr>";
     } else {
       echo "<tr>
-        <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' title=\"Open in new tab\" class=\"copyimage\" width=25 title='Delete Detection'><br>
+        <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'><br>
         <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
         </tr>";
     }
@@ -412,12 +412,12 @@ echo "<table>
           }
 
           echo "<tr>
-            <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' title=\"Open in new tab\" class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
+            <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
             <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
             </tr>";
         } else {
           echo "<tr>
-            <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' title=\"Open in new tab\" class=\"copyimage\" width=25 title='Delete Detection'><br>
+            <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'><br>
             <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
             </tr>";
         }
