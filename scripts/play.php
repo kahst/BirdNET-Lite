@@ -243,7 +243,7 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
       $date = $results['Date'];
       if(realpath($home."/BirdSongs/Extracted/By_Date/".$date) !== false){
         echo "<td>
-          <button action=\"submit\" name=\"date\" value=\"$date\">$date</button></td></tr>";}}
+          <button action=\"submit\" name=\"date\" value=\"$date\">".($date == date('Y-m-d') ? "Today" : $date)."</button></td></tr>";}}
 
           #By Species
   } elseif($view == "byspecies") {
