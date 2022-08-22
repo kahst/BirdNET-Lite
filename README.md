@@ -18,14 +18,11 @@ Check out birds from around the world
 - [BirdWeather](https://app.birdweather.com)<br>
 - [Johannesburg, South Africa](https://joburg.birdnetpi.com)<br>
 - [Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
-- [Norman, Oklahoma, United States](https://normanok.birdnetpi.com)<br>
-- [Nijmegen, the Netherlands](https://nijmegen.birdnetpi.com)<br>
 - [Murrysville, Pennsylvania, United States](https://murrysvillepa.birdnetpi.com)
 - [Berowra, New South Wales, Australia](https://berowra.birdnetpi.com)
 - [Fairview, Tennessee, United States](https://fairviewtennessee.birdnetpi.com)
 - [Dundas, Ontario, Canada](https://dundasontario.birdnetpi.com)
 - [Bungendore, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
-- [Occoquan, Virginia, United States](https://occoquanva.birdnetpi.com)
 - [Rivers Bend, Ohio, United States](https://riversbendoh.birdnetpi.com)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
