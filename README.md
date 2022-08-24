@@ -1,3 +1,5 @@
+# [Review the license!!](https://github.com/mcguirepr89/BirdNET-Pi/blob/main/LICENSE)
+## You may not use BirdNET-Pi to develop a commercial product!!!!
 <h1 align="center">
   BirdNET-Pi
 </h1>
