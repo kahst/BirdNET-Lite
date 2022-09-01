@@ -29,6 +29,7 @@ Check out birds from around the world
 - [Vienna, Virginia, United States](https://viennava.birdnetpi.com)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
+Have a public installation not in the list above? Let me know!! I'd be happy to add it.
 
 Currently listening in these countries . . . that I know of . . .
 - The United States
