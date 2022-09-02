@@ -27,6 +27,8 @@ Check out birds from around the world
 - [Bungendore, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
 - [Rivers Bend, Ohio, United States](https://riversbendoh.birdnetpi.com)
 - [Vienna, Virginia, United States](https://viennava.birdnetpi.com)
+- [Grevenbroich, Elsen, Germany](https://grevenbroich-elsen.birdnetpi.com)
+- [Occoquan, Virginia, United States](https://occoquanva.birdnetpi.com)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 Have a public installation not in the list above? Let me know!! I'd be happy to add it.
