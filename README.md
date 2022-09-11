@@ -31,6 +31,7 @@ Check out birds from around the world
 - [Occoquan, Virginia, United States](https://occoquanva.birdnetpi.com)
 - [Westmoreland, Pennsylvania, United States](https://westmorelandbnc.birdnetpi.com)
 - [Latrobe, Pennsylvania, United States](https://stvincentcollege.birdnetpi.com)
+- [Cambridge, Massachusetts, United States](https://cambridgema.birdnetpi.com)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 Have a public installation not in the list above? Let me know!! I'd be happy to add it.
