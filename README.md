@@ -127,6 +127,7 @@ Use the web interface and go to "Tools" > "System Controls" > "Update." If you e
 ```
 
 ## Troubleshooting and Ideas
+*Hint: A lot of weird problems can be solved by simply restarting the core services. Do this from the web interface "Tools" > "Services" > "Restart Core Services"
 Having trouble or have an idea? *Submit an issue for trouble* and a *discussion for ideas*. Please do *not* submit an issue as a discussion -- the issue tracker solicits information that is needed for anyone to help -- discussions are *not for issues*.
 
 ## Sharing
