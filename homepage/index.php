@@ -5,7 +5,7 @@ body::-webkit-scrollbar {
   display:none
 }
 </style>
-<link rel="stylesheet" href="style.css?v=6.22.22">
+<link rel="stylesheet" href="style.css?v=8.05.22">
 <link rel="stylesheet" type="text/css" href="static/dialog-polyfill.css" />
 <body>
 <div class="banner">

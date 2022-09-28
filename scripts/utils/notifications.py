@@ -3,21 +3,29 @@ import os
 import socket
 import sqlite3
 from datetime import datetime
+import requests
 
 userDir = os.path.expanduser('~')
 APPRISE_CONFIG = userDir + '/BirdNET-Pi/apprise.txt'
 DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
 
 
-def notify(body, title):
+def notify(body, title, attached=""):
     apobj = apprise.Apprise()
     config = apprise.AppriseConfig()
     config.add(APPRISE_CONFIG)
     apobj.add(config)
-    apobj.notify(
-        body=body,
-        title=title,
-    )
+    if attached != "":
+        apobj.notify(
+            body=body,
+            title=title,
+            attach=attached,
+        )
+    else:
+        apobj.notify(
+            body=body,
+            title=title,
+        )
 
 
 def sendAppriseNotifications(species, confidence, path, date, time, week, latitude, longitude, cutoff, sens, overlap, settings_dict, db_path=DB_PATH):
@@ -37,6 +45,25 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
             websiteurl = "http://"+socket.gethostname()+".local"
 
         listenurl = websiteurl+"?filename="+path
+        image_url = ""
+        flickr_images = {}
+
+        if len(settings_dict.get('FLICKR_API_KEY')) > 0 and "$flickrimage" in body:
+            if not comName in flickr_images:
+                try:
+                    # TODO: Make this work with non-english comnames. Implement the "// convert sci name to English name" logic from overview.php here
+                    url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key='+str(settings_dict.get('FLICKR_API_KEY'))+'&text='+str(comName)+' bird&sort=relevance&per_page=5&media=photos&format=json&license=2%2C3%2C4%2C5%2C6%2C9&nojsoncallback=1'
+                    resp = requests.get(url=url)
+                    data = resp.json()["photos"]["photo"][0]
+
+                    image_url = 'https://farm'+str(data["farm"])+'.static.flickr.com/'+str(data["server"])+'/'+str(data["id"])+'_'+str(data["secret"])+'_n.jpg'
+                    flickr_images[comName] = image_url
+                except Exception as e:
+                    print("FLICKR API ERROR: "+str(e)) 
+                    image_url = ""
+            else:
+                image_url = flickr_images[comName]
+
 
         if settings_dict.get('APPRISE_NOTIFY_EACH_DETECTION') == "1":
             notify_body = body.replace("$sciname", sciName)\
@@ -50,6 +77,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                 .replace("$longitude", longitude)\
                 .replace("$cutoff", cutoff)\
                 .replace("$sens", sens)\
+                .replace("$flickrimage", image_url if "{" in body else "")\
                 .replace("$overlap", overlap)
             notify_title = title.replace("$sciname", sciName)\
                 .replace("$comname", comName)\
@@ -62,8 +90,9 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                 .replace("$longitude", longitude)\
                 .replace("$cutoff", cutoff)\
                 .replace("$sens", sens)\
+                .replace("$flickrimage", image_url if "{" in body else "")\
                 .replace("$overlap", overlap)
-            notify(notify_body, notify_title)
+            notify(notify_body, notify_title, image_url)
 
         APPRISE_NOTIFICATION_NEW_SPECIES_DAILY_COUNT_LIMIT = 1  # Notifies the first N per day.
         if settings_dict.get('APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY') == "1":
@@ -90,6 +119,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                         .replace("$longitude", longitude)\
                         .replace("$cutoff", cutoff)\
                         .replace("$sens", sens)\
+                        .replace("$flickrimage", image_url if "{" in body else "")\
                         .replace("$overlap", overlap)\
                         + " (first time today)"
                     notify_title = title.replace("$sciname", sciName)\
@@ -103,9 +133,10 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                         .replace("$longitude", longitude)\
                         .replace("$cutoff", cutoff)\
                         .replace("$sens", sens)\
+                        .replace("$flickrimage", image_url if "{" in body else "")\
                         .replace("$overlap", overlap)\
                         + " (first time today)"
-                    notify(notify_body, notify_title)
+                    notify(notify_body, notify_title, image_url)
                 con.close()
             except sqlite3.Error as e:
                 print(e)
@@ -135,6 +166,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                         .replace("$longitude", longitude)\
                         .replace("$cutoff", cutoff)\
                         .replace("$sens", sens)\
+                        .replace("$flickrimage", image_url if "{" in body else "")\
                         .replace("$overlap", overlap)\
                         + " (only seen " + str(int(numberDetections)) + " times in last 7d)"
                     notify_title = title.replace("$sciname", sciName)\
@@ -148,9 +180,10 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                         .replace("$longitude", longitude)\
                         .replace("$cutoff", cutoff)\
                         .replace("$sens", sens)\
+                        .replace("$flickrimage", image_url if "{" in body else "")\
                         .replace("$overlap", overlap)\
                         + " (only seen " + str(int(numberDetections)) + " times in last 7d)"
-                    notify(notify_body, notify_title)
+                    notify(notify_body, notify_title, image_url)
                 con.close()
             except sqlite3.Error:
                 print("Database busy")

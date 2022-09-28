@@ -1,7 +1,6 @@
 <?php
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_reporting(E_ERROR);
 
 if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/thisrun.txt');
@@ -157,6 +156,16 @@ if(isset($_GET['submit'])) {
       $contents2 = preg_replace("/AUDIOFMT=.*/", "AUDIOFMT=$audiofmt", $contents2);
     }
   }
+  if(isset($_GET["silence_update_indicator"])) {
+    $silence_update_indicator = 1;
+    if(strcmp($silence_update_indicator,$config['SILENCE_UPDATE_INDICATOR']) !== 0) {
+      $contents = preg_replace("/SILENCE_UPDATE_INDICATOR=.*/", "SILENCE_UPDATE_INDICATOR=$silence_update_indicator", $contents);
+      $contents2 = preg_replace("/SILENCE_UPDATE_INDICATOR=.*/", "SILENCE_UPDATE_INDICATOR=$silence_update_indicator", $contents2);
+    }
+  } else {
+    $contents = preg_replace("/SILENCE_UPDATE_INDICATOR=.*/", "SILENCE_UPDATE_INDICATOR=0", $contents);
+    $contents2 = preg_replace("/SILENCE_UPDATE_INDICATOR=.*/", "SILENCE_UPDATE_INDICATOR=0", $contents2);
+  }
 
   $fh = fopen('/etc/birdnet/birdnet.conf', "w");
   $fh2 = fopen("./scripts/thisrun.txt", "w");
@@ -164,7 +173,10 @@ if(isset($_GET['submit'])) {
   fwrite($fh2, $contents2);
 }
 
-$count_labels = count(file("./scripts/labels.txt"));
+$user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
+$home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
+
+$count_labels = count(file($home."/BirdNET-Pi/model/labels.txt"));
 $count = $count_labels;
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -233,13 +245,15 @@ foreach($formats as $format){
       <h3>BirdNET-Pi Password</h3>
       <p>This password will protect your "Tools" page and "Live Audio" stream.</p>
       <label for="caddy_pwd">Password: </label>
-      <input style="width:40ch" name="caddy_pwd" type="text" value="<?php print($newconfig['CADDY_PWD']);?>" /><br>
+      <input style="width:40ch" name="caddy_pwd" id="caddy_pwd" type="password" value="<?php print($newconfig['CADDY_PWD']);?>" /><span id="showpassword" onmouseover="document.getElementById('caddy_pwd').type='text';" onmouseout="document.getElementById('caddy_pwd').type='password';">show</span><br>
       <h3>Custom URL</h3>
       <p><a href="mailto:mcguirepr89@gmail.com?subject=Request%20BirdNET-Pi%20Subdomain&body=<?php include('birdnetpi_request.php'); ?>" target="_blank">Email Me</a> if you would like a BirdNETPi.com subdomain. This would be, <i>https://YourLocation.birdnetpi.com</i></p>
       <p>When you update the URL below, the web server will reload, so be sure to wait at least 30 seconds and then go to your new URL.</p>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
       <input style="width:40ch;" name="birdnetpi_url" type="url" value="<?php print($newconfig['BIRDNETPI_URL']);?>" /><br>
       <p>The BirdNET-Pi URL is how the main page will be reached. If you want your installation to respond to an IP address, place that here, but be sure to indicate "<i>http://</i>".<br>Example for IP: <i>http://192.168.0.109</i><br>Example if you own your own domain: <i>https://virginia.birdnetpi.com</i></p>
+      <label for="silence_update_indicator">Silence Update Indicator: </label>
+      <input type="checkbox" name="silence_update_indicator" <?php if($newconfig['SILENCE_UPDATE_INDICATOR'] == 1) { echo "checked"; };?> ><br>
       <h3>BirdNET-Lite Settings</h3>
       <label for="overlap">Overlap: </label>
       <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($newconfig['OVERLAP']);?>" required/><br>

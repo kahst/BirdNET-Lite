@@ -128,11 +128,11 @@ run_analysis() {
       BIRDWEATHER_ID_PARAM=""
       BIRDWEATHER_ID_LOG=""
     fi
-    echo $PYTHON_VIRTUAL_ENV "$DIR\analyze.py" \
+    echo $PYTHON_VIRTUAL_ENV "$DIR/analyze.py" \
 --i "${1}/${i}" \
 --o "${1}/${i}.csv" \
---lat "${LATITUDE}" \
---lon "${LONGITUDE}" \
+--lat $(echo "${LATITUDE}" | awk '{print int($1+0.5)}').XX \
+--lon $(echo "${LONGITUDE}" | awk '{print int($1+0.5)}').XX \
 --week "${WEEK}" \
 --overlap "${OVERLAP}" \
 --sensitivity "${SENSITIVITY}" \
@@ -168,7 +168,7 @@ until grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;do
   sleep 1
 done
 
-if [ $(find ${RECS_DIR}/StreamData -maxdepth 1 -name '*wav' | wc -l) -gt 0 ];then
+if [ $(find ${RECS_DIR}/StreamData -maxdepth 1 -name '*wav' 2>/dev/null| wc -l) -gt 0 ];then
   find $RECS_DIR -maxdepth 1 -name '*wav' -type f -size 0 -delete
   run_birdnet "${RECS_DIR}/StreamData"
 fi

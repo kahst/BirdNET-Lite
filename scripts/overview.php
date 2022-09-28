@@ -1,6 +1,6 @@
 <?php
-error_reporting(0);
-ini_set('display_errors', 0);
+error_reporting(E_ERROR);
+ini_set('display_errors',1);
 ini_set('session.gc_maxlifetime', 7200);
 session_set_cookie_params(7200);
 session_start();
@@ -50,11 +50,14 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
     $comname = preg_replace('/\'/', '', $comname);
     $filename = "/By_Date/".$mostrecent['Date']."/".$comname."/".$mostrecent['File_Name'];
     $args = "&license=2%2C3%2C4%2C5%2C6%2C9&orientation=square,portrait";
+    $comnameprefix = "%20bird";
     
       // check to make sure the image actually exists, sometimes it takes a minute to be created\
       if(file_exists($home."/BirdSongs/Extracted".$filename.".png")){
           if($_GET['previous_detection_identifier'] == $filename) { die(); }
           if($_GET['only_name'] == "true") { echo $comname.",".$filename;die(); }
+
+          $iterations++;
 
       if (!empty($config["FLICKR_API_KEY"])) {
 
@@ -64,6 +67,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
             $_SESSION['FLICKR_FILTER_EMAIL'] = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.people.findByEmail&api_key=".$config["FLICKR_API_KEY"]."&find_email=".$config["FLICKR_FILTER_EMAIL"]."&format=json&nojsoncallback=1"), true)["user"]["nsid"];
           }
           $args = "&user_id=".$_SESSION['FLICKR_FILTER_EMAIL'];
+          $comnameprefix = "";
         } else {
           if(isset($_SESSION["FLICKR_FILTER_EMAIL"])) {
             unset($_SESSION["FLICKR_FILTER_EMAIL"]);
@@ -89,7 +93,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
             }
           }
 
-         $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace(" ", "%20", $engname)."\"&sort=relevance".$args."&per_page=5&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"][0];
+         $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace(" ", "%20", $engname).$comnameprefix."&sort=relevance".$args."&per_page=5&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"][0];
           $modaltext = "https://flickr.com/photos/".$flickrjson["owner"]."/".$flickrjson["id"];
           $authorlink = "https://flickr.com/people/".$flickrjson["owner"];
           $imageurl = 'https://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
@@ -120,7 +124,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
         <table class="<?php echo ($_GET['previous_detection_identifier'] == 'undefined') ? '' : 'fade-in';  ?>">
           <h3>Most Recent Detection: <span style="font-weight: normal;"><?php echo $mostrecent['Date']." ".$mostrecent['Time'];?></span></h3>
           <tr>
-            <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $mostrecent['File_Name']; ?>"><img class="copyimage" width="25" height="25" src="images/copy.png"></a>
+            <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $mostrecent['File_Name']; ?>"><img class="copyimage" title="Open in new tab" width="25" height="25" src="images/copy.png"></a>
             <div class="centered_image_container" style="margin-bottom: 0px !important;">
               <?php if(!empty($config["FLICKR_API_KEY"]) && strlen($image[2]) > 0) { ?>
                 <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
@@ -135,6 +139,9 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
           </tr>
         </table> <?php break;
       }
+  }
+  if($iterations == 0) {
+    echo "<h3>No Detections For Today.</h3>";
   }
   die();
 }
@@ -284,7 +291,7 @@ function loadDetectionIfNewExists(previous_detection_identifier=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
     // if there's a new detection that needs to be updated to the page
-    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy")) {
+    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy") && !this.responseText.includes("No Detections") || previous_detection_identifier == undefined) {
       document.getElementById("most_recent_detection").innerHTML = this.responseText;
 
       // only going to load left chart & 5 most recents if there's a new detection
@@ -309,7 +316,7 @@ function loadLeftChart() {
 function refreshTopTen() {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
-  if(this.responseText.length > 0 && !this.responseText.includes("Database is busy")) {
+  if(this.responseText.length > 0 && !this.responseText.includes("Database is busy") && !this.responseText.includes("No Detections") || previous_detection_identifier == undefined) {
     document.getElementById("chart").src = "/Charts/"+this.responseText+"?nocache="+Date.now();
   }
   }

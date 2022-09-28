@@ -1,3 +1,5 @@
+<h1 align="center"><a href="https://github.com/mcguirepr89/BirdNET-Pi/blob/main/LICENSE">Review the license!!</a></h1>
+<h1 align="center">You may not use BirdNET-Pi to develop a commercial product!!!!</h1>
 <h1 align="center">
   BirdNET-Pi
 </h1>
@@ -18,15 +20,21 @@ Check out birds from around the world
 - [BirdWeather](https://app.birdweather.com)<br>
 - [Johannesburg, South Africa](https://joburg.birdnetpi.com)<br>
 - [Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
-- [Norman, Oklahoma, United States](https://normanok.birdnetpi.com)<br>
-- [Nijmegen, the Netherlands](https://nijmegen.birdnetpi.com)<br>
 - [Murrysville, Pennsylvania, United States](https://murrysvillepa.birdnetpi.com)
 - [Berowra, New South Wales, Australia](https://berowra.birdnetpi.com)
 - [Fairview, Tennessee, United States](https://fairviewtennessee.birdnetpi.com)
 - [Dundas, Ontario, Canada](https://dundasontario.birdnetpi.com)
 - [Bungendore, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
+- [Rivers Bend, Ohio, United States](https://riversbendoh.birdnetpi.com)
+- [Vienna, Virginia, United States](https://viennava.birdnetpi.com)
+- [Grevenbroich, Elsen, Germany](https://grevenbroich-elsen.birdnetpi.com)
+- [Occoquan, Virginia, United States](https://occoquanva.birdnetpi.com)
+- [Westmoreland, Pennsylvania, United States](https://westmorelandbnc.birdnetpi.com)
+- [Latrobe, Pennsylvania, United States](https://stvincentcollege.birdnetpi.com)
+- [Cambridge, Massachusetts, United States](https://cambridgema.birdnetpi.com)
 
 [Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
+Have a public installation not in the list above? Let me know!! I'd be happy to add it.
 
 Currently listening in these countries . . . that I know of . . .
 - The United States
@@ -53,6 +61,7 @@ Currently listening in these countries . . . that I know of . . .
 - Ireland
 - Denmark
 - Costa Rica
+- The Philippines
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
@@ -76,8 +85,13 @@ Currently listening in these countries . . . that I know of . . .
 * A USB Microphone or Sound Card
 
 ## Installation
+**IMPORTANT:** Not yet tested on [the newest RaspiOS image](https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-09-07/) 
+
 [A comprehensive installation guide is available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Installation-Guide).
-[Raspberry Pi 0W2 installation guide available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/RPi0W2-Installation-Guide)
+
+Please note that installing BirdNET-Pi on top of other servers is not supported. If this is something that you require, please open a discussion for your idea and inquire about how to contribute to development.
+
+[Raspberry Pi 3B[+] and 0W2 installation guide available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/RPi0W2-Installation-Guide)
 
 The system can be installed with:
 ```
@@ -85,7 +99,7 @@ curl -s https://raw.githubusercontent.com/mcguirepr89/BirdNET-Pi/main/newinstall
 ```
 The installer takes care of any and all necessary updates, so you can run that as the very first command upon the first boot, if you'd like.
 
-The installation creates a log in `$HOME/installation$(date "+%F").log`.
+The installation creates a log in `$HOME/installation-$(date "+%F").txt`.
 ## Access
 The BirdNET-Pi can be accessed from any web browser on the same network:
 - http://birdnetpi.local
@@ -113,7 +127,8 @@ Use the web interface and go to "Tools" > "System Controls" > "Update." If you e
 ```
 
 ## Troubleshooting and Ideas
-Having trouble or have an idea? Submit an issue for trouble and a discussion for ideas.
+*Hint: A lot of weird problems can be solved by simply restarting the core services. Do this from the web interface "Tools" > "Services" > "Restart Core Services"
+Having trouble or have an idea? *Submit an issue for trouble* and a *discussion for ideas*. Please do *not* submit an issue as a discussion -- the issue tracker solicits information that is needed for anyone to help -- discussions are *not for issues*.
 
 ## Sharing
 Please join a Discussion!! and please join [BirdWeather!!](https://app.birdweather.com)
@@ -126,6 +141,7 @@ I hope that if you find BirdNET-Pi has been worth your time, you will share your
 - [PixCams Build Guide](https://pixcams.com/building-a-birdnet-pi-real-time-acoustic-bird-id-station/)
 - <ins>[Core-Electronics](https://core-electronics.com.au/projects/bird-calls-raspberry-pi)</ins> Build Article
 - [RaspberryPi.com Blog Post](https://www.raspberrypi.com/news/classify-birds-acoustically-with-birdnet-pi/)
+- [MagPi Issue 119 Showcase Article](https://magpi.raspberrypi.com/issues/119/pdf)
 
 
 ### Internationalization:

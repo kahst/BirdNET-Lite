@@ -111,6 +111,7 @@ create_necessary_dirs() {
   sudo -u ${USER} ln -fs $my_dir/scripts/stats.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $my_dir/scripts/todays_detections.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $my_dir/scripts/history.php ${EXTRACTED}
+  sudo -u ${USER} ln -fs $my_dir/scripts/weekly_report.php ${EXTRACTED}
   sudo -u ${USER} ln -fs $my_dir/homepage/images/favicon.ico ${EXTRACTED}
   sudo -u ${USER} ln -fs ${HOME}/phpsysinfo ${EXTRACTED}
   sudo -u ${USER} ln -fs $my_dir/templates/phpsysinfo.ini ${HOME}/phpsysinfo/
@@ -274,7 +275,7 @@ Restart=on-failure
 RestartSec=5
 Type=simple
 User=${USER}
-ExecStart=$HOME/BirdNET-Pi/birdnet/bin/streamlit run $HOME/BirdNET-Pi/scripts/plotly_streamlit.py --server.address localhost --server.baseUrlPath "/stats"
+ExecStart=$HOME/BirdNET-Pi/birdnet/bin/streamlit run $HOME/BirdNET-Pi/scripts/plotly_streamlit.py --browser.gatherUsageStats false --server.address localhost --server.baseUrlPath "/stats"
 
 [Install]
 WantedBy=multi-user.target
@@ -379,6 +380,8 @@ config_icecast() {
   for i in "${passwords[@]}";do
   sed -i "s/<${i}password>.*<\/${i}password>/<${i}password>${ICE_PWD}<\/${i}password>/g" /etc/icecast2/icecast.xml
   done
+  sed -i 's|<!-- <bind-address>.*|<bind-address>127.0.0.1</bind-address>|;s|<!-- <shoutcast-mount>.*|<shoutcast-mount>/stream</shoutcast-mount>|'
+
   systemctl enable icecast2.service
 }
 
@@ -406,6 +409,10 @@ install_cleanup_cron() {
   sed "s/\$USER/$USER/g" $my_dir/templates/cleanup.cron >> /etc/crontab
 }
 
+install_weekly_cron() {
+  sed "s/\$USER/$USER/g" $my_dir/templates/weekly_report.cron >> /etc/crontab
+}
+
 chown_things() {
   chown -R $USER:$USER $HOME/Bird*
 }
@@ -431,6 +438,7 @@ install_services() {
   install_phpsysinfo
   install_livestream_service
   install_cleanup_cron
+  install_weekly_cron
 
   create_necessary_dirs
   generate_BirdDB

@@ -46,6 +46,11 @@ if(isset($_GET["latitude"])){
   } else {
     $apprise_notify_new_species_each_day = 0;
   }
+  if(isset($_GET['apprise_weekly_report'])) {
+    $apprise_weekly_report = 1;
+  } else {
+    $apprise_weekly_report = 0;
+  }
 
   if(isset($timezone)) {
     shell_exec("sudo timedatectl set-timezone ".$timezone);
@@ -101,6 +106,7 @@ if(isset($_GET["latitude"])){
   $contents = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents);
   $contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents);
   $contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=.*/", "APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=$apprise_notify_new_species_each_day", $contents);
+  $contents = preg_replace("/APPRISE_WEEKLY_REPORT=.*/", "APPRISE_WEEKLY_REPORT=$apprise_weekly_report", $contents);
   $contents = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents);
   $contents = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents);
   $contents = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents);
@@ -114,6 +120,7 @@ if(isset($_GET["latitude"])){
   $contents2 = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents2);
   $contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents2);
   $contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=.*/", "APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=$apprise_notify_new_species_each_day", $contents2);
+  $contents2 = preg_replace("/APPRISE_WEEKLY_REPORT=.*/", "APPRISE_WEEKLY_REPORT=$apprise_weekly_report", $contents2);
   $contents2 = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents2);
   $contents2 = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents2);
   $contents2 = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents2);
@@ -180,6 +187,15 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
     $filename = "http://birdnetpi.local/"."?filename=".$filename;
   }
 
+  $attach="";
+  $exampleimage = "https://live.staticflickr.com/7430/27545810581_8bfa8289a3_c.jpg";
+  if (strpos($body, '$flickrimage') !== false) {
+      $attach = "--attach ".$exampleimage;
+  }
+  if (strpos($body, '{') === false) {
+      $exampleimage = "";
+  }
+
   $title = str_replace("\$sciname", $sciname, $title);
   $title = str_replace("\$comname", $comname, $title);
   $title = str_replace("\$confidence", $confidence, $title);
@@ -192,6 +208,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   $title = str_replace("\$cutoff", $cutoff, $title);
   $title = str_replace("\$sens", $sens, $title);
   $title = str_replace("\$overlap", $overlap, $title);
+  $title = str_replace("\$flickrimage", $exampleimage, $title);
 
   $body = str_replace("\$sciname", $sciname, $body);
   $body = str_replace("\$comname", $comname, $body);
@@ -205,8 +222,9 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   $body = str_replace("\$cutoff", $cutoff, $body);
   $body = str_replace("\$sens", $sens, $body);
   $body = str_replace("\$overlap", $overlap, $body);
+  $body = str_replace("\$flickrimage", $exampleimage, $body);
 
-  echo "<pre class=\"bash\">".shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv -t '".$title."' -b '".$body."' ".$cf." ")."</pre>";
+  echo "<pre class=\"bash\">".shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv -t '".$title."' -b '".$body."' ".$attach." ".$cf." ")."</pre>";
 
   die();
 }
@@ -320,6 +338,8 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <dd>Sigmoid Sensitivity set in "Advanced Settings"</dd>
       <dt>$overlap</dt>
       <dd>Overlap set in "Advanced Settings"</dd>
+      <dt>$flickrimage</dt>
+      <dd>A preview image of the detected species from Flickr. Set your API key below.</dd>
       </dl>
       <p>Use the variables defined above to customize your notification title and body.</p>
       <label for="apprise_notification_title">Notification Title: </label>
@@ -329,9 +349,11 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <input type="checkbox" name="apprise_notify_new_species" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_notify_new_species">Notify each new infrequent species detection (<5 visits per week)</label><br>
       <input type="checkbox" name="apprise_notify_new_species_each_day" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
-      <label for="apprise_notify_new_species_each_day">Notify each new species detection of the day</label><br>
+      <label for="apprise_notify_new_species_each_day">Notify each species first detection of the day</label><br>
       <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
-      <label for="apprise_notify_each_detection">Notify each new detection</label><br><br>
+      <label for="apprise_weekly_report">Notify each new detection</label><br>
+      <input type="checkbox" name="apprise_weekly_report" <?php if($config['APPRISE_WEEKLY_REPORT'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
+      <label for="apprise_weekly_report">Send weekly report</label><br><br>
 
       <button type="button" class="testbtn" onclick="sendTestNotification(this)">Send Test Notification</button><br>
       <span id="testsuccessmsg"></span>

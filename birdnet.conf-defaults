@@ -62,6 +62,7 @@ APPRISE_NOTIFICATION_TITLE="New BirdNET-Pi Detection"
 APPRISE_NOTIFICATION_BODY="A \$sciname \$comname was just detected with a confidence of \$confidence"
 APPRISE_NOTIFY_EACH_DETECTION=0
 APPRISE_NOTIFY_NEW_SPECIES=0
+APPRISE_WEEKLY_REPORT=1
 
 #----------------------  Flickr Images API Configuration -----------------------#
 ## If FLICKR_API_KEY is set, the web interface will try and display bird images 
@@ -157,6 +158,12 @@ AUDIOFMT=mp3
 ## DATABASE_LANG is used to set the language for the database
 
 DATABASE_LANG=en
+
+## SILENCE_UPDATE_INDICATOR is for quieting the display of how many commits
+## your installation is behind by, relative to the Github repo. This number
+## appears next to "Tools" when you're 50 or more commits behind.
+
+SILENCE_UPDATE_INDICATOR=0
 
 ## These are just for debugging
 LAST_RUN=
