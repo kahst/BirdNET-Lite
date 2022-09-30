@@ -26,6 +26,7 @@ if(isset($_GET["latitude"])){
   $apprise_input = $_GET['apprise_input'];
   $apprise_notification_title = $_GET['apprise_notification_title'];
   $apprise_notification_body = $_GET['apprise_notification_body'];
+  $minimum_time_limit = $_GET['minimum_time_limit'];
   $flickr_api_key = $_GET['flickr_api_key'];
   $flickr_filter_email = $_GET["flickr_filter_email"];
   $language = $_GET["language"];
@@ -110,6 +111,7 @@ if(isset($_GET["latitude"])){
   $contents = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents);
   $contents = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents);
   $contents = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents);
+  $contents = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents);
 
   $contents2 = file_get_contents("./scripts/thisrun.txt");
   $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
@@ -124,6 +126,7 @@ if(isset($_GET["latitude"])){
   $contents2 = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents2);
   $contents2 = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents2);
   $contents2 = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents2);
+  $contents2 = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents2);
 
 
   $fh = fopen("/etc/birdnet/birdnet.conf", "w");
@@ -353,7 +356,13 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_weekly_report">Notify each new detection</label><br>
       <input type="checkbox" name="apprise_weekly_report" <?php if($config['APPRISE_WEEKLY_REPORT'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
-      <label for="apprise_weekly_report">Send weekly report</label><br><br>
+      <label for="apprise_weekly_report">Send weekly report</label><br>
+
+      <hr>
+      <label for="quantity">Minimum time between notifications of the same species (sec):</label>
+      <input type="number" id="minimum_time_limit" name="minimum_time_limit" value="<?php echo $config['APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES'];?>" min="0"><br>
+
+      <br>
 
       <button type="button" class="testbtn" onclick="sendTestNotification(this)">Send Test Notification</button><br>
       <span id="testsuccessmsg"></span>
