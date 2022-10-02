@@ -97,6 +97,31 @@ if(isset($_GET['excludefile'])) {
   }
 }
 
+$shifted_path = $home."/BirdSongs/Extracted/By_Date/shifted/";
+
+if(isset($_GET['shiftfile'])) {
+    $filename = $_GET['shiftfile'];
+    if(isset($_GET['shiftfreq'])) {
+	$pp = pathinfo($filename);
+	$dir = $pp['dirname'];
+	$fn  = $pp['filename'];
+	$ext = $pp['extension'];
+        $pi = $home."/BirdSongs/Extracted/By_Date/";
+        $cmd = "/usr/bin/nohup /usr/bin/ffmpeg -y -i \"".$pi.$filename."\" -af \"rubberband=pitch=2500/6000\" \"".$shifted_path.$filename."\"";
+	shell_exec("mkdir -p ".$shifted_path.$dir." && echo \"".$cmd."\" > /tmp/shift.sh && chmod +x /tmp/shift.sh");
+	shell_exec("/tmp/shift.sh");
+	shell_exec("rm -f /tmp/shift.sh");
+    } else {
+	$cmd = "rm -f " . $shifted_path.$dir.$filename;
+	shell_exec("echo \"".$cmd."\" > /tmp/rmshift.sh && chmod +x /tmp/rmshift.sh");
+	shell_exec("/tmp/rmshift.sh");
+	shell_exec("rm -f /tmp/rmshift.sh");
+    }
+
+    echo "OK";
+    die();
+}
+
 if(isset($_GET['bydate'])){
   $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date ORDER BY Date DESC');
   if($statement == False){
@@ -208,6 +233,45 @@ function toggleLock(filename, type, elem) {
     xhttp.open("GET", "play.php?excludefile="+filename+"&exclude_del=true", true);  
   }
   xhttp.send();
+  elem.setAttribute("src","images/spinner.gif");
+}
+
+function toggleShiftFreq(filename, shiftAction, elem) {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    if(this.responseText == "OK"){
+      if(shiftAction == "shift") {
+        elem.setAttribute("src","images/unshift.svg");
+        elem.setAttribute("title", "This file has been shifted down in frequency.");
+        elem.setAttribute("onclick", elem.getAttribute("onclick").replace("shift","unshift"));
+        console.log("shifted freqs of " + filename);
+	video=elem.parentNode.getElementsByTagName("video")[0];
+	video.setAttribute("title", video.getAttribute("title").replace("/By_Date/","/By_Date/shifted/"));
+	source = video.getElementsByTagName("source")[0];
+	source.setAttribute("src", source.getAttribute("src").replace("/By_Date/","/By_Date/shifted/"));
+	video.load();
+      } else {
+        elem.setAttribute("src","images/shift.svg");
+        elem.setAttribute("title", "This file is not shifted in frequency.");
+        elem.setAttribute("onclick", elem.getAttribute("onclick").replace("unshift","shift"));
+        console.log("unshifted freqs of " + filename);
+	video=elem.parentNode.getElementsByTagName("video")[0];
+	video.setAttribute("title", video.getAttribute("title").replace("/By_Date/shifted/","/By_Date/"));
+	source = video.getElementsByTagName("source")[0];
+	source.setAttribute("src", source.getAttribute("src").replace("/By_Date/shifted/","/By_Date/"));
+	video.load();
+      }
+    }
+  }
+  if(shiftAction == "shift") {
+    console.log("shifting freqs of " + filename);
+    xhttp.open("GET", "play.php?shiftfile="+filename+"&shiftfreq=true", true);
+  } else {
+    console.log("unshifting freqs of " + filename);
+    xhttp.open("GET", "play.php?shiftfile="+filename, true);  
+  }
+  xhttp.send();
+  elem.setAttribute("src","images/spinner.gif");
 }
 </script>
 
@@ -331,6 +395,8 @@ echo "<table>
     $comname = preg_replace('/\'/', '', $comname);
     $date = $results['Date'];
     $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
+    $filename_shifted = "/By_Date/shifted/".$date."/".$comname."/".$results['File_Name'];
+    $filename_png = $filename . ".png";
     $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
     $sci_name = $results['Sci_Name'];
     $time = $results['Time'];
@@ -357,14 +423,31 @@ echo "<table>
         $type = "del";
       }
 
+      if(file_exists($shifted_path.$filename_formatted)) {
+        $shiftImageIcon = "images/unshift.svg";
+        $shiftTitle = "This file has been shifted down in frequency."; 
+        $shiftAction = "unshift";
+	$filename = $filename_shifted;
+      } else {
+        $shiftImageIcon = "images/shift.svg";
+        $shiftTitle = "This file is not shifted in frequency.";
+        $shiftAction = "shift";
+      }
+
       echo "<tr>
-        <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
-        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+	<td class=\"relative\"> 
+
+<img style='cursor:pointer;right:90px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'> 
+<img style='cursor:pointer;right:45px' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\"> 
+<img style='cursor:pointer' onclick='toggleShiftFreq(\"".$filename_formatted."\",\"".$shiftAction."\", this)' class=\"copyimage\" width=25 title=\"".$shiftTitle."\" src=\"".$shiftImageIcon."\"> $date $time<br>$confidence<br>
+
+        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename_png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
         </tr>";
     } else {
       echo "<tr>
-        <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'><br>
-        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+	<td class=\"relative\">$date $time<br>$confidence
+<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'><br>
+        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename_png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
         </tr>";
     }
 
@@ -388,6 +471,8 @@ echo "<table>
         $comname = preg_replace('/\'/', '', $comname);
         $date = $results['Date'];
         $filename = "/By_Date/".$date."/".$comname."/".$results['File_Name'];
+        $filename_shifted = "/By_Date/shifted/".$date."/".$comname."/".$results['File_Name'];
+        $filename_png = $filename . ".png";
         $sciname = preg_replace('/ /', '_', $results['Sci_Name']);
         $sci_name = $results['Sci_Name'];
         $time = $results['Time'];
@@ -411,14 +496,31 @@ echo "<table>
             $type = "del";
           }
 
+      if(file_exists($shifted_path.$filename_formatted)) {
+        $shiftImageIcon = "images/unshift.svg";
+        $shiftTitle = "This file has been shifted down in frequency."; 
+        $shiftAction = "unshift";
+	$filename = $filename_shifted;
+      } else {
+        $shiftImageIcon = "images/shift.svg";
+        $shiftTitle = "This file is not shifted in frequency.";
+        $shiftAction = "shift";
+      }
+
           echo "<tr>
-            <td class=\"relative\"><img style='cursor:pointer;right:45px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'> <img style='cursor:pointer' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\">$date $time<br>$confidence<br>
-            <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+	    <td class=\"relative\"> 
+
+<img style='cursor:pointer;right:90px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'> 
+<img style='cursor:pointer;right:45px' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\"> 
+<img style='cursor:pointer' onclick='toggleShiftFreq(\"".$filename_formatted."\",\"".$shiftAction."\", this)' class=\"copyimage\" width=25 title=\"".$shiftTitle."\" src=\"".$shiftImageIcon."\">$date $time<br>$confidence<br>
+
+<video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename_png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
             </tr>";
         } else {
           echo "<tr>
-            <td class=\"relative\">$date $time<br>$confidence<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'><br>
-            <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename.png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+	    <td class=\"relative\">$date $time<br>$confidence
+<img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'><br>
+            <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename_png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
             </tr>";
         }
 
