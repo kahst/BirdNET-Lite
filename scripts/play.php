@@ -107,7 +107,7 @@ if(isset($_GET['shiftfile'])) {
 	$fn  = $pp['filename'];
 	$ext = $pp['extension'];
         $pi = $home."/BirdSongs/Extracted/By_Date/";
-        $cmd = "/usr/bin/nohup /usr/bin/ffmpeg -y -i \"".$pi.$filename."\" -af \"rubberband=pitch=2500/6000\" \"".$shifted_path.$filename."\"";
+        $cmd = "/usr/bin/nohup /usr/bin/ffmpeg -y -i \"".$pi.$filename."\" -af \"rubberband=pitch=".$config['FREQSHIFT_LO']."/".$config['FREQSHIFT_HI']."\" \"".$shifted_path.$filename."\"";
 	shell_exec("mkdir -p ".$shifted_path.$dir." && echo \"".$cmd."\" > /tmp/shift.sh && chmod +x /tmp/shift.sh");
 	shell_exec("/tmp/shift.sh");
 	shell_exec("rm -f /tmp/shift.sh");

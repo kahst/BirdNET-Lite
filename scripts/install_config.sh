@@ -76,8 +76,6 @@ APPRISE_NOTIFICATION_BODY="A \$sciname \$comname was just detected with a confid
 APPRISE_NOTIFY_EACH_DETECTION=0
 APPRISE_NOTIFY_NEW_SPECIES=0
 APPRISE_WEEKLY_REPORT=1
-APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=0
-APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=0
 
 #----------------------  Flickr Images API Configuration -----------------------#
 ## If FLICKR_API_KEY is set, the web interface will try and display bird images 
@@ -127,6 +125,16 @@ CONFIDENCE=0.7
 ## SENSITIVITY is the detection sensitivity from 0.5-1.5.
 
 SENSITIVITY=1.25
+
+## Configuration of the frequency shifting feature, useful for earing impaired people.
+## You have to define a freq. shift from HI to LO:
+## FREQSHIFT_HI
+
+FREQSHIFT_HI=6000
+
+## FREQSHIFT_LO
+
+FREQSHIFT_LO=3000
 
 ## CHANNELS holds the variable that corresponds to the number of channels the
 ## sound card supports.

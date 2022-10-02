@@ -253,16 +253,35 @@ foreach($formats as $format){
       <p>The BirdNET-Pi URL is how the main page will be reached. If you want your installation to respond to an IP address, place that here, but be sure to indicate "<i>http://</i>".<br>Example for IP: <i>http://192.168.0.109</i><br>Example if you own your own domain: <i>https://virginia.birdnetpi.com</i></p>
       <label for="silence_update_indicator">Silence Update Indicator: </label>
       <input type="checkbox" name="silence_update_indicator" <?php if($newconfig['SILENCE_UPDATE_INDICATOR'] == 1) { echo "checked"; };?> ><br>
+
       <h3>BirdNET-Lite Settings</h3>
-      <label for="overlap">Overlap: </label>
-      <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($newconfig['OVERLAP']);?>" required/><br>
-      <p>Min=0.0, Max=2.9</p>
-      <label for="confidence">Minimum Confidence: </label>
-      <input name="confidence" type="number" min="0.01" max="0.99" step="0.01" value="<?php print($newconfig['CONFIDENCE']);?>" required/><br>
-      <p>Min=0.01, Max=0.99</p>
-      <label for="sensitivity">Sigmoid Sensitivity: </label>
-      <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($newconfig['SENSITIVITY']);?>" required/><br>
-      <p>Min=0.5, Max=1.5</p>
+
+      <p>
+        <label for="overlap">Overlap: </label>
+        <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($newconfig['OVERLAP']);?>" required/><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;Min=0.0, Max=2.9
+      </p>
+      <p>
+        <label for="confidence">Minimum Confidence: </label>
+        <input name="confidence" type="number" min="0.01" max="0.99" step="0.01" value="<?php print($newconfig['CONFIDENCE']);?>" required/><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;Min=0.01, Max=0.99
+      </p>
+      <p>
+        <label for="sensitivity">Sigmoid Sensitivity: </label>
+        <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($newconfig['SENSITIVITY']);?>" required/><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;Min=0.5, Max=1.5
+      </p>
+
+      <h3>Accessibility Settings</h3>
+
+      <p>Birdsongs Frequency shifting configuration:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;this can be useful for earing impaired people.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;e.g. origin=6000, target=4000, performs a shift of 2000 Hz down.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<label for="hifreqshift">origin [Hz]: </label>
+        <input name="hifreqshift" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_HI']);?>" required/><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<label for="lofreqshift">target [Hz]: </label>
+        <input name="lofreqshift" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_LO']);?>" required/><br>
+      </p>
       <br><br>
       <input type="hidden" name="view" value="Advanced">
       <button onclick="if(<?php print($newconfig['PRIVACY_THRESHOLD']);?> != document.getElementById('privacy_threshold').value){return confirm('This will take about 90 seconds.')}" type="submit" name="submit" value="advanced">
