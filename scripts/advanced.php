@@ -100,6 +100,22 @@ if(isset($_GET['submit'])) {
     }
   }
 
+  if(isset($_GET["freqshift_hi"])) {
+    $freqshift_hi = $_GET["freqshift_hi"];
+    if(strcmp($freqshift_hi,$config['FREQSHIFT_HI']) !== 0) {
+      $contents = preg_replace("/FREQSHIFT_HI=.*/", "FREQSHIFT_HI=$freqshift_hi", $contents);
+      $contents2 = preg_replace("/FREQSHIFT_HI=.*/", "FREQSHIFT_HI=$freqshift_hi", $contents2);
+    }
+  }
+
+  if(isset($_GET["freqshift_lo"])) {
+    $freqshift_lo = $_GET["freqshift_lo"];
+    if(strcmp($freqshift_lo,$config['FREQSHIFT_LO']) !== 0) {
+      $contents = preg_replace("/FREQSHIFT_LO=.*/", "FREQSHIFT_LO=$freqshift_lo", $contents);
+      $contents2 = preg_replace("/FREQSHIFT_LO=.*/", "FREQSHIFT_LO=$freqshift_lo", $contents2);
+    }
+  }
+
   if(isset($_GET["full_disk"])) {
     $full_disk = $_GET["full_disk"];
     if(strcmp($full_disk,$config['FULL_DISK']) !== 0) {
@@ -278,9 +294,9 @@ foreach($formats as $format){
         &nbsp;&nbsp;&nbsp;&nbsp;this can be useful for earing impaired people.<br>
         &nbsp;&nbsp;&nbsp;&nbsp;e.g. origin=6000, target=4000, performs a shift of 2000 Hz down.<br>
         &nbsp;&nbsp;&nbsp;&nbsp;<label for="hifreqshift">origin [Hz]: </label>
-        <input name="hifreqshift" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_HI']);?>" required/><br>
+        <input name="freqshift_hi" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_HI']);?>" required/><br>
         &nbsp;&nbsp;&nbsp;&nbsp;<label for="lofreqshift">target [Hz]: </label>
-        <input name="lofreqshift" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_LO']);?>" required/><br>
+        <input name="freqshift_lo" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_LO']);?>" required/><br>
       </p>
       <br><br>
       <input type="hidden" name="view" value="Advanced">
