@@ -116,6 +116,22 @@ if(isset($_GET['submit'])) {
     }
   }
 
+  if(isset($_GET["freqshift_pitch"])) {
+    $freqshift_pitch = $_GET["freqshift_pitch"];
+    if(strcmp($freqshift_pitch,$config['FREQSHIFT_PITCH']) !== 0) {
+      $contents = preg_replace("/FREQSHIFT_PITCH=.*/", "FREQSHIFT_PITCH=$freqshift_pitch", $contents);
+      $contents2 = preg_replace("/FREQSHIFT_PITCH=.*/", "FREQSHIFT_PITCH=$freqshift_pitch", $contents2);
+    }
+  }
+
+  if(isset($_GET["freqshift_tool"])) {
+    $freqshift_tool = $_GET["freqshift_tool"];
+    if(strcmp($freqshift_tool,$config['FREQSHIFT_TOOL']) !== 0) {
+      $contents = preg_replace("/FREQSHIFT_TOOL=.*/", "FREQSHIFT_TOOL=$freqshift_tool", $contents);
+      $contents2 = preg_replace("/FREQSHIFT_TOOL=.*/", "FREQSHIFT_TOOL=$freqshift_tool", $contents2);
+    }
+  }
+
   if(isset($_GET["full_disk"])) {
     $full_disk = $_GET["full_disk"];
     if(strcmp($full_disk,$config['FULL_DISK']) !== 0) {
@@ -291,12 +307,30 @@ foreach($formats as $format){
       <h3>Accessibility Settings</h3>
 
       <p>Birdsongs Frequency shifting configuration:<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;this can be useful for earing impaired people.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;e.g. origin=6000, target=4000, performs a shift of 2000 Hz down.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<label for="hifreqshift">origin [Hz]: </label>
+        this can be useful for earing impaired people.<br>
+
+        <p style="margin-left: 40px">
+        Choose here the shifting tool, must be a value in the list { ffmpeg, sox }.<br>
+        <label for="freqshift_tool">shifting tool: </label>
+        <input name="freqshift_tool" type="text" value="<?php print($newconfig['FREQSHIFT_TOOL']);?>" required/><br>
+        </p>
+
+        <p style="margin-left: 40px">
+        using ffmpeg:
+        e.g. origin=6000, target=4000, performs a shift of 2000 Hz down.<br>
+        <label for="freqshift_hi">origin [Hz]: </label>
         <input name="freqshift_hi" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_HI']);?>" required/><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<label for="lofreqshift">target [Hz]: </label>
-        <input name="freqshift_lo" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_LO']);?>" required/><br>
+        <label for="freqshift_lo">target [Hz]: </label>
+        <input name="freqshift_lo" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_LO']);?>" required/>
+        </p>
+
+        <p style="margin-left: 40px">
+        using sox:
+        e.g. shiftPitch=-1200 performs a shift of 1 octave down. This value is in 100ths of a semitone.<br>
+        <label for="freqshift_pitch">pitch shift: </label>
+        <input name="freqshift_pitch" type="number" min="-4000" max="4000" step="1" value="<?php print($newconfig['FREQSHIFT_PITCH']);?>" required/><br>
+        </p>
+
       </p>
       <br><br>
       <input type="hidden" name="view" value="Advanced">

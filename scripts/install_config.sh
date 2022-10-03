@@ -127,14 +127,20 @@ CONFIDENCE=0.7
 SENSITIVITY=1.25
 
 ## Configuration of the frequency shifting feature, useful for earing impaired people.
-## You have to define a freq. shift from HI to LO:
+
+## FREQSHIFT_TOOL
+
+FREQSHIFT_TOOL=sox
+
+## If the tool is ffmpeg, you have to define a freq. shift from HI to LO:
 ## FREQSHIFT_HI
-
 FREQSHIFT_HI=6000
-
 ## FREQSHIFT_LO
-
 FREQSHIFT_LO=3000
+
+## If the tool is sox, you have to define the pitch shift (amount of 100ths of semintone)
+## FREQSHIFT_PITCH
+FREQSHIFT_PITCH=-1500
 
 ## CHANNELS holds the variable that corresponds to the number of channels the
 ## sound card supports.

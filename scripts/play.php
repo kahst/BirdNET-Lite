@@ -100,22 +100,36 @@ if(isset($_GET['excludefile'])) {
 $shifted_path = $home."/BirdSongs/Extracted/By_Date/shifted/";
 
 if(isset($_GET['shiftfile'])) {
+
     $filename = $_GET['shiftfile'];
-    if(isset($_GET['shiftfreq'])) {
-	$pp = pathinfo($filename);
-	$dir = $pp['dirname'];
-	$fn  = $pp['filename'];
-	$ext = $pp['extension'];
-        $pi = $home."/BirdSongs/Extracted/By_Date/";
-        $cmd = "/usr/bin/nohup /usr/bin/ffmpeg -y -i \"".$pi.$filename."\" -af \"rubberband=pitch=".$config['FREQSHIFT_LO']."/".$config['FREQSHIFT_HI']."\" \"".$shifted_path.$filename."\"";
-	shell_exec("mkdir -p ".$shifted_path.$dir." && echo \"".$cmd."\" > /tmp/shift.sh && chmod +x /tmp/shift.sh");
+    $pp = pathinfo($filename);
+    $dir = $pp['dirname'];
+    $fn  = $pp['filename'];
+    $ext = $pp['extension'];
+    $pi = $home."/BirdSongs/Extracted/By_Date/";
+
+    if(isset($_GET['doshift'])) {
+	$freqshift_tool = $config['FREQSHIFT_TOOL'];
+
+	if ($freqshift_tool == "ffmpeg") {
+       		$cmd = "/usr/bin/nohup /usr/bin/ffmpeg -y -i \"".$pi.$filename."\" -af \"rubberband=pitch=".$config['FREQSHIFT_LO']."/".$config['FREQSHIFT_HI']."\" \"".$shifted_path.$filename."\"";
+		shell_exec("mkdir -p ".$shifted_path.$dir." && echo \"".$cmd."\" > /tmp/shift.sh && chmod +x /tmp/shift.sh");
+
+	} else if ($freqshift_tool == "sox") {
+		//linux.die.net/man/1/sox
+		$soxopt = "-q";
+		$soxpitch = $config['FREQSHIFT_PITCH'];
+       		$cmd = "/usr/bin/nohup /usr/bin/sox \"".$pi.$filename."\" \"".$shifted_path.$filename."\" pitch ".$soxopt." ".$soxpitch;
+		shell_exec("mkdir -p ".$shifted_path.$dir." && echo \"".$cmd."\" > /tmp/shift.sh && chmod +x /tmp/shift.sh");
+	}
+
 	shell_exec("/tmp/shift.sh");
 	shell_exec("rm -f /tmp/shift.sh");
     } else {
-	$cmd = "rm -f " . $shifted_path.$dir.$filename;
-	shell_exec("echo \"".$cmd."\" > /tmp/rmshift.sh && chmod +x /tmp/rmshift.sh");
-	shell_exec("/tmp/rmshift.sh");
-	shell_exec("rm -f /tmp/rmshift.sh");
+	$cmd = "rm -f " . $shifted_path.$filename;
+	shell_exec("echo \"".$cmd."\" > /tmp/unshift.sh && chmod +x /tmp/unshift.sh");
+	shell_exec("/tmp/unshift.sh");
+	shell_exec("rm -f /tmp/unshift.sh");
     }
 
     echo "OK";
@@ -265,7 +279,7 @@ function toggleShiftFreq(filename, shiftAction, elem) {
   }
   if(shiftAction == "shift") {
     console.log("shifting freqs of " + filename);
-    xhttp.open("GET", "play.php?shiftfile="+filename+"&shiftfreq=true", true);
+    xhttp.open("GET", "play.php?shiftfile="+filename+"&doshift=true", true);
   } else {
     console.log("unshifting freqs of " + filename);
     xhttp.open("GET", "play.php?shiftfile="+filename, true);  
