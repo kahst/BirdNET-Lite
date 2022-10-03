@@ -123,5 +123,18 @@ fi
 sudo sed -i 's|<!-- <bind-address>.*|<bind-address>127.0.0.1</bind-address>|;s|<!-- <shoutcast-mount>.*|<shoutcast-mount>/stream</shoutcast-mount>|' /etc/icecast2/icecast.xml
 sudo systemctl restart icecast2
 
+if ! grep FREQSHIFT_TOOL /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "FREQSHIFT_TOOL=sox" >> /etc/birdnet/birdnet.conf
+fi
+if ! grep FREQSHIFT_HI /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "FREQSHIFT_HI=6000" >> /etc/birdnet/birdnet.conf
+fi
+if ! grep FREQSHIFT_LO /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "FREQSHIFT_LO=3000" >> /etc/birdnet/birdnet.conf
+fi
+if ! grep FREQSHIFT_PITCH /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "FREQSHIFT_PITCH=-1500" >> /etc/birdnet/birdnet.conf
+fi
+
 sudo systemctl daemon-reload
 restart_services.sh
