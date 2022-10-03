@@ -291,7 +291,7 @@ foreach($formats as $format){
       <p>
         <label for="overlap">Overlap: </label>
         <input name="overlap" type="number" min="0.0" max="2.9" step="0.1" value="<?php print($newconfig['OVERLAP']);?>" required/><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;Min=0.0, Max=2.9
+  &nbsp;&nbsp;&nbsp;&nbsp;Min=0.0, Max=2.9
       </p>
       <p>
         <label for="confidence">Minimum Confidence: </label>
@@ -301,7 +301,7 @@ foreach($formats as $format){
       <p>
         <label for="sensitivity">Sigmoid Sensitivity: </label>
         <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($newconfig['SENSITIVITY']);?>" required/><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;Min=0.5, Max=1.5
+  &nbsp;&nbsp;&nbsp;&nbsp;Min=0.5, Max=1.5
       </p>
 
       <h3>Accessibility Settings</h3>
@@ -310,9 +310,21 @@ foreach($formats as $format){
         this can be useful for earing impaired people.<br>
 
         <p style="margin-left: 40px">
-        Choose here the shifting tool, must be a value in the list { ffmpeg, sox }.<br>
-        <label for="freqshift_tool">shifting tool: </label>
-        <input name="freqshift_tool" type="text" value="<?php print($newconfig['FREQSHIFT_TOOL']);?>" required/><br>
+
+      <label for="freqshift_tool">shifting tool: </label>
+      <select name="freqshift_tool">
+            <option selected="<?php print($newconfig['FREQSHIFT_TOOL']);?>"><?php print($newconfig['FREQSHIFT_TOOL']);?></option>
+      <?php
+        $formats = array("sox","ffmpeg");
+
+        $formats = array_diff($formats, array($newconfig['FREQSHIFT_TOOL']));
+      foreach($formats as $format){
+        echo "<option value='$format'>$format</option>";
+      }
+      ?>
+      </select>
+
+        Choose here the shifting tool.<br>
         </p>
 
         <p style="margin-left: 40px">
