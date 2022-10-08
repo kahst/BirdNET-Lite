@@ -182,7 +182,7 @@ DATABASE_LANG=en
 ## appears next to "Tools" when you're 50 or more commits behind.
 
 ## HEARTBEAT_URL is a location to ping every time some analysis is done
-## no information is sent to the the URL, its a heart beat to show that the
+## no information is sent to the the URL, it is a heart beat to show that the
 ## analysis is continuing
 
 HEARTBEAT_URL=
