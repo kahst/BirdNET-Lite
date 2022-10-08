@@ -167,7 +167,7 @@ DATABASE_LANG=en
 ## no information is sent to the the URL, its a heart beat to show that the
 ## analysis is continuing
 
-HEARBEAT_URL=
+HEARTBEAT_URL=
 
 SILENCE_UPDATE_INDICATOR=0
 
