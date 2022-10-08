@@ -187,6 +187,12 @@ AUDIOFMT=mp3
 ## DATABASE_LANG is the language used for the bird species database
 DATABASE_LANG=en
 
+## HEARTBEAT_URL is a location to ping every time some analysis is done
+## no information is sent to the the URL, its a heart beat to show that the
+## analysis is continuing
+
+HEARTBEAT_URL=
+
 ## SILENCE_UPDATE_INDICATOR is for quieting the display of how many commits
 ## your installation is behind by, relative to the Github repo. This number
 ## appears next to "Tools" when you're 50 or more commits behind.

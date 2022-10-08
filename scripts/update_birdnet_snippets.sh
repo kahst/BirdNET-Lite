@@ -135,6 +135,9 @@ fi
 if ! grep FREQSHIFT_PITCH /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "FREQSHIFT_PITCH=-1500" >> /etc/birdnet/birdnet.conf
 fi
+if ! grep HEARTBEAT_URL /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "HEARTBEAT_URL=" >> /etc/birdnet/birdnet.conf
+fi
 
 sudo systemctl daemon-reload
 restart_services.sh
