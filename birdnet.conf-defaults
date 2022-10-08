@@ -16,8 +16,8 @@ LONGITUDE=
 BIRDWEATHER_ID=
 
 #-----------------------  Web Interface User Password  ------------------------#
-#____________________The variable below sets the 'birdnet'_____________________# 
-#___________________user password for the Live Audio Stream,___________________# 
+#____________________The variable below sets the 'birdnet'_____________________#
+#___________________user password for the Live Audio Stream,___________________#
 #_________________Tools, System Links, and the Processed files ________________#
 
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
@@ -26,7 +26,7 @@ BIRDWEATHER_ID=
 CADDY_PWD=
 
 #-------------------------  Live Audio Stream  --------------------------------#
-#_____________The variable below configures/enables the live___________________# 
+#_____________The variable below configures/enables the live___________________#
 #_____________________________audio stream.____________________________________#
 
 
@@ -43,7 +43,7 @@ ICE_PWD=birdnetpi
 
 
 ## BIRDNETPI_URL is the URL where the extractions, data-set, and live-stream
-## will be web-hosted. If you do not own a domain, or would just prefer to keep 
+## will be web-hosted. If you do not own a domain, or would just prefer to keep
 ## the BirdNET-Pi on your local network, keep this EMPTY.
 
 BIRDNETPI_URL=
@@ -67,8 +67,8 @@ APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=0
 APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=0
 
 #----------------------  Flickr Images API Configuration -----------------------#
-## If FLICKR_API_KEY is set, the web interface will try and display bird images 
-## for each detection. If FLICKR_FILTER_EMAIL is set, the images will only be 
+## If FLICKR_API_KEY is set, the web interface will try and display bird images
+## for each detection. If FLICKR_FILTER_EMAIL is set, the images will only be
 ## displayed from a particular Flickr user (e.g. yourself).
 
 FLICKR_API_KEY=
@@ -80,18 +80,18 @@ FLICKR_FILTER_EMAIL=
 
 ## RECS_DIR is the location birdnet_analysis.service will look for the data-set
 ## it needs to analyze. Be sure this directory is readable and writable for
-## the BIRDNET_USER. 
+## the BIRDNET_USER.
 
 RECS_DIR=$HOME/BirdSongs
 
-## REC_CARD is the sound card you would want the birdnet_recording.service to 
+## REC_CARD is the sound card you would want the birdnet_recording.service to
 ## use. Leave this as "default" to use PulseAudio (recommended), or use
 ## the output from "aplay -L" to specify an ALSA device.
 
 REC_CARD=default
 
-## PROCESSED is the directory where the formerly 'Analyzed' files are moved 
-## after extractions have been made from them. This includes both WAVE and 
+## PROCESSED is the directory where the formerly 'Analyzed' files are moved
+## after extractions have been made from them. This includes both WAVE and
 ## BirdNET.selection.txt files.
 
 PROCESSED=${RECS_DIR}/Processed
@@ -105,7 +105,7 @@ EXTRACTED=${RECS_DIR}/Extracted
 
 OVERLAP=0.0
 
-## CONFIDENCE is the minimum confidence level from 0.0-1.0 BirdNET's analysis 
+## CONFIDENCE is the minimum confidence level from 0.0-1.0 BirdNET's analysis
 ## should reach before creating an entry in the BirdNET.selection.txt file.
 ## Don't set this to 1.0 or you won't have any results.
 
@@ -144,14 +144,14 @@ FULL_DISK=purge
 
 ## PRIVACY_THRESHOLD can be set to enable sensitivity to Human sounds. This
 ## setting is an effort to introduce privacy into the data collection.
-## The PRIVACY_THRESHOLD value represents a percentage of the entire species 
+## The PRIVACY_THRESHOLD value represents a percentage of the entire species
 ## list used during analysis. If a human sound is predicted anywhere within
 ## the precentile set below, no data is collected for that audio chunk.
 ## Valid range: 0-3
 
 PRIVACY_THRESHOLD=0
 
-## RECORDING_LENGTH sets the length of the recording that BirdNET-Lite will 
+## RECORDING_LENGTH sets the length of the recording that BirdNET-Lite will
 ## analyze.
 
 RECORDING_LENGTH=15
@@ -163,11 +163,11 @@ RECORDING_LENGTH=15
 EXTRACTION_LENGTH=
 
 ## AUDIOFMT set the audio format that sox should use for the extractions.
-## The default is mp3. Available formats are: 8svx aif aifc aiff aiffc al amb 
+## The default is mp3. Available formats are: 8svx aif aifc aiff aiffc al amb
 ## amr-nb amr-wb anb au avr awb caf cdda cdr cvs cvsd cvu dat dvms f32 f4 f64 f8
-## fap flac fssd gsm gsrt hcom htk ima ircam la lpc lpc10 lu mat mat4 mat5 maud 
-## mp2 mp3 nist ogg paf prc pvf raw s1 s16 s2 s24 s3 s32 s4 s8 sb sd2 sds sf sl 
-## sln smp snd sndfile sndr sndt sou sox sph sw txw u1 u16 u2 u24 u3 u32 u4 u8 
+## fap flac fssd gsm gsrt hcom htk ima ircam la lpc lpc10 lu mat mat4 mat5 maud
+## mp2 mp3 nist ogg paf prc pvf raw s1 s16 s2 s24 s3 s32 s4 s8 sb sd2 sds sf sl
+## sln smp snd sndfile sndr sndt sou sox sph sw txw u1 u16 u2 u24 u3 u32 u4 u8
 ## ub ul uw vms voc vorbis vox w64 wav wavpcm wv wve xa xi
 ## Note: Most have not been tested.
 
@@ -180,6 +180,12 @@ DATABASE_LANG=en
 ## SILENCE_UPDATE_INDICATOR is for quieting the display of how many commits
 ## your installation is behind by, relative to the Github repo. This number
 ## appears next to "Tools" when you're 50 or more commits behind.
+
+## HEARTBEAT_URL is a location to ping every time some analysis is done
+## no information is sent to the the URL, its a heart beat to show that the
+## analysis is continuing
+
+HEARTBEAT_URL=
 
 SILENCE_UPDATE_INDICATOR=0
 
