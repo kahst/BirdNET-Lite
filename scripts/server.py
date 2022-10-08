@@ -12,7 +12,6 @@ import operator
 import socket
 import threading
 import os
-import paho.mqtt.client as mqtt
 
 from utils.notifications import sendAppriseNotifications
 from utils.parse_settings import config_to_settings
@@ -32,15 +31,6 @@ SERVER = "localhost"
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
-
-MQTT_SERVER = "192.168.0.1"
-MQTT_PORT = 1883
-MQTT_CLIENT = "birdpi"
-MQTT_USER = "birdpi"
-MQTT_PASSWORD = "password"
-MQTT_TOPIC = "birdpi/found"
-MQTT_TOPIC_ATTRIBUTES = "birdpi/found/attributes"
-
 
 userDir = os.path.expanduser('~')
 DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
@@ -453,15 +443,6 @@ def handle_client(conn, addr):
                                       File_Name +
                                       '\n')
 
-                                # post to mqtt
-                                try:
-                                  mclient = mqtt.Client(client_id=MQTT_CLIENT, clean_session=True, userdata=None, protocol=mqtt.MQTTv311, transport=">
-                                  mclient.username_pw_set(username=MQTT_USER, password=MQTT_PASSWORD)
-                                  mclient.connect(MQTT_SERVER, MQTT_PORT)
-                                  mclient.publish(MQTT_TOPIC,Com_Name)
-                                  mclient.disconnect()
-                                except:
-                                  print('MQTT Failed')
                                 if birdweather_id != "99999":
                                     try:
 
@@ -504,13 +485,6 @@ def handle_client(conn, addr):
                                             post_soundscape_end_time + post_commonName + post_scientificName + post_algorithm + post_confidence + post_end
                                         print(post_json)
                                         response = requests.post(detection_url, json=json.loads(post_json))
-                                        
-                                        mclient = mqtt.Client(client_id=MQTT_CLIENT, clean_session=True, userdata=None, protocol=mqtt.MQTTv311, trans>
-                                        mclient.username_pw_set(username=MQTT_USER, password=MQTT_PASSWORD)
-                                        mclient.connect(MQTT_SERVER, MQTT_PORT)
-                                        mclient.publish(MQTT_TOPIC_ATTRIBUTES,str(post_json))
-                                        mclient.disconnect()
-
                                         print("Detection POST Response Status - ", response.status_code)
                                     except BaseException:
                                         print("Cannot POST right now")
