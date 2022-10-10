@@ -187,7 +187,7 @@ install_Caddyfile() {
     cp /etc/caddy/Caddyfile{,.original}
   fi
   if ! [ -z ${CADDY_PWD} ];then
-  HASHWORD=$(caddy hash-password -plaintext ${CADDY_PWD})
+  HASHWORD=$(caddy hash-password --plaintext ${CADDY_PWD})
   cat << EOF > /etc/caddy/Caddyfile
 http:// ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
