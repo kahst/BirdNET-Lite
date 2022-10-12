@@ -264,9 +264,7 @@ $refresh = $config['RECORDING_LENGTH'];
 $time = time();
 if (file_exists('./Charts/'.$chart)) {
   echo "<img id='chart' src=\"/Charts/$chart?nocache=$time\">";
-} else {
-  echo "<p>No Detections For Today</p>";
-}
+} 
 ?>
 </div>
 
