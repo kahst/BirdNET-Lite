@@ -62,6 +62,7 @@ Currently listening in these countries . . . that I know of . . .
 - Denmark
 - Costa Rica
 - The Philippines
+- Hungary
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
