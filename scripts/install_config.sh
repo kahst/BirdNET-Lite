@@ -76,6 +76,8 @@ APPRISE_NOTIFICATION_BODY="A \$sciname \$comname was just detected with a confid
 APPRISE_NOTIFY_EACH_DETECTION=0
 APPRISE_NOTIFY_NEW_SPECIES=0
 APPRISE_WEEKLY_REPORT=1
+APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=0
+APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=0
 
 #----------------------  Flickr Images API Configuration -----------------------#
 ## If FLICKR_API_KEY is set, the web interface will try and display bird images 
