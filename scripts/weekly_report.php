@@ -134,8 +134,11 @@ if(isset($_GET['ascii'])) {
 		echo "No new species were seen this week.";
 	}
 
+        $prevweek = date('W', $enddate) - 1;
+        if($prevweek < 1) { $prevweek = 52; } 
+
 	echo "<hr><small>* data from ".date('Y-m-d', $startdate)." — ".date('Y-m-d',$enddate).".</small><br>";
-	echo '<small>* percentages are calculated relative to week '.(date('W', $enddate) - 1).'.</small>';
+	echo '<small>* percentages are calculated relative to week '.($prevweek).'.</small>';
 
 	die();
 }
