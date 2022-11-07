@@ -307,7 +307,7 @@ foreach($formats as $format){
       <h3>Accessibility Settings</h3>
 
       <p>Birdsongs Frequency shifting configuration:<br>
-        this can be useful for earing impaired people.<br>
+        this can be useful for hearing impaired people.<br>
 
         <p style="margin-left: 40px">
 
