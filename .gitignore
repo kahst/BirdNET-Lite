@@ -18,3 +18,4 @@ exclude_species_list.txt
 firstrun.ini
 HUMAN.txt
 include_species_list.txt
+.DS_Store
