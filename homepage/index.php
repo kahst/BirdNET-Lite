@@ -16,6 +16,16 @@ echo "<a href=\"https://github.com/mcguirepr89/BirdNET-Pi.git\" target=\"_blank\
 echo "<a href=\"https://github.com/mcguirepr89/BirdNET-Pi.git\" target=\"_blank\"><img src=\"images/bird.png\"></a>";
 }?>
   </div>
+
+<?php
+  if (file_exists('./scripts/thisrun.txt')) {
+    $config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+    $config = parse_ini_file('./scripts/firstrun.ini');
+  }
+  $site_name = $config['SITE_NAME'];
+?>
+
   <div class="stream">
 <?php
 if(isset($_GET['stream'])){

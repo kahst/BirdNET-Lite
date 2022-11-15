@@ -2,6 +2,11 @@
 #                    Configuration settings for BirdNET-Pi                     #
 ################################################################################
 
+# Site Name - Optional
+
+SITE_NAME=""
+
+
 #--------------------- Required: Latitude, and Longitude ----------------------#
 
 ## Please only go to 4 decimal places. Example:43.3984
