@@ -22,6 +22,8 @@ if(isset($_GET['restart_php']) && $_GET['restart_php'] == "true") {
 if(isset($_GET["latitude"])){
   $latitude = $_GET["latitude"];
   $longitude = $_GET["longitude"];
+  $site_name = $_GET["site_name"];
+  $site_name = preg_replace( '/[^A-Za-z0-9 ]/'  , "", $site_name);
   $birdweather_id = $_GET["birdweather_id"];
   $apprise_input = $_GET['apprise_input'];
   $apprise_notification_title = $_GET['apprise_notification_title'];
@@ -99,6 +101,7 @@ if(isset($_GET["latitude"])){
 
 
   $contents = file_get_contents("/etc/birdnet/birdnet.conf");
+  $contents = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents);
   $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
   $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
   $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
@@ -114,6 +117,7 @@ if(isset($_GET["latitude"])){
   $contents = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents);
 
   $contents2 = file_get_contents("./scripts/thisrun.txt");
+  $contents2 = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents2);
   $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
   $contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
   $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
@@ -295,6 +299,8 @@ function sendTestNotification(e) {
 
       <table class="settingstable"><tr><td>
       <h2>Location</h2>
+      <label for="site_name">Site Name: </label>
+      <input name="site_name" type="text" value="<?php print($config['SITE_NAME']);?>"/> (Optional)<br>
       <label for="latitude">Latitude: </label>
       <input name="latitude" type="number" max="90" min="-90" step="0.0001" value="<?php print($config['LATITUDE']);?>" required/><br>
       <label for="longitude">Longitude: </label>

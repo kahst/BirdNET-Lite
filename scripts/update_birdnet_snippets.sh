@@ -10,6 +10,11 @@ my_dir=$HOME/BirdNET-Pi/scripts
 sudo -E chown -R $USER:$USER $HOME/*
 sudo chmod -R g+wr $HOME/*
 
+# Create blank sitename as it's optional. First time install will use $HOSTNAME.
+if ! grep SITE_NAME /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "SITE_NAME=\"\"" >> /etc/birdnet/birdnet.conf
+fi
+
 if ! grep PRIVACY_THRESHOLD /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "PRIVACY_THRESHOLD=0" >> /etc/birdnet/birdnet.conf
   git -C $HOME/BirdNET-Pi rm $my_dir/privacy_server.py

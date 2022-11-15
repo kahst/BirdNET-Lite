@@ -13,11 +13,16 @@ install_config() {
 #                    Configuration settings for BirdNET-Pi                     #
 ################################################################################
 
+# Optional: Site Title for banner
+
+SITE_NAME="$HOSTNAME"
+
 #--------------------- Required: Latitude, and Longitude ----------------------#
 
 ## The shell substitution below guesses these based on your network. THESE NEED
 ## TO BE CHANGED TO STATIC VALUES
 ## Please only go to 4 decimal places. Example:43.3984
+
 
 LATITUDE=$(curl -s4 ifconfig.co/json | jq .latitude)
 LONGITUDE=$(curl -s4 ifconfig.co/json | jq .longitude)
