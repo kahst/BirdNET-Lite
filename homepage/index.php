@@ -1,4 +1,16 @@
-<title>BirdNET-Pi</title>
+<?php
+  if (file_exists('./scripts/thisrun.txt')) {
+    $config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+    $config = parse_ini_file('./scripts/firstrun.ini');
+  }
+  if($config["SITE_NAME"] == "") {
+    $site_name = "BirdNET-Pi";
+  } else {
+    $site_name = $config['SITE_NAME'];
+  }
+?>
+<title><?php echo $site_name; ?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body::-webkit-scrollbar {
@@ -17,14 +29,6 @@ echo "<a href=\"https://github.com/mcguirepr89/BirdNET-Pi.git\" target=\"_blank\
 }?>
   </div>
 
-<?php
-  if (file_exists('./scripts/thisrun.txt')) {
-    $config = parse_ini_file('./scripts/thisrun.txt');
-  } elseif (file_exists('./scripts/firstrun.ini')) {
-    $config = parse_ini_file('./scripts/firstrun.ini');
-  }
-  $site_name = $config['SITE_NAME'];
-?>
 
   <div class="stream">
 <?php
