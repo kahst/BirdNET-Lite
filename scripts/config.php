@@ -133,6 +133,13 @@ if(isset($_GET["latitude"])){
   $contents2 = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents2);
 
 
+  if($site_name != $config["SITE_NAME"]) {
+    echo "<script>setTimeout(
+    function() {
+      location.reload();
+    }, 1000);</script>";
+  }
+
   $fh = fopen("/etc/birdnet/birdnet.conf", "w");
   $fh2 = fopen("./scripts/thisrun.txt", "w");
   fwrite($fh, $contents);
