@@ -136,7 +136,7 @@ if(isset($_GET["latitude"])){
   if($site_name != $config["SITE_NAME"]) {
     echo "<script>setTimeout(
     function() {
-      location.reload();
+      window.parent.document.location.reload();
     }, 1000);</script>";
   }
 
