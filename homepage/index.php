@@ -63,7 +63,7 @@ if(isset($_GET['stream'])){
   </form>
   </div>
   <h1><a href=\"/\"><img class=\"topimage\" src=\"images/bnp.png\"></a></h1>
-</div>";
+</div><div class=\"centered\"><h3>$site_name</h3></div>";
 }
 if(isset($_GET['filename'])) {
   $filename = $_GET['filename'];
