@@ -23,7 +23,8 @@ if(isset($_GET["latitude"])){
   $latitude = $_GET["latitude"];
   $longitude = $_GET["longitude"];
   $site_name = $_GET["site_name"];
-  $site_name = preg_replace('/[&#39;|\'|\"|&#34;]*/', '', $site_name);
+  $site_name = str_replace('"', "", $site_name);
+  $site_name = str_replace('\'', "", $site_name);
   $birdweather_id = $_GET["birdweather_id"];
   $apprise_input = $_GET['apprise_input'];
   $apprise_notification_title = $_GET['apprise_notification_title'];
