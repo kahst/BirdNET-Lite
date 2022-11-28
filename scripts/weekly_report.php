@@ -55,7 +55,7 @@ if(isset($_GET['ascii'])) {
 	$result7= $statement7->execute();
 	$priortotalspeciestally = $result7->fetchArray(SQLITE3_ASSOC)['COUNT(DISTINCT(Com_Name))'];
 
-	$percentagedifftotal = round((1 - $priortotalcount / $totalcount) * 100);
+	$percentagedifftotal = round( (($totalcount - $priortotalcount) / $priortotalcount) * 100  );
 
 	if($percentagedifftotal > 0) {
 		$percentagedifftotal = "<span style='color:green;font-size:small'>+".$percentagedifftotal."%</span>";
@@ -63,7 +63,7 @@ if(isset($_GET['ascii'])) {
 		$percentagedifftotal = "<span style='color:red;font-size:small'>-".abs($percentagedifftotal)."%</span>";
 	}
 
-	$percentagedifftotaldistinctspecies = round((1 - $priortotalspeciestally / $totalspeciestally) * 100);
+	$percentagedifftotaldistinctspecies = round( (($totalspeciestally - $priortotalspeciestally) / $priortotalspeciestally) * 100  );
 	if($percentagedifftotaldistinctspecies > 0) {
 		$percentagedifftotaldistinctspecies = "<span style='color:green;font-size:small'>+".$percentagedifftotaldistinctspecies."%</span>";
 	} else {
@@ -99,7 +99,8 @@ if(isset($_GET['ascii'])) {
 			$totalcount = $result2->fetchArray(SQLITE3_ASSOC);
 			$priorweekcount = $totalcount['COUNT(*)'];
 
-			$percentagediff = round((1 - $priorweekcount / $scount) * 100);
+      // really percent changed
+			$percentagediff = round( (($scount - $priorweekcount) / $priorweekcount) * 100  );
 
 			if($percentagediff > 0) {
 				$percentagediff = "<span style='color:green;font-size:small'>+".$percentagediff."%</span>";
@@ -205,7 +206,7 @@ while($detection=$result1->fetchArray(SQLITE3_ASSOC))
 			$totalcount = $result2->fetchArray(SQLITE3_ASSOC);
 			$priorweekcount = $totalcount['COUNT(*)'];
 
-			$percentagediff = round((1 - $priorweekcount / $scount) * 100);
+			$percentagediff = round( (($scount - $priorweekcount) / $priorweekcount) * 100  );
 
 			if($percentagediff > 0) {
 				$percentagediff = "<span style='color:green;font-size:small'>+".$percentagediff."%</span>";
