@@ -89,8 +89,6 @@ Currently listening in these countries . . . that I know of . . .
 * A USB Microphone or Sound Card
 
 ## Installation
-**IMPORTANT:** Not yet tested on [the newest RaspiOS image](https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-09-07/) 
-
 [A comprehensive installation guide is available here](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Installation-Guide).
 
 Please note that installing BirdNET-Pi on top of other servers is not supported. If this is something that you require, please open a discussion for your idea and inquire about how to contribute to development.
