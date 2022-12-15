@@ -22,7 +22,6 @@ Check out birds from around the world
 - [Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
 - [Murrysville, Pennsylvania, United States](https://murrysvillepa.birdnetpi.com)
 - [Berowra, New South Wales, Australia](https://berowra.birdnetpi.com)
-- [Fairview, Tennessee, United States](https://fairviewtennessee.birdnetpi.com)
 - [Dundas, Ontario, Canada](https://dundasontario.birdnetpi.com)
 - [Bungendore, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
 - [Rivers Bend, Ohio, United States](https://riversbendoh.birdnetpi.com)
