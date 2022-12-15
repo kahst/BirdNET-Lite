@@ -261,6 +261,10 @@ body::-webkit-scrollbar {
 <div class="chart">
 <?php
 $refresh = $config['RECORDING_LENGTH'];
+$dividedrefresh = $refresh/4;
+if($dividedrefresh == 0) { 
+  $dividedrefresh = 1;
+}
 $time = time();
 if (file_exists('./Charts/'.$chart)) {
   echo "<img id='chart' src=\"/Charts/$chart?nocache=$time\">";
@@ -332,7 +336,7 @@ window.setInterval(function(){
     // image or audio didn't load for some reason, force a refresh in 5 seconds
     loadDetectionIfNewExists();
   }
-}, <?php echo intval($refresh/4); ?>*1000);
+}, <?php echo intval($dividedrefresh); ?>*1000);
 
 function loadFiveMostRecentDetections() {
   const xhttp = new XMLHttpRequest();
