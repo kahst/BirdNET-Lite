@@ -417,6 +417,15 @@ chown_things() {
   chown -R $USER:$USER $HOME/Bird*
 }
 
+increase_caddy_timeout() {
+  mkdir /etc/systemd/system/caddy.service.d
+  cat << EOF > /etc/systemd/system/caddy.service.d/override.conf
+[Service]
+TimeoutSec=300s
+EOF
+  systemctl daemon-reload
+}
+
 install_services() {
   set_hostname
   update_etc_hosts
@@ -439,6 +448,7 @@ install_services() {
   install_livestream_service
   install_cleanup_cron
   install_weekly_cron
+  increase_caddy_timeout
 
   create_necessary_dirs
   generate_BirdDB
