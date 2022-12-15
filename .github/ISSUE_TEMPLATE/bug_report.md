@@ -29,3 +29,11 @@ Add any other context about the problem or your installation here.
 
 **Your build**
 The hardware on which BirdNET-Pi is running goes here.
+
+**Code or log snippets**
+```
+Paste your 
+log output 
+or 
+code here
+```
