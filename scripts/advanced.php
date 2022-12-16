@@ -5,7 +5,7 @@ error_reporting(E_ERROR);
 if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/thisrun.txt');
 } elseif (file_exists('firstrun.ini')) {
-  $config = parse_ini_file('firstrun.ini');r
+  $config = parse_ini_file('firstrun.ini');
 }
 
 $caddypwd = $config['CADDY_PWD'];
