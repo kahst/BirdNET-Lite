@@ -5,7 +5,7 @@ error_reporting(E_ERROR);
 if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/thisrun.txt');
 } elseif (file_exists('firstrun.ini')) {
-  $config = parse_ini_file('firstrun.ini');
+  $config = parse_ini_file('firstrun.ini');r
 }
 
 $caddypwd = $config['CADDY_PWD'];
@@ -251,7 +251,7 @@ if (file_exists('./scripts/thisrun.txt')) {
       <p>When the disk becomes full, you can choose to 'purge' old files to make room for new ones or 'keep' your data and stop all services instead.<br>Note: you can exclude specific files from 'purge' on the Recordings page.</p>
       <label for="rec_card">Audio Card: </label>
       <input name="rec_card" type="text" value="<?php print($newconfig['REC_CARD']);?>" required/><br>
-      <p>Set Audio Card to 'default' to use PulseAudio (always recommended), or an ALSA recognized sound card device from the output of `aplay -L`. Choose the `dsnoop` device if it is available</p>
+      <p>Set Audio Card to 'default' to use PulseAudio (always recommended), or an ALSA recognized sound card device from the output of `arecord -L`. Choose the `dsnoop` device if it is available</p>
       <label for="channels">Audio Channels: </label>
       <input name="channels" type="number" min="1" max="32" step="1" value="<?php print($newconfig['CHANNELS']);?>" required/><br>
       <p>Set Channels to the number of channels supported by your sound card. 32 max.</p>
