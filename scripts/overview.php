@@ -262,7 +262,7 @@ body::-webkit-scrollbar {
 <?php
 $refresh = $config['RECORDING_LENGTH'];
 $dividedrefresh = $refresh/4;
-if($dividedrefresh == 0) { 
+if($dividedrefresh < 1) { 
   $dividedrefresh = 1;
 }
 $time = time();
