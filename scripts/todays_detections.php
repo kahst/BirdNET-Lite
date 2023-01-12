@@ -5,6 +5,23 @@ session_start();
 error_reporting(E_ERROR);
 ini_set('display_errors',1);
 
+if (file_exists('./scripts/thisrun.txt')) {
+    $config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
+  } 
+
+  if($config["SITE_NAME"] == "") {
+    $site_name = "BirdNET-Pi";
+  } else {
+    $site_name = $config['SITE_NAME'];
+  }
+
+  if($kiosk == true) {
+    echo "<div style='margin-top:20px' class=\"centered\"><h1><a><img class=\"topimage\" src=\"images/bnp.png\"></a></h1></div>
+</div><div class=\"centered\"><h3>$site_name</h3></div><hr>";
+  }
+
 $db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 if($db == False){
   echo "Database is busy";
@@ -63,6 +80,53 @@ $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 
+// from https://stackoverflow.com/questions/2690504/php-producing-relative-date-time-from-timestamps
+function relativeTime($ts)
+{
+    if(!ctype_digit($ts))
+        $ts = strtotime($ts);
+
+    $diff = time() - $ts;
+    if($diff == 0)
+        return 'now';
+    elseif($diff > 0)
+    {
+        $day_diff = floor($diff / 86400);
+        if($day_diff == 0)
+        {
+            if($diff < 60) return 'just now';
+            if($diff < 120) return '1 minute ago';
+            if($diff < 3600) return floor($diff / 60) . ' minutes ago';
+            if($diff < 7200) return '1 hour ago';
+            if($diff < 86400) return floor($diff / 3600) . ' hours ago';
+        }
+        if($day_diff == 1) return 'Yesterday';
+        if($day_diff < 7) return $day_diff . ' days ago';
+        if($day_diff < 31) return ceil($day_diff / 7) . ' weeks ago';
+        if($day_diff < 60) return 'last month';
+        return date('F Y', $ts);
+    }
+    else
+    {
+        $diff = abs($diff);
+        $day_diff = floor($diff / 86400);
+        if($day_diff == 0)
+        {
+            if($diff < 120) return 'in a minute';
+            if($diff < 3600) return 'in ' . floor($diff / 60) . ' minutes';
+            if($diff < 7200) return 'in an hour';
+            if($diff < 86400) return 'in ' . floor($diff / 3600) . ' hours';
+        }
+        if($day_diff == 1) return 'Tomorrow';
+        if($day_diff < 4) return date('l', $ts);
+        if($day_diff < 7 + (7 - date('w'))) return 'next week';
+        if(ceil($day_diff / 7) < 4) return 'in ' . ceil($day_diff / 7) . ' weeks';
+        if(date('n', $ts) == date('n') + 1) return 'next month';
+        return date('F Y', $ts);
+    }
+}
+
+
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   if(isset($_GET['searchterm'])) {
     if(strtolower(explode(" ", $_GET['searchterm'])[0]) == "not") {
@@ -110,6 +174,8 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   $config = parse_ini_file('./scripts/firstrun.ini');
   } 
 
+
+
   while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
   {
     $iterations++;
@@ -120,8 +186,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   $sciname = preg_replace('/ /', '_', $todaytable['Sci_Name']);
   $args = "&license=2%2C3%2C4%2C5%2C6%2C9&orientation=square,portrait";
   $comnameprefix = "%20bird";
-
-  if (!empty($config["FLICKR_API_KEY"]) && (isset($_GET['display_limit']) || isset($_GET['hard_limit']))) {
+  if (!empty($config["FLICKR_API_KEY"]) && (isset($_GET['display_limit']) || isset($_GET['hard_limit']) || $_GET['kiosk'] == true) ) {
 
     if(!empty($config["FLICKR_FILTER_EMAIL"])) {
       if(!isset($_SESSION["FLICKR_FILTER_EMAIL"])) {
@@ -179,16 +244,16 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
           </td>
         <?php } else { //legacy mode ?>
           <tr class="relative" id="<?php echo $iterations; ?>">
-          <td><?php echo $todaytable['Time'];?><br></td><td id="recent_detection_middle_td">
+          <td><?php if($_GET['kiosk'] == true) { echo relativeTime(strtotime($todaytable['Time'])); } else {echo $todaytable['Time'];}?><br></td><td id="recent_detection_middle_td">
           <div>
             <div>
-            <?php if(!empty($config["FLICKR_API_KEY"]) && isset($_GET['hard_limit']) && strlen($image[2]) > 0) { ?>
+            <?php if(!empty($config["FLICKR_API_KEY"]) && (isset($_GET['hard_limit']) || $_GET['kiosk'] == true) && strlen($image[2]) > 0) { ?>
               <img style="float:left;height:75px;" onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" id="birdimage" class="img1">
             <?php } ?>
           </div>
             <div>
-            <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
-            <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br></td>
+            <b><a class="a2" <?php if($_GET['kiosk'] == false){?>href="https://allaboutbirds.org/guide/<?php echo $comname;?>"<?php } else {echo "style='color:blue;'";} ?> target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
+            <a class="a2" <?php if($_GET['kiosk'] == false){?>href="https://wikipedia.org/wiki/<?php echo $sciname;?>"<?php } else {echo "style='color:blue;'";} ?> target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br></td>
         </div></div>
           <td><b>Confidence:</b> <?php echo round((float)round($todaytable['Confidence'],2) * 100 ) . '%';?><br></td>
           <?php if(!isset($_GET['mobile'])) { ?>
@@ -231,7 +296,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   <dialog id="attribution-dialog">
     <h1 id="modalHeading"></h1>
     <p id="modalText"></p>
-    <button onclick="hideDialog()">Close</button>
+    <button style="background-color: #9fe29b;padding:20px" onclick="hideDialog()">Close</button>
   </dialog>
   <script src="static/dialog-polyfill.js"></script>
   <script>
@@ -248,7 +313,11 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
 
   function setModalText(iter, title, text, authorlink, photolink) {
     document.getElementById('modalHeading').innerHTML = "Photo: \""+decodeURIComponent(title.replaceAll("+"," "))+"\" Attribution";
-    document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
+    <?php if($kiosk == false) { ?>
+      document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
+    <?php } else { ?>
+      document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px' src='"+photolink+"'></div><br><div>Image link: <a target='_blank'>"+text+"</a><br>Author link: <a target='_blank'>"+authorlink+"</a></div>";
+    <?php } ?>
     showDialog();
   }
   </script>  
@@ -264,31 +333,48 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
       <tr>
       <td><?php echo $totalcount['COUNT(*)'];?></td>
       <form action="" method="GET">
-      <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button></td>
+      <td><input type="hidden" name="view" value="Recordings"><?php if($kiosk == false){?><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button><?php } else { echo $todaycount['COUNT(*)']; }?></td>
       </form>
       <td><?php echo $hourcount['COUNT(*)'];?></td>
       <form action="" method="GET">
-      <td><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+      <td><?php if($kiosk == false){?><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button><?php }else { echo $totalspeciestally['COUNT(DISTINCT(Com_Name))']; }?></td>
       </form>
       <form action="" method="GET">
-      <td><input type="hidden" name="view" value="Recordings"><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todayspeciestally['COUNT(DISTINCT(Com_Name))'];?></button></td>
+      <td><input type="hidden" name="view" value="Recordings"><?php if($kiosk == false){?><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todayspeciestally['COUNT(DISTINCT(Com_Name))'];?></button><?php } else { echo $todayspeciestally['COUNT(DISTINCT(Com_Name))']; }?></td>
       </form>
       </tr>
     </table>
 
-    <h3>Today's Detections — <input autocomplete="off" size="11" type="text" placeholder="Search..." id="searchterm" name="searchterm"></h3>
+
+    <h3>Today's Detections <?php if($kiosk == false) { ?>— <input autocomplete="off" size="11" type="text" placeholder="Search..." id="searchterm" name="searchterm"><?php } ?></h3>
 
     <div style="padding-bottom:10px" id="detections_table"><h3>Loading...</h3></div>
 
+    <?php if($kiosk == false) { ?>
     <button onclick="switchViews(this);" class="legacyview">Legacy view</button>
+    <?php } ?>
 
 </div>
+
+<?php if($kiosk == true) { ?>
+  <script>
+    const scrollToTop = () => {
+  const c = document.documentElement.scrollTop || document.body.scrollTop;
+  if (c > 0) {
+    window.requestAnimationFrame(scrollToTop);
+    window.scrollTo(0, c - c / 8);
+  }
+};
+</script>
+<button onclick="scrollToTop();" style="background-color: #dbffeb;padding: 20px;position: fixed;bottom: 5%;right: 5%;transition:box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);box-shadow:0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);">Scroll To Top</button>
+<?php } ?>
 
 <script>
 
 var timer = '';
 searchterm = "";
 
+<?php if($kiosk == false) { ?>
 document.getElementById("searchterm").onkeydown = (function(e) {
   if (e.key === "Enter") {
       clearTimeout(timer);
@@ -306,6 +392,7 @@ document.getElementById("searchterm").onkeydown = (function(e) {
      }, 1000);
   }
 });
+<?php } ?>
 
 function switchViews(element) {
   if(searchterm == ""){
@@ -345,12 +432,26 @@ function loadDetections(detections_limit, element=undefined) {
   if(searchterm != ""){
     xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit+"&searchterm="+searchterm, true);
   } else {
-    xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit, true);
+    <?php if($kiosk == true) { ?>
+      xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit+"&kiosk=true", true);
+    <?php } else { ?>
+      xhttp.open("GET", "todays_detections.php?ajax_detections=true&display_limit="+detections_limit, true);
+    <?php } ?>
   }
   xhttp.send();
 }
 window.addEventListener("load", function(){
-  loadDetections(40);
+  <?php if($kiosk == true) { ?>
+    document.getElementById("myTopnav").remove();
+    loadDetections(undefined);
+    // refresh the kiosk detection list every minute
+    setTimeout(function() {
+        loadDetections(undefined);
+        document.getElementById("searchterm").blur();
+    }, 60000);
+  <?php } else { ?>
+    loadDetections(40);
+  <?php } ?>
 });
 </script>
 
