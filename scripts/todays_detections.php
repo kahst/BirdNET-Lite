@@ -280,6 +280,34 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   die();
 }
 
+if(isset($_GET['today_stats'])) {
+  ?>
+  <table>
+      <tr>
+  <th>Total</th>
+  <th>Today</th>
+  <th>Last Hour</th>
+  <th>Unique Species Total</th>
+  <th>Unique Species Today</th>
+      </tr>
+      <tr>
+      <td><?php echo $totalcount['COUNT(*)'];?></td>
+      <form action="" method="GET">
+      <td><input type="hidden" name="view" value="Recordings"><?php if($kiosk == false){?><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button><?php } else { echo $todaycount['COUNT(*)']; }?></td>
+      </form>
+      <td><?php echo $hourcount['COUNT(*)'];?></td>
+      <form action="" method="GET">
+      <td><?php if($kiosk == false){?><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button><?php }else { echo $totalspeciestally['COUNT(DISTINCT(Com_Name))']; }?></td>
+      </form>
+      <form action="" method="GET">
+      <td><input type="hidden" name="view" value="Recordings"><?php if($kiosk == false){?><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todayspeciestally['COUNT(DISTINCT(Com_Name))'];?></button><?php } else { echo $todayspeciestally['COUNT(DISTINCT(Com_Name))']; }?></td>
+      </form>
+      </tr>
+    </table>
+<?php   
+die(); 
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -322,28 +350,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   }
   </script>  
     <h3>Number of Detections</h3>
-    <table>
-      <tr>
-  <th>Total</th>
-  <th>Today</th>
-  <th>Last Hour</th>
-  <th>Unique Species Total</th>
-  <th>Unique Species Today</th>
-      </tr>
-      <tr>
-      <td><?php echo $totalcount['COUNT(*)'];?></td>
-      <form action="" method="GET">
-      <td><input type="hidden" name="view" value="Recordings"><?php if($kiosk == false){?><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button><?php } else { echo $todaycount['COUNT(*)']; }?></td>
-      </form>
-      <td><?php echo $hourcount['COUNT(*)'];?></td>
-      <form action="" method="GET">
-      <td><?php if($kiosk == false){?><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button><?php }else { echo $totalspeciestally['COUNT(DISTINCT(Com_Name))']; }?></td>
-      </form>
-      <form action="" method="GET">
-      <td><input type="hidden" name="view" value="Recordings"><?php if($kiosk == false){?><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todayspeciestally['COUNT(DISTINCT(Com_Name))'];?></button><?php } else { echo $todayspeciestally['COUNT(DISTINCT(Com_Name))']; }?></td>
-      </form>
-      </tr>
-    </table>
+    <div id="todaystats"></div>
 
 
     <h3>Today's Detections <?php if($kiosk == false) { ?>— <input autocomplete="off" size="11" type="text" placeholder="Search..." id="searchterm" name="searchterm"><?php } ?></h3>
@@ -440,14 +447,25 @@ function loadDetections(detections_limit, element=undefined) {
   }
   xhttp.send();
 }
+function refreshTodayStats() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    if(this.responseText.length > 0 && !this.responseText.includes("Database is busy")) {
+      document.getElementById("todaystats").innerHTML = this.responseText;
+    }
+  }
+  xhttp.open("GET", "todays_detections.php?today_stats=true", true);
+  xhttp.send();
+}
 window.addEventListener("load", function(){
   <?php if($kiosk == true) { ?>
     document.getElementById("myTopnav").remove();
     loadDetections(undefined);
+    refreshTodayStats();
     // refresh the kiosk detection list every minute
     setTimeout(function() {
         loadDetections(undefined);
-        document.getElementById("searchterm").blur();
+        refreshTodayStats();
     }, 60000);
   <?php } else { ?>
     loadDetections(40);
