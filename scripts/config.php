@@ -345,7 +345,7 @@ function sendTestNotification(e) {
       <dl>
       <dt>BirdNET_6K_GLOBAL_MODEL (2020)</dt><br>
       <dd id="ddnewline">This model comes from BirdNET-Lite, with bird sound recognition for more than 6,000 species worldwide. This is the default option and will generally work very well for most use cases.</dd>
-      <dt>BirdNET_GLOBAL_3K_V2.2_Model_FP16 (2022+)</dt>
+      <dt>BirdNET_GLOBAL_3K_V2.2_Model_FP16 (2022+)</dt><br>
       <dd id="ddnewline">This model comes from BirdNET-Analyzer, a newer work-in-progress project with aims to improve on the old model. Currently it only supports about 3,500 species worldwide, so for users in North America, this model is generally much more accurate than the above model, but elsewhere it will be less accurate and possibly useless.</dd>
       </dl>
       </td></tr></table><br>
