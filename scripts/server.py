@@ -52,7 +52,12 @@ with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     this_run = f.readlines()
     audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
     priv_thresh = float("." + str(str(str([i for i in this_run if i.startswith('PRIVACY_THRESHOLD')]).split('=')[1]).split('\\')[0])) / 10
-    model = str(str(str([i for i in this_run if i.startswith('MODEL')]).split('=')[1]).split('\\')[0])
+    try:
+        model = str(str(str([i for i in this_run if i.startswith('MODEL')]).split('=')[1]).split('\\')[0])
+        sf_thresh = str(str(str([i for i in this_run if i.startswith('SF_THRESH')]).split('=')[1]).split('\\')[0])
+    except Exception as e:
+        model = "BirdNET_6K_GLOBAL_MODEL"
+        sf_thresh = 0.5
 
 def loadModel():
 
@@ -136,7 +141,7 @@ def explore(lat, lon, week):
     l_filter = predictFilter(lat, lon, week)
 
     # Apply threshold
-    l_filter = np.where(l_filter >= 0.03, l_filter, 0)
+    l_filter = np.where(l_filter >= sf_thresh, l_filter, 0)
 
     # Zip with labels
     l_filter = list(zip(l_filter, CLASSES))
@@ -150,7 +155,7 @@ def predictSpeciesList(lat, lon, week):
 
     l_filter = explore(lat, lon, week)
     for s in l_filter:
-        if s[0] >= 0.03:
+        if s[0] >= sf_thresh:
             PREDICTED_SPECIES_LIST.append(s[1])
 
 def loadCustomSpeciesList(path):
