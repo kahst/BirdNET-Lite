@@ -427,6 +427,7 @@ function searchDetections(searchvalue) {
 function loadDetections(detections_limit, element=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
+    document.getElementsByClassName("legacyview")[0].style.display="unset";
     if(typeof element !== "undefined")
     {
      element.remove();

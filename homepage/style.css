@@ -576,6 +576,7 @@ button:hover {
 }
 
 button.legacyview {
+  display: none;
   color:gray;
   margin:5px;
   float:right;
