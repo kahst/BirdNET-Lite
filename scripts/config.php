@@ -35,6 +35,7 @@ if(isset($_GET["latitude"])){
   $language = $_GET["language"];
   $timezone = $_GET["timezone"];
   $model = $_GET["model"];
+  $sf_thresh = $_GET["sf_thresh"];
 
   if(isset($_GET['apprise_notify_each_detection'])) {
     $apprise_notify_each_detection = 1;
@@ -135,6 +136,7 @@ if(isset($_GET["latitude"])){
   $contents = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents);
   $contents = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents);
   $contents = preg_replace("/MODEL=.*/", "MODEL=$model", $contents);
+  $contents = preg_replace("/SF_THRESH=.*/", "SF_THRESH=$sf_thresh", $contents);
 
   $contents2 = file_get_contents("./scripts/thisrun.txt");
   $contents2 = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents2);
@@ -152,6 +154,8 @@ if(isset($_GET["latitude"])){
   $contents2 = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents2);
   $contents2 = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents2);
   $contents2 = preg_replace("/MODEL=.*/", "MODEL=$model", $contents2);
+  $contents2 = preg_replace("/SF_THRESH=.*/", "SF_THRESH=$sf_thresh", $contents2);
+
 
 
   if($site_name != $config["SITE_NAME"]) {
@@ -341,6 +345,10 @@ function sendTestNotification(e) {
         }
       ?>
       </select>
+
+      <label for="latitude">Species occurance frequency threshold: </label>
+      <p>This value is used by the model to constrain the list of possible species that it will try to detect, given the minimum occurence frequency. A 0.05 threshold means that the species is seen on average at least 5% of the time, from historically collected data for your lat/lon.<br>If you'd like to tinker with this value and see the species list output, you can run the following command:<pre class="bash">~/BirdNET-Pi/birdnet/bin/python3 species.py --threshold 0.7</pre></p>
+      <input name="latitude" type="number" max="90" min="-90" step="0.0001" value="<?php print($config['LATITUDE']);?>" required/><br>
 
       <dl>
       <dt>BirdNET_6K_GLOBAL_MODEL (2020)</dt><br>
