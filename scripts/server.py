@@ -141,7 +141,7 @@ def explore(lat, lon, week):
     l_filter = predictFilter(lat, lon, week)
 
     # Apply threshold
-    l_filter = np.where(l_filter >= sf_thresh, l_filter, 0)
+    l_filter = np.where(l_filter >= float(sf_thresh), l_filter, 0)
 
     # Zip with labels
     l_filter = list(zip(l_filter, CLASSES))
@@ -155,7 +155,7 @@ def predictSpeciesList(lat, lon, week):
 
     l_filter = explore(lat, lon, week)
     for s in l_filter:
-        if s[0] >= sf_thresh:
+        if s[0] >= float(sf_thresh):
             PREDICTED_SPECIES_LIST.append(s[1])
 
 def loadCustomSpeciesList(path):
