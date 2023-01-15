@@ -345,10 +345,10 @@ function sendTestNotification(e) {
         }
       ?>
       </select>
-
-      <label for="latitude">Species occurance frequency threshold: </label>
-      <p>This value is used by the model to constrain the list of possible species that it will try to detect, given the minimum occurence frequency. A 0.05 threshold means that the species is seen on average at least 5% of the time, from historically collected data for your lat/lon.<br>If you'd like to tinker with this value and see the species list output, you can run the following command:<pre class="bash">~/BirdNET-Pi/birdnet/bin/python3 species.py --threshold 0.7</pre></p>
-      <input name="latitude" type="number" max="90" min="-90" step="0.0001" value="<?php print($config['LATITUDE']);?>" required/><br>
+      <br>
+      <label for="sf_thresh">Species Occurence Frequency Threshold: </label>
+      <input name="sf_thresh" type="number" max="0.99" min="0.01" step="0.01" value="<?php print($config['SF_THRESH']);?>"/> <span onclick="document.getElementById('sfhelp').style.display='unset'" style="text-decoration:underline;cursor:pointer">[?]</span><br>
+      <p id="sfhelp" style='display:none'>This value is used by the model to constrain the list of possible species that it will try to detect, given the minimum occurence frequency. A 0.05 threshold means that the species is seen on average at least 5% of the time, from historically collected data for your lat/lon.<br>If you'd like to tinker with this value and see the species list output, you can run the following command: <b>~/BirdNET-Pi/birdnet/bin/python3 species.py --threshold 0.05</b></p>
 
       <dl>
       <dt>BirdNET_6K_GLOBAL_MODEL (2020)</dt><br>
