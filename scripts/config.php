@@ -309,6 +309,15 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 ?>    
 
 <script>
+  document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('modelsel').addEventListener('change', function() {
+    if(this.value == "BirdNET_GLOBAL_3K_V2.2_Model_FP16"){ 
+      document.getElementById("soft").style.display="unset";
+    } else {
+      document.getElementById("soft").style.display="none";
+    }
+  });
+}, false);
 function sendTestNotification(e) {
   document.getElementById("testsuccessmsg").innerHTML = "";
   e.classList.add("disabled");
@@ -332,7 +341,7 @@ function sendTestNotification(e) {
       <h2>Model</h2>
 
       <label for="model">Select a Model: </label>
-      <select name="model">
+      <select id="modelsel" name="model">
       <?php
       $models = array("BirdNET_6K_GLOBAL_MODEL", "BirdNET_GLOBAL_3K_V2.2_Model_FP16");
       foreach($models as $modelName){
@@ -346,9 +355,11 @@ function sendTestNotification(e) {
       ?>
       </select>
       <br>
+      <span <?php if($config['MODEL'] == "BirdNET_6K_GLOBAL_MODEL") { ?>style="display: none"<?php } ?> id="soft">
       <label for="sf_thresh">Species Occurence Frequency Threshold: </label>
       <input name="sf_thresh" type="number" max="0.99" min="0.01" step="0.01" value="<?php print($config['SF_THRESH']);?>"/> <span onclick="document.getElementById('sfhelp').style.display='unset'" style="text-decoration:underline;cursor:pointer">[?]</span><br>
       <p id="sfhelp" style='display:none'>This value is used by the model to constrain the list of possible species that it will try to detect, given the minimum occurence frequency. A 0.05 threshold means that the species is seen on average at least 5% of the time, from historically collected data for your lat/lon.<br>If you'd like to tinker with this value and see the species list output, you can run the following command: <b>~/BirdNET-Pi/birdnet/bin/python3 species.py --threshold 0.05</b></p>
+      </span>
 
       <dl>
       <dt>BirdNET_6K_GLOBAL_MODEL (2020)</dt><br>
