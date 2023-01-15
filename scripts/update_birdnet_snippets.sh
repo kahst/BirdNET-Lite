@@ -150,6 +150,7 @@ fi
 if ! grep SF_THRESH /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "SF_THRESH=0.5" >> /etc/birdnet/birdnet.conf
 fi
+sudo chmod +x ~/BirdNET-Pi/scripts/install_language_label_nm.sh
 
 sudo systemctl daemon-reload
 restart_services.sh
