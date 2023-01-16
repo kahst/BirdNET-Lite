@@ -156,7 +156,9 @@ def predictSpeciesList(lat, lon, week):
     l_filter = explore(lat, lon, week)
     for s in l_filter:
         if s[0] >= float(sf_thresh):
-            PREDICTED_SPECIES_LIST.append(s[1])
+            #if there's a custom user-made include list, we only want to use the species in that
+            if(len(INCLUDE_LIST) == 0):
+                PREDICTED_SPECIES_LIST.append(s[1])
 
 def loadCustomSpeciesList(path):
 
@@ -269,7 +271,7 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
     print('ANALYZING AUDIO...', end=' ', flush=True)
 
     if model == "BirdNET_GLOBAL_3K_V2.2_Model_FP16":
-        if len(PREDICTED_SPECIES_LIST) == 0:
+        if len(PREDICTED_SPECIES_LIST) == 0 or len(INCLUDE_LIST) != 0:
             predictSpeciesList(lat,lon,week)
 
 
