@@ -71,13 +71,13 @@ def predictFilter(lat, lon, week):
 
     return M_INTERPRETER.get_tensor(M_OUTPUT_LAYER_INDEX)[0]
 
-def explore(lat, lon, week):
+def explore(lat, lon, week, threshold):
 
     # Make filter prediction
     l_filter = predictFilter(lat, lon, week)
 
     # Apply threshold
-    l_filter = np.where(l_filter >= 0.03, l_filter, 0)
+    l_filter = np.where(l_filter >= threshold, l_filter, 0)
 
     # Zip with labels
     l_filter = list(zip(l_filter, CLASSES))
@@ -92,7 +92,7 @@ def getSpeciesList(lat, lon, week, threshold=0.05, sort=False):
     print('Getting species list for {}/{}, Week {}...'.format(lat, lon, week), end='', flush=True)
 
     # Extract species from model
-    pred = explore(lat, lon, week)
+    pred = explore(lat, lon, week, threshold)
 
     # Make species list
     slist = []
