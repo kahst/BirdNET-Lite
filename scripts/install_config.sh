@@ -32,7 +32,7 @@ LONGITUDE=$(curl -s4 ifconfig.co/json | jq .longitude)
 #______________________used for detecting bird audio.__________________________#
 
 MODEL=BirdNET_6K_GLOBAL_MODEL
-SF_THRESH=0.5
+SF_THRESH=0.03
 
 #---------------------  BirdWeather Station Information -----------------------#
 #_____________The variable below can be set to have your BirdNET-Pi____________#

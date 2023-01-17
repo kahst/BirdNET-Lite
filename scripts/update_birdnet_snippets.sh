@@ -148,7 +148,7 @@ if ! grep MODEL /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "MODEL=BirdNET_6K_GLOBAL_MODEL" >> /etc/birdnet/birdnet.conf
 fi
 if ! grep SF_THRESH /etc/birdnet/birdnet.conf &>/dev/null;then
-  sudo -u$USER echo "SF_THRESH=0.5" >> /etc/birdnet/birdnet.conf
+  sudo -u$USER echo "SF_THRESH=0.03" >> /etc/birdnet/birdnet.conf
 fi
 sudo chmod +x ~/BirdNET-Pi/scripts/install_language_label_nm.sh
 
