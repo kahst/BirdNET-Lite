@@ -61,6 +61,7 @@ Currently listening in these countries . . . that I know of . . .
 - Hungary
 - South Sudan
 - Argentina
+- Brazil
 
 ## Features
 * 24/7 recording and BirdNET-Lite analysis
