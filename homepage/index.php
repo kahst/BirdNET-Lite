@@ -52,7 +52,7 @@ if(isset($_GET['stream'])){
   <audio controls autoplay><source src=\"/stream\"></audio>
   </div>
   <h1><a href=\"/\"><img class=\"topimage\" src=\"images/bnp.png\"></a></h1>
-  </div>";
+  </div><div class=\"centered\"><h3>$site_name</h3></div>";
     } else {
       header('WWW-Authenticate: Basic realm="My Realm"');
       header('HTTP/1.0 401 Unauthorized');
