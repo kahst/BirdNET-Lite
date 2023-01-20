@@ -350,7 +350,28 @@ die();
   }
   </script>  
     <h3>Number of Detections</h3>
-    <div id="todaystats"></div>
+    <div id="todaystats"><table>
+      <tr>
+  <th>Total</th>
+  <th>Today</th>
+  <th>Last Hour</th>
+  <th>Unique Species Total</th>
+  <th>Unique Species Today</th>
+      </tr>
+      <tr>
+      <td><?php echo $totalcount['COUNT(*)'];?></td>
+      <form action="" method="GET">
+      <td><input type="hidden" name="view" value="Recordings"><?php if($kiosk == false){?><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todaycount['COUNT(*)'];?></button><?php } else { echo $todaycount['COUNT(*)']; }?></td>
+      </form>
+      <td><?php echo $hourcount['COUNT(*)'];?></td>
+      <form action="" method="GET">
+      <td><?php if($kiosk == false){?><button type="submit" name="view" value="Species Stats"><?php echo $totalspeciestally['COUNT(DISTINCT(Com_Name))'];?></button><?php }else { echo $totalspeciestally['COUNT(DISTINCT(Com_Name))']; }?></td>
+      </form>
+      <form action="" method="GET">
+      <td><input type="hidden" name="view" value="Recordings"><?php if($kiosk == false){?><button type="submit" name="date" value="<?php echo date('Y-m-d');?>"><?php echo $todayspeciestally['COUNT(DISTINCT(Com_Name))'];?></button><?php } else { echo $todayspeciestally['COUNT(DISTINCT(Com_Name))']; }?></td>
+      </form>
+      </tr>
+    </table></div>
 
 
     <h3>Today's Detections <?php if($kiosk == false) { ?>— <input autocomplete="off" size="11" type="text" placeholder="Search..." id="searchterm" name="searchterm"><?php } ?></h3>
@@ -427,6 +448,7 @@ function searchDetections(searchvalue) {
 function loadDetections(detections_limit, element=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
+    document.getElementsByClassName("legacyview")[0].style.display="unset";
     if(typeof element !== "undefined")
     {
      element.remove();
