@@ -555,7 +555,12 @@ def handle_client(conn, addr):
                                         post_soundscape_end_time = "\"soundscapeEndTime\": " + end_time + ","
                                         post_commonName = "\"commonName\": \"" + entry[0].split('_')[1] + "\","
                                         post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
-                                        post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
+
+                                        if model == "BirdNET_GLOBAL_3K_V2.2_Model_FP16":
+                                            post_algorithm = "\"algorithm\": " + "\"2p2\"" + ","
+                                        else:
+                                            post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
+                                            
                                         post_confidence = "\"confidence\": " + str(entry[1])
                                         post_end = " }"
 
