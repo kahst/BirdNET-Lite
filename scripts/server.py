@@ -321,7 +321,7 @@ def writeResultsToFile(detections, min_conf, path):
         for d in detections:
             for entry in detections[d]:
                 if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) and (entry[0] in PREDICTED_SPECIES_LIST or len(PREDICTED_SPECIES_LIST) == 0) ):
-                    rfile.write(d + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + '\n')
+                    rfile.write(d + ';' + entry[0].replace('_', ';').split("/")[0] + ';' + str(entry[1]) + '\n')
                     rcnt += 1
     print('DONE! WROTE', rcnt, 'RESULTS.')
     return
@@ -444,14 +444,14 @@ def handle_client(conn, addr):
                             if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0)
                                                          and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) and (entry[0] in PREDICTED_SPECIES_LIST or len(PREDICTED_SPECIES_LIST) == 0) ):
                                 # Write to text file.
-                                rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';'
+                                rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';').split("/")[0] + ';'
                                             + str(entry[1]) + ";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';'
                                             + str(args.sensitivity) + ';' + str(args.overlap) + '\n')
 
                                 # Write to database
                                 Date = str(current_date)
                                 Time = str(current_time)
-                                species = entry[0]
+                                species = entry[0].split("/")[0]
                                 Sci_Name, Com_Name = species.split('_')
                                 score = entry[1]
                                 Confidence = str(round(score * 100))
@@ -553,7 +553,7 @@ def handle_client(conn, addr):
                                         post_soundscape_id = "\"soundscapeId\": " + str(soundscape_id) + ","
                                         post_soundscape_start_time = "\"soundscapeStartTime\": " + start_time + ","
                                         post_soundscape_end_time = "\"soundscapeEndTime\": " + end_time + ","
-                                        post_commonName = "\"commonName\": \"" + entry[0].split('_')[1] + "\","
+                                        post_commonName = "\"commonName\": \"" + entry[0].split('_')[1].split("/")[0] + "\","
                                         post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
 
                                         if model == "BirdNET_GLOBAL_3K_V2.2_Model_FP16":
