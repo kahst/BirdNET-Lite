@@ -47,9 +47,11 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                 try:
                     if int(timeim.time()) - species_last_notified[comName] < int(APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES):
                         return
-                except:
+                except Exception as e:
+                    print("APPRISE NOTIFICATION EXCEPTION: "+str(e))
                     return
 
+        #TODO: this all needs to be changed, we changed the caddy default to allow direct IP access, so birdnetpi.local shouldn't be relied on anymore
         try:
             websiteurl = settings_dict.get('BIRDNETPI_URL')
             if len(websiteurl) == 0:
