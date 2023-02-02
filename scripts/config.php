@@ -111,7 +111,7 @@ if(isset($_GET["latitude"])){
 
     if($model == "BirdNET_GLOBAL_3K_V2.2_Model_FP16"){
     // Install new language label file
-      syslog_shell_exec("$home/BirdNET-Pi/scripts/install_language_label_nm.sh -l $language", $user);
+      syslog_shell_exec("sudo chmod +x $home/BirdNET-Pi/scripts/install_language_label_nm.sh && $home/BirdNET-Pi/scripts/install_language_label_nm.sh -l $language", $user);
     } else {
       syslog_shell_exec("$home/BirdNET-Pi/scripts/install_language_label.sh -l $language", $user);
     }
