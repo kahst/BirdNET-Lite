@@ -57,7 +57,7 @@ with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
         sf_thresh = str(str(str([i for i in this_run if i.startswith('SF_THRESH')]).split('=')[1]).split('\\')[0])
     except Exception as e:
         model = "BirdNET_6K_GLOBAL_MODEL"
-        sf_thresh = 0.5
+        sf_thresh = 0.03
 
 def loadModel():
 
