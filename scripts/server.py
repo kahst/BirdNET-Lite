@@ -35,6 +35,7 @@ DISCONNECT_MESSAGE = "!DISCONNECT"
 userDir = os.path.expanduser('~')
 DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
 
+PREDICTED_SPECIES_LIST = []
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -51,7 +52,12 @@ with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     this_run = f.readlines()
     audiofmt = "." + str(str(str([i for i in this_run if i.startswith('AUDIOFMT')]).split('=')[1]).split('\\')[0])
     priv_thresh = float("." + str(str(str([i for i in this_run if i.startswith('PRIVACY_THRESHOLD')]).split('=')[1]).split('\\')[0])) / 10
-
+    try:
+        model = str(str(str([i for i in this_run if i.startswith('MODEL')]).split('=')[1]).split('\\')[0])
+        sf_thresh = str(str(str([i for i in this_run if i.startswith('SF_THRESH')]).split('=')[1]).split('\\')[0])
+    except Exception as e:
+        model = "BirdNET_6K_GLOBAL_MODEL"
+        sf_thresh = 0.5
 
 def loadModel():
 
@@ -63,7 +69,8 @@ def loadModel():
     print('LOADING TF LITE MODEL...', end=' ')
 
     # Load TFLite model and allocate tensors.
-    modelpath = userDir + '/BirdNET-Pi/model/BirdNET_6K_GLOBAL_MODEL.tflite'
+    # model will either be BirdNET_GLOBAL_3K_V2.2_Model_FP16 (new) or BirdNET_6K_GLOBAL_MODEL (old)
+    modelpath = userDir + '/BirdNET-Pi/model/'+model+'.tflite'
     myinterpreter = tflite.Interpreter(model_path=modelpath, num_threads=2)
     myinterpreter.allocate_tensors()
 
@@ -73,7 +80,8 @@ def loadModel():
 
     # Get input tensor index
     INPUT_LAYER_INDEX = input_details[0]['index']
-    MDATA_INPUT_INDEX = input_details[1]['index']
+    if model == "BirdNET_6K_GLOBAL_MODEL":
+        MDATA_INPUT_INDEX = input_details[1]['index']
     OUTPUT_LAYER_INDEX = output_details[0]['index']
 
     # Load labels
@@ -87,6 +95,70 @@ def loadModel():
 
     return myinterpreter
 
+def loadMetaModel():
+
+    global M_INTERPRETER
+    global M_INPUT_LAYER_INDEX
+    global M_OUTPUT_LAYER_INDEX
+
+    # Load TFLite model and allocate tensors.
+    M_INTERPRETER = tflite.Interpreter(model_path=userDir + '/BirdNET-Pi/model/BirdNET_GLOBAL_3K_V2.2_MData_Model_FP16.tflite')
+    M_INTERPRETER.allocate_tensors()
+
+    # Get input and output tensors.
+    input_details = M_INTERPRETER.get_input_details()
+    output_details = M_INTERPRETER.get_output_details()
+
+    # Get input tensor index
+    M_INPUT_LAYER_INDEX = input_details[0]['index']
+    M_OUTPUT_LAYER_INDEX = output_details[0]['index']
+
+    print("loaded META model")
+
+def predictFilter(lat, lon, week):
+
+    global M_INTERPRETER
+
+    # Does interpreter exist?
+    try:
+        if M_INTERPRETER == None:
+            loadMetaModel()
+    except Exception as e:
+        loadMetaModel()
+
+    # Prepare mdata as sample
+    sample = np.expand_dims(np.array([lat, lon, week], dtype='float32'), 0)
+
+    # Run inference
+    M_INTERPRETER.set_tensor(M_INPUT_LAYER_INDEX, sample)
+    M_INTERPRETER.invoke()
+
+    return M_INTERPRETER.get_tensor(M_OUTPUT_LAYER_INDEX)[0]
+
+def explore(lat, lon, week):
+
+    # Make filter prediction
+    l_filter = predictFilter(lat, lon, week)
+
+    # Apply threshold
+    l_filter = np.where(l_filter >= float(sf_thresh), l_filter, 0)
+
+    # Zip with labels
+    l_filter = list(zip(l_filter, CLASSES))
+
+    # Sort by filter value
+    l_filter = sorted(l_filter, key=lambda x: x[0], reverse=True)
+
+    return l_filter
+
+def predictSpeciesList(lat, lon, week):
+
+    l_filter = explore(lat, lon, week)
+    for s in l_filter:
+        if s[0] >= float(sf_thresh):
+            #if there's a custom user-made include list, we only want to use the species in that
+            if(len(INCLUDE_LIST) == 0):
+                PREDICTED_SPECIES_LIST.append(s[1])
 
 def loadCustomSpeciesList(path):
 
@@ -162,7 +234,8 @@ def predict(sample, sensitivity):
     global INTERPRETER
     # Make a prediction
     INTERPRETER.set_tensor(INPUT_LAYER_INDEX, np.array(sample[0], dtype='float32'))
-    INTERPRETER.set_tensor(MDATA_INPUT_INDEX, np.array(sample[1], dtype='float32'))
+    if model == "BirdNET_6K_GLOBAL_MODEL":
+        INTERPRETER.set_tensor(MDATA_INPUT_INDEX, np.array(sample[1], dtype='float32'))
     INTERPRETER.invoke()
     prediction = INTERPRETER.get_tensor(OUTPUT_LAYER_INDEX)[0]
 
@@ -196,6 +269,11 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
     detections = {}
     start = time.time()
     print('ANALYZING AUDIO...', end=' ', flush=True)
+
+    if model == "BirdNET_GLOBAL_3K_V2.2_Model_FP16":
+        if len(PREDICTED_SPECIES_LIST) == 0 or len(INCLUDE_LIST) != 0:
+            predictSpeciesList(lat,lon,week)
+
 
     # Convert and prepare metadata
     mdata = convertMetadata(np.array([lat, lon, week]))
@@ -242,8 +320,8 @@ def writeResultsToFile(detections, min_conf, path):
         rfile.write('Start (s);End (s);Scientific name;Common name;Confidence\n')
         for d in detections:
             for entry in detections[d]:
-                if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0)):
-                    rfile.write(d + ';' + entry[0].replace('_', ';') + ';' + str(entry[1]) + '\n')
+                if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) and (entry[0] in PREDICTED_SPECIES_LIST or len(PREDICTED_SPECIES_LIST) == 0) ):
+                    rfile.write(d + ';' + entry[0].replace('_', ';').split("/")[0] + ';' + str(entry[1]) + '\n')
                     rcnt += 1
     print('DONE! WROTE', rcnt, 'RESULTS.')
     return
@@ -364,16 +442,16 @@ def handle_client(conn, addr):
                         species_apprised_this_run = []
                         for entry in detections[d]:
                             if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0)
-                                                         and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0)):
+                                                         and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) and (entry[0] in PREDICTED_SPECIES_LIST or len(PREDICTED_SPECIES_LIST) == 0) ):
                                 # Write to text file.
-                                rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';') + ';'
+                                rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';').split("/")[0] + ';'
                                             + str(entry[1]) + ";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';'
                                             + str(args.sensitivity) + ';' + str(args.overlap) + '\n')
 
                                 # Write to database
                                 Date = str(current_date)
                                 Time = str(current_time)
-                                species = entry[0]
+                                species = entry[0].split("/")[0]
                                 Sci_Name, Com_Name = species.split('_')
                                 score = entry[1]
                                 Confidence = str(round(score * 100))
@@ -475,9 +553,14 @@ def handle_client(conn, addr):
                                         post_soundscape_id = "\"soundscapeId\": " + str(soundscape_id) + ","
                                         post_soundscape_start_time = "\"soundscapeStartTime\": " + start_time + ","
                                         post_soundscape_end_time = "\"soundscapeEndTime\": " + end_time + ","
-                                        post_commonName = "\"commonName\": \"" + entry[0].split('_')[1] + "\","
+                                        post_commonName = "\"commonName\": \"" + entry[0].split('_')[1].split("/")[0] + "\","
                                         post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
-                                        post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
+
+                                        if model == "BirdNET_GLOBAL_3K_V2.2_Model_FP16":
+                                            post_algorithm = "\"algorithm\": " + "\"2p2\"" + ","
+                                        else:
+                                            post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
+                                            
                                         post_confidence = "\"confidence\": " + str(entry[1])
                                         post_end = " }"
 

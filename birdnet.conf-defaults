@@ -6,6 +6,12 @@
 
 SITE_NAME=""
 
+#--------------------------------- Model --------------------------------------#
+#_____________The variable below configures which BirdNET model is_____________#
+#______________________used for detecting bird audio.__________________________#
+
+MODEL=BirdNET_6K_GLOBAL_MODEL
+SF_THRESH=0.03
 
 #--------------------- Required: Latitude, and Longitude ----------------------#
 
