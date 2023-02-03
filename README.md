@@ -4,7 +4,7 @@
   BirdNET-Pi
 </h1>
 <p align="center">
-A realtime acoustic bird classification system for the Raspberry Pi 4B, 3B+, and 0W2
+A realtime acoustic bird classification system for the Raspberry Pi 4B, 400, 3B+, and 0W2
 </p>
 <p align="center">
   <img src="https://user-images.githubusercontent.com/60325264/140656397-bf76bad4-f110-467c-897d-992ff0f96476.png" />
