@@ -181,5 +181,10 @@ Current database languages include the list below:
 | Thai | 5580 | 87.71% |
 | Ukrainian | 646 | 10.15% |
 
+## Screenshots
+![chrome_WNyv2pOtUp](https://user-images.githubusercontent.com/103586016/217895046-7f544f42-82c2-4888-a636-cc15d03b2ad7.png)
+![chrome_HNMJKSPwV0](https://user-images.githubusercontent.com/103586016/217896322-aee3ecc4-e40e-40df-ade1-79f05ded21f2.png)
+
+
 ## :thinking:
 Are you a lucky ducky with an extra Raspberry Pi 4B lying around? [Here's an idea!](https://foldingathome.org/alternative-downloads)
