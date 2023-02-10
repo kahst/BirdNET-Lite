@@ -152,5 +152,10 @@ if ! grep SF_THRESH /etc/birdnet/birdnet.conf &>/dev/null;then
 fi
 sudo chmod +x ~/BirdNET-Pi/scripts/install_language_label_nm.sh
 
+sqlite3 $HOME/BirdNET-Pi/scripts/birds.db << EOF
+CREATE INDEX IF NOT EXISTS "detections_Com_Name" ON "detections" ("Com_Name");
+CREATE INDEX IF NOT EXISTS "detections_Date_Time" ON "detections" ("Date" DESC, "Time" DESC);
+EOF
+
 sudo systemctl daemon-reload
 restart_services.sh
