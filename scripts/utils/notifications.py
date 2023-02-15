@@ -13,13 +13,7 @@ DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
 flickr_images = {}
 species_last_notified = {}
 
-asset = apprise.AppriseAsset(
-    plugin_paths=[
-        userDir + "/.apprise/plugins",
-        userDir + "/.config/apprise/plugins",
-    ]
-)
-apobj = apprise.Apprise(asset=asset)
+apobj = apprise.Apprise()
 config = apprise.AppriseConfig()
 config.add(APPRISE_CONFIG)
 apobj.add(config)
