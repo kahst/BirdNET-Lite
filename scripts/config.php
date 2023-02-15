@@ -13,6 +13,23 @@ function syslog_shell_exec($cmd, $sudo_user = null) {
   }
 }
 
+if(isset($_GET['threshold'])) {
+  $threshold = $_GET['threshold'];
+  if (!is_numeric($threshold) || $threshold < 0 || $threshold > 1) {
+    die('Invalid threshold value');
+  }
+
+  $user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
+  $home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
+
+  $command = "sudo -u $user ".$home."/BirdNET-Pi/birdnet/bin/python3 ".$home."/BirdNET-Pi/scripts/species.py --threshold $threshold 2>&1";
+
+  $output = shell_exec($command);
+
+  echo $output;
+  die();
+}
+
 if(isset($_GET['restart_php']) && $_GET['restart_php'] == "true") {
   shell_exec("sudo service php7.4-fpm restart");
   die();
@@ -357,9 +374,102 @@ function sendTestNotification(e) {
       <br>
       <span <?php if($config['MODEL'] == "BirdNET_6K_GLOBAL_MODEL") { ?>style="display: none"<?php } ?> id="soft">
       <label for="sf_thresh">Species Occurence Frequency Threshold [0.0005, 0.99]: </label>
-      <input name="sf_thresh" type="number" max="0.99" min="0.0005" step="any" value="<?php print($config['SF_THRESH']);?>"/> <span onclick="document.getElementById('sfhelp').style.display='unset'" style="text-decoration:underline;cursor:pointer">[?]</span><br>
-      <p id="sfhelp" style='display:none'>This value is used by the model to constrain the list of possible species that it will try to detect, given the minimum occurence frequency. A 0.03 threshold means that for a species to be included in this list, it needs to, on average, be seen on at least 3% of historically submitted eBird checklists for your given lat/lon/current week of year. So, the lower the threshold, the rarer the species it will include.<br>If you'd like to tinker with this threshold value and see which species make it onto the list, you can run the following command <?php if($config['MODEL'] == "BirdNET_6K_GLOBAL_MODEL"){ ?>AFTER clicking 'Update Settings' at the very bottom of this page to install the appropriate labels file<?php } ?>: <b>~/BirdNET-Pi/birdnet/bin/python3 ~/BirdNET-Pi/scripts/species.py --threshold 0.03</b></p>
+      <input name="sf_thresh" type="number" max="0.99" min="0.0005" step="any" value="<?php print($config['SF_THRESH']);?>"/> <span onclick="document.getElementById('sfhelp').style.display='unset'" style="text-decoration:underline;cursor:pointer">[more info]</span><br>
+      <p id="sfhelp" style='display:none'>This value is used by the model to constrain the list of possible species that it will try to detect, given the minimum occurence frequency. A 0.03 threshold means that for a species to be included in this list, it needs to, on average, be seen on at least 3% of historically submitted eBird checklists for your given lat/lon/current week of year. So, the lower the threshold, the rarer the species it will include.<br><br>If you'd like to tinker with this threshold value and see which species make it onto the list, <?php if($config['MODEL'] == "BirdNET_6K_GLOBAL_MODEL"){ ?>please click "Update Settings" at the very bottom of this page to install the appropriate label file, then come back here and you'll be able to use the Species List Tester.<?php } else { ?>you can use this tool: <button type="button" class="testbtn" id="openModal">Species List Tester</button><?php } ?></p>
       </span>
+
+<script src="static/dialog-polyfill.js"></script>
+
+<dialog id="modal">
+  <div>
+    <label for="threshold">Threshold:</label>
+    <input type="number" id="threshold" step="0.01" min="0" max="1" value="">
+    <button type="button" id="runProcess">Preview Species List</button>
+  </div>
+  <pre id="output"></pre>
+  <button type="button" id="closeModal">Close</button>
+</dialog>
+
+<style>
+#output {
+  max-width: 100vw;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+#modal {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+#modal div {
+  display: flex;
+  align-items: center;
+}
+
+#modal input[type="number"] {
+  height: 32px;
+}
+
+#modal button {
+  height: 32px;
+  margin-left: 5px;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+</style>
+
+
+<script>
+// Get the button and modal elements
+const openModalBtn = document.getElementById('openModal');
+const modal = document.getElementById('modal');
+const output = document.getElementById('output');
+const thresholdInput = document.getElementById('threshold');
+const runProcessBtn = document.getElementById('runProcess');
+const sfThreshInput = document.getElementsByName('sf_thresh')[0];
+const closeModalBtn = document.getElementById('closeModal');
+
+
+// Add an event listener to the button to open the modal
+openModalBtn.addEventListener('click', () => {
+
+  // Set the initial value of the threshold input element
+  thresholdInput.value = sfThreshInput.value;
+
+// Show the modal
+  modal.showModal();
+});
+
+// Add an event listener to the "Preview Species List" button
+runProcessBtn.addEventListener('click', () => {
+
+  runProcess();
+});
+
+// Add an event listener to the "Close" button
+closeModalBtn.addEventListener('click', () => {
+  modal.close();
+});
+
+// Function to run the process
+function runProcess() {
+  // Get the value of the threshold input element
+  const threshold = thresholdInput.value;
+
+ // Set the output to "Loading..."
+  output.innerHTML = "Loading...";
+
+  // Make the AJAX request
+  const xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      // Handle the response
+      output.innerHTML = xhr.responseText;
+    }
+  };
+  xhr.open('GET', `scripts/config.php?threshold=${threshold}`);
+  xhr.send();
+}
+</script>
 
       <dl>
       <dt>BirdNET_6K_GLOBAL_MODEL (2020)</dt><br>

@@ -132,7 +132,7 @@ if __name__ == '__main__':
     for x in range(len(species_list)):
         print(species_list[x][0] + " - "+ str(species_list[x][1]))
     
-    print("\nThe above species list describes all of the species that have been historically observed at the specified lat/long ("+lat+", "+lon+") for this week of the year. The frequency threshold is the percentage of submitted eBird checklists that the species appeared on, meaning a higher threshold means that the species is more common.")
+    print("\nThe above species list describes all the species that the model will attempt to detect. If you don't see a species you want detected on this list, decrease your threshold.")
     print("\nNOTE: no actual changes to your BirdNET-Pi species list were made by running this command. To set your desired frequency threshold, do it through the BirdNET-Pi web interface (Tools -> Settings -> Model)")
 
 
