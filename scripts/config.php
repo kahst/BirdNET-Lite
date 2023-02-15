@@ -422,6 +422,7 @@ function sendTestNotification(e) {
 // Get the button and modal elements
 const openModalBtn = document.getElementById('openModal');
 const modal = document.getElementById('modal');
+dialogPolyfill.registerDialog(modal);
 const output = document.getElementById('output');
 const thresholdInput = document.getElementById('threshold');
 const runProcessBtn = document.getElementById('runProcess');
