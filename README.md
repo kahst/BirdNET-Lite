@@ -182,7 +182,7 @@ Current database languages include the list below:
 | Ukrainian | 646 | 10.15% |
 
 ## Screenshots
-![chrome_WNyv2pOtUp](https://user-images.githubusercontent.com/103586016/217895046-7f544f42-82c2-4888-a636-cc15d03b2ad7.png)
+![chrome_olUUgVo1Ka](https://user-images.githubusercontent.com/103586016/219236461-c717e88b-134f-4916-a691-eb7c055c55bf.png)
 ![chrome_HNMJKSPwV0](https://user-images.githubusercontent.com/103586016/217896322-aee3ecc4-e40e-40df-ade1-79f05ded21f2.png)
 
 
