@@ -157,5 +157,7 @@ CREATE INDEX IF NOT EXISTS "detections_Com_Name" ON "detections" ("Com_Name");
 CREATE INDEX IF NOT EXISTS "detections_Date_Time" ON "detections" ("Date" DESC, "Time" DESC);
 EOF
 
+$HOME/BirdNET-Pi/birdnet/bin/pip3 install -U apprise
+
 sudo systemctl daemon-reload
 restart_services.sh
