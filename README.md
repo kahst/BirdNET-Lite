@@ -64,9 +64,9 @@ Currently listening in these countries . . . that I know of . . .
 - Brazil
 
 ## Features
-* 24/7 recording and BirdNET-Lite analysis
-* Automatic extraction of detected data (creating audio clips of detected bird sounds)
-* Spectrograms available for all extractions
+* 24/7 recording and automatic identification of bird songs using BirdNET machine learning
+* Bird sounds are automatically extracted and catalogued  
+* Visualize your recorded bird data and analyze trends
 * Live audio stream & spectrogram
 * Automatic disk space management, where old audio files are periodically purged
 * [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
