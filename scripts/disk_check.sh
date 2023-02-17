@@ -23,6 +23,7 @@ if [ "${used//%}" -ge 95 ]; then
             fi
             ((iter++))
         done
+        find ~/BirdSongs/ -type d -empty -mtime +90 -delete
         find ${EXTRACTED}/By_Date/ -empty -type d -delete;;
 
        #rm -drfv "$(find ${EXTRACTED}/By_Date/* -maxdepth 1 -type d -prune \
