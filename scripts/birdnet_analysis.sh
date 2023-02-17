@@ -103,7 +103,7 @@ run_analysis() {
     itr=0
     until [ -z "$(lsof -t ${1}/${i})" ];do
       itr=$((itr+1))
-      if [ $itr -eq 30 ]; then
+      if [ $itr -eq $(($RECORDING_LENGTH * 3)) ]; then
         echo "Maximum number of attempts exceeded. Exiting & restarting service."
         exit
       fi
