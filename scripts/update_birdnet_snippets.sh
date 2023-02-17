@@ -159,5 +159,10 @@ EOF
 
 $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1
 
+if ! grep -q 'RuntimeMaxSec=' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"&>/dev/null; then
+    sudo -E sed -i '/\[Service\]/a RuntimeMaxSec=3600' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"
+    sudo systemctl daemon-reload && restart_services.sh
+fi
+
 sudo systemctl daemon-reload
 restart_services.sh
