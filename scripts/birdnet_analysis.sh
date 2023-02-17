@@ -40,10 +40,10 @@ if [ ! -f ${EXCLUDE_LIST} ];then
     chmod g+rw ${EXCLUDE_LIST}
 fi
 if [ "$(du ${INCLUDE_LIST} | awk '{print $1}')" -lt 4 ];then
-  INCLUDE_LIST=null
+	INCLUDE_LIST=null
 fi
 if [ "$(du ${EXCLUDE_LIST} | awk '{print $1}')" -lt 4 ];then
-  EXCLUDE_LIST=null
+	EXCLUDE_LIST=null
 fi
 
 # Create an array of the audio files
@@ -140,7 +140,7 @@ run_analysis() {
 ${INCLUDEPARAM} \
 ${EXCLUDEPARAM} \
 ${BIRDWEATHER_ID_LOG}
-     output=$($PYTHON_VIRTUAL_ENV $DIR/analyze.py \
+    $PYTHON_VIRTUAL_ENV $DIR/analyze.py \
       --i "${1}/${i}" \
       --o "${1}/${i}.csv" \
       --lat "${LATITUDE}" \
@@ -151,19 +151,11 @@ ${BIRDWEATHER_ID_LOG}
       --min_conf "${CONFIDENCE}" \
       ${INCLUDEPARAM} \
       ${EXCLUDEPARAM} \
-      ${BIRDWEATHER_ID_PARAM})
-
-    echo -e "${output}"
-
-    if [ -z "$output" ] || [ "${#output}" -lt 5 ]; then
-        echo "BirdNET Analysis Server is hung or down, attempting to restart it..."
-        sudo ~/BirdNET-Pi/scripts/restart_services.sh
-    else
-        if [ ! -z $HEARTBEAT_URL ]; then
-          echo "Performing Heartbeat"
-          IP=`curl -s ${HEARTBEAT_URL}`
-          echo "Heartbeat: $IP"
-        fi
+      ${BIRDWEATHER_ID_PARAM}
+    if [ ! -z $HEARTBEAT_URL ]; then
+      echo "Performing Heartbeat"
+      IP=`curl -s ${HEARTBEAT_URL}`
+      echo "Heartbeat: $IP"
     fi
   done
 }
@@ -177,15 +169,8 @@ run_birdnet() {
   run_analysis "${1}"
 }
 
-count=0
-until grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1; do
+until grep 5050 <(netstat -tulpn 2>&1) &> /dev/null 2>&1;do
   sleep 1
-  count=$((count+1))
-  if [[ $count -eq 30 ]]; then
-    echo "BirdNET Analysis Server is hung or down, attempting to restart it..."
-    sudo ~/BirdNET-Pi/scripts/restart_services.sh
-    count=0
-  fi
 done
 
 if [ $(find ${RECS_DIR}/StreamData -maxdepth 1 -name '*wav' 2>/dev/null| wc -l) -gt 0 ];then
