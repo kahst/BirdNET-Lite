@@ -398,6 +398,11 @@ if($statement2 == False){
   header("refresh: 0;");
 }
 $result2 = $statement2->execute();
+$num_rows = 0;
+while ($result2->fetchArray(SQLITE3_ASSOC)) {
+    $num_rows++;
+}
+$result2->reset(); // reset the pointer to the beginning of the result set
 echo "<table>
   <tr>
   <th>$name</th>
@@ -425,6 +430,12 @@ echo "<table>
       continue;
     }
     $iter++;
+
+    if($num_rows < 100){
+      $imageelem = "<video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename_png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video>";
+    } else {
+      $imageelem = "<a href=\"$filename\"><img src=\"$filename_png\"></a>";
+    }
 
     if($config["FULL_DISK"] == "purge") {
       if(!in_array($filename_formatted, $disk_check_exclude_arr)) {
@@ -455,13 +466,15 @@ echo "<table>
 <img style='cursor:pointer;right:45px' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\"> 
 <img style='cursor:pointer' onclick='toggleShiftFreq(\"".$filename_formatted."\",\"".$shiftAction."\", this)' class=\"copyimage\" width=25 title=\"".$shiftTitle."\" src=\"".$shiftImageIcon."\"> $date $time<br>$confidence<br>
 
-        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename_png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+        ".$imageelem."
+        </td>
         </tr>";
     } else {
       echo "<tr>
 	<td class=\"relative\">$date $time<br>$confidence
 <img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'><br>
-        <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename_png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
+        ".$imageelem."
+        </td>
         </tr>";
     }
 

@@ -6,7 +6,11 @@ $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 if(!isset($_SESSION['behind'])) {
   $fetch = shell_exec("sudo -u".$user." git -C ".$home."/BirdNET-Pi fetch 2>&1");
-  $_SESSION['behind'] = trim(shell_exec("sudo -u".$user." git -C ".$home."/BirdNET-Pi status | sed -n '2 p' | cut -d ' ' -f 7"));
+  $str = trim(shell_exec("sudo -u".$user." git -C ".$home."/BirdNET-Pi status"));
+  if (preg_match("/behind '.*?' by (\d+) commit(s?)\b/", $str, $matches)) {
+    $num_commits_behind = $matches[1];
+    $_SESSION['behind'] = $num_commits_behind; 
+  }
   if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>
   <style>
   .updatenumber { 

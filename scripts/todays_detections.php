@@ -409,6 +409,7 @@ document.getElementById("searchterm").onkeydown = (function(e) {
       searchDetections(document.getElementById("searchterm").value);
       document.getElementById("searchterm").blur();
   } else {
+     /*
      clearTimeout(timer);
      timer = setTimeout(function() {
         searchDetections(document.getElementById("searchterm").value);
@@ -418,6 +419,7 @@ document.getElementById("searchterm").onkeydown = (function(e) {
             document.getElementById("searchterm").blur();
         }, 2000);
      }, 1000);
+     */
   }
 });
 <?php } ?>

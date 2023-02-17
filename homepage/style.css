@@ -813,3 +813,7 @@ pre#timer.bash {
   padding:3px;
   background-color:#9fe29b
 }
+
+#ddnewline::before {
+   content: none;
+}

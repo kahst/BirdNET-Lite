@@ -13,7 +13,13 @@ DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
 flickr_images = {}
 species_last_notified = {}
 
-apobj = apprise.Apprise()
+asset = apprise.AppriseAsset(
+    plugin_paths=[
+        userDir + "/.apprise/plugins",
+        userDir + "/.config/apprise/plugins",
+    ]
+)
+apobj = apprise.Apprise(asset=asset)
 config = apprise.AppriseConfig()
 config.add(APPRISE_CONFIG)
 apobj.add(config)
@@ -44,9 +50,14 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
         APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES = settings_dict.get('APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES')
         if APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES != "0":
             if species_last_notified.get(comName) is not None:
-                if int(timeim.time()) - species_last_notified[comName] < int(APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES):
+                try:
+                    if int(timeim.time()) - species_last_notified[comName] < int(APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES):
+                        return
+                except Exception as e:
+                    print("APPRISE NOTIFICATION EXCEPTION: "+str(e))
                     return
 
+        #TODO: this all needs to be changed, we changed the caddy default to allow direct IP access, so birdnetpi.local shouldn't be relied on anymore
         try:
             websiteurl = settings_dict.get('BIRDNETPI_URL')
             if len(websiteurl) == 0:
@@ -63,6 +74,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                     # TODO: Make this work with non-english comnames. Implement the "// convert sci name to English name" logic from overview.php here
                     url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key='+str(settings_dict.get('FLICKR_API_KEY'))+'&text='+str(comName)+' bird&sort=relevance&per_page=5&media=photos&format=json&license=2%2C3%2C4%2C5%2C6%2C9&nojsoncallback=1'
                     resp = requests.get(url=url)
+                    resp.encoding = "utf-8"
                     data = resp.json()["photos"]["photo"][0]
 
                     image_url = 'https://farm'+str(data["farm"])+'.static.flickr.com/'+str(data["server"])+'/'+str(data["id"])+'_'+str(data["secret"])+'_n.jpg'

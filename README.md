@@ -4,7 +4,7 @@
   BirdNET-Pi
 </h1>
 <p align="center">
-A realtime acoustic bird classification system for the Raspberry Pi 4B, 3B+, and 0W2
+A realtime acoustic bird classification system for the Raspberry Pi 4B, 400, 3B+, and 0W2
 </p>
 <p align="center">
   <img src="https://user-images.githubusercontent.com/60325264/140656397-bf76bad4-f110-467c-897d-992ff0f96476.png" />
@@ -64,9 +64,9 @@ Currently listening in these countries . . . that I know of . . .
 - Brazil
 
 ## Features
-* 24/7 recording and BirdNET-Lite analysis
-* Automatic extraction of detected data (creating audio clips of detected bird sounds)
-* Spectrograms available for all extractions
+* 24/7 recording and automatic identification of bird songs using BirdNET machine learning
+* Bird sounds are automatically extracted and catalogued  
+* Visualize your recorded bird data and analyze trends
 * Live audio stream & spectrogram
 * Automatic disk space management, where old audio files are periodically purged
 * [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
@@ -81,7 +81,7 @@ Currently listening in these countries . . . that I know of . . .
 * Localization supported
 
 ## Requirements
-* A Raspberry Pi 4B, Raspberry Pi 3B+, or Raspberry Pi 0W2 (The 3B+ and 0W2 must run on RaspiOS-ARM64-**Lite**)
+* A Raspberry Pi 4B, Raspberry Pi 400, Raspberry Pi 3B+, or Raspberry Pi 0W2 (The 3B+ and 0W2 must run on RaspiOS-ARM64-**Lite**)
 * An SD Card with the **_64-bit version of RaspiOS_** installed (please use Bullseye) -- Lite is recommended, but the installation works on RaspiOS-ARM64-Full as well. Downloads available within the [Raspberry Pi Imager](https://www.raspberrypi.com/software/).
 * A USB Microphone or Sound Card
 
@@ -106,6 +106,7 @@ The BirdNET-Pi can be accessed from any web browser on the same network:
 - Password is empty by default. Set this in "Tools" > "Settings" > "Advanced Settings"
 
 Please take a look at the [wiki](https://github.com/mcguirepr89/BirdNET-Pi/wiki) and [discussions](https://github.com/mcguirepr89/BirdNET-Pi/discussions) for information on
+- [BirdNET-Pi's Deep Convolutional Neural Network(s)](https://github.com/mcguirepr89/BirdNET-Pi/wiki/BirdNET-Pi:-some-theory-on-classification-&-some-practical-hints)
 - [making your installation public](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
 - [backing up and restoring your database](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Backup-and-Restore-the-Database)
 - [adjusting your sound card settings](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Adjusting-your-sound-card)
@@ -179,6 +180,11 @@ Current database languages include the list below:
 | Swedish | 264 | 4.15% |
 | Thai | 5580 | 87.71% |
 | Ukrainian | 646 | 10.15% |
+
+## Screenshots
+![chrome_olUUgVo1Ka](https://user-images.githubusercontent.com/103586016/219236461-c717e88b-134f-4916-a691-eb7c055c55bf.png)
+![chrome_HNMJKSPwV0](https://user-images.githubusercontent.com/103586016/217896322-aee3ecc4-e40e-40df-ade1-79f05ded21f2.png)
+
 
 ## :thinking:
 Are you a lucky ducky with an extra Raspberry Pi 4B lying around? [Here's an idea!](https://foldingathome.org/alternative-downloads)

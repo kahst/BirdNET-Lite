@@ -27,6 +27,14 @@ SITE_NAME="$HOSTNAME"
 LATITUDE=$(curl -s4 ifconfig.co/json | jq .latitude)
 LONGITUDE=$(curl -s4 ifconfig.co/json | jq .longitude)
 
+#--------------------------------- Model --------------------------------------#
+#_____________The variable below configures which BirdNET model is_____________#
+#______________________used for detecting bird audio.__________________________#
+#_It's recommended that you only change these values through the web interface.#
+
+MODEL=BirdNET_6K_GLOBAL_MODEL
+SF_THRESH=0.03
+
 #---------------------  BirdWeather Station Information -----------------------#
 #_____________The variable below can be set to have your BirdNET-Pi____________#
 #__________________also act as a BirdWeather listening station_________________#
