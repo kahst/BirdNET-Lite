@@ -66,13 +66,14 @@ if(isset($_GET['submit'])) {
   if(isset($_GET["rtsp_stream"])) {
     $rtsp_stream = str_replace("\r\n", ",", $_GET["rtsp_stream"]);
     if(strcmp($rtsp_stream,$config['RTSP_STREAM']) !== 0) {
-      $contents = preg_replace("/RTSP_STREAM=.*/", "RTSP_STREAM=$rtsp_stream", $contents);
-      $contents2 = preg_replace("/RTSP_STREAM=.*/", "RTSP_STREAM=$rtsp_stream", $contents2);
+      $contents = preg_replace("/RTSP_STREAM=.*/", "RTSP_STREAM=\"$rtsp_stream\"", $contents);
+      $contents2 = preg_replace("/RTSP_STREAM=.*/", "RTSP_STREAM=\"$rtsp_stream\"", $contents2);
       $fh = fopen('/etc/birdnet/birdnet.conf', "w");
       $fh2 = fopen("./scripts/thisrun.txt", "w");
       fwrite($fh, $contents);
       fwrite($fh2, $contents2);
       exec('sudo systemctl restart birdnet_recording.service');
+      exec('sudo systemctl restart livestream.service');
     }
   }
   
