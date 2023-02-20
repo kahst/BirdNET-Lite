@@ -7,6 +7,20 @@ trap 'exit 1' SIGINT SIGHUP
 echo "Beginning $0"
 birdnet_conf=$my_dir/birdnet.conf
 
+# Retrieve latitude and longitude from web
+LATITUDE=$(curl -s4 ifconfig.co/json | jq .latitude)
+LONGITUDE=$(curl -s4 ifconfig.co/json | jq .longitude)
+
+# Define regular expression pattern
+pattern='^[+-]?[0-9]{2}\.[0-9]{4}$'
+
+# Check if latitude and longitude match the pattern
+if ! [[ $LATITUDE =~ $pattern ]] || ! [[ $LONGITUDE =~ $pattern ]]; then
+  echo -e "\033[33mCouldn't set latitude and longitude automatically, you will need to do this manually from the web interface by navigating to Tools -> Settings -> Location.\033[0m"
+  LATITUDE=0.0000
+  LONGITUDE=0.0000
+fi
+
 install_config() {
   cat << EOF > $birdnet_conf
 ################################################################################
@@ -24,8 +38,8 @@ SITE_NAME="$HOSTNAME"
 ## Please only go to 4 decimal places. Example:43.3984
 
 
-LATITUDE=$(curl -s4 ifconfig.co/json | jq .latitude)
-LONGITUDE=$(curl -s4 ifconfig.co/json | jq .longitude)
+LATITUDE=$LATITUDE
+LONGITUDE=$LONGITUDE
 
 #--------------------------------- Model --------------------------------------#
 #_____________The variable below configures which BirdNET model is_____________#
