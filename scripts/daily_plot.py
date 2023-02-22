@@ -48,7 +48,8 @@ readings = 10
 plt_top10_today = (df_plt_today['Com_Name'].value_counts()[:readings])
 df_plt_top10_today = df_plt_today[df_plt_today.Com_Name.isin(plt_top10_today.index)]
 
-if df_plt_top10_today.empty: exit(0)
+if df_plt_top10_today.empty:
+    exit(0)
 
 # Set Palette for graphics
 pal = "Greens"
