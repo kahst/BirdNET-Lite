@@ -38,7 +38,7 @@ def notify(body, title, attached=""):
         )
 
 
-def sendAppriseNotifications(species, confidence, path, date, time, week, latitude, longitude, cutoff, sens, overlap, settings_dict, db_path=DB_PATH):
+def sendAppriseNotifications(species, confidence, confidencepct, path, date, time, week, latitude, longitude, cutoff, sens, overlap, settings_dict, db_path=DB_PATH):
     # print(sendAppriseNotifications)
     # print(settings_dict)
     if os.path.exists(APPRISE_CONFIG) and os.path.getsize(APPRISE_CONFIG) > 0:
@@ -90,6 +90,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
             notify_body = body.replace("$sciname", sciName)\
                 .replace("$comname", comName)\
                 .replace("$confidence", confidence)\
+                .replace("$confidencepct", confidencepct)\
                 .replace("$listenurl", listenurl)\
                 .replace("$date", date)\
                 .replace("$time", time)\
@@ -103,6 +104,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
             notify_title = title.replace("$sciname", sciName)\
                 .replace("$comname", comName)\
                 .replace("$confidence", confidence)\
+                .replace("$confidencepct", confidencepct)\
                 .replace("$listenurl", listenurl)\
                 .replace("$date", date)\
                 .replace("$time", time)\
@@ -133,6 +135,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                     notify_body = body.replace("$sciname", sciName)\
                         .replace("$comname", comName)\
                         .replace("$confidence", confidence)\
+                        .replace("$confidencepct", confidencepct)\
                         .replace("$listenurl", listenurl)\
                         .replace("$date", date)\
                         .replace("$time", time)\
@@ -147,6 +150,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                     notify_title = title.replace("$sciname", sciName)\
                         .replace("$comname", comName)\
                         .replace("$confidence", confidence)\
+                        .replace("$confidencepct", confidencepct)\
                         .replace("$listenurl", listenurl)\
                         .replace("$date", date)\
                         .replace("$time", time)\
@@ -181,6 +185,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                     notify_body = body.replace("$sciname", sciName)\
                         .replace("$comname", comName)\
                         .replace("$confidence", confidence)\
+                        .replace("$confidencepct", confidencepct)\
                         .replace("$listenurl", listenurl)\
                         .replace("$date", date)\
                         .replace("$time", time)\
@@ -195,6 +200,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                     notify_title = title.replace("$sciname", sciName)\
                         .replace("$comname", comName)\
                         .replace("$confidence", confidence)\
+                        .replace("$confidencepct", confidencepct)\
                         .replace("$listenurl", listenurl)\
                         .replace("$date", date)\
                         .replace("$time", time)\
