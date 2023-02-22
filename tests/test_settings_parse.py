@@ -39,6 +39,6 @@ IDFILE=/home/pi/BirdNET-Pi/IdentifiedSoFar.txt"""
         f.write(text)
 
     settings = config_to_settings(filename.name)
-    assert(settings["APPRISE_NOTIFICATION_TITLE"] == "Bird!")
-    assert(settings["FULL_DISK"] == "purge")
-    assert(settings["OVERLAP"] == "0.0")  # Yes, it's a string at this point.
+    assert (settings["APPRISE_NOTIFICATION_TITLE"] == "Bird!")
+    assert (settings["FULL_DISK"] == "purge")
+    assert (settings["OVERLAP"] == "0.0")  # Yes, it's a string at this point.
