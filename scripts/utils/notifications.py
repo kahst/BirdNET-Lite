@@ -43,7 +43,7 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
                              date, time, week, latitude, longitude, cutoff,
                              sens, overlap, settings_dict, db_path=DB_PATH):
     # print(sendAppriseNotifications)
-    # print(settings_dict)
+    print(settings_dict)
     if os.path.exists(APPRISE_CONFIG) and os.path.getsize(APPRISE_CONFIG) > 0:
 
         title = settings_dict.get('APPRISE_NOTIFICATION_TITLE')
