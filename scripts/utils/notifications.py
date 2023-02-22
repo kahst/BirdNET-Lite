@@ -43,7 +43,7 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
                              date, time, week, latitude, longitude, cutoff,
                              sens, overlap, settings_dict, db_path=DB_PATH):
     # print(sendAppriseNotifications)
-    print(settings_dict)
+    # print(settings_dict)
     if os.path.exists(APPRISE_CONFIG) and os.path.getsize(APPRISE_CONFIG) > 0:
 
         title = settings_dict.get('APPRISE_NOTIFICATION_TITLE')
@@ -92,8 +92,8 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
         if settings_dict.get('APPRISE_NOTIFY_EACH_DETECTION') == "1":
             notify_body = body.replace("$sciname", sciName)\
                 .replace("$comname", comName)\
-                .replace("$confidence", confidence)\
                 .replace("$confidencepct", confidencepct)\
+                .replace("$confidence", confidence)\
                 .replace("$listenurl", listenurl)\
                 .replace("$date", date)\
                 .replace("$time", time)\
@@ -106,8 +106,8 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
                 .replace("$overlap", overlap)
             notify_title = title.replace("$sciname", sciName)\
                 .replace("$comname", comName)\
-                .replace("$confidence", confidence)\
                 .replace("$confidencepct", confidencepct)\
+                .replace("$confidence", confidence)\
                 .replace("$listenurl", listenurl)\
                 .replace("$date", date)\
                 .replace("$time", time)\
@@ -137,8 +137,8 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
                     print("send the notification")
                     notify_body = body.replace("$sciname", sciName)\
                         .replace("$comname", comName)\
-                        .replace("$confidence", confidence)\
                         .replace("$confidencepct", confidencepct)\
+                        .replace("$confidence", confidence)\
                         .replace("$listenurl", listenurl)\
                         .replace("$date", date)\
                         .replace("$time", time)\
@@ -152,8 +152,8 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
                         + " (first time today)"
                     notify_title = title.replace("$sciname", sciName)\
                         .replace("$comname", comName)\
-                        .replace("$confidence", confidence)\
                         .replace("$confidencepct", confidencepct)\
+                        .replace("$confidence", confidence)\
                         .replace("$listenurl", listenurl)\
                         .replace("$date", date)\
                         .replace("$time", time)\
@@ -187,8 +187,8 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
                 if numberDetections > 0 and numberDetections <= 5:
                     notify_body = body.replace("$sciname", sciName)\
                         .replace("$comname", comName)\
-                        .replace("$confidence", confidence)\
                         .replace("$confidencepct", confidencepct)\
+                        .replace("$confidence", confidence)\
                         .replace("$listenurl", listenurl)\
                         .replace("$date", date)\
                         .replace("$time", time)\
@@ -202,8 +202,8 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
                         + " (only seen " + str(int(numberDetections)) + " times in last 7d)"
                     notify_title = title.replace("$sciname", sciName)\
                         .replace("$comname", comName)\
-                        .replace("$confidence", confidence)\
                         .replace("$confidencepct", confidencepct)\
+                        .replace("$confidence", confidence)\
                         .replace("$listenurl", listenurl)\
                         .replace("$date", date)\
                         .replace("$time", time)\
