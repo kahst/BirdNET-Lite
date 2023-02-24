@@ -11,6 +11,8 @@ import sqlite3
 from sqlite3 import Connection
 import plotly.express as px
 from sklearn.preprocessing import normalize
+from suntime import Sun
+from datetime import datetime
 
 pio.templates.default = "plotly_white"
 
@@ -167,6 +169,68 @@ top_N = st.sidebar.slider(
 top_N_species = (df5.value_counts()[:top_N])
 
 font_size = 15
+
+def sunrise_sunset_scatter(num_days_to_display):
+    latitude = df['Lat'][0]
+    longitude = df['Lon'][0]
+
+    sun = Sun(latitude, longitude)
+
+    sunrise_list = []
+    sunset_list = []
+    sunrise_week_list = []
+    sunset_week_list = []
+    sunrise_text_list = []
+    sunset_text_list = []
+
+    now = datetime.now()
+
+    for past_day in range(num_days_to_display):
+        d = timedelta(days=num_days_to_display - past_day - 1)
+
+        current_date = now - d
+        # current_date = datetime.fromisocalendar(2022, week + 1, 5)
+        # time_zone = datetime.now()
+        sun_rise = sun.get_local_sunrise_time(current_date)
+        sun_dusk = sun.get_local_sunset_time(current_date)
+
+        sun_rise_time = float(sun_rise.hour) + float(sun_rise.minute) / 60.0
+        sun_dusk_time = float(sun_dusk.hour) + float(sun_dusk.minute) / 60.0
+
+        temp_time = str(sun_rise)[-14:-9] + " Sunrise"
+        sunrise_text_list.append(temp_time)
+        temp_time = str(sun_dusk)[-14:-9] + " Sunset"
+        sunset_text_list.append(temp_time)
+        sunrise_list.append(sun_rise_time)
+        sunset_list.append(sun_dusk_time)
+        sunrise_week_list.append(past_day)
+        sunset_week_list.append(past_day)
+
+    sunrise_week_list.append(None)
+    sunrise_list.append(None)
+    sunrise_text_list.append(None)
+    sun_list = sunrise_list.extend(sunset_list)
+    sun_week_list = sunrise_week_list.extend(sunset_week_list)
+    sunrise_text_list.extend(sunset_text_list)
+
+    return sunrise_week_list, sunrise_list, sunrise_text_list
+
+def hms_to_dec(t):
+    # (h, m, s) = t.split(':')
+    h = t.hour
+    m = t.minute / 60
+    s = t.second / 3600
+    result = h + m + s
+    return result
+
+def hms_to_str(t):
+    # (h, m, s) = t.split(':')
+    h = t.hour
+    m = t.minute
+    # s = t.second / 3600
+    # result = h + m + s
+    return "%02d:%02d" % (h, m)
+
 
 if daily is False:
 
@@ -364,8 +428,11 @@ if daily is False:
         df4.index = [df4.index.date, df4.index.time]
         day_hour_freq = df4.unstack().fillna(0)
 
+        saved_time_labels = [hms_to_str(h) for h in day_hour_freq.columns.tolist()]
+        fig_dec_y = [hms_to_dec(h) for h in day_hour_freq.columns.tolist()]
         fig_x = [d.strftime('%d-%m-%Y') for d in day_hour_freq.index.tolist()]
         fig_y = [h.strftime('%H:%M') for h in day_hour_freq.columns.tolist()]
+        day_hour_freq.columns = fig_dec_y
         fig_z = day_hour_freq.values.transpose()
 #        fig_heatmap = go.Figure(data=go.Heatmap(x=fig_x,y=fig_y,z=fig_z))
 
@@ -374,7 +441,41 @@ if daily is False:
         # yaxis={'categoryorder':'total ascending'})
         color_pals = px.colors.named_colorscales()
         selected_pal = st.sidebar.selectbox('Select Color Pallet for Daily Detections', color_pals)
-        fig.add_trace(go.Heatmap(x=fig_x, y=fig_y, z=fig_z, autocolorscale=False, colorscale=selected_pal), row=1, col=1)
+
+        heatmap = go.Heatmap(
+            # x=fig_x, y=fig_y,
+            x=fig_x,
+            y=day_hour_freq.columns,
+            z=fig_z,  # heat.values,
+            showscale=False,
+            # text=labels,
+            texttemplate="%{text}", autocolorscale=False, colorscale=selected_pal
+        )
+        num_days_to_display = len(fig_x)
+        sunrise_week_list, sunrise_list, sunrise_text_list = sunrise_sunset_scatter(num_days_to_display)
+        daysback_range = fig_x
+        daysback_range.append(None)
+        daysback_range.extend(daysback_range)
+        daysback_range = daysback_range[:-1]
+
+        sunrise_sunset = go.Scatter(x=daysback_range,
+                                    y=sunrise_list,
+                                    mode='lines',
+                                    hoverinfo='text',
+                                    text=sunrise_text_list,
+                                    line_color='orange', line_width=1, name=' ')
+
+        fig = go.Figure(data=[heatmap, sunrise_sunset])
+        number_of_y_ticks = 12
+        y_downscale_factor = int(len(saved_time_labels) / number_of_y_ticks)
+        fig.update_layout(
+            yaxis=dict(
+                tickmode = 'array',
+                tickvals = day_hour_freq.columns[::y_downscale_factor],
+                ticktext = saved_time_labels[::y_downscale_factor],
+                nticks = 6
+            )
+        )
         st.plotly_chart(fig, use_container_width=True)  # , config=config)
 else:
     fig = make_subplots(
