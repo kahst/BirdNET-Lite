@@ -100,15 +100,19 @@ if(isset($_GET['ascii'])) {
 			$priorweekcount = $totalcount['COUNT(*)'];
 
       // really percent changed
-			$percentagediff = round( (($scount - $priorweekcount) / $priorweekcount) * 100  );
+			if($priorweekcount > 0){
+                                $percentagediff = round( (($scount - $priorweekcount) / $priorweekcount) * 100  );
 
-			if($percentagediff > 0) {
-				$percentagediff = "<span style='color:green;font-size:small'>+".$percentagediff."%</span>";
-			} else {
-				$percentagediff = "<span style='color:red;font-size:small'>-".abs($percentagediff)."%</span>";
-			}
+                                if($percentagediff > 0) {
+                                        $percentagediff = "<span style='color:green;font-size:small'>+".$percentagediff."%</span>";
+                                } else {
+                                        $percentagediff = "<span style='color:red;font-size:small'>-".abs($percentagediff)."%</span>";
+                                }
 
-			echo $com_name." - ".$scount." (".$percentagediff.")<br>";
+                                echo $com_name." - ".$scount." (".$percentagediff.")<br>";
+                        } else {
+                                echo $com_name." - ".$scount ."<br>";
+                        }
 		}
 	}
 
