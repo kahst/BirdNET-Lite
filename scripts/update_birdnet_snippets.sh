@@ -158,7 +158,7 @@ CREATE INDEX IF NOT EXISTS "detections_Date_Time" ON "detections" ("Date" DESC, 
 EOF
 
 $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1 >/dev/null
-$HOME/BirdNET-Pi/birdnet/bin/pip3 install streamlit==1.19.0 >/dev/null
+$HOME/BirdNET-Pi/birdnet/bin/pip3 install streamlit==1.11.1 >/dev/null
 
 if ! grep -q 'RuntimeMaxSec=' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"&>/dev/null; then
     sudo -E sed -i '/\[Service\]/a RuntimeMaxSec=3600' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"
