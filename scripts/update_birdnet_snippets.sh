@@ -160,8 +160,8 @@ EOF
 apprise_version=$($HOME/BirdNET-Pi/birdnet/bin/pip3 show apprise 2>/dev/null | grep Version | awk '{print $2}')
 streamlit_version=$($HOME/BirdNET-Pi/birdnet/bin/pip3 show streamlit 2>/dev/null | grep Version | awk '{print $2}')
 
-[[ $apprise_version == "1.2.1" ]] && $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1
-[[ $streamlit_version == "1.19.0" ]] && $HOME/BirdNET-Pi/birdnet/bin/pip3 install streamlit==1.19.0
+[[ $apprise_version != "1.2.1" ]] && $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1
+[[ $streamlit_version != "1.19.0" ]] && $HOME/BirdNET-Pi/birdnet/bin/pip3 install streamlit==1.19.0
 
 if ! grep -q 'RuntimeMaxSec=' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"&>/dev/null; then
     sudo -E sed -i '/\[Service\]/a RuntimeMaxSec=3600' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"
