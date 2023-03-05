@@ -80,6 +80,52 @@ $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 
+if(isset($_GET['comname'])) {
+ $birdName = $_GET['comname'];
+ $birdName = str_replace("_", " ", $birdName);
+
+
+// Prepare a SQL statement to retrieve the detection data for the specified bird
+$stmt = $db->prepare('SELECT Date, COUNT(*) AS Detections FROM detections WHERE Com_Name = :com_name AND Date BETWEEN DATE("now", "-30 days") AND DATE("now") GROUP BY Date');
+
+// Bind the bird name parameter to the SQL statement
+$stmt->bindValue(':com_name', $birdName);
+
+// Execute the SQL statement and get the result set
+$result = $stmt->execute();
+
+// Fetch the result set as an associative array
+$data = array();
+while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+  $data[$row['Date']] = $row['Detections'];
+}
+
+// Create an array of all dates in the last 14 days
+$last14Days = array();
+for ($i = 0; $i < 31; $i++) {
+  $last14Days[] = date('Y-m-d', strtotime("-$i days"));
+}
+
+// Merge the data array with the last14Days array
+$data = array_merge(array_fill_keys($last14Days, 0), $data);
+
+// Sort the data by date in ascending order
+ksort($data);
+
+// Convert the data to an array of objects
+$data = array_map(function($date, $count) {
+  return array('date' => $date, 'count' => $count);
+}, array_keys($data), $data);
+
+// Close the database connection
+$db->close();
+
+// Return the data as JSON
+echo json_encode($data);
+die();
+
+}
+
 // from https://stackoverflow.com/questions/2690504/php-producing-relative-date-time-from-timestamps
 function relativeTime($ts)
 {
@@ -230,6 +276,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
         <?php if(isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])){ ?>
           <tr class="relative" id="<?php echo $iterations; ?>">
           <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" title="Open in new tab" width=25 src="images/copy.png"></a>
+          <img class="copyimage" style="right:39px;cursor:pointer" title="View species stats" onclick="generateMiniGraph(this, '<?php echo $comname; ?>')" width=25 src="images/chart.svg">
             
           <div class="centered_image_container">
             <?php if(!empty($config["FLICKR_API_KEY"]) && strlen($image[2]) > 0) { ?>
@@ -327,6 +374,8 @@ die();
     <button style="background-color: #9fe29b;padding:20px" onclick="hideDialog()">Close</button>
   </dialog>
   <script src="static/dialog-polyfill.js"></script>
+  <script src="static/Chart.bundle.js"></script>
+  <script src="static/chartjs-plugin-trendline.min.js"></script>
   <script>
   var dialog = document.querySelector('dialog');
   dialogPolyfill.registerDialog(dialog);
@@ -497,3 +546,151 @@ window.addEventListener("load", function(){
 });
 </script>
 
+<style>
+  .tooltip {
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  transition: opacity 0.2s ease-in-out;
+}
+</style>
+
+<script>
+function generateMiniGraph(elem, comname) {
+  // Make an AJAX call to fetch the number of detections for the bird species
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/todays_detections.php?comname=' + comname);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      var detections = JSON.parse(xhr.responseText);
+
+      console.log(detections)
+
+      // Create a div element for the chart window
+      var chartWindow = document.createElement('div');
+      chartWindow.className = "chartdiv"
+      chartWindow.style.position = 'fixed';
+      chartWindow.style.top = '0%';
+      chartWindow.style.left = '50%';
+      chartWindow.style.width = window.innerWidth < 700 ? '40%' : '20%';
+      chartWindow.style.height = window.innerWidth < 700 ? '25%' : '16%';
+      chartWindow.style.backgroundColor = '#fff';
+      chartWindow.style.zIndex = '9999';
+      chartWindow.style.overflow = 'auto';
+      chartWindow.style.borderRadius = '5px';
+      chartWindow.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+
+      document.body.appendChild(chartWindow);
+
+
+            // Create a canvas element for the chart
+      var canvas = document.createElement('canvas');
+      canvas.width = chartWindow.offsetWidth;
+      canvas.height = chartWindow.offsetHeight;
+      chartWindow.appendChild(canvas);
+
+      // Create a new Chart.js chart
+      var ctx = canvas.getContext('2d');
+      var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: detections.map(item => item.date),
+          datasets: [{
+            label: 'Detections',
+            data: detections.map(item => item.count),
+            backgroundColor: '#9fe29b',
+            borderColor: '#77c487',
+            borderWidth: 1,
+            lineTension: 0.3, // Add smoothing to the line
+            pointRadius: 1, // Make the data points smaller
+            pointHitRadius: 10, // Increase the area around data points for mouse events
+
+          trendlineLinear: {
+            style: "rgba(55, 99, 64, 0.5)",
+            lineStyle: "solid",
+            width: 1.5
+          }
+
+          }]
+        },
+        options: {
+          layout: {
+            padding: {
+              right: 10
+            }
+          },
+          title: {
+            display: true,
+            text: 'Detections Over 30d'
+          },
+          legend: {
+            display: false
+          },
+          scales: {
+            xAxes: [{
+              display: false,
+              gridLines: {
+                display: false // Hide the gridlines on the x-axis
+              },
+              ticks: {
+                autoSkip: true,
+                maxTicksLimit: 2
+              }
+            }],
+            yAxes: [{
+              gridLines: {
+                display: false // Hide the gridlines on the y-axis
+              },
+              ticks: {
+                beginAtZero: true,
+                precision: 0,
+                stepSize: 1
+              }
+            }]
+          }
+        }
+      });
+
+      // Position the chart window to the left of the button
+      var buttonRect = elem.getBoundingClientRect();
+      var chartRect = chartWindow.getBoundingClientRect();
+      chartWindow.style.left = (buttonRect.left - chartRect.width - 10) + 'px';
+
+      // Calculate the top position of the chart to center it with the button
+      var buttonCenter = buttonRect.top + (buttonRect.height / 2);
+      var chartHeight = chartWindow.offsetHeight;
+      var chartTop = buttonCenter - (chartHeight / 2);
+      chartWindow.style.top = chartTop + 'px';
+
+
+      // Add a close button to the chart window
+      var closeButton = document.createElement('button');
+      closeButton.id = "chartcb";
+      closeButton.innerText = 'X';
+      closeButton.style.position = 'absolute';
+      closeButton.style.top = '5px';
+      closeButton.style.right = '5px';
+      closeButton.addEventListener('click', function() {
+        document.body.removeChild(chartWindow);
+      });
+      chartWindow.appendChild(closeButton);
+    }
+  };
+  xhr.send();
+}
+
+// TODO: add more margin to the right of the inside of the chart, add cursor icon to hover on the chart icon
+
+// Listen for the scroll event on the window object
+window.addEventListener('scroll', function() {
+  // Get all chart elements
+  var charts = document.querySelectorAll('.chartdiv');
+  
+  // Loop through all chart elements and remove them
+  charts.forEach(function(chart) {
+    chart.parentNode.removeChild(chart);
+  });
+});
+
+</script>
