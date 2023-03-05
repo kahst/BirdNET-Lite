@@ -276,7 +276,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
         <?php if(isset($_GET['display_limit']) && is_numeric($_GET['display_limit'])){ ?>
           <tr class="relative" id="<?php echo $iterations; ?>">
           <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img class="copyimage" title="Open in new tab" width=25 src="images/copy.png"></a>
-          <img class="copyimage" style="right:39px;cursor:pointer" title="View species stats" onclick="generateMiniGraph(this, '<?php echo $comname; ?>')" width=25 src="images/chart.svg">
+        
             
           <div class="centered_image_container">
             <?php if(!empty($config["FLICKR_API_KEY"]) && strlen($image[2]) > 0) { ?>
@@ -284,7 +284,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
             <?php } ?>
 
             <?php echo $todaytable['Time'];?><br> 
-          <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
+          <b><a class="a2" href="https://allaboutbirds.org/guide/<?php echo $comname;?>" target="top"><?php echo $todaytable['Com_Name'];?></a></b><img style="height: 1em;cursor:pointer" title="View species stats" onclick="generateMiniGraph(this, '<?php echo $comname; ?>')" width=25 src="images/chart.svg"><br>
           <a class="a2" href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
           <b>Confidence:</b> <?php echo round((float)round($todaytable['Confidence'],2) * 100 ) . '%';?><br></div><br>
           <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
@@ -299,7 +299,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
             <?php } ?>
           </div>
             <div>
-            <b><a class="a2" <?php if($_GET['kiosk'] == false){?>href="https://allaboutbirds.org/guide/<?php echo $comname;?>"<?php } else {echo "style='color:blue;'";} ?> target="top"><?php echo $todaytable['Com_Name'];?></a></b><br>
+            <b><a class="a2" <?php if($_GET['kiosk'] == false){?>href="https://allaboutbirds.org/guide/<?php echo $comname;?>"<?php } else {echo "style='color:blue;'";} ?> target="top"><?php echo $todaytable['Com_Name'];?></a></b> <img style="height: 1em;cursor:pointer;float:unset;display:inline" title="View species stats" onclick="generateMiniGraph(this, '<?php echo $comname; ?>')" width=25 src="images/chart.svg"><br>
             <a class="a2" <?php if($_GET['kiosk'] == false){?>href="https://wikipedia.org/wiki/<?php echo $sciname;?>"<?php } else {echo "style='color:blue;'";} ?> target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br></td>
         </div></div>
           <td><b>Confidence:</b> <?php echo round((float)round($todaytable['Confidence'],2) * 100 ) . '%';?><br></td>
@@ -376,6 +376,7 @@ die();
   <script src="static/dialog-polyfill.js"></script>
   <script src="static/Chart.bundle.js"></script>
   <script src="static/chartjs-plugin-trendline.min.js"></script>
+  
   <script>
   var dialog = document.querySelector('dialog');
   dialogPolyfill.registerDialog(dialog);
@@ -652,17 +653,16 @@ function generateMiniGraph(elem, comname) {
         }
       });
 
-      // Position the chart window to the left of the button
+      // Position the chart window to the right of the button
       var buttonRect = elem.getBoundingClientRect();
       var chartRect = chartWindow.getBoundingClientRect();
-      chartWindow.style.left = (buttonRect.left - chartRect.width - 10) + 'px';
+      chartWindow.style.left = (buttonRect.right + 10) + 'px';
 
       // Calculate the top position of the chart to center it with the button
       var buttonCenter = buttonRect.top + (buttonRect.height / 2);
       var chartHeight = chartWindow.offsetHeight;
       var chartTop = buttonCenter - (chartHeight / 2);
       chartWindow.style.top = chartTop + 'px';
-
 
       // Add a close button to the chart window
       var closeButton = document.createElement('button');
@@ -679,8 +679,6 @@ function generateMiniGraph(elem, comname) {
   };
   xhr.send();
 }
-
-// TODO: add more margin to the right of the inside of the chart, add cursor icon to hover on the chart icon
 
 // Listen for the scroll event on the window object
 window.addEventListener('scroll', function() {
