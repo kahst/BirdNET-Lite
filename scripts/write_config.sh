@@ -11,3 +11,4 @@ sed -i s/'^BIRDWEATHER_ID=$'/"BIRDWEATHER_ID=${birdweather_id}"/g ${birders_conf
 sed -i s/'^BIRDNETPI_URL=$'/"BIRDNETPI_URL=${birdnetpi_url/\/\//\\\/\\\/}"/g ${birders_conf}
 sed -i s/'^WEBTERMINAL_URL=$'/"WEBTERMINAL_URL=${extractionlog_url/\/\//\\\/\\\/}"/g ${birders_conf}
 sed -i s/'^BIRDNETLOG_URL=$'/"BIRDNETLOG_URL=${birdnetlog_url/\/\//\\\/\\\/}"/g ${birders_conf}
+

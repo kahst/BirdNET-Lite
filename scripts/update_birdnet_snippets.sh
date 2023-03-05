@@ -66,7 +66,7 @@ fi
 apprise_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("apprise") else "not installed")')
 if [[ "$apprise_installation_status" = "not installed" ]];then
   $HOME/BirdNET-Pi/birdnet/bin/pip3 install -U pip
-  $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1
 fi
 [ -f $HOME/BirdNET-Pi/apprise.txt ] || sudo -E -ucaddy touch $HOME/BirdNET-Pi/apprise.txt
 if ! which lsof &>/dev/null;then
@@ -157,8 +157,11 @@ CREATE INDEX IF NOT EXISTS "detections_Com_Name" ON "detections" ("Com_Name");
 CREATE INDEX IF NOT EXISTS "detections_Date_Time" ON "detections" ("Date" DESC, "Time" DESC);
 EOF
 
-$HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1 >/dev/null
-$HOME/BirdNET-Pi/birdnet/bin/pip3 install streamlit==1.11.1 >/dev/null
+apprise_version=$($HOME/BirdNET-Pi/birdnet/bin/pip3 show apprise 2>/dev/null | grep Version | awk '{print $2}')
+streamlit_version=$($HOME/BirdNET-Pi/birdnet/bin/pip3 show streamlit 2>/dev/null | grep Version | awk '{print $2}')
+
+[[ $apprise_version != "1.2.1" ]] && $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1
+[[ $streamlit_version != "1.19.0" ]] && $HOME/BirdNET-Pi/birdnet/bin/pip3 install streamlit==1.19.0
 
 if ! grep -q 'RuntimeMaxSec=' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"&>/dev/null; then
     sudo -E sed -i '/\[Service\]/a RuntimeMaxSec=3600' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"

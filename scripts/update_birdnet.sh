@@ -50,6 +50,9 @@ sudo_with_user git -C $HOME/BirdNET-Pi fetch $remote $branch
 # Switches git to specified branch
 sudo_with_user git -C $HOME/BirdNET-Pi switch -C $branch --track $remote/$branch
 
+# Prints out changes
+sudo_with_user git -C $HOME/BirdNET-Pi diff --stat HEAD^ HEAD
+
 sudo systemctl daemon-reload
 sudo ln -sf $my_dir/* /usr/local/bin/
 
