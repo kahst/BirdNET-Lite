@@ -168,5 +168,9 @@ if ! grep -q 'RuntimeMaxSec=' "$HOME/BirdNET-Pi/templates/birdnet_analysis.servi
     sudo systemctl daemon-reload && restart_services.sh
 fi
 
+if ! grep RAW_SPECTROGRAM /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "RAW_SPECTROGRAM=0" >> /etc/birdnet/birdnet.conf
+fi
+
 sudo systemctl daemon-reload
 restart_services.sh
