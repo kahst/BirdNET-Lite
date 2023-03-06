@@ -324,9 +324,9 @@ if(isset($_GET['view'])){
                 $diff_array = str_split($diff);
                 $indicators = array_map(function ($d) use ($delta) {
                     if ($d === '+') {
-                        return 'A';
+                        return "<span style='color:lime;'><b>+</b></span>";
                     } elseif ($d === '-') {
-                        return 'B';
+                        return "<span style='color:red;'><b>-</b></span>";
                     } elseif ($d === ' ') {
                         if ($delta !== '') {
                             return 'A';
@@ -342,13 +342,13 @@ if(isset($_GET['view'])){
 
         // rejoin the modified lines into a string
         $output = implode("\n", $lines);
-        $results = $lines;
+        $results = $output;
 
 
         if(strlen($results) == 0) {
           $results = "This command has no output.";
         }
-        echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$initcommand."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td><pre style='text-align:left'>$results</pre></td></tr></table>"; 
+        echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$initcommand."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td style='padding-left: 0px;padding-right: 0px;padding-bottom: 0px;padding-top: 0px;'><pre class='bash' style='text-align:left;margin:0px'>$results</pre></td></tr></table>"; 
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
