@@ -298,7 +298,7 @@ foreach($formats as $format){
       <label for="silence_update_indicator">Silence Update Indicator: </label>
       <input type="checkbox" name="silence_update_indicator" <?php if($newconfig['SILENCE_UPDATE_INDICATOR'] == 1) { echo "checked"; };?> ><br>
 
-      <label for="raw_spectrogram">Silence Update Indicator: </label>
+      <label for="raw_spectrogram">Minimalist Spectrograms: </label>
       <input type="checkbox" name="raw_spectrogram" <?php if($newconfig['RAW_SPECTROGRAM'] == 1) { echo "checked"; };?> ><br>
 
       <h3>BirdNET-Lite Settings</h3>
