@@ -307,6 +307,44 @@ if(isset($_GET['view'])){
         $results = str_replace("failed", "<span style='color:red'>failed</span>",$results);
         $results = str_replace("active (running)", "<span style='color:green'><b>active (running)</b></span>",$results);
         $results = str_replace("Your branch is up to date", "<span style='color:limegreen'><b>Your branch is up to date</b></span>",$results);
+
+        // split the input string into lines
+        $lines = explode("\n", $results);
+
+        // iterate over each line
+        foreach ($lines as &$line) {
+            // check if the line matches the pattern
+            if (preg_match('/^(.+?)\s*\|\s*(\d+)\s*([\+\- ]+)(\d+)?$/', $line, $matches)) {
+                // extract the filename, count, and indicator letters
+                $filename = $matches[1];
+                $count = $matches[2];
+                $diff = $matches[3];
+                $delta = $matches[4] ?? '';
+                // determine the indicator letters
+                $diff_array = str_split($diff);
+                $indicators = array_map(function ($d) use ($delta) {
+                    if ($d === '+') {
+                        return 'A';
+                    } elseif ($d === '-') {
+                        return 'B';
+                    } elseif ($d === ' ') {
+                        if ($delta !== '') {
+                            return 'A';
+                        } else {
+                            return ' ';
+                        }
+                    }
+                }, $diff_array);
+                // modify the line with the new indicator letters
+                $line = sprintf('%-35s|%3d %s%s', $filename, $count, implode('', $indicators), $delta);
+            }
+        }
+
+        // rejoin the modified lines into a string
+        $output = implode("\n", $lines);
+        $results = $lines;
+
+
         if(strlen($results) == 0) {
           $results = "This command has no output.";
         }
