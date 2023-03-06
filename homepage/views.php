@@ -308,6 +308,9 @@ if(isset($_GET['view'])){
         $results = str_replace("active (running)", "<span style='color:green'><b>active (running)</b></span>",$results);
         $results = str_replace("Your branch is up to date", "<span style='color:limegreen'><b>Your branch is up to date</b></span>",$results);
 
+        $results = str_replace("(+)", "(<span style='color:limegreen'><b>+</b></span>)",$results);
+        $results = str_replace("(-)", "(<span style='color:red'><b>-</b></span>)",$results);
+
         // split the input string into lines
         $lines = explode("\n", $results);
 
