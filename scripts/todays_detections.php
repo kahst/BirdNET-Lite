@@ -656,7 +656,11 @@ function generateMiniGraph(elem, comname) {
       // Position the chart window to the right of the button
       var buttonRect = elem.getBoundingClientRect();
       var chartRect = chartWindow.getBoundingClientRect();
-      chartWindow.style.left = (buttonRect.right + 10) + 'px';
+      if (window.innerWidth < 700) {
+        chartWindow.style.left = 'calc(75% - ' + (chartRect.width / 2) + 'px)';
+      } else {
+        chartWindow.style.left = (buttonRect.right + 10) + 'px';
+      }
 
       // Calculate the top position of the chart to center it with the button
       var buttonCenter = buttonRect.top + (buttonRect.height / 2);
