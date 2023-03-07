@@ -7,8 +7,10 @@ HOME=$(awk -F: '/1000/ {print $6}' /etc/passwd)
 my_dir=$HOME/BirdNET-Pi/scripts
 
 # Sets proper permissions and ownership
-sudo -E chown -R $USER:$USER $HOME/*
-sudo chmod -R g+wr $HOME/*
+#sudo -E chown -R $USER:$USER $HOME/*
+#sudo chmod -R g+wr $HOME/*
+find $HOME/* -not -user $USER -execdir sudo -E chown $USER:$USER {} \+
+find $HOME/* -not -user $USER -execdir sudo chmod g+wr {} \+
 
 # Create blank sitename as it's optional. First time install will use $HOSTNAME.
 if ! grep SITE_NAME /etc/birdnet/birdnet.conf &>/dev/null;then
