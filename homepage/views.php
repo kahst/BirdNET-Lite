@@ -353,7 +353,8 @@ if(isset($_GET['view'])){
         $output = implode("\n", $lines);
         $results = $output;
 
-
+        // remove script tags (xss)
+        $results = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $results);
         if(strlen($results) == 0) {
           $results = "This command has no output.";
         }
