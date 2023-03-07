@@ -11,6 +11,12 @@ if(!isset($_SESSION['behind'])) {
     $num_commits_behind = $matches[1];
     $_SESSION['behind'] = $num_commits_behind; 
   }
+  if (preg_match('/\b(\d+)\b and \b(\d+)\b different commits each/', $str, $matches)) {
+      $num1 = (int) $matches[1];
+      $num2 = (int) $matches[2];
+      $sum = $num1 + $num2;
+      $_SESSION['behind'] = $sum; 
+  }
   if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>
   <style>
   .updatenumber { 
