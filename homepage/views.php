@@ -353,7 +353,7 @@ if(isset($_GET['view'])){
         $output = implode("\n", $lines);
         $results = $output;
 
-
+        $results = nl2br(htmlspecialchars($results));
         if(strlen($results) == 0) {
           $results = "This command has no output.";
         }
