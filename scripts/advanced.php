@@ -322,7 +322,7 @@ foreach($formats as $format){
       <h3>Accessibility Settings</h3>
 
       <p>Birdsongs Frequency shifting configuration:<br>
-        this can be useful for hearing impaired people.<br>
+        this can be useful for hearing impaired people. Note: audio files will only be pitch shifted when the "FREQ SHIFT" button is manually clicked for a detection on the "Recordings" page.<br>
 
         <p style="margin-left: 40px">
 
