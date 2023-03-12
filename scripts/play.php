@@ -109,27 +109,27 @@ if(isset($_GET['shiftfile'])) {
     $pi = $home."/BirdSongs/Extracted/By_Date/";
 
     if(isset($_GET['doshift'])) {
-	$freqshift_tool = $config['FREQSHIFT_TOOL'];
+  $freqshift_tool = $config['FREQSHIFT_TOOL'];
 
-	if ($freqshift_tool == "ffmpeg") {
-       		$cmd = "/usr/bin/nohup /usr/bin/ffmpeg -y -i \"".$pi.$filename."\" -af \"rubberband=pitch=".$config['FREQSHIFT_LO']."/".$config['FREQSHIFT_HI']."\" \"".$shifted_path.$filename."\"";
-		shell_exec("mkdir -p ".$shifted_path.$dir." && echo \"".$cmd."\" > /tmp/shift.sh && chmod +x /tmp/shift.sh");
+  if ($freqshift_tool == "ffmpeg") {
+          $cmd = "/usr/bin/nohup /usr/bin/ffmpeg -y -i \"".$pi.$filename."\" -af \"rubberband=pitch=".$config['FREQSHIFT_LO']."/".$config['FREQSHIFT_HI']."\" \"".$shifted_path.$filename."\"";
+    shell_exec("mkdir -p ".$shifted_path.$dir." && echo \"".$cmd."\" > /tmp/shift.sh && chmod +x /tmp/shift.sh");
 
-	} else if ($freqshift_tool == "sox") {
-		//linux.die.net/man/1/sox
-		$soxopt = "-q";
-		$soxpitch = $config['FREQSHIFT_PITCH'];
-       		$cmd = "/usr/bin/nohup /usr/bin/sox \"".$pi.$filename."\" \"".$shifted_path.$filename."\" pitch ".$soxopt." ".$soxpitch;
-		shell_exec("mkdir -p ".$shifted_path.$dir." && echo \"".$cmd."\" > /tmp/shift.sh && chmod +x /tmp/shift.sh");
-	}
+  } else if ($freqshift_tool == "sox") {
+    //linux.die.net/man/1/sox
+    $soxopt = "-q";
+    $soxpitch = $config['FREQSHIFT_PITCH'];
+          $cmd = "/usr/bin/nohup /usr/bin/sox \"".$pi.$filename."\" \"".$shifted_path.$filename."\" pitch ".$soxopt." ".$soxpitch;
+    shell_exec("mkdir -p ".$shifted_path.$dir." && echo \"".$cmd."\" > /tmp/shift.sh && chmod +x /tmp/shift.sh");
+  }
 
-	shell_exec("/tmp/shift.sh");
-	shell_exec("rm -f /tmp/shift.sh");
+  shell_exec("/tmp/shift.sh");
+  shell_exec("rm -f /tmp/shift.sh");
     } else {
-	$cmd = "rm -f " . $shifted_path.$filename;
-	shell_exec("echo \"".$cmd."\" > /tmp/unshift.sh && chmod +x /tmp/unshift.sh");
-	shell_exec("/tmp/unshift.sh");
-	shell_exec("rm -f /tmp/unshift.sh");
+  $cmd = "rm -f " . $shifted_path.$filename;
+  shell_exec("echo \"".$cmd."\" > /tmp/unshift.sh && chmod +x /tmp/unshift.sh");
+  shell_exec("/tmp/unshift.sh");
+  shell_exec("rm -f /tmp/unshift.sh");
     }
 
     echo "OK";
@@ -259,21 +259,21 @@ function toggleShiftFreq(filename, shiftAction, elem) {
         elem.setAttribute("title", "This file has been shifted down in frequency.");
         elem.setAttribute("onclick", elem.getAttribute("onclick").replace("shift","unshift"));
         console.log("shifted freqs of " + filename);
-	video=elem.parentNode.getElementsByTagName("video")[0];
-	video.setAttribute("title", video.getAttribute("title").replace("/By_Date/","/By_Date/shifted/"));
-	source = video.getElementsByTagName("source")[0];
-	source.setAttribute("src", source.getAttribute("src").replace("/By_Date/","/By_Date/shifted/"));
-	video.load();
+  video=elem.parentNode.getElementsByTagName("video")[0];
+  video.setAttribute("title", video.getAttribute("title").replace("/By_Date/","/By_Date/shifted/"));
+  source = video.getElementsByTagName("source")[0];
+  source.setAttribute("src", source.getAttribute("src").replace("/By_Date/","/By_Date/shifted/"));
+  video.load();
       } else {
         elem.setAttribute("src","images/shift.svg");
         elem.setAttribute("title", "This file is not shifted in frequency.");
         elem.setAttribute("onclick", elem.getAttribute("onclick").replace("unshift","shift"));
         console.log("unshifted freqs of " + filename);
-	video=elem.parentNode.getElementsByTagName("video")[0];
-	video.setAttribute("title", video.getAttribute("title").replace("/By_Date/shifted/","/By_Date/"));
-	source = video.getElementsByTagName("source")[0];
-	source.setAttribute("src", source.getAttribute("src").replace("/By_Date/shifted/","/By_Date/"));
-	video.load();
+  video=elem.parentNode.getElementsByTagName("video")[0];
+  video.setAttribute("title", video.getAttribute("title").replace("/By_Date/shifted/","/By_Date/"));
+  source = video.getElementsByTagName("source")[0];
+  source.setAttribute("src", source.getAttribute("src").replace("/By_Date/shifted/","/By_Date/"));
+  video.load();
       }
     }
   }
@@ -325,21 +325,75 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
 
           #By Species
   } elseif($view == "byspecies") {
-    while($results=$result->fetchArray(SQLITE3_ASSOC)){
+    $birds = array();
+    while($results=$result->fetchArray(SQLITE3_ASSOC))
+    {
       $name = $results['Com_Name'];
-
-      echo "<td>
-        <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";}
-
-    #Specific Date
-  } elseif($view == "date") {
-    while($results=$result->fetchArray(SQLITE3_ASSOC)){
-      $name = $results['Com_Name'];
-      if(realpath($home."/BirdSongs/Extracted/By_Date/".$date."/".str_replace(" ", "_",$name)) !== false){
-        echo "<td>
-          <button action=\"submit\" name=\"species\" value=\"$name\">$name</button></td></tr>";
-      }
+      $birds[] = $name;
     }
+
+    if(count($birds) > 45) {
+      $num_cols = 3;
+    } else {
+      $num_cols = 1;
+    }
+    $num_rows = ceil(count($birds) / $num_cols);
+
+    for ($row = 0; $row < $num_rows; $row++) {
+      echo "<tr>";
+
+      for ($col = 0; $col < $num_cols; $col++) {
+        $index = $row + $col * $num_rows;
+
+        if ($index < count($birds)) {
+          ?>
+          <td class="spec">
+              <button type="submit" name="species" value="<?php echo $birds[$index];?>"><?php echo $birds[$index];?></button>
+          </td>
+          <?php
+        } else {
+          echo "<td></td>";
+        }
+      }
+
+      echo "</tr>";
+    }
+  } elseif($view == "date") {
+    $birds = array();
+while($results=$result->fetchArray(SQLITE3_ASSOC))
+{
+  $name = $results['Com_Name'];
+  if(realpath($home."/BirdSongs/Extracted/By_Date/".$date."/".str_replace(" ", "_",$name)) !== false){
+    $birds[] = $name;
+  }
+}
+
+if(count($birds) > 45) {
+  $num_cols = 3;
+} else {
+  $num_cols = 1;
+}
+$num_rows = ceil(count($birds) / $num_cols);
+
+for ($row = 0; $row < $num_rows; $row++) {
+  echo "<tr>";
+
+  for ($col = 0; $col < $num_cols; $col++) {
+    $index = $row + $col * $num_rows;
+
+    if ($index < count($birds)) {
+      ?>
+      <td class="spec">
+          <button type="submit" name="species" value="<?php echo $birds[$index];?>"><?php echo $birds[$index];?></button>
+      </td>
+      <?php
+    } else {
+      echo "<td></td>";
+    }
+  }
+
+  echo "</tr>";
+}
 
     #Choose
   } else {
@@ -452,7 +506,7 @@ echo "<table>
         $shiftImageIcon = "images/unshift.svg";
         $shiftTitle = "This file has been shifted down in frequency."; 
         $shiftAction = "unshift";
-	$filename = $filename_shifted;
+  $filename = $filename_shifted;
       } else {
         $shiftImageIcon = "images/shift.svg";
         $shiftTitle = "This file is not shifted in frequency.";
@@ -460,7 +514,7 @@ echo "<table>
       }
 
       echo "<tr>
-	<td class=\"relative\"> 
+  <td class=\"relative\"> 
 
 <img style='cursor:pointer;right:90px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'> 
 <img style='cursor:pointer;right:45px' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\"> 
@@ -471,7 +525,7 @@ echo "<table>
         </tr>";
     } else {
       echo "<tr>
-	<td class=\"relative\">$date $time<br>$confidence
+  <td class=\"relative\">$date $time<br>$confidence
 <img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\")' class=\"copyimage\" width=25 title='Delete Detection'><br>
         ".$imageelem."
         </td>
@@ -527,7 +581,7 @@ echo "<table>
         $shiftImageIcon = "images/unshift.svg";
         $shiftTitle = "This file has been shifted down in frequency."; 
         $shiftAction = "unshift";
-	$filename = $filename_shifted;
+  $filename = $filename_shifted;
       } else {
         $shiftImageIcon = "images/shift.svg";
         $shiftTitle = "This file is not shifted in frequency.";
@@ -535,7 +589,7 @@ echo "<table>
       }
 
           echo "<tr>
-	    <td class=\"relative\"> 
+      <td class=\"relative\"> 
 
 <img style='cursor:pointer;right:90px' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'> 
 <img style='cursor:pointer;right:45px' onclick='toggleLock(\"".$filename_formatted."\",\"".$type."\", this)' class=\"copyimage\" width=25 title=\"".$title."\" src=\"".$imageicon."\"> 
@@ -545,7 +599,7 @@ echo "<table>
             </tr>";
         } else {
           echo "<tr>
-	    <td class=\"relative\">$date $time<br>$confidence
+      <td class=\"relative\">$date $time<br>$confidence
 <img style='cursor:pointer' src='images/delete.svg' onclick='deleteDetection(\"".$filename_formatted."\", true)' class=\"copyimage\" width=25 title='Delete Detection'><br>
             <video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename_png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video></td>
             </tr>";
@@ -553,4 +607,13 @@ echo "<table>
 
       }echo "</table>";}?>
 </div>
+<style>
+td.spec {
+  width: calc(100% / <?php echo $num_cols;?>);
+}
+tr:first-child td.spec {
+  padding-top: 10px;
+}
+</style>
+
 </html>
