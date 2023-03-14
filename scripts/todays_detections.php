@@ -264,11 +264,21 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
           break;
         }
       }
-      $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace(" ", "%20", $engname).$comnameprefix."&sort=relevance".$args."&per_page=5&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"][0];
-      $modaltext = "https://flickr.com/photos/".$flickrjson["owner"]."/".$flickrjson["id"];
-      $authorlink = "https://flickr.com/people/".$flickrjson["owner"];
-      $imageurl = 'https://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
-      array_push($_SESSION['images'], array($comname,$imageurl,$flickrjson["title"], $modaltext, $authorlink));
+      // Make the API call
+      $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace(" ", "%20", $engname).$comnameprefix."&sort=relevance".$args."&per_page=5&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"];
+
+      // Find the first photo that is not blacklisted
+      $photo = null;
+      foreach ($flickrjson as $flickrphoto) {
+          if ($flickrphoto["id"] !== "4892923285") {
+              $photo = $flickrphoto;
+              break;
+          }
+      }
+      $modaltext = "https://flickr.com/photos/".$photo["owner"]."/".$photo["id"];
+      $authorlink = "https://flickr.com/people/".$photo["owner"];
+      $imageurl = 'https://farm' .$photo["farm"]. '.static.flickr.com/' .$photo["server"]. '/' .$photo["id"]. '_'  .$photo["secret"].  '.jpg';
+      array_push($_SESSION['images'], array($comname,$imageurl,$photo["title"], $modaltext, $authorlink));
       $image = $_SESSION['images'][count($_SESSION['images'])-1];
     }
   }
