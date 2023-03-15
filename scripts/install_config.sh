@@ -233,6 +233,13 @@ SILENCE_UPDATE_INDICATOR=0
 
 RAW_SPECTROGRAM=0
 
+## CUSTOM_IMAGE and CUSTOM_IMAGE_TITLE allow you to show a custom image on the
+## Overview page of your BirdNET-Pi. This can be used to show a dynamically 
+## updating picture of your garden, for example.
+
+CUSTOM_IMAGE=
+CUSTOM_IMAGE_TITLE=
+
 ## These are just for debugging
 LAST_RUN=
 THIS_RUN=
