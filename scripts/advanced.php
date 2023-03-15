@@ -320,7 +320,7 @@ foreach($formats as $format){
       <label for="custom_image">Custom Image Absolute Path: </label>
         <input name="custom_image" type="text" value="<?php print($newconfig['CUSTOM_IMAGE']);?>"/><br>
 
-      <hr>
+      <br>
       <label for="custom_image_label">Custom Image Label: </label>
       <input name="custom_image_label" type="text" value="<?php print($newconfig['CUSTOM_IMAGE_TITLE']);?>"/><br>
 

@@ -178,7 +178,7 @@ if ! grep CUSTOM_IMAGE /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "CUSTOM_IMAGE=" >> /etc/birdnet/birdnet.conf
 fi
 if ! grep CUSTOM_IMAGE_TITLE /etc/birdnet/birdnet.conf &>/dev/null;then
-  sudo -u$USER echo "CUSTOM_IMAGE_TITLE=" >> /etc/birdnet/birdnet.conf
+  sudo -u$USER echo "CUSTOM_IMAGE_TITLE=\"\"" >> /etc/birdnet/birdnet.conf
 fi
 
 
