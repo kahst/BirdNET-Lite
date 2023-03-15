@@ -319,12 +319,13 @@ foreach($formats as $format){
 
       <br>
 
-      <p>These allow you to show a custom image on the Overview page of your BirdNET-Pi. This can be used to show a dynamically updating picture of your garden, for example.</p>
       <label for="custom_image">Custom Image Absolute Path: </label>
         <input name="custom_image" type="text" value="<?php print($newconfig['CUSTOM_IMAGE']);?>"/><br>
 
       <label for="custom_image_label">Custom Image Label: </label>
       <input name="custom_image_label" type="text" value="<?php print($newconfig['CUSTOM_IMAGE_TITLE']);?>"/><br>
+
+      <p>These allow you to show a custom image on the Overview page of your BirdNET-Pi. This can be used to show a dynamically updating picture of your garden, for example.</p>
 
       <h3>BirdNET-Lite Settings</h3>
 
