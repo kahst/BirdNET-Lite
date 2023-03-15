@@ -264,13 +264,16 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
           break;
         }
       }
+      // Read the blacklisted image ids from the file into an array
+      $blacklisted_ids = array_map('trim', file($home."/BirdNET-Pi/scripts/blacklisted_images.txt"));
+
       // Make the API call
       $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace(" ", "%20", $engname).$comnameprefix."&sort=relevance".$args."&per_page=5&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"];
 
-      // Find the first photo that is not blacklisted
+      // Find the first photo that is not blacklisted or is not the specific blacklisted id
       $photo = null;
       foreach ($flickrjson as $flickrphoto) {
-          if ($flickrphoto["id"] !== "4892923285") {
+          if ($flickrphoto["id"] !== "4892923285" && !in_array($flickrphoto["id"], $blacklisted_ids)) {
               $photo = $flickrphoto;
               break;
           }
@@ -378,16 +381,19 @@ die();
 </style>
 </head>
 <div class="viewdb">
-  <dialog id="attribution-dialog">
+  <dialog style="margin-top: 5px;max-height: 100vh;
+  overflow-y: auto;" id="attribution-dialog">
     <h1 id="modalHeading"></h1>
     <p id="modalText"></p>
-    <button style="background-color: #9fe29b;padding:20px" onclick="hideDialog()">Close</button>
+    <button style="font-weight:bold;color:blue" onclick="hideDialog()">Close</button>
+    <button style="font-weight:bold;color:blue" onclick="if(confirm('Are you sure you want to blacklist this image?')) { blacklistImage(); }">Never show this image again</button>
   </dialog>
   <script src="static/dialog-polyfill.js"></script>
   <script src="static/Chart.bundle.js"></script>
   <script src="static/chartjs-plugin-trendline.min.js"></script>
   
   <script>
+    var last_photo_link;
   var dialog = document.querySelector('dialog');
   dialogPolyfill.registerDialog(dialog);
 
@@ -399,13 +405,29 @@ die();
     document.getElementById('attribution-dialog').close();
   }
 
+  function blacklistImage() {
+    const match = last_photo_link.match(/\d+$/); // match one or more digits
+    const result = match ? match[0] : null; // extract the first match or return null if no match is found
+    console.log(last_photo_link)
+    const xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+      if(this.responseText.length > 0) {
+       location.reload();
+      }
+    }
+    xhttp.open("GET", "overview.php?blacklistimage="+result, true);
+    xhttp.send();
+
+  }
+
   function setModalText(iter, title, text, authorlink, photolink) {
     document.getElementById('modalHeading').innerHTML = "Photo: \""+decodeURIComponent(title.replaceAll("+"," "))+"\" Attribution";
     <?php if($kiosk == false) { ?>
-      document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
+      document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px;max-height: calc(100vh - 15rem);display: block;margin: 0 auto;' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
     <?php } else { ?>
-      document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px' src='"+photolink+"'></div><br><div>Image link: <a target='_blank'>"+text+"</a><br>Author link: <a target='_blank'>"+authorlink+"</a></div>";
+      document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px;max-height: calc(100vh - 15rem);display: block;margin: 0 auto;' src='"+photolink+"'></div><br><div>Image link: <a target='_blank'>"+text+"</a><br>Author link: <a target='_blank'>"+authorlink+"</a></div>";
     <?php } ?>
+    last_photo_link = text;
     showDialog();
   }
   </script>  
