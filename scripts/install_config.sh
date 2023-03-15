@@ -238,7 +238,7 @@ RAW_SPECTROGRAM=0
 ## updating picture of your garden, for example.
 
 CUSTOM_IMAGE=
-CUSTOM_IMAGE_TITLE=
+CUSTOM_IMAGE_TITLE=""
 
 ## These are just for debugging
 LAST_RUN=

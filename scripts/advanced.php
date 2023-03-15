@@ -317,10 +317,12 @@ foreach($formats as $format){
       <label for="raw_spectrogram">Minimalist Spectrograms: </label>
       <input type="checkbox" name="raw_spectrogram" <?php if($newconfig['RAW_SPECTROGRAM'] == 1) { echo "checked"; };?> ><br>
 
+      <br>
+
+      <p>These allow you to show a custom image on the Overview page of your BirdNET-Pi. This can be used to show a dynamically updating picture of your garden, for example.</p><br>
       <label for="custom_image">Custom Image Absolute Path: </label>
         <input name="custom_image" type="text" value="<?php print($newconfig['CUSTOM_IMAGE']);?>"/><br>
 
-      <hr>
       <label for="custom_image_label">Custom Image Label: </label>
       <input name="custom_image_label" type="text" value="<?php print($newconfig['CUSTOM_IMAGE_TITLE']);?>"/><br>
 
