@@ -23,6 +23,20 @@ $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 
+if(isset($_GET['custom_image'])){
+  if(isset($config["CUSTOM_IMAGE"])) {
+  ?>
+    <br>
+    <h3><?php echo $config["CUSTOM_IMAGE_TITLE"]; ?></h3>
+    <?php
+    $image_data = file_get_contents($config["CUSTOM_IMAGE"]);
+    $image_base64 = base64_encode($image_data);
+    $img_tag = "<img src='data:image/png;base64," . $image_base64 . "'>";
+    echo $img_tag;
+  }
+  die();
+}
+
 if(isset($_GET['fetch_chart_string']) && $_GET['fetch_chart_string'] == "true") {
   $myDate = date('Y-m-d');
   $chart = "Combo-$myDate.png";
@@ -294,7 +308,10 @@ if (file_exists('./Charts/'.$chart)) {
 $refresh = $config['RECORDING_LENGTH'];
 $time = time();
 echo "<img id=\"spectrogramimage\" src=\"/spectrogram.png?nocache=$time\">";
+
 ?>
+
+<div id="customimage"></div>
 
 </div>
 </div>
@@ -372,6 +389,24 @@ window.addEventListener("load", function(){
 window.setInterval(function(){
   document.getElementById("spectrogramimage").src = "/spectrogram.png?nocache="+Date.now();
 }, <?php echo $refresh; ?>*1000);
+
+<?php if(isset($config["CUSTOM_IMAGE"])){?>
+// every 1 second, this loop will run and refresh the custom image
+window.setInterval(function(){
+  // Find the customimage element
+  var customimage = document.getElementById("customimage");
+
+  function updateCustomImage() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "overview.php?custom_image=true", true);
+    xhr.onload = function() {
+      customimage.innerHTML = xhr.responseText;
+    }
+    xhr.send();
+  }
+  updateCustomImage();
+}, 1000);
+<?php } ?>
 </script>
 
 <style>

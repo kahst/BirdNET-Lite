@@ -211,6 +211,22 @@ if(isset($_GET['submit'])) {
     $contents2 = preg_replace("/RAW_SPECTROGRAM=.*/", "RAW_SPECTROGRAM=0", $contents2);
   }
 
+  if(isset($_GET["custom_image"])) {
+    $custom_image = $_GET["custom_image"];
+    if(strcmp($custom_image,$config['CUSTOM_IMAGE']) !== 0) {
+      $contents = preg_replace("/CUSTOM_IMAGE=.*/", "CUSTOM_IMAGE=$custom_image", $contents);
+      $contents2 = preg_replace("/CUSTOM_IMAGE=.*/", "CUSTOM_IMAGE=$custom_image", $contents2);
+    }
+  }
+
+  if(isset($_GET["custom_image_label"])) {
+    $custom_image_label = $_GET["custom_image_label"];
+    if(strcmp($custom_image_label,$config['CUSTOM_IMAGE_TITLE']) !== 0) {
+      $contents = preg_replace("/CUSTOM_IMAGE_TITLE=.*/", "CUSTOM_IMAGE_TITLE=$custom_image_label", $contents);
+      $contents2 = preg_replace("/CUSTOM_IMAGE_TITLE=.*/", "CUSTOM_IMAGE_TITLE=$custom_image_label", $contents2);
+    }
+  }
+
   $fh = fopen('/etc/birdnet/birdnet.conf', "w");
   $fh2 = fopen("./scripts/thisrun.txt", "w");
   fwrite($fh, $contents);
@@ -300,6 +316,12 @@ foreach($formats as $format){
 
       <label for="raw_spectrogram">Minimalist Spectrograms: </label>
       <input type="checkbox" name="raw_spectrogram" <?php if($newconfig['RAW_SPECTROGRAM'] == 1) { echo "checked"; };?> ><br>
+
+      <label for="custom_image">Custom Image Absolute Path: </label>
+        <input name="custom_image" type="text" value="<?php print($newconfig['CUSTOM_IMAGE']);?>"/><br>
+
+      <label for="custom_image_label">Custom Image Label: </label>
+      <input name="custom_image_label" type="text" value="<?php print($newconfig['CUSTOM_IMAGE_TITLE']);?>"/><br>
 
       <h3>BirdNET-Lite Settings</h3>
 
