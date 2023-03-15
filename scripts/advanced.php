@@ -200,6 +200,33 @@ if(isset($_GET['submit'])) {
     $contents2 = preg_replace("/SILENCE_UPDATE_INDICATOR=.*/", "SILENCE_UPDATE_INDICATOR=0", $contents2);
   }
 
+  if(isset($_GET["raw_spectrogram"])) {
+    $raw_spectrogram = 1;
+    if(strcmp($RAW_SPECTROGRAM,$config['RAW_SPECTROGRAM']) !== 0) {
+      $contents = preg_replace("/RAW_SPECTROGRAM=.*/", "RAW_SPECTROGRAM=$raw_spectrogram", $contents);
+      $contents2 = preg_replace("/RAW_SPECTROGRAM=.*/", "RAW_SPECTROGRAM=$raw_spectrogram", $contents2);
+    }
+  } else {
+    $contents = preg_replace("/RAW_SPECTROGRAM=.*/", "RAW_SPECTROGRAM=0", $contents);
+    $contents2 = preg_replace("/RAW_SPECTROGRAM=.*/", "RAW_SPECTROGRAM=0", $contents2);
+  }
+
+  if(isset($_GET["custom_image"])) {
+    $custom_image = $_GET["custom_image"];
+    if(strcmp($custom_image,$config['CUSTOM_IMAGE']) !== 0) {
+      $contents = preg_replace("/CUSTOM_IMAGE=.*/", "CUSTOM_IMAGE=$custom_image", $contents);
+      $contents2 = preg_replace("/CUSTOM_IMAGE=.*/", "CUSTOM_IMAGE=$custom_image", $contents2);
+    }
+  }
+
+  if(isset($_GET["custom_image_label"])) {
+    $custom_image_label = $_GET["custom_image_label"];
+    if(strcmp($custom_image_label,$config['CUSTOM_IMAGE_TITLE']) !== 0) {
+      $contents = preg_replace("/CUSTOM_IMAGE_TITLE=.*/", "CUSTOM_IMAGE_TITLE=$custom_image_label", $contents);
+      $contents2 = preg_replace("/CUSTOM_IMAGE_TITLE=.*/", "CUSTOM_IMAGE_TITLE=$custom_image_label", $contents2);
+    }
+  }
+
   $fh = fopen('/etc/birdnet/birdnet.conf', "w");
   $fh2 = fopen("./scripts/thisrun.txt", "w");
   fwrite($fh, $contents);
@@ -287,6 +314,18 @@ foreach($formats as $format){
       <label for="silence_update_indicator">Silence Update Indicator: </label>
       <input type="checkbox" name="silence_update_indicator" <?php if($newconfig['SILENCE_UPDATE_INDICATOR'] == 1) { echo "checked"; };?> ><br>
 
+      <label for="raw_spectrogram">Minimalist Spectrograms: </label>
+      <input type="checkbox" name="raw_spectrogram" <?php if($newconfig['RAW_SPECTROGRAM'] == 1) { echo "checked"; };?> ><br>
+
+      <br>
+
+      <p>These allow you to show a custom image on the Overview page of your BirdNET-Pi. This can be used to show a dynamically updating picture of your garden, for example.</p>
+      <label for="custom_image">Custom Image Absolute Path: </label>
+        <input name="custom_image" type="text" value="<?php print($newconfig['CUSTOM_IMAGE']);?>"/><br>
+
+      <label for="custom_image_label">Custom Image Label: </label>
+      <input name="custom_image_label" type="text" value="<?php print($newconfig['CUSTOM_IMAGE_TITLE']);?>"/><br>
+
       <h3>BirdNET-Lite Settings</h3>
 
       <p>
@@ -308,7 +347,7 @@ foreach($formats as $format){
       <h3>Accessibility Settings</h3>
 
       <p>Birdsongs Frequency shifting configuration:<br>
-        this can be useful for hearing impaired people.<br>
+        this can be useful for hearing impaired people. Note: audio files will only be pitch shifted when the "FREQ SHIFT" button is manually clicked for a detection on the "Recordings" page.<br>
 
         <p style="margin-left: 40px">
 

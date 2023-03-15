@@ -23,6 +23,20 @@ $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 
+if(isset($_GET['custom_image'])){
+  if(isset($config["CUSTOM_IMAGE"])) {
+  ?>
+    <br>
+    <h3><?php echo $config["CUSTOM_IMAGE_TITLE"]; ?></h3>
+    <?php
+    $image_data = file_get_contents($config["CUSTOM_IMAGE"]);
+    $image_base64 = base64_encode($image_data);
+    $img_tag = "<img src='data:image/png;base64," . $image_base64 . "'>";
+    echo $img_tag;
+  }
+  die();
+}
+
 if(isset($_GET['fetch_chart_string']) && $_GET['fetch_chart_string'] == "true") {
   $myDate = date('Y-m-d');
   $chart = "Combo-$myDate.png";
@@ -93,11 +107,21 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
             }
           }
 
-         $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace(" ", "%20", $engname).$comnameprefix."&sort=relevance".$args."&per_page=5&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"][0];
-          $modaltext = "https://flickr.com/photos/".$flickrjson["owner"]."/".$flickrjson["id"];
-          $authorlink = "https://flickr.com/people/".$flickrjson["owner"];
-          $imageurl = 'https://farm' .$flickrjson["farm"]. '.static.flickr.com/' .$flickrjson["server"]. '/' .$flickrjson["id"]. '_'  .$flickrjson["secret"].  '.jpg';
-          array_push($_SESSION['images'], array($comname,$imageurl,$flickrjson["title"], $modaltext, $authorlink));
+         // Make the API call
+          $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace(" ", "%20", $engname).$comnameprefix."&sort=relevance".$args."&per_page=5&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"];
+
+          // Find the first photo that is not blacklisted
+          $photo = null;
+          foreach ($flickrjson as $flickrphoto) {
+              if ($flickrphoto["id"] !== "4892923285") {
+                  $photo = $flickrphoto;
+                  break;
+              }
+          }
+          $modaltext = "https://flickr.com/photos/".$photo["owner"]."/".$photo["id"];
+          $authorlink = "https://flickr.com/people/".$photo["owner"];
+          $imageurl = 'https://farm' .$photo["farm"]. '.static.flickr.com/' .$photo["server"]. '/' .$photo["id"]. '_'  .$photo["secret"].  '.jpg';
+          array_push($_SESSION['images'], array($comname,$imageurl,$photo["title"], $modaltext, $authorlink));
           $image = $_SESSION['images'][count($_SESSION['images'])-1];
         }
       }
@@ -131,7 +155,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
               <?php } ?>
               <form action="" method="GET">
                   <input type="hidden" name="view" value="Species Stats">
-                  <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button></br>
+                  <button type="submit" name="species" value="<?php echo $mostrecent['Com_Name'];?>"><?php echo $mostrecent['Com_Name'];?></button><img style="width: unset !important;display: inline;height: 1em;cursor:pointer" title="View species stats" onclick="generateMiniGraph(this, '<?php echo $comname; ?>')" width=25 src="images/chart.svg"></br>
                   <a href="https://wikipedia.org/wiki/<?php echo $sciname;?>" target="_blank"/><i><?php echo $mostrecent['Sci_Name'];?></i></a>
                   <br>Confidence: <?php echo $percent = round((float)round($mostrecent['Confidence'],2) * 100 ) . '%';?><br></div><br>
                   <video style="margin-top:10px" onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster="<?php echo $filename.".png";?>" preload="none" title="<?php echo $filename;?>"><source src="<?php echo $filename;?>"></video></td>
@@ -236,6 +260,8 @@ body::-webkit-scrollbar {
     <button onclick="hideDialog()">Close</button>
   </dialog>
   <script src="static/dialog-polyfill.js"></script>
+  <script src="static/Chart.bundle.js"></script>
+  <script src="static/chartjs-plugin-trendline.min.js"></script>
   <script>
   var dialog = document.querySelector('dialog');
   dialogPolyfill.registerDialog(dialog);
@@ -282,7 +308,10 @@ if (file_exists('./Charts/'.$chart)) {
 $refresh = $config['RECORDING_LENGTH'];
 $time = time();
 echo "<img id=\"spectrogramimage\" src=\"/spectrogram.png?nocache=$time\">";
+
 ?>
+
+<div id="customimage"></div>
 
 </div>
 </div>
@@ -360,5 +389,171 @@ window.addEventListener("load", function(){
 window.setInterval(function(){
   document.getElementById("spectrogramimage").src = "/spectrogram.png?nocache="+Date.now();
 }, <?php echo $refresh; ?>*1000);
+
+<?php if(isset($config["CUSTOM_IMAGE"])){?>
+// every 1 second, this loop will run and refresh the custom image
+window.setInterval(function(){
+  // Find the customimage element
+  var customimage = document.getElementById("customimage");
+
+  function updateCustomImage() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "overview.php?custom_image=true", true);
+    xhr.onload = function() {
+      customimage.innerHTML = xhr.responseText;
+    }
+    xhr.send();
+  }
+  updateCustomImage();
+}, 1000);
+<?php } ?>
 </script>
 
+<style>
+  .tooltip {
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  transition: opacity 0.2s ease-in-out;
+}
+</style>
+<script>
+function generateMiniGraph(elem, comname) {
+  // Make an AJAX call to fetch the number of detections for the bird species
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/todays_detections.php?comname=' + comname);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      var detections = JSON.parse(xhr.responseText);
+
+      console.log(detections)
+
+      // Create a div element for the chart window
+      var chartWindow = document.createElement('div');
+      chartWindow.className = "chartdiv"
+      chartWindow.style.position = 'fixed';
+      chartWindow.style.top = '0%';
+      chartWindow.style.left = '50%';
+      chartWindow.style.width = window.innerWidth < 700 ? '40%' : '20%';
+      chartWindow.style.height = window.innerWidth < 700 ? '25%' : '16%';
+      chartWindow.style.backgroundColor = '#fff';
+      chartWindow.style.zIndex = '9999';
+      chartWindow.style.overflow = 'auto';
+      chartWindow.style.borderRadius = '5px';
+      chartWindow.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+
+      document.body.appendChild(chartWindow);
+
+
+            // Create a canvas element for the chart
+      var canvas = document.createElement('canvas');
+      canvas.width = chartWindow.offsetWidth;
+      canvas.height = chartWindow.offsetHeight;
+      chartWindow.appendChild(canvas);
+
+      // Create a new Chart.js chart
+      var ctx = canvas.getContext('2d');
+      var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: detections.map(item => item.date),
+          datasets: [{
+            label: 'Detections',
+            data: detections.map(item => item.count),
+            backgroundColor: '#9fe29b',
+            borderColor: '#77c487',
+            borderWidth: 1,
+            lineTension: 0.3, // Add smoothing to the line
+            pointRadius: 1, // Make the data points smaller
+            pointHitRadius: 10, // Increase the area around data points for mouse events
+
+          trendlineLinear: {
+            style: "rgba(55, 99, 64, 0.5)",
+            lineStyle: "solid",
+            width: 1.5
+          }
+
+          }]
+        },
+        options: {
+          layout: {
+            padding: {
+              right: 10
+            }
+          },
+          title: {
+            display: true,
+            text: 'Detections Over 30d'
+          },
+          legend: {
+            display: false
+          },
+          scales: {
+            xAxes: [{
+              display: false,
+              gridLines: {
+                display: false // Hide the gridlines on the x-axis
+              },
+              ticks: {
+                autoSkip: true,
+                maxTicksLimit: 2
+              }
+            }],
+            yAxes: [{
+              gridLines: {
+                display: false // Hide the gridlines on the y-axis
+              },
+              ticks: {
+                beginAtZero: true,
+                precision: 0,
+                stepSize: 1
+              }
+            }]
+          }
+        }
+      });
+
+      var buttonRect = elem.getBoundingClientRect();
+      var chartRect = chartWindow.getBoundingClientRect();
+      if (window.innerWidth < 700) {
+        chartWindow.style.left = 'calc(75% - ' + (chartRect.width / 2) + 'px)';
+      } else {
+        chartWindow.style.left = (buttonRect.right + 10) + 'px';
+      }
+
+
+      // Calculate the top position of the chart to center it with the button
+      var buttonCenter = buttonRect.top + (buttonRect.height / 2);
+      var chartHeight = chartWindow.offsetHeight;
+      var chartTop = buttonCenter - (chartHeight / 2);
+      chartWindow.style.top = chartTop + 'px';
+
+      // Add a close button to the chart window
+      var closeButton = document.createElement('button');
+      closeButton.id = "chartcb";
+      closeButton.innerText = 'X';
+      closeButton.style.position = 'absolute';
+      closeButton.style.top = '5px';
+      closeButton.style.right = '5px';
+      closeButton.addEventListener('click', function() {
+        document.body.removeChild(chartWindow);
+      });
+      chartWindow.appendChild(closeButton);
+    }
+  };
+  xhr.send();
+}
+
+// Listen for the scroll event on the window object
+window.addEventListener('scroll', function() {
+  // Get all chart elements
+  var charts = document.querySelectorAll('.chartdiv');
+  
+  // Loop through all chart elements and remove them
+  charts.forEach(function(chart) {
+    chart.parentNode.removeChild(chart);
+  });
+});
+
+</script>

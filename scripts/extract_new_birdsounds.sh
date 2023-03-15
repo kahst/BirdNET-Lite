@@ -118,11 +118,22 @@ for h in "${SCAN_DIRS[@]}";do
     sox -V1 "${h}/${OLDFILE}" "${NEWSPECIES_BYDATE}/${NEWFILE}" \
       trim ="${START}" ="${END}"
 
-    # Create spectrogram for extraction
-    sox -V1 "${NEWSPECIES_BYDATE}/${NEWFILE}" -n remix 1 rate 24k spectrogram \
-      -t "${COMMON_NAME}" \
-      -c "${NEWSPECIES_BYDATE//$HOME\/}/${NEWFILE}" \
-      -o "${NEWSPECIES_BYDATE}/${NEWFILE}.png"
+    RAW_SPECTROGRAM=${RAW_SPECTROGRAM}
+    # Check if RAW_SPECTROGRAM is 1
+    if [ "$RAW_SPECTROGRAM" == "1" ]; then
+      # If it is, add "-r" as an argument to the SOX command
+      sox -V1 "${NEWSPECIES_BYDATE}/${NEWFILE}" -n remix 1 rate 24k spectrogram \
+        -t "${COMMON_NAME}" \
+        -c "${NEWSPECIES_BYDATE//$HOME\/}/${NEWFILE}" \
+        -o "${NEWSPECIES_BYDATE}/${NEWFILE}.png" \
+        -r
+    else
+      # If it's not, run the SOX command without the "-r" argument
+      sox -V1 "${NEWSPECIES_BYDATE}/${NEWFILE}" -n remix 1 rate 24k spectrogram \
+        -t "${COMMON_NAME}" \
+        -c "${NEWSPECIES_BYDATE//$HOME\/}/${NEWFILE}" \
+        -o "${NEWSPECIES_BYDATE}/${NEWFILE}.png"
+    fi
     
   done < "${TMPFILE}"
   

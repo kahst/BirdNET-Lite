@@ -10,6 +10,12 @@ if (preg_match("/behind '.*?' by (\d+) commit(s?)\b/", $str, $matches)) {
   $num_commits_behind = $matches[1];
   $_SESSION['behind'] = $num_commits_behind; 
 }
+if (preg_match('/\b(\d+)\b and \b(\d+)\b different commits each/', $str, $matches)) {
+    $num1 = (int) $matches[1];
+    $num2 = (int) $matches[2];
+    $sum = $num1 + $num2;
+    $_SESSION['behind'] = $sum; 
+}
 ?><html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <br>

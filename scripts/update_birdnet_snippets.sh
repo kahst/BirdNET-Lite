@@ -7,8 +7,10 @@ HOME=$(awk -F: '/1000/ {print $6}' /etc/passwd)
 my_dir=$HOME/BirdNET-Pi/scripts
 
 # Sets proper permissions and ownership
-sudo -E chown -R $USER:$USER $HOME/*
-sudo chmod -R g+wr $HOME/*
+#sudo -E chown -R $USER:$USER $HOME/*
+#sudo chmod -R g+wr $HOME/*
+find $HOME/* -not -user $USER -execdir sudo -E chown $USER:$USER {} \+
+find $HOME/* -not -user $USER -execdir sudo chmod g+wr {} \+
 
 # Create blank sitename as it's optional. First time install will use $HOSTNAME.
 if ! grep SITE_NAME /etc/birdnet/birdnet.conf &>/dev/null;then
@@ -167,6 +169,18 @@ if ! grep -q 'RuntimeMaxSec=' "$HOME/BirdNET-Pi/templates/birdnet_analysis.servi
     sudo -E sed -i '/\[Service\]/a RuntimeMaxSec=3600' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"
     sudo systemctl daemon-reload && restart_services.sh
 fi
+
+if ! grep RAW_SPECTROGRAM /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "RAW_SPECTROGRAM=0" >> /etc/birdnet/birdnet.conf
+fi
+
+if ! grep CUSTOM_IMAGE /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "CUSTOM_IMAGE=" >> /etc/birdnet/birdnet.conf
+fi
+if ! grep CUSTOM_IMAGE_TITLE /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "CUSTOM_IMAGE_TITLE=\"\"" >> /etc/birdnet/birdnet.conf
+fi
+
 
 sudo systemctl daemon-reload
 restart_services.sh

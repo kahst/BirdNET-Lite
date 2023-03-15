@@ -11,6 +11,12 @@ if(!isset($_SESSION['behind'])) {
     $num_commits_behind = $matches[1];
     $_SESSION['behind'] = $num_commits_behind; 
   }
+  if (preg_match('/\b(\d+)\b and \b(\d+)\b different commits each/', $str, $matches)) {
+      $num1 = (int) $matches[1];
+      $num2 = (int) $matches[2];
+      $sum = $num1 + $num2;
+      $_SESSION['behind'] = $sum; 
+  }
   if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>
   <style>
   .updatenumber { 
@@ -307,10 +313,52 @@ if(isset($_GET['view'])){
         $results = str_replace("failed", "<span style='color:red'>failed</span>",$results);
         $results = str_replace("active (running)", "<span style='color:green'><b>active (running)</b></span>",$results);
         $results = str_replace("Your branch is up to date", "<span style='color:limegreen'><b>Your branch is up to date</b></span>",$results);
+
+        $results = str_replace("(+)", "(<span style='color:lime;font-weight:bold'>+</span>)",$results);
+        $results = str_replace("(-)", "(<span style='color:red;font-weight:bold'>-</span>)",$results);
+
+        // split the input string into lines
+        $lines = explode("\n", $results);
+
+        // iterate over each line
+        foreach ($lines as &$line) {
+            // check if the line matches the pattern
+            if (preg_match('/^(.+?)\s*\|\s*(\d+)\s*([\+\- ]+)(\d+)?$/', $line, $matches)) {
+                // extract the filename, count, and indicator letters
+                $filename = $matches[1];
+                $count = $matches[2];
+                $diff = $matches[3];
+                $delta = $matches[4] ?? '';
+                // determine the indicator letters
+                $diff_array = str_split($diff);
+                $indicators = array_map(function ($d) use ($delta) {
+                    if ($d === '+') {
+                        return "<span style='color:lime;'><b>+</b></span>";
+                    } elseif ($d === '-') {
+                        return "<span style='color:red;'><b>-</b></span>";
+                    } elseif ($d === ' ') {
+                        if ($delta !== '') {
+                            return 'A';
+                        } else {
+                            return ' ';
+                        }
+                    }
+                }, $diff_array);
+                // modify the line with the new indicator letters
+                $line = sprintf('%-35s|%3d %s%s', $filename, $count, implode('', $indicators), $delta);
+            }
+        }
+
+        // rejoin the modified lines into a string
+        $output = implode("\n", $lines);
+        $results = $output;
+
+        // remove script tags (xss)
+        $results = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $results);
         if(strlen($results) == 0) {
           $results = "This command has no output.";
         }
-        echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$initcommand."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td><pre style='text-align:left'>$results</pre></td></tr></table>"; 
+        echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$initcommand."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td style='padding-left: 0px;padding-right: 0px;padding-bottom: 0px;padding-top: 0px;'><pre class='bash' style='text-align:left;margin:0px'>$results</pre></td></tr></table>"; 
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');
