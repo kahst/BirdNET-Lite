@@ -312,6 +312,7 @@ echo "<img id=\"spectrogramimage\" src=\"/spectrogram.png?nocache=$time\">";
 ?>
 
 <div id="customimage"></div>
+<br>
 
 </div>
 </div>
