@@ -213,13 +213,13 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
   }
   $iterations = 0;
   $lines;
+  $licenses_urls = array();
 
   if (file_exists('./scripts/thisrun.txt')) {
     $config = parse_ini_file('./scripts/thisrun.txt');
   } elseif (file_exists('./scripts/firstrun.ini')) {
   $config = parse_ini_file('./scripts/firstrun.ini');
   } 
-
 
 
   while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
@@ -253,6 +253,19 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
     if($key !== false) {
       $image = $_SESSION['images'][$key];
     } else {
+      // Get license information if we haven't already
+      if (empty($licenses_urls)) {
+        $licenses_url = "https://api.flickr.com/services/rest/?method=flickr.photos.licenses.getInfo&api_key=".$config["FLICKR_API_KEY"]."&format=json&nojsoncallback=1";
+        $licenses_response = file_get_contents($licenses_url);
+        $licenses_data = json_decode($licenses_response, true)["licenses"]["license"];
+        foreach ($licenses_data as $license) {
+          $license_id = $license["id"];
+          $license_name = $license["name"];
+          $license_url = $license["url"];
+          $licenses_urls[$license_id] = $license_url;
+        }
+      }
+
       // only open the file once per script execution
       if(!isset($lines)) {
         $lines = file($home."/BirdNET-Pi/model/labels_flickr.txt");
@@ -278,10 +291,16 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
               break;
           }
       }
+
+      $license_url = "https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=".$config["FLICKR_API_KEY"]."&photo_id=".$photo["id"]."&format=json&nojsoncallback=1";
+      $license_response = file_get_contents($license_url);
+      $license_info = json_decode($license_response, true)["photo"]["license"];
+      $license_url = $licenses_urls[$license_info];
+
       $modaltext = "https://flickr.com/photos/".$photo["owner"]."/".$photo["id"];
       $authorlink = "https://flickr.com/people/".$photo["owner"];
       $imageurl = 'https://farm' .$photo["farm"]. '.static.flickr.com/' .$photo["server"]. '/' .$photo["id"]. '_'  .$photo["secret"].  '.jpg';
-      array_push($_SESSION['images'], array($comname,$imageurl,$photo["title"], $modaltext, $authorlink));
+      array_push($_SESSION['images'], array($comname,$imageurl,$photo["title"], $modaltext, $authorlink, $license_url));
       $image = $_SESSION['images'][count($_SESSION['images'])-1];
     }
   }
@@ -293,7 +312,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
             
           <div class="centered_image_container">
             <?php if(!empty($config["FLICKR_API_KEY"]) && strlen($image[2]) > 0) { ?>
-              <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
+              <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>", "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>", "<?php echo $image[5]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
             <?php } ?>
 
             <?php echo $todaytable['Time'];?><br> 
@@ -308,7 +327,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
           <div>
             <div>
             <?php if(!empty($config["FLICKR_API_KEY"]) && (isset($_GET['hard_limit']) || $_GET['kiosk'] == true) && strlen($image[2]) > 0) { ?>
-              <img style="float:left;height:75px;" onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" id="birdimage" class="img1">
+              <img style="float:left;height:75px;" onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>", "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>", "<?php echo $image[5]; ?>")' src="<?php echo $image[1]; ?>" id="birdimage" class="img1">
             <?php } ?>
           </div>
             <div>
@@ -420,12 +439,12 @@ die();
 
   }
 
-  function setModalText(iter, title, text, authorlink, photolink) {
+  function setModalText(iter, title, text, authorlink, photolink, licenseurl) {
     document.getElementById('modalHeading').innerHTML = "Photo: \""+decodeURIComponent(title.replaceAll("+"," "))+"\" Attribution";
     <?php if($kiosk == false) { ?>
-      document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px;max-height: calc(100vh - 15rem);display: block;margin: 0 auto;' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
+      document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px;max-height: calc(100vh - 15rem);display: block;margin: 0 auto;' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a><br>License URL: <a href="+licenseurl+" target='_blank'>"+licenseurl+"</a></div>";
     <?php } else { ?>
-      document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px;max-height: calc(100vh - 15rem);display: block;margin: 0 auto;' src='"+photolink+"'></div><br><div>Image link: <a target='_blank'>"+text+"</a><br>Author link: <a target='_blank'>"+authorlink+"</a></div>";
+      document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px;max-height: calc(100vh - 15rem);display: block;margin: 0 auto;' src='"+photolink+"'></div><br><div>Image link: <a target='_blank'>"+text+"</a><br>Author link: <a target='_blank'>"+authorlink+"</a><br>License URL: <a target='_blank'>"+licenseurl+"</a></div>";
     <?php } ?>
     last_photo_link = text;
     showDialog();
