@@ -222,8 +222,8 @@ if(isset($_GET['submit'])) {
   if(isset($_GET["custom_image_label"])) {
     $custom_image_label = $_GET["custom_image_label"];
     if(strcmp($custom_image_label,$config['CUSTOM_IMAGE_TITLE']) !== 0) {
-      $contents = preg_replace("/CUSTOM_IMAGE_TITLE=.*/", "CUSTOM_IMAGE_TITLE=$custom_image_label", $contents);
-      $contents2 = preg_replace("/CUSTOM_IMAGE_TITLE=.*/", "CUSTOM_IMAGE_TITLE=$custom_image_label", $contents2);
+      $contents = preg_replace("/CUSTOM_IMAGE_TITLE=.*/", "CUSTOM_IMAGE_TITLE=\"$custom_image_label\"", $contents);
+      $contents2 = preg_replace("/CUSTOM_IMAGE_TITLE=.*/", "CUSTOM_IMAGE_TITLE=\"$custom_image_label\"", $contents2);
     }
   }
 
