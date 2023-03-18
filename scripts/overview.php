@@ -37,6 +37,33 @@ if(isset($_GET['custom_image'])){
   die();
 }
 
+if(isset($_GET['blacklistimage'])) {
+  if(isset($_SERVER['PHP_AUTH_USER'])) {
+    $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+    $submitteduser = $_SERVER['PHP_AUTH_USER'];
+    if($submittedpwd == $config['CADDY_PWD'] && $submitteduser == 'birdnet'){
+
+      $imageid = $_GET['blacklistimage'];
+      $file_handle = fopen($home."/BirdNET-Pi/scripts/blacklisted_images.txt", 'a+');
+      fwrite($file_handle, $imageid . "\n");
+      fclose($file_handle);
+      unset($_SESSION['images']);
+      die("OK");
+    } else {
+      header('WWW-Authenticate: Basic realm="My Realm"');
+      header('HTTP/1.0 401 Unauthorized');
+      echo 'You must be authenticated.';
+      exit;
+    }
+  } else {
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'You must be authenticated.';
+    exit;
+  }
+
+}
+
 if(isset($_GET['fetch_chart_string']) && $_GET['fetch_chart_string'] == "true") {
   $myDate = date('Y-m-d');
   $chart = "Combo-$myDate.png";
@@ -57,6 +84,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
   }
   $iterations = 0;
   $lines;
+  $licenses_urls = array();
   // hopefully one of the 5 most recent detections has an image that is valid, we'll use that one as the most recent detection until the newer ones get their images created
   while($mostrecent = $result4->fetchArray(SQLITE3_ASSOC)) {
     $comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
@@ -95,6 +123,19 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
         if($key !== false) {
           $image = $_SESSION['images'][$key];
         } else {
+          // Get license information if we haven't already
+          if (empty($licenses_urls)) {
+            $licenses_url = "https://api.flickr.com/services/rest/?method=flickr.photos.licenses.getInfo&api_key=".$config["FLICKR_API_KEY"]."&format=json&nojsoncallback=1";
+            $licenses_response = file_get_contents($licenses_url);
+            $licenses_data = json_decode($licenses_response, true)["licenses"]["license"];
+            foreach ($licenses_data as $license) {
+              $license_id = $license["id"];
+              $license_name = $license["name"];
+              $license_url = $license["url"];
+              $licenses_urls[$license_id] = $license_url;
+            }
+          }
+
           // only open the file once per script execution
           if(!isset($lines)) {
             $lines = file($home."/BirdNET-Pi/model/labels_flickr.txt");
@@ -107,21 +148,30 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
             }
           }
 
-         // Make the API call
+           // Read the blacklisted image ids from the file into an array
+          $blacklisted_ids = array_map('trim', file($home."/BirdNET-Pi/scripts/blacklisted_images.txt"));
+
+          // Make the API call
           $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace(" ", "%20", $engname).$comnameprefix."&sort=relevance".$args."&per_page=5&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"];
 
-          // Find the first photo that is not blacklisted
+          // Find the first photo that is not blacklisted or is not the specific blacklisted id
           $photo = null;
           foreach ($flickrjson as $flickrphoto) {
-              if ($flickrphoto["id"] !== "4892923285") {
+              if ($flickrphoto["id"] !== "4892923285" && !in_array($flickrphoto["id"], $blacklisted_ids)) {
                   $photo = $flickrphoto;
                   break;
               }
           }
+
+          $license_url = "https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=".$config["FLICKR_API_KEY"]."&photo_id=".$photo["id"]."&format=json&nojsoncallback=1";
+          $license_response = file_get_contents($license_url);
+          $license_info = json_decode($license_response, true)["photo"]["license"];
+          $license_url = $licenses_urls[$license_info];
+
           $modaltext = "https://flickr.com/photos/".$photo["owner"]."/".$photo["id"];
           $authorlink = "https://flickr.com/people/".$photo["owner"];
           $imageurl = 'https://farm' .$photo["farm"]. '.static.flickr.com/' .$photo["server"]. '/' .$photo["id"]. '_'  .$photo["secret"].  '.jpg';
-          array_push($_SESSION['images'], array($comname,$imageurl,$photo["title"], $modaltext, $authorlink));
+          array_push($_SESSION['images'], array($comname,$imageurl,$photo["title"], $modaltext, $authorlink, $license_url));
           $image = $_SESSION['images'][count($_SESSION['images'])-1];
         }
       }
@@ -151,7 +201,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
             <td class="relative"><a target="_blank" href="index.php?filename=<?php echo $mostrecent['File_Name']; ?>"><img class="copyimage" title="Open in new tab" width="25" height="25" src="images/copy.png"></a>
             <div class="centered_image_container" style="margin-bottom: 0px !important;">
               <?php if(!empty($config["FLICKR_API_KEY"]) && strlen($image[2]) > 0) { ?>
-                <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>",  "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
+                <img onclick='setModalText(<?php echo $iterations; ?>,"<?php echo urlencode($image[2]); ?>", "<?php echo $image[3]; ?>", "<?php echo $image[4]; ?>", "<?php echo $image[1]; ?>", "<?php echo $image[5]; ?>")' src="<?php echo $image[1]; ?>" class="img1">
               <?php } ?>
               <form action="" method="GET">
                   <input type="hidden" name="view" value="Species Stats">
@@ -254,15 +304,18 @@ body::-webkit-scrollbar {
 </style>
 </head>
 <div class="overview">
-  <dialog id="attribution-dialog">
+  <dialog style="margin-top: 5px;max-height: 100vh;
+  overflow-y: auto;" id="attribution-dialog">
     <h1 id="modalHeading"></h1>
     <p id="modalText"></p>
     <button onclick="hideDialog()">Close</button>
+    <button style="font-weight:bold;color:blue" onclick="if(confirm('Are you sure you want to blacklist this image?')) { blacklistImage(); }">Never show this image again</button>
   </dialog>
   <script src="static/dialog-polyfill.js"></script>
   <script src="static/Chart.bundle.js"></script>
   <script src="static/chartjs-plugin-trendline.min.js"></script>
   <script>
+  var last_photo_link;
   var dialog = document.querySelector('dialog');
   dialogPolyfill.registerDialog(dialog);
 
@@ -274,9 +327,25 @@ body::-webkit-scrollbar {
     document.getElementById('attribution-dialog').close();
   }
 
-  function setModalText(iter, title, text, authorlink, photolink) {
+  function blacklistImage() {
+    const match = last_photo_link.match(/\d+$/); // match one or more digits
+    const result = match ? match[0] : null; // extract the first match or return null if no match is found
+    console.log(last_photo_link)
+    const xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+      if(this.responseText.length > 0) {
+       location.reload();
+      }
+    }
+    xhttp.open("GET", "overview.php?blacklistimage="+result, true);
+    xhttp.send();
+
+  }
+
+  function setModalText(iter, title, text, authorlink, photolink, licenseurl) {
     document.getElementById('modalHeading').innerHTML = "Photo: \""+decodeURIComponent(title.replaceAll("+"," "))+"\" Attribution";
-    document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
+    document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px;max-height: calc(100vh - 15rem);display: block;margin: 0 auto;' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a><br>License URL: <a href="+licenseurl+" target='_blank'>"+licenseurl+"</a></div>";
+    last_photo_link = text;
     showDialog();
   }
   </script>  
@@ -312,6 +381,7 @@ echo "<img id=\"spectrogramimage\" src=\"/spectrogram.png?nocache=$time\">";
 ?>
 
 <div id="customimage"></div>
+<br>
 
 </div>
 </div>
