@@ -11,6 +11,12 @@ my_dir=$HOME/BirdNET-Pi/scripts
 #sudo chmod -R g+wr $HOME/*
 find $HOME/* -not -user $USER -execdir sudo -E chown $USER:$USER {} \+
 find $HOME/* -not -user $USER -execdir sudo chmod g+wr {} \+
+files=("$HOME/BirdNET-Pi/apprise.txt" "$HOME/BirdNET-Pi/exclude_species_list.txt" "$HOME/BirdNET-Pi/include_species_list.txt" "$HOME/BirdNET-Pi/scripts/disk_check_exclude.txt" "$HOME/BirdNET-Pi/scripts/blacklisted_images.txt")
+for file in "${files[@]}"
+do
+    sudo chown caddy:caddy "$file"
+done
+chmod -R a+w $HOME/BirdNET-Pi/scripts/*.php
 
 # Create blank sitename as it's optional. First time install will use $HOSTNAME.
 if ! grep SITE_NAME /etc/birdnet/birdnet.conf &>/dev/null;then
