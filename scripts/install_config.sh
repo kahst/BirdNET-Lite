@@ -105,6 +105,7 @@ APPRISE_NOTIFY_NEW_SPECIES=0
 APPRISE_WEEKLY_REPORT=1
 APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=0
 APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=0
+APPRISE_ONLY_NOTIFY_SPECIES_NAMES=""
 
 #----------------------  Flickr Images API Configuration -----------------------#
 ## If FLICKR_API_KEY is set, the web interface will try and display bird images 

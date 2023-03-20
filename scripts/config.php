@@ -53,6 +53,7 @@ if(isset($_GET["latitude"])){
   $timezone = $_GET["timezone"];
   $model = $_GET["model"];
   $sf_thresh = $_GET["sf_thresh"];
+  $only_notify_species_names = $_GET['only_notify_species_names'];
 
   if(isset($_GET['apprise_notify_each_detection'])) {
     $apprise_notify_each_detection = 1;
@@ -154,6 +155,7 @@ if(isset($_GET["latitude"])){
   $contents = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents);
   $contents = preg_replace("/MODEL=.*/", "MODEL=$model", $contents);
   $contents = preg_replace("/SF_THRESH=.*/", "SF_THRESH=$sf_thresh", $contents);
+  $contents = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES=\"$only_notify_species_names\"", $contents);
 
   $contents2 = file_get_contents("./scripts/thisrun.txt");
   $contents2 = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents2);
@@ -172,6 +174,7 @@ if(isset($_GET["latitude"])){
   $contents2 = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents2);
   $contents2 = preg_replace("/MODEL=.*/", "MODEL=$model", $contents2);
   $contents2 = preg_replace("/SF_THRESH=.*/", "SF_THRESH=$sf_thresh", $contents2);
+  $contents2 = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES=\"$only_notify_species_names\"", $contents2);
 
 
 
@@ -549,8 +552,10 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <label for="apprise_weekly_report">Send weekly report</label><br>
 
       <hr>
-      <label for="quantity">Minimum time between notifications of the same species (sec):</label>
+      <label for="minimum_time_limit">Minimum time between notifications of the same species (sec):</label>
       <input type="number" id="minimum_time_limit" name="minimum_time_limit" value="<?php echo $config['APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES'];?>" min="0"><br>
+      <label for="only_notify_species_names">ONLY notify for these species (comma separated common names):</label>
+      <input type="text" id="only_notify_species_names" placeholder="Northern Cardinal,American Crow,Carolina Chickadee" name="only_notify_species_names" value="<?php echo $config['APPRISE_ONLY_NOTIFY_SPECIES_NAMES'];?>" size=96><br>
 
       <br>
 
