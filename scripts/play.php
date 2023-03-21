@@ -120,16 +120,16 @@ if(isset($_GET['shiftfile'])) {
     $soxopt = "-q";
     $soxpitch = $config['FREQSHIFT_PITCH'];
           $cmd = "/usr/bin/nohup /usr/bin/sox \"".$pi.$filename."\" \"".$shifted_path.$filename."\" pitch ".$soxopt." ".$soxpitch;
-    shell_exec("mkdir -p ".$shifted_path.$dir." && echo \"".$cmd."\" > /tmp/shift.sh && chmod +x /tmp/shift.sh");
+    shell_exec("sudo mkdir -p ".$shifted_path.$dir." && sudo echo \"".$cmd."\" > /tmp/shift.sh && sudo chmod +x /tmp/shift.sh");
   }
 
-  shell_exec("/tmp/shift.sh");
-  shell_exec("rm -f /tmp/shift.sh");
+  shell_exec("sudo /tmp/shift.sh");
+  shell_exec("sudo rm -f /tmp/shift.sh");
     } else {
   $cmd = "rm -f " . $shifted_path.$filename;
-  shell_exec("echo \"".$cmd."\" > /tmp/unshift.sh && chmod +x /tmp/unshift.sh");
-  shell_exec("/tmp/unshift.sh");
-  shell_exec("rm -f /tmp/unshift.sh");
+  shell_exec("sudo echo \"".$cmd."\" > /tmp/unshift.sh && sudo chmod +x /tmp/unshift.sh");
+  shell_exec("sudo /tmp/unshift.sh");
+  shell_exec("sudo rm -f /tmp/unshift.sh");
     }
 
     echo "OK";
