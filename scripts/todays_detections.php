@@ -1,5 +1,6 @@
 <?php
 ini_set('session.gc_maxlifetime', 7200);
+ini_set('user_agent', 'PHP_Flickr/1.0');
 session_set_cookie_params(7200);
 session_start();
 error_reporting(E_ERROR);
