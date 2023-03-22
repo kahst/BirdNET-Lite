@@ -542,7 +542,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <hr>
       <label for="minimum_time_limit">Minimum time between notifications of the same species (sec):</label>
       <input type="number" id="minimum_time_limit" name="minimum_time_limit" value="<?php echo $config['APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES'];?>" min="0"><br>
-      <label for="only_notify_species_names">ONLY notify for these species (comma separated common names):</label>
+      <label for="only_notify_species_names">Exclude these species (comma separated common names):</label>
       <input type="text" id="only_notify_species_names" placeholder="Northern Cardinal,American Crow,Carolina Chickadee" name="only_notify_species_names" value="<?php echo $config['APPRISE_ONLY_NOTIFY_SPECIES_NAMES'];?>" size=96><br>
 
       <br>
