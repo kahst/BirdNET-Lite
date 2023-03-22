@@ -107,20 +107,8 @@ if(isset($_GET["latitude"])){
   } elseif (file_exists('./scripts/firstrun.ini')) {
     $lang_config = parse_ini_file('./scripts/firstrun.ini');
   }
-  if ($language != $lang_config['DATABASE_LANG']){
-    $user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
-    $home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
 
-    // Archive old language file
-    syslog_shell_exec("cp -f $home/BirdNET-Pi/model/labels.txt $home/BirdNET-Pi/model/labels.txt.old", $user);
-
-    // Install new language label file
-    syslog_shell_exec("$home/BirdNET-Pi/scripts/install_language_label.sh -l $language", $user);
-
-    syslog(LOG_INFO, "Successfully changed language to '$language'");
-  }
-
-  if ($model != $lang_config['MODEL']){
+  if ($model != $lang_config['MODEL'] || $language != $lang_config['DATABASE_LANG']){
     $user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
     $home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
 
@@ -134,7 +122,7 @@ if(isset($_GET["latitude"])){
       syslog_shell_exec("$home/BirdNET-Pi/scripts/install_language_label.sh -l $language", $user);
     }
 
-    syslog(LOG_INFO, "Successfully changed language to '$language'");
+    syslog(LOG_INFO, "Successfully changed language to '$language' and model to '$model'");
   }
 
 
