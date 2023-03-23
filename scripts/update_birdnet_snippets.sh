@@ -12,6 +12,7 @@ my_dir=$HOME/BirdNET-Pi/scripts
 find $HOME/* -not -user $USER -execdir sudo -E chown $USER:$USER {} \+
 find $HOME/* -not -user $USER -execdir sudo chmod g+wr {} \+
 chmod 666 ~/BirdNET-Pi/scripts/*.txt
+chmod 666 ~/BirdNET-Pi/*.txt
 chmod -R a+w $HOME/BirdNET-Pi/scripts/*.php
 
 # Create blank sitename as it's optional. First time install will use $HOSTNAME.
