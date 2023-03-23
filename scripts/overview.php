@@ -461,7 +461,7 @@ window.setInterval(function(){
   document.getElementById("spectrogramimage").src = "/spectrogram.png?nocache="+Date.now();
 }, <?php echo $refresh; ?>*1000);
 
-<?php if(isset($config["CUSTOM_IMAGE"])){?>
+<?php if(isset($config["CUSTOM_IMAGE"]) && strlen($config["CUSTOM_IMAGE"]) > 2){?>
 // every 1 second, this loop will run and refresh the custom image
 window.setInterval(function(){
   // Find the customimage element
