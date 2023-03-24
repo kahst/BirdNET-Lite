@@ -24,6 +24,14 @@ $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 
+$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\', \'localtime\')');
+if($statement2 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
+$result2 = $statement2->execute();
+$todaycount = $result2->fetchArray(SQLITE3_ASSOC);
+
 if(isset($_GET['custom_image'])){
   if(isset($config["CUSTOM_IMAGE"])) {
   ?>
@@ -216,7 +224,11 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
       }
   }
   if($iterations == 0) {
-    echo "<h3>No Detections For Today.</h3>";
+    if($todaycount > 0) {
+      echo "<h3>Your system is currently processing a backlog of audio. This can take several hours before normal functionality of your BirdNET-Pi resumes.</h3>";
+    } else {
+      echo "<h3>No Detections For Today.</h3>";
+    }
   }
   die();
 }
@@ -230,14 +242,6 @@ if($statement == False) {
 }
 $result = $statement->execute();
 $totalcount = $result->fetchArray(SQLITE3_ASSOC);
-
-$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\', \'localtime\')');
-if($statement2 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result2 = $statement2->execute();
-$todaycount = $result2->fetchArray(SQLITE3_ASSOC);
 
 $statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == Date(\'now\', \'localtime\') AND TIME >= TIME(\'now\', \'localtime\', \'-1 hour\')');
 if($statement3 == False) {
