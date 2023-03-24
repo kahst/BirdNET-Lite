@@ -314,7 +314,7 @@ body::-webkit-scrollbar {
     <h1 id="modalHeading"></h1>
     <p id="modalText"></p>
     <button onclick="hideDialog()">Close</button>
-    <button style="font-weight:bold;color:blue" onclick="if(confirm('Are you sure you want to blacklist this image?')) { blacklistImage(); }">Never show this image again</button>
+    <button style="font-weight:bold;color:blue" onclick="if(confirm('Are you sure you want to blacklist this image?')) { blacklistImage(); }">Blacklist this image</button>
   </dialog>
   <script src="static/dialog-polyfill.js"></script>
   <script src="static/Chart.bundle.js"></script>
