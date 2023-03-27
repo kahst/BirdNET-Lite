@@ -82,7 +82,7 @@ if(isset($_GET['fetch_chart_string']) && $_GET['fetch_chart_string'] == "true") 
 
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['previous_detection_identifier'])) {
 
-  $statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 5');
+  $statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 15');
   if($statement4 == False) {
     echo "Database is busy";
     header("refresh: 0;");
