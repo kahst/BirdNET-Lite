@@ -101,7 +101,7 @@ if(isset($_GET['submit'])) {
     }
   }
 
-  if(isset($_GET["freqshift_hi"])) {
+  if(isset($_GET["freqshift_hi"]) && is_numeric($_GET['freqshift_hi'])) {
     $freqshift_hi = $_GET["freqshift_hi"];
     if(strcmp($freqshift_hi,$config['FREQSHIFT_HI']) !== 0) {
       $contents = preg_replace("/FREQSHIFT_HI=.*/", "FREQSHIFT_HI=$freqshift_hi", $contents);
@@ -109,7 +109,7 @@ if(isset($_GET['submit'])) {
     }
   }
 
-  if(isset($_GET["freqshift_lo"])) {
+  if(isset($_GET["freqshift_lo"]) && is_numeric($_GET['freqshift_lo'])) {
     $freqshift_lo = $_GET["freqshift_lo"];
     if(strcmp($freqshift_lo,$config['FREQSHIFT_LO']) !== 0) {
       $contents = preg_replace("/FREQSHIFT_LO=.*/", "FREQSHIFT_LO=$freqshift_lo", $contents);
@@ -117,7 +117,7 @@ if(isset($_GET['submit'])) {
     }
   }
 
-  if(isset($_GET["freqshift_pitch"])) {
+  if(isset($_GET["freqshift_pitch"]) && is_numeric($_GET['freqshift_pitch'])) {
     $freqshift_pitch = $_GET["freqshift_pitch"];
     if(strcmp($freqshift_pitch,$config['FREQSHIFT_PITCH']) !== 0) {
       $contents = preg_replace("/FREQSHIFT_PITCH=.*/", "FREQSHIFT_PITCH=$freqshift_pitch", $contents);
