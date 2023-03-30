@@ -13,7 +13,7 @@ find $HOME/* -not -user $USER -execdir sudo -E chown $USER:$USER {} \+
 find $HOME/* -not -user $USER -execdir sudo chmod g+wr {} \+
 chmod 666 ~/BirdNET-Pi/scripts/*.txt
 chmod 666 ~/BirdNET-Pi/*.txt
-find $HOME/BirdNET-Pi -path "$HOME/BirdNET-Pi/birdnet" -prune -o -type f ! -perm /o=w -exec chmod a+w {} \;
+chmod -R a+w $HOME/BirdNET-Pi/scripts/*.php
 
 # Create blank sitename as it's optional. First time install will use $HOSTNAME.
 if ! grep SITE_NAME /etc/birdnet/birdnet.conf &>/dev/null;then
