@@ -2,6 +2,7 @@
 error_reporting(E_ERROR);
 ini_set('display_errors',1);
 ini_set('session.gc_maxlifetime', 7200);
+ini_set('user_agent', 'PHP_Flickr/1.0');
 session_set_cookie_params(7200);
 session_start();
 $myDate = date('Y-m-d');
@@ -22,6 +23,14 @@ if (file_exists('./scripts/thisrun.txt')) {
 $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
+
+$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\', \'localtime\')');
+if($statement2 == False) {
+  echo "Database is busy";
+  header("refresh: 0;");
+}
+$result2 = $statement2->execute();
+$todaycount = $result2->fetchArray(SQLITE3_ASSOC);
 
 if(isset($_GET['custom_image'])){
   if(isset($config["CUSTOM_IMAGE"])) {
@@ -73,7 +82,7 @@ if(isset($_GET['fetch_chart_string']) && $_GET['fetch_chart_string'] == "true") 
 
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['previous_detection_identifier'])) {
 
-  $statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 5');
+  $statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 15');
   if($statement4 == False) {
     echo "Database is busy";
     header("refresh: 0;");
@@ -215,7 +224,11 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
       }
   }
   if($iterations == 0) {
-    echo "<h3>No Detections For Today.</h3>";
+    if($todaycount > 0) {
+      echo "<h3>Your system is currently processing a backlog of audio. This can take several hours before normal functionality of your BirdNET-Pi resumes.</h3>";
+    } else {
+      echo "<h3>No Detections For Today.</h3>";
+    }
   }
   die();
 }
@@ -229,14 +242,6 @@ if($statement == False) {
 }
 $result = $statement->execute();
 $totalcount = $result->fetchArray(SQLITE3_ASSOC);
-
-$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\', \'localtime\')');
-if($statement2 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result2 = $statement2->execute();
-$todaycount = $result2->fetchArray(SQLITE3_ASSOC);
 
 $statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == Date(\'now\', \'localtime\') AND TIME >= TIME(\'now\', \'localtime\', \'-1 hour\')');
 if($statement3 == False) {
@@ -309,7 +314,7 @@ body::-webkit-scrollbar {
     <h1 id="modalHeading"></h1>
     <p id="modalText"></p>
     <button onclick="hideDialog()">Close</button>
-    <button style="font-weight:bold;color:blue" onclick="if(confirm('Are you sure you want to blacklist this image?')) { blacklistImage(); }">Never show this image again</button>
+    <button style="font-weight:bold;color:blue" onclick="if(confirm('Are you sure you want to blacklist this image?')) { blacklistImage(); }">Blacklist this image</button>
   </dialog>
   <script src="static/dialog-polyfill.js"></script>
   <script src="static/Chart.bundle.js"></script>
@@ -460,7 +465,7 @@ window.setInterval(function(){
   document.getElementById("spectrogramimage").src = "/spectrogram.png?nocache="+Date.now();
 }, <?php echo $refresh; ?>*1000);
 
-<?php if(isset($config["CUSTOM_IMAGE"])){?>
+<?php if(isset($config["CUSTOM_IMAGE"]) && strlen($config["CUSTOM_IMAGE"]) > 2){?>
 // every 1 second, this loop will run and refresh the custom image
 window.setInterval(function(){
   // Find the customimage element
