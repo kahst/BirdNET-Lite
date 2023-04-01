@@ -213,7 +213,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
     $_SESSION['images'] = [];
   }
   $iterations = 0;
-  $lines;
+  $lines=null;
   $licenses_urls = array();
 
   if (file_exists('./scripts/thisrun.txt')) {
@@ -324,7 +324,8 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
           </td>
         <?php } else { //legacy mode ?>
           <tr class="relative" id="<?php echo $iterations; ?>">
-          <td><?php if($_GET['kiosk'] == true) { echo relativeTime(strtotime($todaytable['Time'])); } else {echo $todaytable['Time'];}?><br></td><td id="recent_detection_middle_td">
+          <td><?php if($_GET['kiosk'] == true) { echo relativeTime(strtotime($todaytable['Time'])); } else {echo $todaytable['Time'];}?><br></td>
+          <td id="recent_detection_middle_td">
           <div>
             <div>
             <?php if(!empty($config["FLICKR_API_KEY"]) && (isset($_GET['hard_limit']) || $_GET['kiosk'] == true) && strlen($image[2]) > 0) { ?>
@@ -332,14 +333,31 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true"  ) {
             <?php } ?>
           </div>
             <div>
-            <b><a class="a2" <?php if($_GET['kiosk'] == false){?>href="https://allaboutbirds.org/guide/<?php echo $comname;?>"<?php } else {echo "style='color:blue;'";} ?> target="top"><?php echo $todaytable['Com_Name'];?></a></b> <img style="height: 1em;cursor:pointer;float:unset;display:inline" title="View species stats" onclick="generateMiniGraph(this, '<?php echo $comname; ?>')" width=25 src="images/chart.svg"><br>
-            <a class="a2" <?php if($_GET['kiosk'] == false){?>href="https://wikipedia.org/wiki/<?php echo $sciname;?>"<?php } else {echo "style='color:blue;'";} ?> target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br></td>
-        </div></div>
+            <b><a class="a2" <?php if($_GET['kiosk'] == false){?>href="https://allaboutbirds.org/guide/<?php echo $comname;?>"<?php } else {echo "style='color:blue;'";} ?> target="top"><?php echo $todaytable['Com_Name'];?></a></b>
+                <?php
+                    //If on mobile, add in a icon to link off to the recording so the user can see more info
+                    if (isset($_GET['mobile'])) {
+						?>
+                            <br>
+                            <img style="height: 1em;cursor:pointer;float:unset;display:inline" title="View species stats" onclick="generateMiniGraph(this, '<?php echo $comname; ?>')" width=25 src="images/chart.svg">
+                            <a target="_blank" href="index.php?filename=<?php echo $todaytable['File_Name']; ?>"><img style="height: 1em;cursor:pointer;float:unset;display:inline" class="copyimage-mobile" title="Open in new tab" width=16 src="images/copy.png"></a>'
+						<?php
+                    }else{
+                        //Else just put the species stats icon
+                        ?>
+						    <img style="height: 1em;cursor:pointer;float:unset;display:inline" title="View species stats" onclick="generateMiniGraph(this, '<?php echo $comname; ?>')" width=25 src="images/chart.svg">
+                        <?php
+					}
+                ?>
+                <br>
+            <a class="a2" <?php if($_GET['kiosk'] == false){?>href="https://wikipedia.org/wiki/<?php echo $sciname;?>"<?php } else {echo "style='color:blue;'";} ?> target="top"><i><?php echo $todaytable['Sci_Name'];?></i></a><br>
+            </div>
+          </div>
+          </td>
           <td><b>Confidence:</b> <?php echo round((float)round($todaytable['Confidence'],2) * 100 ) . '%';?><br></td>
           <?php if(!isset($_GET['mobile'])) { ?>
-          <td style="min-width:180px"><audio controls preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></video>
+              <td style="min-width:180px"><audio controls preload="none" title="<?php echo $filename;?>"><source preload="none" src="<?php echo $filename;?>"></audio></td>
           <?php } ?>
-          </td>
         <?php } ?>
   <?php }?>
         </tr>
