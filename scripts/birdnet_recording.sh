@@ -8,7 +8,7 @@ source /etc/birdnet/birdnet.conf
 if [ ! -z $RTSP_STREAM ];then
   [ -d $RECS_DIR/StreamData ] || mkdir -p $RECS_DIR/StreamData
   # Explode the RSPT steam setting into an array so we can count the number we have
-  RSTP_STREAMS_EXPLODED_ARRAY=(${RTSP_STREAM//,/ })
+  RTSP_STREAMS_EXPLODED_ARRAY=(${RTSP_STREAM//,/ })
 
   while true;do
 # Original loop
@@ -17,18 +17,18 @@ if [ ! -z $RTSP_STREAM ];then
 #    done
 
     # Initially start the count off at 1 - our very first stream
-    RSTP_STREAMS_STARTED_COUNT=1
+    RTSP_STREAMS_STARTED_COUNT=1
     FFMPEG_PARAMS=""
 
     # Loop over the streams
-    for i in "${RSTP_STREAMS_EXPLODED_ARRAY[@]}"
+    for i in "${RTSP_STREAMS_EXPLODED_ARRAY[@]}"
     do
       # Map id used to map input to output, this is 0 based in ffmpeg decrement
-      MAP_ID=$((RSTP_STREAMS_STARTED_COUNT-1))
+      MAP_ID=$((RTSP_STREAMS_STARTED_COUNT-1))
       # Build up the parameters to process the RSTP stream, including mapping for the output
-      FFMPEG_PARAMS+="-vn -thread_queue_size 512 -i ${i} -map ${MAP_ID} -t ${RECORDING_LENGTH} -acodec pcm_s16le -ac 2 -ar 48000 file:${RECS_DIR}/StreamData/$(date "+%F")-birdnet-RSTP_${RSTP_STREAMS_STARTED_COUNT}-$(date "+%H:%M:%S").wav "
+      FFMPEG_PARAMS+="-vn -thread_queue_size 512 -i ${i} -map ${MAP_ID} -t ${RECORDING_LENGTH} -acodec pcm_s16le -ac 2 -ar 48000 file:${RECS_DIR}/StreamData/$(date "+%F")-birdnet-RTSP_${RTSP_STREAMS_STARTED_COUNT}-$(date "+%H:%M:%S").wav "
       # Increment counter
-      ((RSTP_STREAMS_STARTED_COUNT += 1))
+      ((RTSP_STREAMS_STARTED_COUNT += 1))
     done
 
   # Make sure were passing something valid to ffmpeg, ffmpeg will run interactive and control our look by waiting ${RECORDING_LENGTH} between loops

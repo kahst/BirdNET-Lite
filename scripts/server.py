@@ -406,15 +406,15 @@ def handle_client(conn, addr):
                 file_name = Path(full_file_name).stem
 
                 # Get the RSTP stream identifier from the filename if it exists
-                rstp_ident_for_fn = ""
-                rstp_ident = re.search("RSTP_[0-9]+-", file_name)
-                if rstp_ident is not None:
-                    rstp_ident_for_fn = rstp_ident.group()
+                RTSP_ident_for_fn = ""
+                RTSP_ident = re.search("RTSP_[0-9]+-", file_name)
+                if RTSP_ident is not None:
+                    RTSP_ident_for_fn = RTSP_ident.group()
 
                 # Find and remove the identifier for the RSTP stream url it was from that is added when more than one
                 # RSTP stream is recorded simultaneously, in order to make the filenames unique as filenames are all
                 # generated at the same time
-                file_name = re.sub("RSTP_[0-9]+-", "", file_name)
+                file_name = re.sub("RTSP_[0-9]+-", "", file_name)
 
                 # Now we can read the date and time as normal
                 # First portion of the filename contaning the date in Y m d
@@ -480,7 +480,7 @@ def handle_client(conn, addr):
                                 Overlap = str(args.overlap)
                                 Com_Name = Com_Name.replace("'", "")
                                 File_Name = Com_Name.replace(" ", "_") + '-' + Confidence + '-' + \
-                                    Date.replace("/", "-") + '-birdnet-' + rstp_ident_for_fn + Time + audiofmt
+                                    Date.replace("/", "-") + '-birdnet-' + RTSP_ident_for_fn + Time + audiofmt
 
                                 # Connect to SQLite Database
                                 for attempt_number in range(3):
