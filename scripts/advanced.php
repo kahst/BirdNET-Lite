@@ -352,6 +352,7 @@ if (file_exists('./scripts/thisrun.txt')) {
       <input name="channels" type="number" min="1" max="32" step="1" value="<?php print($newconfig['CHANNELS']);?>" required/><br>
       <p>Set Channels to the number of channels supported by your sound card. 32 max.</p>
       <label id="rtsp_stream_input_label" for="rtsp_stream">RTSP Stream: </label>
+      <br>
       <input style="display: none;" name="rtsp_stream" type="url" value="">
       <input style="display: none;" id="rtsp_stream_url_placeholder" name="rtsp_stream_placeholder" type="url" size="60" value="">
         <?php
@@ -370,8 +371,7 @@ if (file_exists('./scripts/thisrun.txt')) {
                 //For every other input field, change the id to reflect the URL's index in the array
 				?>
                 <input id="rtsp_stream_url_<?php echo $stream_idx; ?>" name="rtsp_stream_<?php echo $stream_idx; ?>" type="url" size="60"
-                       value="<?php echo $stream_url; ?>"
-                       style="margin-left: 107px">
+                       value="<?php echo $stream_url; ?>">
                 <br>
 				<?php
 			}
@@ -379,7 +379,7 @@ if (file_exists('./scripts/thisrun.txt')) {
         ?>
       <div id="newrtspstream_button_container">
         <br>
-        <span id="newrtspstream" style="margin-left: 107px" onclick="addNewrtspInput();">add</span><br>
+        <span id="newrtspstream" onclick="addNewrtspInput();">add</span><br>
       </div>
       <p>If you place an RTSP stream URL here, BirdNET-Pi will use that as its audio source. Multiple streams are allowed but may have a impact on rPi performance. Analyze ffmpeg CPU/Memory usage with <b>top</b> or <b>htop</b> if necessary.</p>
       <label for="recording_length">Recording Length: </label>
