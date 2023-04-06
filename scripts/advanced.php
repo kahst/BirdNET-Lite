@@ -76,6 +76,22 @@ if(isset($_GET['submit'])) {
       exec('sudo systemctl restart livestream.service');
     }
   }
+
+  if (isset($_GET["rtsp_stream_to_livestream"])) {
+    $rtsp_stream_selected = trim($_GET["rtsp_stream_to_livestream"]);
+
+    //Setting exists already, see if the value changed
+    if (strcmp($rtsp_stream_selected, $config['RTSP_STREAM_TO_LIVESTREAM']) !== 0) {
+      $contents = preg_replace("/RTSP_STREAM_TO_LIVESTREAM=.*/", "RTSP_STREAM_TO_LIVESTREAM=\"$rtsp_stream_selected\"", $contents);
+      $contents2 = preg_replace("/RTSP_STREAM_TO_LIVESTREAM=.*/", "RTSP_STREAM_TO_LIVESTREAM=\"$rtsp_stream_selected\"", $contents2);
+      $fh = fopen("/etc/birdnet/birdnet.conf", "w");
+      $fh2 = fopen("./scripts/thisrun.txt", "w");
+      fwrite($fh, $contents);
+      fwrite($fh2, $contents2);
+      sleep(1);
+      exec("sudo systemctl restart livestream.service");
+    }
+  }
   
   if(isset($_GET["overlap"])) {
     $overlap = $_GET["overlap"];
@@ -269,6 +285,58 @@ if (file_exists('./scripts/thisrun.txt')) {
         output.innerHTML = this.value;
         document.getElementById("predictionCount").innerHTML = parseInt((this.value * <?php echo $count; ?>)/100);
       }
+
+      //Keep track of how many new input fields were added
+      var number_of_new_rtsp_urls_added = 0;
+      //Function to insert new input fields
+      function addNewrtspInput() {
+          //Find the placeholder input field
+          var url_template_element = document.getElementById('rtsp_stream_url_placeholder');
+          var new_url_input_template = url_template_element.cloneNode();
+          var br_seperator = document.createElement("BR");
+
+          //Fix up the new element so it's visible, set the style so it's sligned correctly
+          new_url_input_template.setAttribute("id", "rtsp_stream_url_new_" + number_of_new_rtsp_urls_added);
+          new_url_input_template.setAttribute("name", "rtsp_stream_new_" + number_of_new_rtsp_urls_added);
+          new_url_input_template.setAttribute("style", "margin-left: 107px");
+
+          //Insert the new input field before the button to add new urls
+          var newrtspstream_button = document.getElementById('newrtspstream_button_container');
+          //Insert the new input element before the newrtspstream button
+          newrtspstream_button.parentNode.insertBefore(new_url_input_template, newrtspstream_button);
+          //Add a separator before the button
+          newrtspstream_button.parentNode.insertBefore(br_seperator, newrtspstream_button);
+
+          //Increment the counter
+          number_of_new_rtsp_urls_added++;
+      }
+
+      var rtsp_stream_string = "";
+      var rtsp_stream_string_array = [];
+      //Collect all the rtsp urls that have been set, concat them into a single string and set it into the rtsp_stream input field so it gets saved
+      function collectrtspUrls() {
+          //Reset the array and string so we don't get duplicates
+          rtsp_stream_string = "";
+          rtsp_stream_string_array = [];
+
+          //Get the inputs by name (which is similar across
+          var existing_rtsp_stream_urls = document.querySelectorAll('[name^="rtsp_stream_"]');
+          //Loop over the result and get the values
+          for (let i = 0; i < existing_rtsp_stream_urls.length; i++) {
+              //Only collect results that re not empty and add them to the array
+              if (existing_rtsp_stream_urls[i].value !== 'undefined' && existing_rtsp_stream_urls[i].value !== "") {
+                  rtsp_stream_string_array.push(existing_rtsp_stream_urls[i].value.trim());
+              }
+          }
+
+          //if the array is not empty, then implode the array joining all the values by a comma
+          if (rtsp_stream_string_array.length !== 0) {
+              rtsp_stream_string = rtsp_stream_string_array.join(',');
+              //Locate the hidden rtsp_stream input field that we'll populate with the full string which will get saved to the config file
+              var rtsp_stream_input = document.querySelector('[name=rtsp_stream]');
+              rtsp_stream_input.setAttribute('value',rtsp_stream_string);
+          }
+      }
       </script>
       <p>If a Human is predicted anywhere among the top <span id="predictionCount"><?php echo $newconfig['PRIVACY_THRESHOLD'] == 0 ? "threshold % of" : intval(($newconfig['PRIVACY_THRESHOLD'] * $count)/100); ?></span> predictions, the sample will be considered of human origin and no data will be collected. Start with 1% and move up as needed.</p>
       <label>Full Disk Behavior: </label>
@@ -283,9 +351,37 @@ if (file_exists('./scripts/thisrun.txt')) {
       <label for="channels">Audio Channels: </label>
       <input name="channels" type="number" min="1" max="32" step="1" value="<?php print($newconfig['CHANNELS']);?>" required/><br>
       <p>Set Channels to the number of channels supported by your sound card. 32 max.</p>
-      <label for="rtsp_stream">RTSP Stream: </label>
-      <input name="rtsp_stream" type="url" value="<?php echo $newconfig['RTSP_STREAM'];?>"</input><br>
-      <p>If you place an RTSP stream URL here, BirdNET-Pi will use that as its audio source.</p>
+      <label id="rtsp_stream_input_label" for="rtsp_stream">RTSP Stream: </label>
+      <br>
+      <input style="display: none;" name="rtsp_stream" type="url" value="">
+      <input style="display: none;" id="rtsp_stream_url_placeholder" name="rtsp_stream_placeholder" type="url" size="60" value="">
+        <?php
+        //Print out the rtsp urls in their own input fields
+		//Explode the stream into an array at the comma
+		$rtsp_streams = explode(",", $newconfig['RTSP_STREAM']);
+		//Print out existing streams
+		foreach ($rtsp_streams as $stream_idx => $stream_url) {
+            //For the first input keep the element mostly the same as the original but without styling to align it
+			if ($stream_idx === 0) {
+				?>
+                <input id="rtsp_stream_url_0" name="rtsp_stream_0" type="url" size="60" value="<?php echo $stream_url; ?>">
+                <br>
+				<?php
+			} else {
+                //For every other input field, change the id to reflect the URL's index in the array
+				?>
+                <input id="rtsp_stream_url_<?php echo $stream_idx; ?>" name="rtsp_stream_<?php echo $stream_idx; ?>" type="url" size="60"
+                       value="<?php echo $stream_url; ?>">
+                <br>
+				<?php
+			}
+		}
+        ?>
+      <div id="newrtspstream_button_container">
+        <br>
+        <span id="newrtspstream" onclick="addNewrtspInput();">add</span><br>
+      </div>
+      <p>If you place an RTSP stream URL here, BirdNET-Pi will use that as its audio source.<br>Multiple streams are allowed but may have a impact on rPi performance.<br>Analyze ffmpeg CPU/Memory usage with <b>top</b> or <b>htop</b> if necessary.<br>To remove all and use the soundcard again, just delete the RTSP entries and click Save at the bottom.</p>
       <label for="recording_length">Recording Length: </label>
       <input name="recording_length" oninput="document.getElementsByName('extraction_length')[0].setAttribute('max', this.value);" type="number" min="3" max="60" step="1" value="<?php print($newconfig['RECORDING_LENGTH']);?>" required/><br>
       <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
@@ -389,7 +485,7 @@ foreach($formats as $format){
       </p>
       <br><br>
       <input type="hidden" name="view" value="Advanced">
-      <button onclick="if(<?php print($newconfig['PRIVACY_THRESHOLD']);?> != document.getElementById('privacy_threshold').value){return confirm('This will take about 90 seconds.')}" type="submit" name="submit" value="advanced">
+      <button onclick="if(<?php print($newconfig['PRIVACY_THRESHOLD']);?> != document.getElementById('privacy_threshold').value){return confirm('This will take about 90 seconds.')} collectrtspUrls();" type="submit" name="submit" value="advanced">
 <?php
 if(isset($_GET['submit'])){
   echo "Success!";

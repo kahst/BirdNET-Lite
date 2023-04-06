@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from tzlocal import get_localzone
 import datetime
@@ -403,8 +404,24 @@ def handle_client(conn, addr):
                 full_file_name = args.i
                 # print('FULL FILENAME: -' + full_file_name + '-')
                 file_name = Path(full_file_name).stem
+
+                # Get the RSTP stream identifier from the filename if it exists
+                RTSP_ident_for_fn = ""
+                RTSP_ident = re.search("RTSP_[0-9]+-", file_name)
+                if RTSP_ident is not None:
+                    RTSP_ident_for_fn = RTSP_ident.group()
+
+                # Find and remove the identifier for the RSTP stream url it was from that is added when more than one
+                # RSTP stream is recorded simultaneously, in order to make the filenames unique as filenames are all
+                # generated at the same time
+                file_name = re.sub("RTSP_[0-9]+-", "", file_name)
+
+                # Now we can read the date and time as normal
+                # First portion of the filename contaning the date in Y m d
                 file_date = file_name.split('-birdnet-')[0]
+                # Second portion of the filename containing the time in H:M:S
                 file_time = file_name.split('-birdnet-')[1]
+                # Join the date and time together to get a complete string representing when the audio was recorded
                 date_time_str = file_date + ' ' + file_time
                 date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
                 # print('Date:', date_time_obj.date())
@@ -463,7 +480,7 @@ def handle_client(conn, addr):
                                 Overlap = str(args.overlap)
                                 Com_Name = Com_Name.replace("'", "")
                                 File_Name = Com_Name.replace(" ", "_") + '-' + Confidence + '-' + \
-                                    Date.replace("/", "-") + '-birdnet-' + Time + audiofmt
+                                    Date.replace("/", "-") + '-birdnet-' + RTSP_ident_for_fn + Time + audiofmt
 
                                 # Connect to SQLite Database
                                 for attempt_number in range(3):

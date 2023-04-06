@@ -1,13 +1,14 @@
 <?php
 error_reporting(E_ERROR);
 ini_set('display_errors',1);
-if(isset($_GET['ajax_csv'])) {
 
 if (file_exists('./scripts/thisrun.txt')) {
-  $config = parse_ini_file('./scripts/thisrun.txt');
+	$config = parse_ini_file('./scripts/thisrun.txt');
 } elseif (file_exists('./scripts/firstrun.ini')) {
-  $config = parse_ini_file('./scripts/firstrun.ini');
+	$config = parse_ini_file('./scripts/firstrun.ini');
 }
+
+if(isset($_GET['ajax_csv'])) {
 $RECS_DIR = $config["RECS_DIR"];
 
 $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
@@ -39,6 +40,25 @@ if (($handle = fopen($RECS_DIR."/".date('F-Y')."/".date('d-l')."/".$newest_file.
 }
 die();
 }
+
+$RSTP_Stream_Config = array();
+
+//Load the birdnet config so we can read the RSTP setting
+// Valid config data
+if (is_array($config) && array_key_exists('RTSP_STREAM',$config)) {
+	if (is_null($config['RTSP_STREAM']) === false && $config['RTSP_STREAM'] !== "") {
+		$RSTP_Stream_Config_Data = explode(",", $config['RTSP_STREAM']);
+
+		//Process the stream further
+		//we need to able to ID it (just do this by position), get the hostname to show in the dropdown box
+		foreach ($RSTP_Stream_Config_Data as $stream_idx => $stream_url) {
+			//$stream_idx is the array position of the the RSP stream URL, idx of 0 is the first, 1 - second etc
+			$rstp_stream_url = parse_url($stream_url);
+			$RSTP_Stream_Config[$stream_idx] = $rstp_stream_url['host'];
+		}
+	}
+}
+
 ?>
 <script>  
 // CREDITS: https://codepen.io/jakealbaugh/pen/jvQweW
@@ -340,6 +360,46 @@ h1 {
 <img id="spectrogramimage" style="width:100%;height:100%;display:none" src="/spectrogram.png?nocache=<?php echo $time;?>">
 
 <div class="centered">
+	<?php
+	if (isset($RSTP_Stream_Config) && !empty($RSTP_Stream_Config)) {
+		?>
+        <div style="display:inline" id="rstp_streams">
+            <label>RTSP Stream: </label>
+            <select id="rtsp_stream_select" name="RTSP Streams">
+				<?php
+				//The setting representing which livestream to stream is more than the number of RTSP streams available
+				//maybe the list of streams has been modified
+                //This isn't the ideal for this, but needed a way to fix this setting without calling the advanced setting page
+				if (array_key_exists($config['RTSP_STREAM_TO_LIVESTREAM'], $RSTP_Stream_Config) === false) {
+					$contents = file_get_contents('/etc/birdnet/birdnet.conf');
+					$contents2 = file_get_contents('./scripts/thisrun.txt');
+					$contents = preg_replace("/RTSP_STREAM_TO_LIVESTREAM=.*/", "RTSP_STREAM_TO_LIVESTREAM=\"0\"", $contents);
+					$contents2 = preg_replace("/RTSP_STREAM_TO_LIVESTREAM=.*/", "RTSP_STREAM_TO_LIVESTREAM=\"0\"", $contents2);
+					$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+					$fh2 = fopen("./scripts/thisrun.txt", "w");
+					fwrite($fh, $contents);
+					fwrite($fh2, $contents2);
+					exec("sudo systemctl restart livestream.service");
+				}
+
+				//Print out the dropdown list for the RTSP streams
+				foreach ($RSTP_Stream_Config as $stream_id => $stream_host) {
+					$isSelected = "";
+					//Match up the selected value saved in config so we can preselect it
+					if ($config['RTSP_STREAM_TO_LIVESTREAM'] == $stream_id) {
+						$isSelected = 'selected="selected"';
+					}
+					//Create the select option
+					echo "<option value=" . $stream_id . " $isSelected >" . $stream_host . "</option>";
+				}
+
+				?>
+            </select>
+        </div>
+        &mdash;
+		<?php
+	}
+	?>
   <div style="display:inline" id="gain" >
   <label>Gain: </label>
   <span class="slidecontainer">
@@ -347,7 +407,7 @@ h1 {
     <span id="gain_value"></span>%
   </span>
   </div>
-  —
+    &mdash;
   <div style="display:inline" id="comp" >
   <label>Compression: </label>
     <input name="compression" type="checkbox" id="compression" disabled>
@@ -355,10 +415,55 @@ h1 {
 </div>
 
 <audio style="display:none" controls="" crossorigin="anonymous" id='player' preload="none"><source id="playersrc" src="/stream"></audio>
-<h1>Loading...</h1>
+<h1 id="loading-h1">Loading...</h1>
 <canvas></canvas>
 
 <script>
+var rtsp_stream_select = document.getElementById("rtsp_stream_select");
+//When the dropdown selection is changed set the new value is settings, then restart the livestream service so it broadcasts newly selected RSTP stream
+rtsp_stream_select.onchange = function() {
+    if (this.value !== 'undefined'){
+        // Get the audio player element
+        var audio_player = document.querySelector('audio#player');
+        var central_controls_element = document.getElementsByClassName('centered')[0];
+
+        //Create the loading header again as a placeholder while we're waiting to reload the stream
+        var h1_loading = document.createElement("H1");
+        var h1_loading_text = document.createTextNode("Loading...");
+        h1_loading.setAttribute("id","loading-h1");
+        h1_loading.setAttribute("style","font-size:48px; font-weight: bolder; color: #FFF");
+        h1_loading.appendChild(h1_loading_text);
+
+        // Create the XMLHttpRequest object.
+        const xhr = new XMLHttpRequest();
+        // Initialize the request
+        xhr.open("GET", './views.php?rtsp_stream_to_livestream='+ this.value +'&view=Advanced&submit=advanced');
+        // Send the request
+        xhr.send();
+        // Fired once the request completes successfully
+        xhr.onload = function(e) {
+            // Check if the request was a success
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                // Restart the audio player in case it stopped working while the livestream service was restarted
+               if(audio_player !== 'undefined'){
+                   central_controls_element.appendChild(h1_loading);
+                   //Wait 5 seconds before restarting the stream
+                   setTimeout(function () {
+                           audio_player.pause();
+                           audio_player.setAttribute('src', '/stream');
+                           audio_player.load();
+                           audio_player.play();
+
+                           document.getElementById('loading-h1').remove()
+                       },
+                       10000
+                   )
+               }
+            }
+        }
+    }
+}
+
 var slider = document.getElementById("gain_input");
 var output = document.getElementById("gain_value");
 output.innerHTML = slider.value; // Display the default slider value
