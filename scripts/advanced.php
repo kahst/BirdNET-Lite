@@ -381,7 +381,7 @@ if (file_exists('./scripts/thisrun.txt')) {
         <br>
         <span id="newrtspstream" onclick="addNewrtspInput();">add</span><br>
       </div>
-      <p>If you place an RTSP stream URL here, BirdNET-Pi will use that as its audio source. Multiple streams are allowed but may have a impact on rPi performance. Analyze ffmpeg CPU/Memory usage with <b>top</b> or <b>htop</b> if necessary.</p>
+      <p>If you place an RTSP stream URL here, BirdNET-Pi will use that as its audio source.<br>Multiple streams are allowed but may have a impact on rPi performance.<br>Analyze ffmpeg CPU/Memory usage with <b>top</b> or <b>htop</b> if necessary.<br>To remove all and use the soundcard again, just delete the RTSP entries and click Save at the bottom.</p>
       <label for="recording_length">Recording Length: </label>
       <input name="recording_length" oninput="document.getElementsByName('extraction_length')[0].setAttribute('max', this.value);" type="number" min="3" max="60" step="1" value="<?php print($newconfig['RECORDING_LENGTH']);?>" required/><br>
       <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
