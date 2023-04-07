@@ -396,8 +396,16 @@ def handle_client(conn, addr):
 
                 birdweather_id = args.birdweather_id
 
-                # Read audio data
-                audioData = readAudioData(args.i, args.overlap)
+                # Read audio data & handle errors
+                try:
+                    audioData = readAudioData(args.i, args.overlap)
+
+                except (NameError, TypeError) as e:
+                    print(f"Error with the following info: {e}")
+                    open('~/BirdNET-Pi/analyzing_now.txt', 'w').close()
+
+                finally:
+                    pass
 
                 # Get Date/Time from filename in case Pi gets behind
                 # now = datetime.now()
@@ -577,7 +585,7 @@ def handle_client(conn, addr):
                                             post_algorithm = "\"algorithm\": " + "\"2p2\"" + ","
                                         else:
                                             post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
-                                            
+
                                         post_confidence = "\"confidence\": " + str(entry[1])
                                         post_end = " }"
 
