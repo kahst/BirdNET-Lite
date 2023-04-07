@@ -298,7 +298,7 @@ if (file_exists('./scripts/thisrun.txt')) {
           //Fix up the new element so it's visible, set the style so it's sligned correctly
           new_url_input_template.setAttribute("id", "rtsp_stream_url_new_" + number_of_new_rtsp_urls_added);
           new_url_input_template.setAttribute("name", "rtsp_stream_new_" + number_of_new_rtsp_urls_added);
-          new_url_input_template.setAttribute("style", "margin-left: 107px");
+          new_url_input_template.removeAttribute("style");
 
           //Insert the new input field before the button to add new urls
           var newrtspstream_button = document.getElementById('newrtspstream_button_container');
