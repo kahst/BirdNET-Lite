@@ -268,9 +268,10 @@ if (file_exists('./scripts/thisrun.txt')) {
   $newconfig = parse_ini_file('./scripts/firstrun.ini');
 }
 ?>
-      <h2>Advanced Settings</h2>
+      <div class="brbanner"><h1>Advanced Settings</h1></div><br>
     <form action="" method="GET">
-      <label>Privacy Threshold: </label><br>
+      <table class="settingstable"><tr><td>
+      <h2>Privacy Threshold</h2>
       <div class="slidecontainer">
         <input name="privacy_threshold" type="range" min="0" max="3" value="<?php print($newconfig['PRIVACY_THRESHOLD']);?>" class="slider" id="privacy_threshold">
         <p>Value: <span id="threshold_value"></span>%</p>
@@ -285,7 +286,6 @@ if (file_exists('./scripts/thisrun.txt')) {
         output.innerHTML = this.value;
         document.getElementById("predictionCount").innerHTML = parseInt((this.value * <?php echo $count; ?>)/100);
       }
-
       //Keep track of how many new input fields were added
       var number_of_new_rtsp_urls_added = 0;
       //Function to insert new input fields
@@ -339,18 +339,43 @@ if (file_exists('./scripts/thisrun.txt')) {
       }
       </script>
       <p>If a Human is predicted anywhere among the top <span id="predictionCount"><?php echo $newconfig['PRIVACY_THRESHOLD'] == 0 ? "threshold % of" : intval(($newconfig['PRIVACY_THRESHOLD'] * $count)/100); ?></span> predictions, the sample will be considered of human origin and no data will be collected. Start with 1% and move up as needed.</p>
-      <label>Full Disk Behavior: </label>
+      </td></tr></table><br>
+      
+      <table class="settingstable"><tr><td>
+      <h2>Full Disk Behaviour</h2>
       <label for="purge">
       <input name="full_disk" type="radio" id="purge" value="purge" <?php if (strcmp($newconfig['FULL_DISK'], "purge") == 0) { echo "checked"; }?>>Purge</label>
       <label for="keep">
       <input name="full_disk" type="radio" id="keep" value="keep" <?php if (strcmp($newconfig['FULL_DISK'], "keep") == 0) { echo "checked"; }?>>Keep</label>
       <p>When the disk becomes full, you can choose to 'purge' old files to make room for new ones or 'keep' your data and stop all services instead.<br>Note: you can exclude specific files from 'purge' on the Recordings page.</p>
+      </td></tr></table><br>
+      <table class="settingstable"><tr><td>
+
+      <h2>Audio Settings</h2>
       <label for="rec_card">Audio Card: </label>
       <input name="rec_card" type="text" value="<?php print($newconfig['REC_CARD']);?>" required/><br>
       <p>Set Audio Card to 'default' to use PulseAudio (always recommended), or an ALSA recognized sound card device from the output of `arecord -L`. Choose the `dsnoop` device if it is available</p>
       <label for="channels">Audio Channels: </label>
       <input name="channels" type="number" min="1" max="32" step="1" value="<?php print($newconfig['CHANNELS']);?>" required/><br>
       <p>Set Channels to the number of channels supported by your sound card. 32 max.</p>
+      <label for="recording_length">Recording Length: </label>
+      <input name="recording_length" oninput="document.getElementsByName('extraction_length')[0].setAttribute('max', this.value);" type="number" min="3" max="60" step="1" value="<?php print($newconfig['RECORDING_LENGTH']);?>" required/><br>
+      <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
+      <label for="extraction_length">Extraction Length: </label>
+      <input name="extraction_length" oninput="this.setAttribute('max', document.getElementsByName('recording_length')[0].value);" type="number" min="3" value="<?php print($newconfig['EXTRACTION_LENGTH']);?>" /><br>
+      <p>Set Extraction Length to something less than your Recording Length. Min=3 Max=Recording Length</p>
+      <label for="audiofmt">Extractions Audio Format</label>
+      <select name="audiofmt">
+      <option selected="<?php print($newconfig['AUDIOFMT']);?>"><?php print($newconfig['AUDIOFMT']);?></option>
+<?php
+  $formats = array("8svx", "aif", "aifc", "aiff", "aiffc", "al", "amb", "amr-nb", "amr-wb", "anb", "au", "avr", "awb", "caf", "cdda", "cdr", "cvs", "cvsd", "cvu", "dat", "dvms", "f32", "f4", "f64", "f8", "fap", "flac", "fssd", "gsm", "gsrt", "hcom", "htk", "ima", "ircam", "la", "lpc", "lpc10", "lu", "mat", "mat4", "mat5", "maud", "mp2", "mp3", "nist", "ogg", "paf", "prc", "pvf", "raw", "s1", "s16", "s2", "s24", "s3", "s32", "s4", "s8", "sb", "sd2", "sds", "sf", "sl", "sln", "smp", "snd", "sndfile", "sndr", "sndt", "sou", "sox", "sph", "sw", "txw", "u1", "u16", "u2", "u24", "u3", "u32", "u4", "u8", "ub", "ul", "uw", "vms", "voc", "vorbis", "vox", "w64", "wav", "wavpcm", "wv", "wve", "xa", "xi");
+foreach($formats as $format){
+  echo "<option value='$format'>$format</option>";
+}
+?>
+      </select>
+      <br><br>
+      
       <label id="rtsp_stream_input_label" for="rtsp_stream">RTSP Stream: </label>
       <br>
       <input style="display: none;" name="rtsp_stream" type="url" value="">
@@ -379,34 +404,25 @@ if (file_exists('./scripts/thisrun.txt')) {
         ?>
       <div id="newrtspstream_button_container">
         <br>
-        <span id="newrtspstream" onclick="addNewrtspInput();">add</span><br>
+        <span id="newrtspstream" onclick="addNewrtspInput();">Add</span><br>
       </div>
       <p>If you place an RTSP stream URL here, BirdNET-Pi will use that as its audio source.<br>Multiple streams are allowed but may have a impact on rPi performance.<br>Analyze ffmpeg CPU/Memory usage with <b>top</b> or <b>htop</b> if necessary.<br>To remove all and use the soundcard again, just delete the RTSP entries and click Save at the bottom.</p>
-      <label for="recording_length">Recording Length: </label>
-      <input name="recording_length" oninput="document.getElementsByName('extraction_length')[0].setAttribute('max', this.value);" type="number" min="3" max="60" step="1" value="<?php print($newconfig['RECORDING_LENGTH']);?>" required/><br>
-      <p>Set Recording Length in seconds between 6 and 60. Multiples of 3 are recommended, as BirdNET analyzes in 3-second chunks.</p> 
-      <label for="extraction_length">Extraction Length: </label>
-      <input name="extraction_length" oninput="this.setAttribute('max', document.getElementsByName('recording_length')[0].value);" type="number" min="3" value="<?php print($newconfig['EXTRACTION_LENGTH']);?>" /><br>
-      <p>Set Extraction Length to something less than your Recording Length. Min=3 Max=Recording Length</p>
-      <label for="audiofmt">Extractions Audio Format</label>
-      <select name="audiofmt">
-      <option selected="<?php print($newconfig['AUDIOFMT']);?>"><?php print($newconfig['AUDIOFMT']);?></option>
-<?php
-  $formats = array("8svx", "aif", "aifc", "aiff", "aiffc", "al", "amb", "amr-nb", "amr-wb", "anb", "au", "avr", "awb", "caf", "cdda", "cdr", "cvs", "cvsd", "cvu", "dat", "dvms", "f32", "f4", "f64", "f8", "fap", "flac", "fssd", "gsm", "gsrt", "hcom", "htk", "ima", "ircam", "la", "lpc", "lpc10", "lu", "mat", "mat4", "mat5", "maud", "mp2", "mp3", "nist", "ogg", "paf", "prc", "pvf", "raw", "s1", "s16", "s2", "s24", "s3", "s32", "s4", "s8", "sb", "sd2", "sds", "sf", "sl", "sln", "smp", "snd", "sndfile", "sndr", "sndt", "sou", "sox", "sph", "sw", "txw", "u1", "u16", "u2", "u24", "u3", "u32", "u4", "u8", "ub", "ul", "uw", "vms", "voc", "vorbis", "vox", "w64", "wav", "wavpcm", "wv", "wve", "xa", "xi");
-foreach($formats as $format){
-  echo "<option value='$format'>$format</option>";
-}
-?>
-      </select>
-      <h3>BirdNET-Pi Password</h3>
+      </td></tr></table><br>
+      <table class="settingstable"><tr><td>
+      <h2>BirdNET-Pi Password</h2>
       <p>This password will protect your "Tools" page and "Live Audio" stream.</p>
       <label for="caddy_pwd">Password: </label>
       <input style="width:40ch" name="caddy_pwd" id="caddy_pwd" type="password" pattern="[A-Za-z0-9]+" title="Password must be alphanumeric (A-Z, 0-9)" value="<?php print($newconfig['CADDY_PWD']);?>" /><span id="showpassword" onmouseover="document.getElementById('caddy_pwd').type='text';" onmouseout="document.getElementById('caddy_pwd').type='password';">show</span><br>
-      <h3>Custom URL</h3>
+      </td></tr></table><br>
+      <table class="settingstable"><tr><td>
+      <h2>Custom URL</h2>
       <p>When you update the URL below, the web server will reload, so be sure to wait at least 30 seconds and then go to your new URL.</p>
       <label for="birdnetpi_url">BirdNET-Pi URL: </label>
       <input style="width:40ch;" name="birdnetpi_url" type="url" value="<?php print($newconfig['BIRDNETPI_URL']);?>" /><br>
       <p>The BirdNET-Pi URL is how the main page will be reached. If you want your installation to respond to an IP address, place that here, but be sure to indicate "<i>http://</i>".<br>Example for IP: <i>http://192.168.0.109</i><br>Example if you own your own domain: <i>https://virginia.birdnetpi.com</i></p>
+      </td></tr></table><br>
+      <table class="settingstable"><tr><td>
+      <h2>Options</h2>
       <label for="silence_update_indicator">Silence Update Indicator: </label>
       <input type="checkbox" name="silence_update_indicator" <?php if($newconfig['SILENCE_UPDATE_INDICATOR'] == 1) { echo "checked"; };?> ><br>
       <p>This allows you to quiet the display of how many commits your installation is behind by relative to the Github repo. This number appears next to "Tools" when you're 50 or more commits behind.</p>
@@ -414,9 +430,10 @@ foreach($formats as $format){
       <label for="raw_spectrogram">Minimalist Spectrograms: </label>
       <input type="checkbox" name="raw_spectrogram" <?php if($newconfig['RAW_SPECTROGRAM'] == 1) { echo "checked"; };?> ><br>
       <p>This allows you to remove the axes and labels of the spectrograms that are generated by Sox for each detection for a cleaner appearance.</p>
+      </td></tr></table><br>
 
-      <br>
-
+      <table class="settingstable"><tr><td>
+      <h2>Custom Image</h2>
       <label for="custom_image">Custom Image Absolute Path: </label>
         <input name="custom_image" type="text" value="<?php print($newconfig['CUSTOM_IMAGE']);?>"/><br>
 
@@ -424,8 +441,10 @@ foreach($formats as $format){
       <input name="custom_image_label" type="text" value="<?php print($newconfig['CUSTOM_IMAGE_TITLE']);?>"/><br>
 
       <p>These allow you to show a custom image on the Overview page of your BirdNET-Pi. This can be used to show a dynamically updating picture of your garden, for example.</p>
+	  </td></tr></table><br>
 
-      <h3>BirdNET-Lite Settings</h3>
+      <table class="settingstable"><tr><td>
+      <h2>BirdNET-Lite Settings</h2>
 
       <p>
         <label for="overlap">Overlap: </label>
@@ -442,15 +461,17 @@ foreach($formats as $format){
         <input name="sensitivity" type="number" min="0.5" max="1.5" step="0.01" value="<?php print($newconfig['SENSITIVITY']);?>" required/><br>
   &nbsp;&nbsp;&nbsp;&nbsp;Min=0.5, Max=1.5
       </p>
+      </td></tr></table><br>
 
-      <h3>Accessibility Settings</h3>
+      <table class="settingstable"><tr><td>
+      <h2>Accessibility Settings</h2>
 
       <p>Birdsongs Frequency shifting configuration:<br>
         this can be useful for hearing impaired people. Note: audio files will only be pitch shifted when the "FREQ SHIFT" button is manually clicked for a detection on the "Recordings" page.<br>
 
         <p style="margin-left: 40px">
 
-      <label for="freqshift_tool">shifting tool: </label>
+      <label for="freqshift_tool">Shifting tool: </label>
       <select name="freqshift_tool">
             <option selected="<?php print($newconfig['FREQSHIFT_TOOL']);?>"><?php print($newconfig['FREQSHIFT_TOOL']);?></option>
       <?php
@@ -463,25 +484,25 @@ foreach($formats as $format){
       ?>
       </select>
 
-        Choose here the shifting tool.<br>
+        Choose the shifting tool here.<br>
         </p>
 
         <p style="margin-left: 40px">
-        using ffmpeg:
+        Using ffmpeg:
         e.g. origin=6000, target=4000, performs a shift of 2000 Hz down.<br>
-        <label for="freqshift_hi">origin [Hz]: </label>
+        <label for="freqshift_hi">Origin [Hz]: </label>
         <input name="freqshift_hi" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_HI']);?>" required/><br>
-        <label for="freqshift_lo">target [Hz]: </label>
+        <label for="freqshift_lo">Target [Hz]: </label>
         <input name="freqshift_lo" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_LO']);?>" required/>
         </p>
 
         <p style="margin-left: 40px">
-        using sox:
+        Using sox:
         e.g. shiftPitch=-1200 performs a shift of 1 octave down. This value is in 100ths of a semitone.<br>
-        <label for="freqshift_pitch">pitch shift: </label>
+        <label for="freqshift_pitch">Pitch shift: </label>
         <input name="freqshift_pitch" type="number" min="-4000" max="4000" step="1" value="<?php print($newconfig['FREQSHIFT_PITCH']);?>" required/><br>
         </p>
-
+		</td></tr></table><br>
       </p>
       <br><br>
       <input type="hidden" name="view" value="Advanced">
