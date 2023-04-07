@@ -82,7 +82,7 @@ if(isset($_GET["latitude"])){
     echo "<script>setTimeout(
     function() {
       const xhttp = new XMLHttpRequest();
-    xhttp.open(\"GET\", \"scripts/config.php?restart_php=true\", true);
+    xhttp.open(\"GET\", \"./config.php?restart_php=true\", true);
     xhttp.send();
     }, 1000);</script>";
   }
