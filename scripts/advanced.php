@@ -52,6 +52,8 @@ if(isset($_GET['submit'])) {
 
   if(isset($_GET["birdnetpi_url"])) {
     $birdnetpi_url = $_GET["birdnetpi_url"];
+    // remove trailing slash to prevent conf from becoming broken
+    $birdnetpi_url = rtrim($birdnetpi_url, '/');
     if(strcmp($birdnetpi_url,$config['BIRDNETPI_URL']) !== 0) {
       $contents = preg_replace("/BIRDNETPI_URL=.*/", "BIRDNETPI_URL=$birdnetpi_url", $contents);
       $contents2 = preg_replace("/BIRDNETPI_URL=.*/", "BIRDNETPI_URL=$birdnetpi_url", $contents2);
