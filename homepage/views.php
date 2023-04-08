@@ -271,10 +271,10 @@ if(isset($_GET['view'])){
   } else {
     $submittedpwd = $_SERVER['PHP_AUTH_PW'];
     $submitteduser = $_SERVER['PHP_AUTH_USER'];
-    $allowedCommands = array('sudo systemctl stop livestream.service && sudo /etc/init.d/icecast2 stop',
-                       'sudo systemctl restart livestream.service && sudo /etc/init.d/icecast2 restart',
-                       'sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo /etc/init.d/icecast2 stop',
-                       'sudo systemctl enable icecast2 && sudo /etc/init.d/icecast2 start && sudo systemctl enable --now livestream.service',
+    $allowedCommands = array('sudo systemctl stop livestream.service && sudo systemctl stop icecast2.service',
+                       'sudo systemctl restart livestream.service && sudo systemctl restart icecast2.service',
+                       'sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo systemctl stop icecast2.service',
+                       'sudo systemctl enable icecast2 && sudo systemctl start icecast2.service && sudo systemctl enable --now livestream.service',
                        'sudo systemctl stop web_terminal.service',
                        'sudo systemctl restart web_terminal.service',
                        'sudo systemctl disable --now web_terminal.service',

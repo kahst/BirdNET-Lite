@@ -25,10 +25,10 @@ function service_status($name) {
 <div class="servicecontrols">
   <form action="" method="GET">
     <h3>Live Audio Stream <?php echo service_status("livestream.service");?></h3>
-    <button type="submit" name="submit" value="sudo systemctl stop livestream.service && sudo /etc/init.d/icecast2 stop">Stop</button>
-    <button type="submit" name="submit" value="sudo systemctl restart livestream.service && sudo /etc/init.d/icecast2 restart">Restart </button>
-    <button type="submit" name="submit" value="sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo /etc/init.d/icecast2 stop">Disable</button>
-    <button type="submit" name="submit" value="sudo systemctl enable icecast2 && sudo /etc/init.d/icecast2 start && sudo systemctl enable --now livestream.service">Enable</button>
+    <button type="submit" name="submit" value="sudo systemctl stop livestream.service && sudo systemctl stop icecast2.service">Stop</button>
+    <button type="submit" name="submit" value="sudo systemctl restart livestream.service && sudo systemctl restart icecast2.service">Restart </button>
+    <button type="submit" name="submit" value="sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo systemctl stop icecast2.service">Disable</button>
+    <button type="submit" name="submit" value="sudo systemctl enable icecast2 && sudo systemctl start icecast2.service && sudo systemctl enable --now livestream.service">Enable</button>
   </form>
   <form action="" method="GET">
     <h3>Web Terminal <?php echo service_status("web_terminal.service");?></h3>
