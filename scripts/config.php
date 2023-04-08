@@ -472,10 +472,9 @@ function runProcess() {
       <dl>
       <dt>BirdNET_6K_GLOBAL_MODEL (2020)</dt><br>
       <dd id="ddnewline">This is the BirdNET-Lite model, with bird sound recognition for more than 6,000 species worldwide. This is the default option and will generally work very for people in most of the world.</dd>
-	  <br>
       <dt>BirdNET_GLOBAL_3K_V2.2_Model_FP16 (2022)</dt><br>
       <dd id="ddnewline">This is the BirdNET-Analyzer model, a newer work-in-progress project with aims to improve on the BirdNET-Lite model. Currently it only supports about 3,500 species worldwide, meaning for some regions (North America, Europe, Australia) it will usually outperform the BirdNET-Lite model, but for other regions it will be worse.</dd><br>
-      <dt>[ In-depth technical write-up on the models <a target="_blank" href="https://github.com/mcguirepr89/BirdNET-Pi/wiki/BirdNET-Pi:-some-theory-on-classification-&-some-practical-hints">here</a> ]</dt>
+      <dt>(in-depth technical write-up on the models <a target="_blank" href="https://github.com/mcguirepr89/BirdNET-Pi/wiki/BirdNET-Pi:-some-theory-on-classification-&-some-practical-hints">here</a>)</dt>
       </dl>
       </td></tr></table><br>
 
@@ -483,7 +482,7 @@ function runProcess() {
       <h2>Location</h2>
       <label for="site_name">Site Name: </label>
       <input name="site_name" type="text" value="<?php print($config['SITE_NAME']);?>"/> (Optional)<br>
-      <label for="latitude">Latitude: &nbsp; &nbsp;</label>
+      <label for="latitude">Latitude: </label>
       <input name="latitude" type="number" max="90" min="-90" step="0.0001" value="<?php print($config['LATITUDE']);?>" required/><br>
       <label for="longitude">Longitude: </label>
       <input name="longitude" type="number" max="180" min="-180" step="0.0001" value="<?php print($config['LONGITUDE']);?>" required/><br>
@@ -651,7 +650,6 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       ?>
       <input onclick="this.showPicker()" type="date" id="date" name="date" value="<?php echo $date->format('Y-m-d') ?>" <?php echo $disabledvalue; ?>>
       <input onclick="this.showPicker()" type="time" id="time" name="time" value="<?php echo $date->format('H:i'); ?>" <?php echo $disabledvalue; ?>><br>
-      <br>
       <label for="timezone">Select a Timezone: </label>
       <select name="timezone">
       <option disabled selected>
