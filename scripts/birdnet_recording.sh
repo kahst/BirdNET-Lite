@@ -3,7 +3,7 @@
 #set -x
 source /etc/birdnet/birdnet.conf
 
-# S
+# Set the logging level
 LOGGING_LEVEL='error'
 
 [ -z $RECORDING_LENGTH ] && RECORDING_LENGTH=15
