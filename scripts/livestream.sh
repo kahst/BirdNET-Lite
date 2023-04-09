@@ -2,6 +2,9 @@
 # Live Audio Stream Service Script
 source /etc/birdnet/birdnet.conf
 
+# Set logging level
+LOGGING_LEVEL='error'
+
 if [ -z ${REC_CARD} ];then
   echo "Stream not supported"
 elif [[ ! -z ${RTSP_STREAM} ]];then
@@ -22,11 +25,11 @@ elif [[ ! -z ${RTSP_STREAM} ]];then
     SELECTED_RSTP_STREAM=${RSTP_STREAMS_EXPLODED_ARRAY[0]}
   fi
 
-  ffmpeg -nostdin -loglevel 32 -ac ${CHANNELS} -i ${SELECTED_RSTP_STREAM} -acodec libmp3lame \
+  ffmpeg -nostdin -loglevel $LOGGING_LEVEL -ac ${CHANNELS} -i ${SELECTED_RSTP_STREAM} -acodec libmp3lame \
     -b:a 320k -ac ${CHANNELS} -content_type 'audio/mpeg' \
     -f mp3 icecast://source:${ICE_PWD}@localhost:8000/stream -re
 else
-	ffmpeg -nostdin -loglevel 32 -ac ${CHANNELS} -f alsa -i ${REC_CARD} -acodec libmp3lame \
+	ffmpeg -nostdin -loglevel $LOGGING_LEVEL -ac ${CHANNELS} -f alsa -i ${REC_CARD} -acodec libmp3lame \
     -b:a 320k -ac ${CHANNELS} -content_type 'audio/mpeg' \
     -f mp3 icecast://source:${ICE_PWD}@localhost:8000/stream -re
 fi

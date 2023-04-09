@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# Performs the recording from the specified RSTP stream or soundcard
-set -x
+# Performs the recording from the specified RTSP stream or soundcard
+#set -x
 source /etc/birdnet/birdnet.conf
+
+# S
+LOGGING_LEVEL='error'
 
 [ -z $RECORDING_LENGTH ] && RECORDING_LENGTH=15
 
@@ -33,7 +36,7 @@ if [ ! -z $RTSP_STREAM ];then
 
   # Make sure were passing something valid to ffmpeg, ffmpeg will run interactive and control our look by waiting ${RECORDING_LENGTH} between loops
   if [ -n "$FFMPEG_PARAMS" ];then
-    ffmpeg -nostdin $FFMPEG_PARAMS
+    ffmpeg -hide_banner -loglevel $LOGGING_LEVEL -nostdin $FFMPEG_PARAMS
   fi
 
   done
