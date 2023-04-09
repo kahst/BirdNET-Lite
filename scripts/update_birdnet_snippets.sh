@@ -9,8 +9,8 @@ my_dir=$HOME/BirdNET-Pi/scripts
 # Sets proper permissions and ownership
 #sudo -E chown -R $USER:$USER $HOME/*
 #sudo chmod -R g+wr $HOME/*
-find $HOME/* -not -user $USER -execdir sudo -E chown $USER:$USER {} \+
-find $HOME/* -not -user $USER -execdir sudo chmod g+wr {} \+
+find $HOME/Bird* -not -user $USER -execdir sudo -E chown $USER:$USER {} \+
+find $HOME/Bird* -not -user $USER -execdir sudo chmod g+wr {} \+
 chmod 666 ~/BirdNET-Pi/scripts/*.txt
 chmod 666 ~/BirdNET-Pi/*.txt
 find $HOME/BirdNET-Pi -path "$HOME/BirdNET-Pi/birdnet" -prune -o -type f ! -perm /o=w -exec chmod a+w {} \;
@@ -130,8 +130,7 @@ if ! grep '\-\-browser.gatherUsageStats false' $HOME/BirdNET-Pi/templates/birdne
 fi
 
 # Make IceCast2 a little more secure
-sudo sed -i 's|<!-- <bind-address>.*|<bind-address>127.0.0.1</bind-address>|;s|<!-- <shoutcast-mount>.*|<shoutcast-mount>/stream</shoutcast-mount>|' /etc/icecast2/icecast.xml
-sudo systemctl restart icecast2
+sudo sed -i.bak -e 's|<!-- <bind-address>.*|<bind-address>127.0.0.1</bind-address>|;s|<!-- <shoutcast-mount>.*|<shoutcast-mount>/stream</shoutcast-mount>|' /etc/icecast2/icecast.xml && if [ -s /etc/icecast2/icecast.xml.bak ] && ! sudo diff /etc/icecast2/icecast.xml /etc/icecast2/icecast.xml.bak > /dev/null; then sudo systemctl restart icecast2; fi
 
 if ! grep FREQSHIFT_TOOL /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "FREQSHIFT_TOOL=sox" >> /etc/birdnet/birdnet.conf
@@ -162,7 +161,7 @@ CREATE INDEX IF NOT EXISTS "detections_Com_Name" ON "detections" ("Com_Name");
 CREATE INDEX IF NOT EXISTS "detections_Date_Time" ON "detections" ("Date" DESC, "Time" DESC);
 EOF
 
-apprise_version=$($HOME/BirdNET-Pi/birdnet/bin/pip3 show apprise 2>/dev/null | grep Version | awk '{print $2}')
+apprise_version=$($HOME/BirdNET-Pi/birdnet/bin/python3 -c "import apprise; print(apprise.__version__)")
 streamlit_version=$($HOME/BirdNET-Pi/birdnet/bin/pip3 show streamlit 2>/dev/null | grep Version | awk '{print $2}')
 
 [[ $apprise_version != "1.2.1" ]] && $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1

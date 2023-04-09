@@ -481,45 +481,47 @@ h1 {
 
 <script>
 var rtsp_stream_select = document.getElementById("rtsp_stream_select");
-//When the dropdown selection is changed set the new value is settings, then restart the livestream service so it broadcasts newly selected RTSP stream
-rtsp_stream_select.onchange = function() {
-    if (this.value !== 'undefined'){
-        // Get the audio player element
-        var audio_player = document.querySelector('audio#player');
-        var central_controls_element = document.getElementsByClassName('centered')[0];
+if (typeof (rtsp_stream_select) !== 'undefined' && rtsp_stream_select !== null) {
+    //When the dropdown selection is changed set the new value is settings, then restart the livestream service so it broadcasts newly selected RTSP stream
+    rtsp_stream_select.onchange = function () {
+        if (this.value !== 'undefined') {
+            // Get the audio player element
+            var audio_player = document.querySelector('audio#player');
+            var central_controls_element = document.getElementsByClassName('centered')[0];
 
-        //Create the loading header again as a placeholder while we're waiting to reload the stream
-        var h1_loading = document.createElement("H1");
-        var h1_loading_text = document.createTextNode("Loading...");
-        h1_loading.setAttribute("id","loading-h1");
-        h1_loading.setAttribute("style","font-size:48px; font-weight: bolder; color: #FFF");
-        h1_loading.appendChild(h1_loading_text);
+            //Create the loading header again as a placeholder while we're waiting to reload the stream
+            var h1_loading = document.createElement("H1");
+            var h1_loading_text = document.createTextNode("Loading...");
+            h1_loading.setAttribute("id", "loading-h1");
+            h1_loading.setAttribute("style", "font-size:48px; font-weight: bolder; color: #FFF");
+            h1_loading.appendChild(h1_loading_text);
 
-        // Create the XMLHttpRequest object.
-        const xhr = new XMLHttpRequest();
-        // Initialize the request
-        xhr.open("GET", './views.php?rtsp_stream_to_livestream='+ this.value +'&view=Advanced&submit=advanced');
-        // Send the request
-        xhr.send();
-        // Fired once the request completes successfully
-        xhr.onload = function(e) {
-            // Check if the request was a success
-            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                // Restart the audio player in case it stopped working while the livestream service was restarted
-               if(audio_player !== 'undefined'){
-                   central_controls_element.appendChild(h1_loading);
-                   //Wait 5 seconds before restarting the stream
-                   setTimeout(function () {
-                           audio_player.pause();
-                           audio_player.setAttribute('src', '/stream');
-                           audio_player.load();
-                           audio_player.play();
+            // Create the XMLHttpRequest object.
+            const xhr = new XMLHttpRequest();
+            // Initialize the request
+            xhr.open("GET", './views.php?rtsp_stream_to_livestream=' + this.value + '&view=Advanced&submit=advanced');
+            // Send the request
+            xhr.send();
+            // Fired once the request completes successfully
+            xhr.onload = function (e) {
+                // Check if the request was a success
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    // Restart the audio player in case it stopped working while the livestream service was restarted
+                    if (audio_player !== 'undefined') {
+                        central_controls_element.appendChild(h1_loading);
+                        //Wait 5 seconds before restarting the stream
+                        setTimeout(function () {
+                                audio_player.pause();
+                                audio_player.setAttribute('src', '/stream');
+                                audio_player.load();
+                                audio_player.play();
 
-                           document.getElementById('loading-h1').remove()
-                       },
-                       10000
-                   )
-               }
+                                document.getElementById('loading-h1').remove()
+                            },
+                            10000
+                        )
+                    }
+                }
             }
         }
     }
