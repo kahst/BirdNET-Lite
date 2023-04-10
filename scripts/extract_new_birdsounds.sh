@@ -130,7 +130,7 @@ for h in "${SCAN_DIRS[@]}";do
     else
       # If it's not, run the SOX command without the "-r" argument
       sox -V1 "${NEWSPECIES_BYDATE}/${NEWFILE}" -n remix 1 rate 24k spectrogram \
-        -t "${COMMON_NAME}" \
+        -t "$(echo "${COMMON_NAME}" | iconv -f utf8 -t ascii//TRANSLIT)" \
         -c "${NEWSPECIES_BYDATE//$HOME\/}/${NEWFILE}" \
         -o "${NEWSPECIES_BYDATE}/${NEWFILE}.png"
     fi
