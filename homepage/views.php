@@ -51,7 +51,7 @@ if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/firstrun.ini');
 }
 ?>
-<link rel="stylesheet" href="style.css?v=4.06.23">
+<link rel="stylesheet" href="style.css?v=<?php echo date ('n.d.y', filemtime('style.css')); ?>">
 <style>
 body::-webkit-scrollbar {
   display:none
