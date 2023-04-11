@@ -271,10 +271,10 @@ if(isset($_GET['view'])){
   } else {
     $submittedpwd = $_SERVER['PHP_AUTH_PW'];
     $submitteduser = $_SERVER['PHP_AUTH_USER'];
-    $allowedCommands = array('sudo systemctl stop livestream.service && sudo /etc/init.d/icecast2 stop',
-                       'sudo systemctl restart livestream.service && sudo /etc/init.d/icecast2 restart',
-                       'sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo /etc/init.d/icecast2 stop',
-                       'sudo systemctl enable icecast2 && sudo /etc/init.d/icecast2 start && sudo systemctl enable --now livestream.service',
+    $allowedCommands = array('sudo systemctl stop livestream.service && sudo systemctl stop icecast2.service',
+                       'sudo systemctl restart livestream.service && sudo systemctl restart icecast2.service',
+                       'sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo systemctl stop icecast2.service',
+                       'sudo systemctl enable icecast2 && sudo systemctl start icecast2.service && sudo systemctl enable --now livestream.service',
                        'sudo systemctl stop web_terminal.service',
                        'sudo systemctl restart web_terminal.service',
                        'sudo systemctl disable --now web_terminal.service',
@@ -321,9 +321,28 @@ if(isset($_GET['view'])){
     if($submittedpwd == $caddypwd && $submitteduser == 'birdnet' && in_array($command,$allowedCommands)){
       if(isset($command)){
         $initcommand = $command;
-        if (strpos($command, "systemctl") !== false) {
-          $tmp = explode(" ",trim($command));
-          $command .= "& sleep 3;sudo systemctl status ".end($tmp);
+		  if (strpos($command, "systemctl") !== false) {
+			  //If there more than one command to execute, processes then separately
+			  //currently only livestream service uses multiple commands to interact with the required services
+			  if (strpos($command, " && ") !== false) {
+				  $separate_commands = explode("&&", trim($command));
+				  $new_multiservice_status_command = "";
+				  foreach ($separate_commands as $indiv_service_command) {
+					  //explode the string by " " space so we can get each individual component of the command
+					  //and eventually the service name at the end
+					  $separate_command_tmp = explode(" ", trim($indiv_service_command));
+					  //get the service names
+					  $new_multiservice_status_command .= " " . trim(end($separate_command_tmp));
+				  }
+
+				  $service_names = $new_multiservice_status_command;
+			  } else {
+                  //only one service needs restarting so we only need to query the status of one service
+				  $tmp = explode(" ", trim($command));
+				  $service_names = end($tmp);
+			  }
+
+          $command .= " & sleep 3;sudo systemctl status " . $service_names;
         }
         if($initcommand == "update_birdnet.sh") {
           unset($_SESSION['behind']);

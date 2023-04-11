@@ -828,6 +828,12 @@ pre#timer.bash {
   background-color: #9fe29b;
 }
 
+.exclude_species_list_option_highlight {
+  color: black;
+  background-color: rgb(119, 196, 135);
+  font-weight: bolder;
+}
+
 #ddnewline::before {
    content: none;
 }

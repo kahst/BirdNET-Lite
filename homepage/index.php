@@ -37,7 +37,7 @@ body::-webkit-scrollbar {
   display:none
 }
 </style>
-<link rel="stylesheet" href="style.css?v=4.06.23">
+<link rel="stylesheet" href="style.css?v=<?php echo date ('n.d.y', filemtime('style.css')); ?>">
 <link rel="stylesheet" type="text/css" href="static/dialog-polyfill.css" />
 <body>
 <div class="banner">

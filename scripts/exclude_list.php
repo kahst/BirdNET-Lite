@@ -7,6 +7,8 @@
 <form action="" method="GET" id="add">
   <h3>All Species Labels</h3>
   <input autocomplete="off" size="18" type="text" placeholder="Search Species..." id="exclude_species_searchterm" name="exclude_species_searchterm">
+  <br>
+  <span>Once the desired species has been highlighted, select it and click ADD to have it excluded.</span>
   <select name="species[]" id="species" multiple size="auto">
   <option>Choose a species below to add to the Excluded Species List</option>
   <?php
@@ -38,6 +40,7 @@
 <div class="customlabels column3">
 <form action="" method="GET" id="del">
   <h3>Excluded Species List</h3>
+  <br><br>
   <select name="species[]" id="value2" multiple size="auto">
 <?php
   $filename = './scripts/exclude_species_list.txt';
@@ -77,10 +80,10 @@
             //Now look at the select list, loop over the options and try find part of the text in the option's name/text
             var species_select_list = document.querySelector('select#species');
 
-            //if the search text differs from last time start the search from the begining of te list
+            //if the search text differs from last time start the search from the beginning of te list
             if (search_text !== last_search_term) {
                 //Also unselect the last match
-                species_select_list[search_match_idx].removeAttribute('selected');
+                species_select_list[search_match_idx].removeAttribute('class');
                 search_match_idx = 1;
             }
 
@@ -91,9 +94,9 @@
                 search_match_text = option_text.toLowerCase().includes(search_text)
 
                 //Check if the item is already selected, that could mean that user may be searching the same phrase
-                //again, we want to search further so let's unselect it and move to the next index
-                if (species_select_list[search_match_idx].getAttribute('selected') === true || species_select_list[search_match_idx].getAttribute('selected') === "true") {
-                    species_select_list[search_match_idx].removeAttribute('selected');
+                if (species_select_list[search_match_idx].getAttribute('class') === "exclude_species_list_option_highlight") {
+                    species_select_list[search_match_idx].removeAttribute('class');
+                    // species_select_list[search_match_idx].removeAttribute('style');
                     //Go to the next item
                     i++
                     continue;
@@ -110,12 +113,15 @@
                     search_match_idx = i;
 
                     //Scroll into view and select it
-                    species_select_list[search_match_idx].scrollIntoView();
-                    species_select_list[search_match_idx].setAttribute('selected', true);
+                    species_select_list[search_match_idx].scrollIntoView({behavior: 'smooth', block: 'start'});
+                    //Apply a style to the option since setting the selected value to true breaks scrolling on chrome :(
+                    //the style is nicer anyway :)
+                    species_select_list[search_match_idx].setAttribute('class', "exclude_species_list_option_highlight");
+                    // species_select_list[search_match_idx].setAttribute('selected', 'true');
+
                     //break the loop
                     break;
                 }
-                // }
             }
             //Track what search term was used so we know when to start over
             last_search_term = search_text
