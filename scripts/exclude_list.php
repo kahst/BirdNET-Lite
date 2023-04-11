@@ -8,7 +8,7 @@
   <h3>All Species Labels</h3>
   <input autocomplete="off" size="18" type="text" placeholder="Search Species..." id="exclude_species_searchterm" name="exclude_species_searchterm">
   <br>
-  <span>Once the desired species has been highlighted, select it and click ADD to have it excluded.</span>
+  <span>Once the desired species has been highlighted, click it and then click ADD to have it excluded.</span>
   <select name="species[]" id="species" multiple size="auto">
   <option>Choose a species below to add to the Excluded Species List</option>
   <?php
@@ -58,6 +58,15 @@
 </div>
 
 <script>
+    document.getElementById("add").addEventListener("submit", function(event) {
+      var speciesSelect = document.getElementById("species");
+      if (speciesSelect.selectedIndex < 1) {
+        alert("Please click the species you want to add.");
+        document.querySelector('.views').style.opacity = 1;
+        event.preventDefault();
+      }
+    });
+
     var search_term = document.querySelector("input#exclude_species_searchterm");
     search_term.addEventListener("keydown", doSearch);
     //Index where we found a match
