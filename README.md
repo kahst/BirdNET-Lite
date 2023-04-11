@@ -20,7 +20,7 @@ Check out birds from around the world
 - [BirdWeather](https://app.birdweather.com)<br>
 - [Johannesburg, South Africa](https://joburg.birdnetpi.com)<br>
 - [Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
-- [Berowra, New South Wales, Australia](https://berowra.birdnetpi.com)
+- [Berowra, New South Wales, Australia](https://birds.lloydsplace.au/)
 - [Dundas, Ontario, Canada](https://dundasontario.birdnetpi.com)
 - [Bungendore, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
 - [Rivers Bend, Ohio, United States](https://riversbendoh.birdnetpi.com)
