@@ -9,8 +9,8 @@ my_dir=$HOME/BirdNET-Pi/scripts
 # Sets proper permissions and ownership
 #sudo -E chown -R $USER:$USER $HOME/*
 #sudo chmod -R g+wr $HOME/*
+find $HOME/Bird* -execdir sudo chmod g+wr {} \+
 find $HOME/Bird* -not -user $USER -execdir sudo -E chown $USER:$USER {} \+
-find $HOME/Bird* -not -user $USER -execdir sudo chmod g+wr {} \+
 chmod 666 ~/BirdNET-Pi/scripts/*.txt
 chmod 666 ~/BirdNET-Pi/*.txt
 find $HOME/BirdNET-Pi -path "$HOME/BirdNET-Pi/birdnet" -prune -o -type f ! -perm /o=w -exec chmod a+w {} \;
