@@ -2,8 +2,15 @@
 # Live Audio Stream Service Script
 source /etc/birdnet/birdnet.conf
 
-# Set logging level
-LOGGING_LEVEL='error'
+# Read the logging level from the configuration option
+LOGGING_LEVEL="${LogLevel_LiveAudioStreamService}"
+# If empty for some reason default to log level of error
+[ -z $LOGGING_LEVEL ] && LOGGING_LEVEL='error'
+# Additionally if we're at debug or info level then allow printing of script commands and variables
+if [ "$LOGGING_LEVEL" == "info" ] || [ "$LOGGING_LEVEL" == "debug" ];then
+  # Enable printing of commands/variables etc to terminal for debugging
+  set -x
+fi
 
 if [ -z ${REC_CARD} ];then
   echo "Stream not supported"

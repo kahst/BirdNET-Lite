@@ -245,6 +245,55 @@ if(isset($_GET['submit'])) {
     }
   }
 
+  if (isset($_GET["LogLevel_BirdnetRecordingService"])) {
+    $birdnet_recording_service_log_level = trim($_GET["LogLevel_BirdnetRecordingService"]);
+
+	//Setting exists already, see if the value changed
+	if (strcmp($birdnet_recording_service_log_level, $config['LogLevel_BirdnetRecordingService']) !== 0) {
+		$contents = preg_replace("/LogLevel_BirdnetRecordingService=.*/", "LogLevel_BirdnetRecordingService=\"$birdnet_recording_service_log_level\"", $contents);
+		$contents2 = preg_replace("/LogLevel_BirdnetRecordingService=.*/", "LogLevel_BirdnetRecordingService=\"$birdnet_recording_service_log_level\"", $contents2);
+		$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+		$fh2 = fopen("./scripts/thisrun.txt", "w");
+		fwrite($fh, $contents);
+		fwrite($fh2, $contents2);
+		sleep(1);
+		exec("sudo systemctl restart birdnet_recording.service");
+	}
+  }
+
+  if (isset($_GET["LogLevel_SpectrogramViewerService"])) {
+	$spectrogram_viewer_service_log_level = trim($_GET["LogLevel_SpectrogramViewerService"]);
+
+	//Setting exists already, see if the value changed
+	if (strcmp($spectrogram_viewer_service_log_level, $config['LogLevel_SpectrogramViewerService']) !== 0) {
+		$contents = preg_replace("/LogLevel_SpectrogramViewerService=.*/", "LogLevel_SpectrogramViewerService=\"$spectrogram_viewer_service_log_level\"", $contents);
+		$contents2 = preg_replace("/LogLevel_SpectrogramViewerService=.*/", "LogLevel_SpectrogramViewerService=\"$spectrogram_viewer_service_log_level\"", $contents2);
+		$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+		$fh2 = fopen("./scripts/thisrun.txt", "w");
+		fwrite($fh, $contents);
+		fwrite($fh2, $contents2);
+		sleep(1);
+		exec("sudo systemctl restart spectrogram_viewer.service");
+	}
+  }
+
+  if (isset($_GET["LogLevel_LiveAudioStreamService"])) {
+	$livestream_audio_service_log_level = trim($_GET["LogLevel_LiveAudioStreamService"]);
+
+	//Setting exists already, see if the value changed
+	if (strcmp($livestream_audio_service_log_level, $config['LogLevel_LiveAudioStreamService']) !== 0) {
+		$contents = preg_replace("/LogLevel_LiveAudioStreamService=.*/", "LogLevel_LiveAudioStreamService=\"$livestream_audio_service_log_level\"", $contents);
+		$contents2 = preg_replace("/LogLevel_LiveAudioStreamService=.*/", "LogLevel_LiveAudioStreamService=\"$livestream_audio_service_log_level\"", $contents2);
+		$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+		$fh2 = fopen("./scripts/thisrun.txt", "w");
+		fwrite($fh, $contents);
+		fwrite($fh2, $contents2);
+		sleep(1);
+		exec("sudo systemctl restart livestream.service && sudo systemctl restart icecast2.service");
+	}
+  }
+
+
   $fh = fopen('/etc/birdnet/birdnet.conf', "w");
   $fh2 = fopen("./scripts/thisrun.txt", "w");
   fwrite($fh, $contents);
@@ -505,7 +554,85 @@ foreach($formats as $format){
         <input name="freqshift_pitch" type="number" min="-4000" max="4000" step="1" value="<?php print($newconfig['FREQSHIFT_PITCH']);?>" required/><br>
         </p>
 		</td></tr></table><br>
-      </p>
+
+        <table class="settingstable">
+            <tr>
+                <td>
+                    <h2>Logging</h2>
+                    <div class="callout callout-warning">
+                        <h4>Note:</h4>
+                        It is recommended that the Log Level be set to <b>Error</b> on production systems to keep output
+                        manageable by only reporting errors.
+                        <br>
+                        Not all components support the log level option at this time.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Birdnet Recording:
+                    <select id="LogLevel_BirdnetRecordingService" name="LogLevel_BirdnetRecordingService">
+                        <option value="error" <?php echo $newconfig['LogLevel_BirdnetRecordingService'] == "error" ? "selected=''" : "" ?>>
+                            Errors Only
+                        </option>
+                        <option value="warning" <?php echo $newconfig['LogLevel_BirdnetRecordingService'] == "warning" ? "selected=''" : "" ?>>
+                            Warning
+                        </option>
+                        <option value="info" <?php echo $newconfig['LogLevel_BirdnetRecordingService'] == "info" ? "selected=''" : "" ?>>
+                            Info
+                        </option>
+                        <option value="debug" <?php echo $newconfig['LogLevel_BirdnetRecordingService'] == "debug" ? "selected=''" : "" ?>>
+                            Debug
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Live Audio Stream:
+                    <select id="LogLevel_LiveAudioStreamService" name="LogLevel_LiveAudioStreamService">
+                        <option value="error" <?php echo $newconfig['LogLevel_LiveAudioStreamService'] == "error" ? "selected=''" : "" ?>>
+                            Errors Only
+                        </option>
+                        <option value="warning" <?php echo $newconfig['LogLevel_LiveAudioStreamService'] == "warning" ? "selected=''" : "" ?>>
+                            Warning
+                        </option>
+                        <option value="info" <?php echo $newconfig['LogLevel_LiveAudioStreamService'] == "info" ? "selected=''" : "" ?>>
+                            Info
+                        </option>
+                        <option value="debug" <?php echo $newconfig['LogLevel_LiveAudioStreamService'] == "debug" ? "selected=''" : "" ?>>
+                            Debug
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Spectrogram Service:
+                    <select id="LogLevel_SpectrogramViewerService" name="LogLevel_SpectrogramViewerService">
+                        <option value="error" <?php echo $newconfig['LogLevel_SpectrogramViewerService'] == "error" ? "selected=''" : "" ?>>
+                            Errors Only
+                        </option>
+                        <option value="warning" <?php echo $newconfig['LogLevel_SpectrogramViewerService'] == "warning" ? "selected=''" : "" ?>>
+                            Warning
+                        </option>
+                        <option value="info" <?php echo $newconfig['LogLevel_SpectrogramViewerService'] == "info" ? "selected=''" : "" ?>>
+                            Info
+                        </option>
+                        <option value="debug" <?php echo $newconfig['LogLevel_SpectrogramViewerService'] == "debug" ? "selected=''" : "" ?>>
+                            Debug
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <small>
+                        <b>'error'</b> - Show all errors, including ones which can be recovered from. This is the default value.<br>
+                        <b>'warning'</b> - Show all warnings and errors. Any message related to possibly incorrect or unexpected events will be shown.<br>
+                        <b>'info'</b> - Show informative messages and output during processing. This is in addition to warnings and errors. <br>
+                        <b>'debug'</b> - Show everything, including debugging information.<br>
+                    </small>
+                </td>
+            </tr>
+        </table>
       <br><br>
       <input type="hidden" name="view" value="Advanced">
       <button onclick="if(<?php print($newconfig['PRIVACY_THRESHOLD']);?> != document.getElementById('privacy_threshold').value){return confirm('This will take about 90 seconds.')} collectrtspUrls();" type="submit" name="submit" value="advanced">
