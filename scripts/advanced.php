@@ -560,7 +560,7 @@ foreach($formats as $format){
                 <td>
                     <h2>Logging</h2>
                     <div class="callout callout-warning">
-                        <h4>Note:</h4>
+                        <b>Note:</b>
                         It is recommended that the Log Level be set to <b>Error</b> on production systems to keep output
                         manageable by only reporting errors.
                         <br>
@@ -627,8 +627,8 @@ foreach($formats as $format){
                     <small>
                         <b>'error'</b> - Show all errors, including ones which can be recovered from. This is the default value.<br>
                         <b>'warning'</b> - Show all warnings and errors. Any message related to possibly incorrect or unexpected events will be shown.<br>
-                        <b>'info'</b> - Show informative messages and output during processing. This is in addition to warnings and errors. <br>
-                        <b>'debug'</b> - Show everything, including debugging information.<br>
+                        <b>'info'</b> - Show informative messages and output during processing. This is in addition to warnings and errors. This will produce more output, use this for initial debugging.<br>
+                        <b>'debug'</b> - Show everything, including debugging information. Produces a lot of output.<br>
                     </small>
                 </td>
             </tr>
