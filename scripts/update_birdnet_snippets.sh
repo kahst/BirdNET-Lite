@@ -15,6 +15,10 @@ chmod 666 ~/BirdNET-Pi/scripts/*.txt
 chmod 666 ~/BirdNET-Pi/*.txt
 find $HOME/BirdNET-Pi -path "$HOME/BirdNET-Pi/birdnet" -prune -o -type f ! -perm /o=w -exec chmod a+w {} \;
 
+# remove world-writable perms
+chmod -R o-w ~/BirdNET-Pi/templates/*
+
+
 # Create blank sitename as it's optional. First time install will use $HOSTNAME.
 if ! grep SITE_NAME /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "SITE_NAME=\"\"" >> /etc/birdnet/birdnet.conf
