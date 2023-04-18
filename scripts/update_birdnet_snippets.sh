@@ -195,6 +195,11 @@ if ! grep RTSP_STREAM_TO_LIVESTREAM /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "RTSP_STREAM_TO_LIVESTREAM=\"0\"" >> /etc/birdnet/birdnet.conf
 fi
 
+suntime_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("suntime") else "not installed")')
+if [[ "$suntime_installation_status" = "not installed" ]];then
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install -U pip
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install suntime
+fi
 
 sudo systemctl daemon-reload
 restart_services.sh
