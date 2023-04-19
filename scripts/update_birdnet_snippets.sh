@@ -199,7 +199,7 @@ suntime_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkguti
 if [[ "$suntime_installation_status" = "not installed" ]];then
   $HOME/BirdNET-Pi/birdnet/bin/pip3 install -U pip
   $HOME/BirdNET-Pi/birdnet/bin/pip3 install suntime
-
+fi
 
 # For new Advanced Setting Logging level options
 if ! grep LogLevel_BirdnetRecordingService /etc/birdnet/birdnet.conf &>/dev/null;then
