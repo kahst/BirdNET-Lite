@@ -245,59 +245,106 @@ if(isset($_GET['submit'])) {
     }
   }
 
-  if (isset($_GET["LogLevel_BirdnetRecordingService"])) {
-    $birdnet_recording_service_log_level = trim($_GET["LogLevel_BirdnetRecordingService"]);
+	if (isset($_GET["LogLevel_BirdnetRecordingService"])) {
+		$birdnet_recording_service_log_level = trim($_GET["LogLevel_BirdnetRecordingService"]);
 
-	//Setting exists already, see if the value changed
-	if (strcmp($birdnet_recording_service_log_level, $config['LogLevel_BirdnetRecordingService']) !== 0) {
-		$contents = preg_replace("/LogLevel_BirdnetRecordingService=.*/", "LogLevel_BirdnetRecordingService=\"$birdnet_recording_service_log_level\"", $contents);
-		$contents2 = preg_replace("/LogLevel_BirdnetRecordingService=.*/", "LogLevel_BirdnetRecordingService=\"$birdnet_recording_service_log_level\"", $contents2);
-		$fh = fopen("/etc/birdnet/birdnet.conf", "w");
-		$fh2 = fopen("./scripts/thisrun.txt", "w");
-		fwrite($fh, $contents);
-		fwrite($fh2, $contents2);
-		sleep(1);
-		exec("sudo systemctl restart birdnet_recording.service");
+		//If setting exists change it's value
+		if (array_key_exists('LogLevel_BirdnetRecordingService', $config)) {
+			//Setting exists already, see if the value changed
+			if (strcmp($birdnet_recording_service_log_level, $config['LogLevel_BirdnetRecordingService']) !== 0) {
+				$contents = preg_replace("/LogLevel_BirdnetRecordingService=.*/", "LogLevel_BirdnetRecordingService=\"$birdnet_recording_service_log_level\"", $contents);
+				$contents2 = preg_replace("/LogLevel_BirdnetRecordingService=.*/", "LogLevel_BirdnetRecordingService=\"$birdnet_recording_service_log_level\"", $contents2);
+				$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+				$fh2 = fopen("./scripts/thisrun.txt", "w");
+				fwrite($fh, $contents);
+				fwrite($fh2, $contents2);
+				sleep(1);
+				exec("sudo systemctl restart birdnet_recording.service");
+			}
+		} else {
+			//Create the setting in the setting file - same as what update_birdnet_snippets.sh does but will take the users selected log level as the value
+			shell_exec('sudo echo "LogLevel_BirdnetRecordingService=\"' . $birdnet_recording_service_log_level . '\"" >> /etc/birdnet/birdnet.conf');
+			//also update this run txt file
+			shell_exec('sudo echo "LogLevel_BirdnetRecordingService=\"' . $birdnet_recording_service_log_level . '\"" >> ./scripts/thisrun.txt');
+
+			//Reload the config files as we've changed the contents, we need to make sure the contents of the existing variables reflects contents of the config file
+			sleep(1);
+			$contents = file_get_contents('/etc/birdnet/birdnet.conf');
+			$contents2 = file_get_contents('./scripts/thisrun.txt');
+
+			exec("sudo systemctl restart birdnet_recording.service");
+		}
 	}
-  }
 
-  if (isset($_GET["LogLevel_SpectrogramViewerService"])) {
-	$spectrogram_viewer_service_log_level = trim($_GET["LogLevel_SpectrogramViewerService"]);
+	if (isset($_GET["LogLevel_SpectrogramViewerService"])) {
+		$spectrogram_viewer_service_log_level = trim($_GET["LogLevel_SpectrogramViewerService"]);
 
-	//Setting exists already, see if the value changed
-	if (strcmp($spectrogram_viewer_service_log_level, $config['LogLevel_SpectrogramViewerService']) !== 0) {
-		$contents = preg_replace("/LogLevel_SpectrogramViewerService=.*/", "LogLevel_SpectrogramViewerService=\"$spectrogram_viewer_service_log_level\"", $contents);
-		$contents2 = preg_replace("/LogLevel_SpectrogramViewerService=.*/", "LogLevel_SpectrogramViewerService=\"$spectrogram_viewer_service_log_level\"", $contents2);
-		$fh = fopen("/etc/birdnet/birdnet.conf", "w");
-		$fh2 = fopen("./scripts/thisrun.txt", "w");
-		fwrite($fh, $contents);
-		fwrite($fh2, $contents2);
-		sleep(1);
-		exec("sudo systemctl restart spectrogram_viewer.service");
+		//If setting exists change it's value
+		if (array_key_exists('LogLevel_SpectrogramViewerService', $config)) {
+			//Setting exists already, see if the value changed
+			if (strcmp($spectrogram_viewer_service_log_level, $config['LogLevel_SpectrogramViewerService']) !== 0) {
+				$contents = preg_replace("/LogLevel_SpectrogramViewerService=.*/", "LogLevel_SpectrogramViewerService=\"$spectrogram_viewer_service_log_level\"", $contents);
+				$contents2 = preg_replace("/LogLevel_SpectrogramViewerService=.*/", "LogLevel_SpectrogramViewerService=\"$spectrogram_viewer_service_log_level\"", $contents2);
+				$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+				$fh2 = fopen("./scripts/thisrun.txt", "w");
+				fwrite($fh, $contents);
+				fwrite($fh2, $contents2);
+				sleep(1);
+				exec("sudo systemctl restart spectrogram_viewer.service");
+			}
+		} else {
+			//Create the setting in the setting file - same as what update_birdnet_snippets.sh does but will take the users selected log level as the value
+			shell_exec('sudo echo "LogLevel_SpectrogramViewerService=\"' . $spectrogram_viewer_service_log_level . '\"" >> /etc/birdnet/birdnet.conf');
+			//also update this run txt file
+			shell_exec('sudo echo "LogLevel_SpectrogramViewerService=\"' . $spectrogram_viewer_service_log_level . '\"" >> ./scripts/thisrun.txt');
+
+			//Reload the config files as we've changed the contents, we need to make sure the contents of the existing variables reflects contents of the config file
+			sleep(1);
+			$contents = file_get_contents('/etc/birdnet/birdnet.conf');
+			$contents2 = file_get_contents('./scripts/thisrun.txt');
+
+			exec("sudo systemctl restart spectrogram_viewer.service");
+		}
 	}
-  }
 
-  if (isset($_GET["LogLevel_LiveAudioStreamService"])) {
-	$livestream_audio_service_log_level = trim($_GET["LogLevel_LiveAudioStreamService"]);
+	if (isset($_GET["LogLevel_LiveAudioStreamService"])) {
+		$livestream_audio_service_log_level = trim($_GET["LogLevel_LiveAudioStreamService"]);
 
-	//Setting exists already, see if the value changed
-	if (strcmp($livestream_audio_service_log_level, $config['LogLevel_LiveAudioStreamService']) !== 0) {
-		$contents = preg_replace("/LogLevel_LiveAudioStreamService=.*/", "LogLevel_LiveAudioStreamService=\"$livestream_audio_service_log_level\"", $contents);
-		$contents2 = preg_replace("/LogLevel_LiveAudioStreamService=.*/", "LogLevel_LiveAudioStreamService=\"$livestream_audio_service_log_level\"", $contents2);
-		$fh = fopen("/etc/birdnet/birdnet.conf", "w");
-		$fh2 = fopen("./scripts/thisrun.txt", "w");
-		fwrite($fh, $contents);
-		fwrite($fh2, $contents2);
-		sleep(1);
-		exec("sudo systemctl restart livestream.service && sudo systemctl restart icecast2.service");
+		//If setting exists change it's value
+		if (array_key_exists('LogLevel_LiveAudioStreamService', $config)) {
+			//Setting exists already, see if the value changed
+			if (strcmp($livestream_audio_service_log_level, $config['LogLevel_LiveAudioStreamService']) !== 0) {
+				$contents = preg_replace("/LogLevel_LiveAudioStreamService=.*/", "LogLevel_LiveAudioStreamService=\"$livestream_audio_service_log_level\"", $contents);
+				$contents2 = preg_replace("/LogLevel_LiveAudioStreamService=.*/", "LogLevel_LiveAudioStreamService=\"$livestream_audio_service_log_level\"", $contents2);
+				//Write the settings to the config files, so we can restart the relevant services
+				$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+				$fh2 = fopen("./scripts/thisrun.txt", "w");
+				fwrite($fh, $contents);
+				fwrite($fh2, $contents2);
+				sleep(1);
+				exec("sudo systemctl restart livestream.service && sudo systemctl restart icecast2.service");
+			}
+		} else {
+			//Create the setting in the setting file - same as what update_birdnet_snippets.sh does but will take the users selected log level as the value
+			shell_exec('sudo echo "LogLevel_LiveAudioStreamService=\"' . $livestream_audio_service_log_level . '\"" >> /etc/birdnet/birdnet.conf');
+			//also update this run txt file
+			shell_exec('sudo echo "LogLevel_LiveAudioStreamService=\"' . $livestream_audio_service_log_level . '\"" >> ./scripts/thisrun.txt');
+
+			//Reload the config files as we've changed the contents, we need to make sure the contents of the existing variables reflects contents of the config file
+			sleep(1);
+			$contents = file_get_contents('/etc/birdnet/birdnet.conf');
+			$contents2 = file_get_contents('./scripts/thisrun.txt');
+
+			exec("sudo systemctl restart livestream.service && sudo systemctl restart icecast2.service");
+		}
 	}
-  }
 
-
-  $fh = fopen('/etc/birdnet/birdnet.conf', "w");
-  $fh2 = fopen("./scripts/thisrun.txt", "w");
-  fwrite($fh, $contents);
-  fwrite($fh2, $contents2);
+	//Finally write the data out. some sections do this themselves in order to have the new settings ready for the services that will be restarted
+	//but will doubly ensure the settings are saved after any modification
+	$fh = fopen('/etc/birdnet/birdnet.conf', "w");
+	$fh2 = fopen("./scripts/thisrun.txt", "w");
+	fwrite($fh, $contents);
+	fwrite($fh2, $contents2);
 }
 
 $user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
@@ -336,57 +383,6 @@ if (file_exists('./scripts/thisrun.txt')) {
       slider.oninput = function() {
         output.innerHTML = this.value;
         document.getElementById("predictionCount").innerHTML = parseInt((this.value * <?php echo $count; ?>)/100);
-      }
-      //Keep track of how many new input fields were added
-      var number_of_new_rtsp_urls_added = 0;
-      //Function to insert new input fields
-      function addNewrtspInput() {
-          //Find the placeholder input field
-          var url_template_element = document.getElementById('rtsp_stream_url_placeholder');
-          var new_url_input_template = url_template_element.cloneNode();
-          var br_seperator = document.createElement("BR");
-
-          //Fix up the new element so it's visible, set the style so it's sligned correctly
-          new_url_input_template.setAttribute("id", "rtsp_stream_url_new_" + number_of_new_rtsp_urls_added);
-          new_url_input_template.setAttribute("name", "rtsp_stream_new_" + number_of_new_rtsp_urls_added);
-          new_url_input_template.removeAttribute("style");
-
-          //Insert the new input field before the button to add new urls
-          var newrtspstream_button = document.getElementById('newrtspstream_button_container');
-          //Insert the new input element before the newrtspstream button
-          newrtspstream_button.parentNode.insertBefore(new_url_input_template, newrtspstream_button);
-          //Add a separator before the button
-          newrtspstream_button.parentNode.insertBefore(br_seperator, newrtspstream_button);
-
-          //Increment the counter
-          number_of_new_rtsp_urls_added++;
-      }
-
-      var rtsp_stream_string = "";
-      var rtsp_stream_string_array = [];
-      //Collect all the rtsp urls that have been set, concat them into a single string and set it into the rtsp_stream input field so it gets saved
-      function collectrtspUrls() {
-          //Reset the array and string so we don't get duplicates
-          rtsp_stream_string = "";
-          rtsp_stream_string_array = [];
-
-          //Get the inputs by name (which is similar across
-          var existing_rtsp_stream_urls = document.querySelectorAll('[name^="rtsp_stream_"]');
-          //Loop over the result and get the values
-          for (let i = 0; i < existing_rtsp_stream_urls.length; i++) {
-              //Only collect results that re not empty and add them to the array
-              if (existing_rtsp_stream_urls[i].value !== 'undefined' && existing_rtsp_stream_urls[i].value !== "") {
-                  rtsp_stream_string_array.push(existing_rtsp_stream_urls[i].value.trim());
-              }
-          }
-
-          //if the array is not empty, then implode the array joining all the values by a comma
-          if (rtsp_stream_string_array.length !== 0) {
-              rtsp_stream_string = rtsp_stream_string_array.join(',');
-              //Locate the hidden rtsp_stream input field that we'll populate with the full string which will get saved to the config file
-              var rtsp_stream_input = document.querySelector('[name=rtsp_stream]');
-              rtsp_stream_input.setAttribute('value',rtsp_stream_string);
-          }
       }
       </script>
       <p>If a Human is predicted anywhere among the top <span id="predictionCount"><?php echo $newconfig['PRIVACY_THRESHOLD'] == 0 ? "threshold % of" : intval(($newconfig['PRIVACY_THRESHOLD'] * $count)/100); ?></span> predictions, the sample will be considered of human origin and no data will be collected. Start with 1% and move up as needed.</p>
@@ -457,6 +453,61 @@ foreach($formats as $format){
         <br>
         <span id="newrtspstream" onclick="addNewrtspInput();">Add</span><br>
       </div>
+      <script>
+                      //Keep track of how many new input fields were added
+                      var number_of_new_rtsp_urls_added = 0;
+
+                      //Function to insert new input fields
+                      function addNewrtspInput() {
+                          //Find the placeholder input field
+                          var url_template_element = document.getElementById('rtsp_stream_url_placeholder');
+                          var new_url_input_template = url_template_element.cloneNode();
+                          var br_seperator = document.createElement("BR");
+
+                          //Fix up the new element so it's visible, set the style so it's sligned correctly
+                          new_url_input_template.setAttribute("id", "rtsp_stream_url_new_" + number_of_new_rtsp_urls_added);
+                          new_url_input_template.setAttribute("name", "rtsp_stream_new_" + number_of_new_rtsp_urls_added);
+                          new_url_input_template.removeAttribute("style");
+
+                          //Insert the new input field before the button to add new urls
+                          var newrtspstream_button = document.getElementById('newrtspstream_button_container');
+                          //Insert the new input element before the newrtspstream button
+                          newrtspstream_button.parentNode.insertBefore(new_url_input_template, newrtspstream_button);
+                          //Add a separator before the button
+                          newrtspstream_button.parentNode.insertBefore(br_seperator, newrtspstream_button);
+
+                          //Increment the counter
+                          number_of_new_rtsp_urls_added++;
+                      }
+
+                      var rtsp_stream_string = "";
+                      var rtsp_stream_string_array = [];
+
+                      //Collect all the rtsp urls that have been set, concat them into a single string and set it into the rtsp_stream input field so it gets saved
+                      function collectrtspUrls() {
+                          //Reset the array and string so we don't get duplicates
+                          rtsp_stream_string = "";
+                          rtsp_stream_string_array = [];
+
+                          //Get the inputs by name (which is similar across
+                          var existing_rtsp_stream_urls = document.querySelectorAll('[name^="rtsp_stream_"]');
+                          //Loop over the result and get the values
+                          for (let i = 0; i < existing_rtsp_stream_urls.length; i++) {
+                              //Only collect results that re not empty and add them to the array
+                              if (existing_rtsp_stream_urls[i].value !== 'undefined' && existing_rtsp_stream_urls[i].value !== "") {
+                                  rtsp_stream_string_array.push(existing_rtsp_stream_urls[i].value.trim());
+                              }
+                          }
+
+                          //if the array is not empty, then implode the array joining all the values by a comma
+                          if (rtsp_stream_string_array.length !== 0) {
+                              rtsp_stream_string = rtsp_stream_string_array.join(',');
+                              //Locate the hidden rtsp_stream input field that we'll populate with the full string which will get saved to the config file
+                              var rtsp_stream_input = document.querySelector('[name=rtsp_stream]');
+                              rtsp_stream_input.setAttribute('value', rtsp_stream_string);
+                          }
+                      }
+      </script>
       <p>If you place an RTSP stream URL here, BirdNET-Pi will use that as its audio source.<br>Multiple streams are allowed but may have a impact on rPi performance.<br>Analyze ffmpeg CPU/Memory usage with <b>top</b> or <b>htop</b> if necessary.<br>To remove all and use the soundcard again, just delete the RTSP entries and click Save at the bottom.</p>
       </td></tr></table><br>
       <table class="settingstable"><tr><td>
@@ -562,7 +613,7 @@ foreach($formats as $format){
                     <div class="callout callout-warning">
                         <b>Note:</b>
                         It is recommended that the Log Level be set to <b>Error</b> on production systems to keep output
-                        manageable by only reporting errors.
+                        manageable, by only reporting errors.
                         <br>
                         Not all components support the log level option at this time.
                     </div>
@@ -571,7 +622,7 @@ foreach($formats as $format){
             <tr>
                 <td>Birdnet Recording:
                     <select id="LogLevel_BirdnetRecordingService" name="LogLevel_BirdnetRecordingService">
-                        <option value="error" <?php echo $newconfig['LogLevel_BirdnetRecordingService'] == "error" ? "selected=''" : "" ?>>
+                        <option value="error" <?php echo $newconfig['LogLevel_BirdnetRecordingService'] == "error" || !array_key_exists('LogLevel_BirdnetRecordingService', $newconfig) ? "selected=''" : "" ?>>
                             Errors Only
                         </option>
                         <option value="warning" <?php echo $newconfig['LogLevel_BirdnetRecordingService'] == "warning" ? "selected=''" : "" ?>>
@@ -589,7 +640,7 @@ foreach($formats as $format){
             <tr>
                 <td>Live Audio Stream:
                     <select id="LogLevel_LiveAudioStreamService" name="LogLevel_LiveAudioStreamService">
-                        <option value="error" <?php echo $newconfig['LogLevel_LiveAudioStreamService'] == "error" ? "selected=''" : "" ?>>
+                        <option value="error" <?php echo $newconfig['LogLevel_LiveAudioStreamService'] == "error" || !array_key_exists('LogLevel_LiveAudioStreamService', $newconfig) ? "selected=''" : "" ?>>
                             Errors Only
                         </option>
                         <option value="warning" <?php echo $newconfig['LogLevel_LiveAudioStreamService'] == "warning" ? "selected=''" : "" ?>>
@@ -607,7 +658,7 @@ foreach($formats as $format){
             <tr>
                 <td>Spectrogram Service:
                     <select id="LogLevel_SpectrogramViewerService" name="LogLevel_SpectrogramViewerService">
-                        <option value="error" <?php echo $newconfig['LogLevel_SpectrogramViewerService'] == "error" ? "selected=''" : "" ?>>
+                        <option value="error" <?php echo $newconfig['LogLevel_SpectrogramViewerService'] == "error" || !array_key_exists('LogLevel_SpectrogramViewerService', $newconfig) ? "selected=''" : "" ?>>
                             Errors Only
                         </option>
                         <option value="warning" <?php echo $newconfig['LogLevel_SpectrogramViewerService'] == "warning" ? "selected=''" : "" ?>>
@@ -625,7 +676,7 @@ foreach($formats as $format){
             <tr>
                 <td>
                     <small>
-                        <b>'error'</b> - Show all errors, including ones which can be recovered from. This is the default value.<br>
+                        <b>'error'</b> - Show all errors, including ones which can be recovered from. <b>This is the default value.</b><br>
                         <b>'warning'</b> - Show all warnings and errors. Any message related to possibly incorrect or unexpected events will be shown.<br>
                         <b>'info'</b> - Show informative messages and output during processing. This is in addition to warnings and errors. This will produce more output, use this for initial debugging.<br>
                         <b>'debug'</b> - Show everything, including debugging information. Produces a lot of output.<br>
