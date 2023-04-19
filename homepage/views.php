@@ -50,6 +50,16 @@ if (file_exists('./scripts/thisrun.txt')) {
 } elseif (file_exists('./scripts/firstrun.ini')) {
   $config = parse_ini_file('./scripts/firstrun.ini');
 }
+
+if ($config["LATITUDE"] == "0.000" && $config["LONGITUDE"] == "0.000") {
+  echo "<center style='color:red'><b>WARNING: Your latitude and longitude are not set properly. Please do so now in Tools -> Settings.</center></b>";
+}
+elseif ($config["LATITUDE"] == "0.000") {
+  echo "<center style='color:red'><b>WARNING: Your latitude is not set properly. Please do so now in Tools -> Settings.</center></b>";
+}
+elseif ($config["LONGITUDE"] == "0.000") {
+  echo "<center style='color:red'><b>WARNING: Your longitude is not set properly. Please do so now in Tools -> Settings.</center></b>";
+}
 ?>
 <link rel="stylesheet" href="style.css?v=<?php echo date ('n.d.y', filemtime('style.css')); ?>">
 <style>

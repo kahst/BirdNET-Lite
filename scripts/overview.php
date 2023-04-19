@@ -224,7 +224,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
       }
   }
   if($iterations == 0) {
-    if($todaycount > 0) {
+    if($todaycount['COUNT(*)'] > 0) {
       echo "<h3>Your system is currently processing a backlog of audio. This can take several hours before normal functionality of your BirdNET-Pi resumes.</h3>";
     } else {
       echo "<h3>No Detections For Today.</h3>";

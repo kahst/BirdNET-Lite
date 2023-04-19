@@ -34,10 +34,9 @@ if [ ! -z $RTSP_STREAM ];then
     do
       # Map id used to map input to output (first stream being 0), this is 0 based in ffmpeg so decrement our counter (which is more human readable) by 1
       MAP_ID=$((RTSP_STREAMS_STARTED_COUNT-1))
-      # Build up the parameters to process the RSTP stream, including mapping for the output, because some streams may have more than one audio stream within it, get the first stream
-      #ffmpeg does this by default when there is only 1 steam, but if there are more than 1 then it doesn't know which one we want
-      FFMPEG_PARAMS+="-vn -thread_queue_size 512 -i ${i} -map ${MAP_ID} -t ${RECORDING_LENGTH} -acodec pcm_s16le -ac 2 -ar 48000 file:${RECS_DIR}/StreamData/$(date "+%F")-birdnet-RTSP_${RTSP_STREAMS_STARTED_COUNT}-$(date "+%H:%M:%S").wav "
-      # Increment counter for the next round
+      # Build up the parameters to process the RSTP stream, including mapping for the output
+      FFMPEG_PARAMS+="-vn -thread_queue_size 512 -i ${i} -map ${MAP_ID}:a:0 -t ${RECORDING_LENGTH} -acodec pcm_s16le -ac 2 -ar 48000 file:${RECS_DIR}/StreamData/$(date "+%F")-birdnet-RTSP_${RTSP_STREAMS_STARTED_COUNT}-$(date "+%H:%M:%S").wav "
+      # Increment counter
       ((RTSP_STREAMS_STARTED_COUNT += 1))
     done
 

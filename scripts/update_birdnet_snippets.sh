@@ -9,11 +9,15 @@ my_dir=$HOME/BirdNET-Pi/scripts
 # Sets proper permissions and ownership
 #sudo -E chown -R $USER:$USER $HOME/*
 #sudo chmod -R g+wr $HOME/*
+find $HOME/Bird* -type f ! -perm -g+wr -exec chmod g+wr {} + 2>/dev/null
 find $HOME/Bird* -not -user $USER -execdir sudo -E chown $USER:$USER {} \+
-find $HOME/Bird* -not -user $USER -execdir sudo chmod g+wr {} \+
 chmod 666 ~/BirdNET-Pi/scripts/*.txt
 chmod 666 ~/BirdNET-Pi/*.txt
 find $HOME/BirdNET-Pi -path "$HOME/BirdNET-Pi/birdnet" -prune -o -type f ! -perm /o=w -exec chmod a+w {} \;
+
+# remove world-writable perms
+chmod -R o-w ~/BirdNET-Pi/templates/*
+
 
 # Create blank sitename as it's optional. First time install will use $HOSTNAME.
 if ! grep SITE_NAME /etc/birdnet/birdnet.conf &>/dev/null;then
@@ -191,7 +195,13 @@ if ! grep RTSP_STREAM_TO_LIVESTREAM /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "RTSP_STREAM_TO_LIVESTREAM=\"0\"" >> /etc/birdnet/birdnet.conf
 fi
 
-# For new Advanced Setting Logging level options,
+suntime_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("suntime") else "not installed")')
+if [[ "$suntime_installation_status" = "not installed" ]];then
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install -U pip
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install suntime
+
+
+# For new Advanced Setting Logging level options
 if ! grep LogLevel_BirdnetRecordingService /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "LogLevel_BirdnetRecordingService=\"error\"" >> /etc/birdnet/birdnet.conf
 fi

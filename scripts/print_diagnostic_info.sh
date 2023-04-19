@@ -9,6 +9,9 @@ for service in "${services[@]}"; do
     echo ""
 done
 
+echo "========= Syslog snippet =========="
+tail -n 100 /var/log/syslog
+
 # 2. Mounted file systems
 echo "========== Mounted File Systems =========="
 df -h
