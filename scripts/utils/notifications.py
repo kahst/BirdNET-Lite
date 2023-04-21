@@ -170,7 +170,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
             except sqlite3.Error as e:
                 print(e)
                 print("Database busy")
-                time.sleep(2)
+                timeim.sleep(2)
 
         if settings_dict.get('APPRISE_NOTIFY_NEW_SPECIES') == "1":
             try:
@@ -217,7 +217,7 @@ def sendAppriseNotifications(species, confidence, path, date, time, week, latitu
                 con.close()
             except sqlite3.Error:
                 print("Database busy")
-                time.sleep(2)
+                timeim.sleep(2)
 
 
 if __name__ == "__main__":
