@@ -120,7 +120,7 @@ if(isset($_GET["latitude"])){
       // Archive old language file
       syslog_shell_exec("cp -f $home/BirdNET-Pi/model/labels.txt $home/BirdNET-Pi/model/labels.txt.old", $user);
 
-      if($model == "BirdNET_GLOBAL_3K_V2.2_Model_FP16"){
+      if($model == "BirdNET_GLOBAL_3K_V2.3_Model_FP16"){
       // Install new language label file
         syslog_shell_exec("sudo chmod +x $home/BirdNET-Pi/scripts/install_language_label_nm.sh && $home/BirdNET-Pi/scripts/install_language_label_nm.sh -l $language", $user);
       } else {
@@ -325,7 +325,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 <script>
   document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('modelsel').addEventListener('change', function() {
-    if(this.value == "BirdNET_GLOBAL_3K_V2.2_Model_FP16"){ 
+    if(this.value == "BirdNET_GLOBAL_3K_V2.3_Model_FP16"){ 
       document.getElementById("soft").style.display="unset";
     } else {
       document.getElementById("soft").style.display="none";
@@ -357,7 +357,7 @@ function sendTestNotification(e) {
       <label for="model">Select a Model: </label>
       <select id="modelsel" name="model">
       <?php
-      $models = array("BirdNET_6K_GLOBAL_MODEL", "BirdNET_GLOBAL_3K_V2.2_Model_FP16");
+      $models = array("BirdNET_6K_GLOBAL_MODEL", "BirdNET_GLOBAL_3K_V2.3_Model_FP16");
       foreach($models as $modelName){
           $isSelected = "";
           if($config['MODEL'] == $modelName){
@@ -473,7 +473,7 @@ function runProcess() {
       <dt>BirdNET_6K_GLOBAL_MODEL (2020)</dt><br>
       <dd id="ddnewline">This is the BirdNET-Lite model, with bird sound recognition for more than 6,000 species worldwide. This is the default option and will generally work very for people in most of the world.</dd>
     <br>
-      <dt>BirdNET_GLOBAL_3K_V2.2_Model_FP16 (2022)</dt><br>
+      <dt>BirdNET_GLOBAL_3K_V2.3_Model_FP16 (2022)</dt><br>
       <dd id="ddnewline">This is the BirdNET-Analyzer model, a newer work-in-progress project with aims to improve on the BirdNET-Lite model. Currently it only supports about 3,500 species worldwide, meaning for some regions (North America, Europe, Australia) it will usually outperform the BirdNET-Lite model, but for other regions it will be worse.</dd><br>
       <dt>[ In-depth technical write-up on the models <a target="_blank" href="https://github.com/mcguirepr89/BirdNET-Pi/wiki/BirdNET-Pi:-some-theory-on-classification-&-some-practical-hints">here</a> ]</dt>
       </dl>
