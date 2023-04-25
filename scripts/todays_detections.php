@@ -570,7 +570,9 @@ function searchDetections(searchvalue) {
 function loadDetections(detections_limit, element=undefined) {
   const xhttp = new XMLHttpRequest();
   xhttp.onload = function() {
-    document.getElementsByClassName("legacyview")[0].style.display="unset";
+    <?php if($kiosk == false) { ?>
+      document.getElementsByClassName("legacyview")[0].style.display="unset";
+    <?php } ?>
     if(typeof element !== "undefined")
     {
      element.remove();
