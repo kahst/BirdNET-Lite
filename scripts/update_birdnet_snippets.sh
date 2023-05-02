@@ -190,6 +190,9 @@ fi
 if ! grep APPRISE_ONLY_NOTIFY_SPECIES_NAMES /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "APPRISE_ONLY_NOTIFY_SPECIES_NAMES=\"\"" >> /etc/birdnet/birdnet.conf
 fi
+if ! grep APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2 /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=\"\"" >> /etc/birdnet/birdnet.conf
+fi
 
 if ! grep RTSP_STREAM_TO_LIVESTREAM /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "RTSP_STREAM_TO_LIVESTREAM=\"0\"" >> /etc/birdnet/birdnet.conf
