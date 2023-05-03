@@ -66,7 +66,7 @@ Currently listening in these countries . . . that I know of . . .
 * **Automatic extraction and cataloguing** of bird sounds
 * **Tools to visualize your recorded bird data** and analyze trends
 * **Live audio stream and spectrogram**
-* **Automatic disk space management** that periodically purges old audio files to manage disk space
+* **Automatic disk space management** that periodically purges old audio files
 * [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
 * Web interface access to all data and logs provided by [Caddy](https://caddyserver.com)
 * [GoTTY](https://github.com/yudai/gotty) Web Terminal
