@@ -63,7 +63,7 @@ Currently listening in these countries . . . that I know of . . .
 
 ## Features
 * **24/7 recording and automatic identification** of bird songs, chirps, and peeps using BirdNET machine learning
-* **Automatic extraction and cataloguing** of bird sounds
+* **Automatic extraction and cataloguing** of bird clips from full-length recordings
 * **Tools to visualize your recorded bird data** and analyze trends
 * **Live audio stream and spectrogram**
 * **Automatic disk space management** that periodically purges old audio files
