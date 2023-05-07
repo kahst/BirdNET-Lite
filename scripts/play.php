@@ -1,44 +1,17 @@
 <?php
-error_reporting(E_ERROR);
-ini_set('display_errors',1);
-
-$db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
-if($db == False){
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-
-if (file_exists('./scripts/thisrun.txt')) {
-  $config = parse_ini_file('./scripts/thisrun.txt');
-} elseif (file_exists('firstrun.ini')) {
-  $config = parse_ini_file('firstrun.ini');
-}
-
-$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-$home = trim($home);
-
+include_once "./scripts/common.php";
 
 if(isset($_GET['deletefile'])) {
   if(isset($_SERVER['PHP_AUTH_USER'])) {
     $submittedpwd = $_SERVER['PHP_AUTH_PW'];
     $submitteduser = $_SERVER['PHP_AUTH_USER'];
     if($submittedpwd == $config['CADDY_PWD'] && $submitteduser == 'birdnet'){
-      $statement1 = $db->prepare('DELETE FROM detections WHERE File_Name = "'.explode("/",$_GET['deletefile'])[2].'" LIMIT 1');
-      if($statement1 == False){
-        echo "Error";
-        header("refresh: 0;");
-      } else {
-        $file_pointer = $home."/BirdSongs/Extracted/By_Date/".$_GET['deletefile'];
-        if (!exec("sudo rm $file_pointer && sudo rm $file_pointer.png")) {
-          echo "OK";
-        } else {
-          echo "Error";
-        }
 
-      }
-      $result1 = $statement1->execute();
+	  $filename_to_delete = $_GET['deletefile'];
+      $message = deleteDetection($filename_to_delete)['message'];
+      echo $message;
       die();
+
     } else {
       header('WWW-Authenticate: Basic realm="My Realm"');
       header('HTTP/1.0 401 Unauthorized');
@@ -58,31 +31,17 @@ if(isset($_GET['excludefile'])) {
     $submittedpwd = $_SERVER['PHP_AUTH_PW'];
     $submitteduser = $_SERVER['PHP_AUTH_USER'];
     if($submittedpwd == $config['CADDY_PWD'] && $submitteduser == 'birdnet'){
-      if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")) {
-        file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end\n");
-      }
-      if(isset($_GET['exclude_add'])) {
-        $myfile = fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "a") or die("Unable to open file!");
-        $txt = $_GET['excludefile'];
-        fwrite($myfile, $txt."\n");
-        fwrite($myfile, $txt.".png\n");
-        fclose($myfile);
-        echo "OK";
-        die();
-      } else {
-        $lines  = file($home."/BirdNET-Pi/scripts/disk_check_exclude.txt");
-        $search = $_GET['excludefile'];
 
-        $result = '';
-        foreach($lines as $line) {
-          if(stripos($line, $search) === false && stripos($line, $search.".png") === false) {
-            $result .= $line;
-          }
-        }
-        file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", $result);
-        echo "OK";
-        die();
+      if(isset($_GET['exclude_add'])) {
+		  $response_data = protectDetectionFromDeletion('protect', $_GET['excludefile']);
+		  echo $response_data['message'];
+		  die();
+      } else {
+		  $response_data = protectDetectionFromDeletion('unprotect', $_GET['excludefile']);
+		  echo $response_data['message'];
+		  die();
       }
+
     } else {
       header('WWW-Authenticate: Basic realm="My Realm"');
       header('HTTP/1.0 401 Unauthorized');
@@ -101,43 +60,24 @@ $shifted_path = $home."/BirdSongs/Extracted/By_Date/shifted/";
 
 if(isset($_GET['shiftfile'])) {
 
-    $filename = $_GET['shiftfile'];
-    $pp = pathinfo($filename);
-    $dir = $pp['dirname'];
-    $fn  = $pp['filename'];
-    $ext = $pp['extension'];
-    $pi = $home."/BirdSongs/Extracted/By_Date/";
+	$filename = $_GET['shiftfile'];
+	$doShift = null;
+	if (isset($_GET['doshift'])) {
+		$doShift = true;
+	}
 
-    if(isset($_GET['doshift'])) {
-  $freqshift_tool = $config['FREQSHIFT_TOOL'];
-
-  if ($freqshift_tool == "ffmpeg") {
-    $cmd = "sudo /usr/bin/nohup /usr/bin/ffmpeg -y -i \"".$pi.$filename."\" -af \"rubberband=pitch=".$config['FREQSHIFT_LO']."/".$config['FREQSHIFT_HI']."\" \"".$shifted_path.$filename."\"";
-    shell_exec("sudo mkdir -p ".$shifted_path.$dir." && ".$cmd);
-
-  } else if ($freqshift_tool == "sox") {
-    //linux.die.net/man/1/sox
-    $soxopt = "-q";
-    $soxpitch = $config['FREQSHIFT_PITCH'];
-    $cmd = "sudo /usr/bin/nohup /usr/bin/sox \"".$pi.$filename."\" \"".$shifted_path.$filename."\" pitch ".$soxopt." ".$soxpitch;
-   shell_exec("sudo mkdir -p ".$shifted_path.$dir." && ".$cmd);
-  }
-    } else {
-     $cmd = "sudo rm -f " . $shifted_path.$filename;
-     shell_exec($cmd);
-    }
-
-    echo "OK";
+	$response_data = frequencyShiftDetectionAudio($filename, $doShift);
+    echo $response_data['message'];
     die();
 }
 
 if(isset($_GET['bydate'])){
-  $statement = $db->prepare('SELECT DISTINCT(Date) FROM detections GROUP BY Date ORDER BY Date DESC');
-  if($statement == False){
-    echo "Database is busy";
-    header("refresh: 0;");
-  }
-  $result = $statement->execute();
+  $result_data = getDetectionsByDate();
+	if($result_data['success'] == False){
+		echo $result_data['message'];
+		header("refresh: 0;");
+	}
+	$result = $result_data['data'];
   $view = "bydate";
 
   #Specific Date
@@ -146,30 +86,36 @@ if(isset($_GET['bydate'])){
   session_start();
   $_SESSION['date'] = $date;
   if(isset($_GET['sort']) && $_GET['sort'] == "occurrences") {
-    $statement = $db->prepare("SELECT DISTINCT(Com_Name) FROM detections WHERE Date == \"$date\" GROUP BY Com_Name ORDER BY COUNT(*) DESC");
+    $sort = $_GET['sort'];
   } else {
-    $statement = $db->prepare("SELECT DISTINCT(Com_Name) FROM detections WHERE Date == \"$date\" ORDER BY Com_Name");
+    $sort = null;
   }
-  if($statement == False){
-    echo "Database is busy";
-    header("refresh: 0;");
-  }
-  $result = $statement->execute();
+	$result_data = getDetectionsByDate($date, $sort);
+	if($result_data['success'] == False){
+		echo $result_data['message'];
+		header("refresh: 0;");
+	}
+	$result = $result_data['data'];
+
   $view = "date";
 
   #By Species
 } elseif(isset($_GET['byspecies'])) {
-  if(isset($_GET['sort']) && $_GET['sort'] == "occurrences") {
-    $statement = $db->prepare('SELECT DISTINCT(Com_Name) FROM detections GROUP BY Com_Name ORDER BY COUNT(*) DESC');
-  } else {
-    $statement = $db->prepare('SELECT DISTINCT(Com_Name) FROM detections ORDER BY Com_Name ASC');
-  } 
+	if(isset($_GET['sort']) && $_GET['sort'] == "occurrences") {
+		$sort = $_GET['sort'];
+	} else {
+		$sort = null;
+	}
+
   session_start();
-  if($statement == False){
-    echo "Database is busy";
-    header("refresh: 0;");
-  }
-  $result = $statement->execute();
+
+  $resultArr_data = getDetectionsBySpecies(null, $sort);
+	if($resultArr_data['success'] == False){
+		echo $resultArr_data['message'];
+		header("refresh: 0;");
+	}
+	$result = $resultArr_data['data']['species'];
+
   $view = "byspecies";
 
   #Specific Species
@@ -177,15 +123,16 @@ if(isset($_GET['bydate'])){
   $species = $_GET['species'];
   session_start();
   $_SESSION['species'] = $species;
-  $statement = $db->prepare("SELECT * FROM detections WHERE Com_Name == \"$species\" ORDER BY Com_Name");
-  $statement3 = $db->prepare("SELECT Date, Time, Sci_Name, MAX(Confidence), File_Name FROM detections WHERE Com_Name == \"$species\" ORDER BY Com_Name");
-  if($statement == False || $statement3 == False){
-    echo "Database is busy";
-    header("refresh: 0;");
-  }
-  $result = $statement->execute();
-  $result3 = $statement3->execute();
-  $view = "species";
+
+	$resultArr_data = getDetectionsBySpecies($species, null);
+	if($resultArr_data['success'] == False){
+		echo $resultArr_data['message'];
+		header("refresh: 0;");
+	}
+	$result = $resultArr_data['data']['species'];
+    $resul3 = $resultArr_data['data']['species_MaxConf'];
+	$view = "species";
+
 } else {
   session_start();
   session_unset();
@@ -312,20 +259,20 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
 <?php
   #By Date
   if($view == "bydate") {
-    while($results=$result->fetchArray(SQLITE3_ASSOC)){
-      $date = $results['Date'];
-      if(realpath($home."/BirdSongs/Extracted/By_Date/".$date) !== false){
-        echo "<td>
-          <button action=\"submit\" name=\"date\" value=\"$date\">".($date == date('Y-m-d') ? "Today" : $date)."</button></td></tr>";}}
+      foreach ($result as $bd_result){
+		  $date = $bd_result['Date'];
+		  if(realpath($home."/BirdSongs/Extracted/By_Date/".$date) !== false){
+			  echo "<td>
+          <button action=\"submit\" name=\"date\" value=\"$date\">".($date == date('Y-m-d') ? "Today" : $date)."</button></td></tr>";}
+	  }
 
           #By Species
   } elseif($view == "byspecies") {
     $birds = array();
-    while($results=$result->fetchArray(SQLITE3_ASSOC))
-    {
-      $name = $results['Com_Name'];
-      $birds[] = $name;
-    }
+	  foreach ($result as $species_bird_name) {
+		  $name = $species_bird_name['Com_Name'];
+		  $birds[] = $name;
+	  }
 
     if(count($birds) > 45) {
       $num_cols = 3;
@@ -355,13 +302,12 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
     }
   } elseif($view == "date") {
     $birds = array();
-while($results=$result->fetchArray(SQLITE3_ASSOC))
-{
-  $name = $results['Com_Name'];
-  if(realpath($home."/BirdSongs/Extracted/By_Date/".$date."/".str_replace(" ", "_",$name)) !== false){
-    $birds[] = $name;
-  }
-}
+	  foreach ($result as $species_bird_name) {
+		  $name = $species_bird_name['Com_Name'];
+		  if (realpath($home . "/BirdSongs/Extracted/By_Date/" . $date . "/" . str_replace(" ", "_", $name)) !== false) {
+			  $birds[] = $name;
+		  }
+	  }
 
 if(count($birds) > 45) {
   $num_cols = 3;
@@ -428,37 +374,37 @@ if ($fp) {
 }
 
 $name = $_GET['species'];
+$confidence = null;
 if(isset($_SESSION['date'])) {
   $date = $_SESSION['date'];
   if(isset($_GET['sort']) && $_GET['sort'] == "confidence") {
-    $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Confidence DESC");
-  } else {
-    $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" AND Date == \"$date\" ORDER BY Time DESC");
+      $confidence = $_GET['sort'];
   }
+	$result2_data = getSpeciesDetectionInfo($name, $date, $confidence);
 } else {
   if(isset($_GET['sort']) && $_GET['sort'] == "confidence") {
-    $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Confidence DESC");
-  } else {
-    $statement2 = $db->prepare("SELECT * FROM detections where Com_Name == \"$name\" ORDER BY Date DESC, Time DESC");
+	  $confidence = $_GET['sort'];
   }
+	$result2_data = getSpeciesDetectionInfo($name, null, $confidence);
 }
-if($statement2 == False){
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result2 = $statement2->execute();
-$num_rows = 0;
-while ($result2->fetchArray(SQLITE3_ASSOC)) {
-    $num_rows++;
-}
-$result2->reset(); // reset the pointer to the beginning of the result set
+
+	if ($result2_data['success'] == False) {
+		echo $result2_data['message'];
+		header("refresh: 0;");
+	}
+	$result2 = $result2_data['data'];
+
+//Count number of records we have
+$num_rows = count($result2);
+
 echo "<table>
   <tr>
   <th>$name</th>
   </tr>";
   $iter=0;
-  while($results=$result2->fetchArray(SQLITE3_ASSOC))
+  while($iter < count($result2))
   {
+    $results = $result2[$iter];
     $comname = preg_replace('/ /', '_', $results['Com_Name']);
     $comname = preg_replace('/\'/', '', $comname);
     $date = $results['Date'];
@@ -471,6 +417,7 @@ echo "<table>
     $confidence = round((float)round($results['Confidence'],2) * 100 ) . '%';
     $filename_formatted = $date."/".$comname."/".$results['File_Name'];
 
+	$iter++;
     // file was deleted by disk check, no need to show the detection in recordings
     if(!file_exists($home."/BirdSongs/Extracted/".$filename)) {
       continue;
@@ -478,12 +425,11 @@ echo "<table>
     if(!in_array($filename_formatted, $disk_check_exclude_arr) && isset($_GET['only_excluded'])) {
       continue;
     }
-    $iter++;
 
     if($num_rows < 100){
       $imageelem = "<video onplay='setLiveStreamVolume(0)' onended='setLiveStreamVolume(1)' onpause='setLiveStreamVolume(1)' controls poster=\"$filename_png\" preload=\"none\" title=\"$filename\"><source src=\"$filename\"></video>";
     } else {
-      $imageelem = "<a href=\"$filename\"><img src=\"$filename_png\"></a>";
+      $imageelem = "<a target='_blank' href=\"$filename\"><img src=\"$filename_png\"></a>";
     }
 
     if($config["FULL_DISK"] == "purge") {
@@ -531,17 +477,17 @@ echo "<table>
 
   if(isset($_GET['filename'])){
     $name = $_GET['filename'];
-    $statement2 = $db->prepare("SELECT * FROM detections where File_name == \"$name\" ORDER BY Date DESC, Time DESC");
-    if($statement2 == False){
-      echo "Database is busy";
-      header("refresh: 0;");
-    }
-    $result2 = $statement2->execute();
+    $result2_data = getDetectionsByFilename($name);
+	  if($result2_data['success'] == False){
+		  echo $result2_data['message'];
+		  header("refresh: 0;");
+	  }
+	  $result2 = $result2_data['data'];
     echo "<table>
       <tr>
       <th>$name</th>
       </tr>";
-      while($results=$result2->fetchArray(SQLITE3_ASSOC))
+      foreach ($result2 as $results)
       {
         $comname = preg_replace('/ /', '_', $results['Com_Name']);
         $comname = preg_replace('/\'/', '', $comname);
@@ -600,7 +546,9 @@ echo "<table>
             </tr>";
         }
 
-      }echo "</table>";}?>
+      }
+      echo "</table>";
+  }?>
 </div>
 <style>
 td.spec {
