@@ -92,6 +92,7 @@ if(isset($_GET["latitude"])){
   }
 
   // Update Language settings only if a change is requested
+
   changeLanguage($model, $language);
 
 	setSetting('SITE_NAME', "\"$site_name\"");

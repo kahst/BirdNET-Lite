@@ -1005,7 +1005,7 @@ function changeLanguage($model, $language)
 
 			if ($model == "BirdNET_GLOBAL_3K_V2.3_Model_FP16") {
 				// Install new language label file
-				$result = syslog_shell_exec("sudo chmod +x $scripts_dir/install_language_label_nm.sh && $scripts_dir/install_language_label_nm.sh -l $language", $user);
+				$result = syslog_shell_exec("chmod +x $scripts_dir/install_language_label_nm.sh && $scripts_dir/install_language_label_nm.sh -l $language", $user);
 			} else {
 				$result = syslog_shell_exec("$scripts_dir/install_language_label.sh -l $language", $user);
 			}
