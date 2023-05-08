@@ -1,16 +1,8 @@
 <?php
-error_reporting(E_ERROR);
-ini_set('display_errors',1);
-
-function syslog_shell_exec($cmd, $sudo_user = null) {
-  if ($sudo_user) {
-    $cmd = "sudo -u $sudo_user $cmd";
-  }
-  $output = shell_exec($cmd);
-
-  if (strlen($output) > 0) {
-    syslog(LOG_INFO, $output);
-  }
+if(file_exists('./scripts/common.php')){
+	include_once "./scripts/common.php";
+}else{
+	include_once "./common.php";
 }
 
 if(isset($_GET['threshold'])) {
@@ -19,19 +11,12 @@ if(isset($_GET['threshold'])) {
     die('Invalid threshold value');
   }
 
-  $user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
-  $home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
-
-  $command = "sudo -u $user ".$home."/BirdNET-Pi/birdnet/bin/python3 ".$home."/BirdNET-Pi/scripts/species.py --threshold $threshold 2>&1";
-
-  $output = shell_exec($command);
-
-  echo $output;
+  echo executeSysCommand('test_threshold', $threshold);
   die();
 }
 
 if(isset($_GET['restart_php']) && $_GET['restart_php'] == "true") {
-  shell_exec("sudo service php7.4-fpm restart");
+  executeSysCommand('restart_php');
   die();
 }
 
@@ -78,7 +63,7 @@ if(isset($_GET["latitude"])){
   }
 
   if(isset($timezone) && in_array($timezone, DateTimeZone::listIdentifiers())) {
-    shell_exec("sudo timedatectl set-timezone ".$timezone);
+    executeSysCommand('set_timezone',$timezone);
     date_default_timezone_set($timezone);
     echo "<script>setTimeout(
     function() {
@@ -91,88 +76,84 @@ if(isset($_GET["latitude"])){
   // logic for setting the date and time based on user inputs from the form below
   if(isset($_GET['date']) && isset($_GET['time'])) {
     // can't set the date manually if it's getting it from the internet, disable ntp
-    exec("sudo timedatectl set-ntp false");
+    executeSysCommand('disable_ntp');
 
     // check if valid date and time
     $datetime = DateTime::createFromFormat('Y-m-d H:i', $_GET['date'] . ' ' . $_GET['time']);
     if ($datetime && $datetime->format('Y-m-d H:i') === $_GET['date'] . ' ' . $_GET['time']) {
-      exec("sudo date -s '".$_GET['date']." ".$_GET['time']."'");
+		executeSysCommand('set_date', ['date' => $_GET['date'], 'time' => $_GET['time']]);
     }
   } else {
     // user checked 'use time from internet if available,' so make sure that's on
-    if(strlen(trim(exec("sudo timedatectl | grep \"NTP service: active\""))) == 0){
-      exec("sudo timedatectl set-ntp true");
-      sleep(3);
+    if(strlen(trim(executeSysCommand('is_ntp_active'))) == 0){
+		executeSysCommand('enable_ntp');
+		sleep(3);
     }
   }
 
   // Update Language settings only if a change is requested
-  if (file_exists('./scripts/thisrun.txt')) {
-    $lang_config = parse_ini_file('./scripts/thisrun.txt');
-  } elseif (file_exists('./scripts/firstrun.ini')) {
-    $lang_config = parse_ini_file('./scripts/firstrun.ini');
-  }
-
-  if ($model != $lang_config['MODEL'] || $language != $lang_config['DATABASE_LANG']){
-    if(strlen($language) == 2){
-      $user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
-      $home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
-
-      // Archive old language file
-      syslog_shell_exec("cp -f $home/BirdNET-Pi/model/labels.txt $home/BirdNET-Pi/model/labels.txt.old", $user);
-
-      if($model == "BirdNET_GLOBAL_3K_V2.3_Model_FP16"){
-      // Install new language label file
-        syslog_shell_exec("sudo chmod +x $home/BirdNET-Pi/scripts/install_language_label_nm.sh && $home/BirdNET-Pi/scripts/install_language_label_nm.sh -l $language", $user);
-      } else {
-        syslog_shell_exec("$home/BirdNET-Pi/scripts/install_language_label.sh -l $language", $user);
-      }
-
-      syslog(LOG_INFO, "Successfully changed language to '$language' and model to '$model'");
-    }
-  }
+  changeLanguage($model, $language);
 
 
-  $contents = file_get_contents("/etc/birdnet/birdnet.conf");
-  $contents = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents);
-  $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
-  $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
-  $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
-  $contents = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents);
-  $contents = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY='$apprise_notification_body'", $contents);
-  $contents = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents);
-  $contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents);
-  $contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=.*/", "APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=$apprise_notify_new_species_each_day", $contents);
-  $contents = preg_replace("/APPRISE_WEEKLY_REPORT=.*/", "APPRISE_WEEKLY_REPORT=$apprise_weekly_report", $contents);
-  $contents = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents);
-  $contents = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents);
-  $contents = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents);
-  $contents = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents);
-  $contents = preg_replace("/MODEL=.*/", "MODEL=$model", $contents);
-  $contents = preg_replace("/SF_THRESH=.*/", "SF_THRESH=$sf_thresh", $contents);
-  $contents = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES=\"$only_notify_species_names\"", $contents);
-  $contents = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=\"$only_notify_species_names_2\"", $contents);
+//
+//  $contents = file_get_contents("/etc/birdnet/birdnet.conf");
+//  $contents = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents);
+//  $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
+//  $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
+//  $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
+//  $contents = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents);
+//  $contents = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY='$apprise_notification_body'", $contents);
+//  $contents = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents);
+//  $contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents);
+//  $contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=.*/", "APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=$apprise_notify_new_species_each_day", $contents);
+//  $contents = preg_replace("/APPRISE_WEEKLY_REPORT=.*/", "APPRISE_WEEKLY_REPORT=$apprise_weekly_report", $contents);
+//  $contents = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents);
+//  $contents = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents);
+//  $contents = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents);
+//  $contents = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents);
+//  $contents = preg_replace("/MODEL=.*/", "MODEL=$model", $contents);
+//  $contents = preg_replace("/SF_THRESH=.*/", "SF_THRESH=$sf_thresh", $contents);
+//  $contents = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES=\"$only_notify_species_names\"", $contents);
+//  $contents = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=\"$only_notify_species_names_2\"", $contents);
+//
+//  $contents2 = file_get_contents("./scripts/thisrun.txt");
+//  $contents2 = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents2);
+//  $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
+//  $contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
+//  $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
+//  $contents2 = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents2);
+//  $contents2 = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY='$apprise_notification_body'", $contents2);
+//  $contents2 = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents2);
+//  $contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents2);
+//  $contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=.*/", "APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=$apprise_notify_new_species_each_day", $contents2);
+//  $contents2 = preg_replace("/APPRISE_WEEKLY_REPORT=.*/", "APPRISE_WEEKLY_REPORT=$apprise_weekly_report", $contents2);
+//  $contents2 = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents2);
+//  $contents2 = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents2);
+//  $contents2 = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents2);
+//  $contents2 = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents2);
+//  $contents2 = preg_replace("/MODEL=.*/", "MODEL=$model", $contents2);
+//  $contents2 = preg_replace("/SF_THRESH=.*/", "SF_THRESH=$sf_thresh", $contents2);
+//  $contents2 = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES=\"$only_notify_species_names\"", $contents2);
+//  $contents2 = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=\"$only_notify_species_names_2\"", $contents2);
 
-  $contents2 = file_get_contents("./scripts/thisrun.txt");
-  $contents2 = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents2);
-  $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
-  $contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
-  $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
-  $contents2 = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents2);
-  $contents2 = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY='$apprise_notification_body'", $contents2);
-  $contents2 = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents2);
-  $contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents2);
-  $contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=.*/", "APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=$apprise_notify_new_species_each_day", $contents2);
-  $contents2 = preg_replace("/APPRISE_WEEKLY_REPORT=.*/", "APPRISE_WEEKLY_REPORT=$apprise_weekly_report", $contents2);
-  $contents2 = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents2);
-  $contents2 = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents2);
-  $contents2 = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents2);
-  $contents2 = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents2);
-  $contents2 = preg_replace("/MODEL=.*/", "MODEL=$model", $contents2);
-  $contents2 = preg_replace("/SF_THRESH=.*/", "SF_THRESH=$sf_thresh", $contents2);
-  $contents2 = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES=\"$only_notify_species_names\"", $contents2);
-  $contents2 = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=\"$only_notify_species_names_2\"", $contents2);
-
+    setSetting('SITE_NAME', "\"$site_name\"");
+	setSetting('LATITUDE', $latitude);
+	setSetting('LONGITUDE', $longitude);
+	setSetting('BIRDWEATHER_ID', $birdweather_id);
+	setSetting('APPRISE_NOTIFICATION_TITLE', "\"$apprise_notification_title\"");
+	setSetting('APPRISE_NOTIFICATION_BODY', "'$apprise_notification_body'");
+	setSetting('APPRISE_NOTIFY_EACH_DETECTION', $apprise_notify_each_detection);
+	setSetting('APPRISE_NOTIFY_NEW_SPECIES', $apprise_notify_new_species);
+	setSetting('APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY', $apprise_notify_new_species_each_day);
+	setSetting('APPRISE_WEEKLY_REPORT', $apprise_weekly_report);
+	setSetting('FLICKR_API_KEY', $flickr_api_key);
+	setSetting('DATABASE_LANG', $language);
+	setSetting('FLICKR_FILTER_EMAIL', $flickr_filter_email);
+	setSetting('APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES', $minimum_time_limit);
+	setSetting('MODEL', $model);
+	setSetting('SF_THRESH', $sf_thresh);
+	setSetting('APPRISE_ONLY_NOTIFY_SPECIES_NAMES', "\"$only_notify_species_names\"");
+	setSetting('APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2', "\"$only_notify_species_names_2\"");
 
 
   if($site_name != $config["SITE_NAME"]) {
@@ -182,43 +163,17 @@ if(isset($_GET["latitude"])){
     }, 1000);</script>";
   }
 
-  $fh = fopen("/etc/birdnet/birdnet.conf", "w");
-  $fh2 = fopen("./scripts/thisrun.txt", "w");
-  fwrite($fh, $contents);
-  fwrite($fh2, $contents2);
+	updateAppriseConfig($apprise_input);
 
-  if(isset($apprise_input)){
-    $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-    $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-    $home = trim($home);
-
-    $appriseconfig = fopen($home."/BirdNET-Pi/apprise.txt", "w");
-    fwrite($appriseconfig, $apprise_input);
-  }
-
-  syslog(LOG_INFO, "Restarting Services");
-  shell_exec("sudo restart_services.sh");
+    serviceMaintenance('restart core.services');
 }
 
 if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
-  $db = new SQLite3('./birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
-
-  $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-  $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-  $home = trim($home);
-
-  if (file_exists('./thisrun.txt')) {
-    $config = parse_ini_file('./thisrun.txt');
-  } elseif (file_exists('./firstrun.ini')) {
-    $config = parse_ini_file('./firstrun.ini');
-  }
-
   $cf = explode("\n",$_GET['apprise_config']);
   $cf = "'".implode("' '", $cf)."'";
 
-  $statement0 = $db->prepare('SELECT * FROM detections WHERE Date == DATE(\'now\', \'localtime\') ORDER BY TIME DESC LIMIT 1');
-  $result0 = $statement0->execute();
-  while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
+  $result0 = getMostRecentDetectionToday();
+  foreach ($result0['data'] as $todaytable)
   {
     $sciname = $todaytable['Sci_Name'];
     $comname = $todaytable['Com_Name'];
@@ -280,7 +235,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   $body = str_replace("\$overlap", $overlap, $body);
   $body = str_replace("\$flickrimage", $exampleimage, $body);
 
-  echo "<pre class=\"bash\">".shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv --plugin-path ".$home."/.apprise/plugins "." -t '".escapeshellcmd($title)."' -b '".escapeshellcmd($body)."' ".$attach." ".$cf." ")."</pre>";
+	echo "<pre class=\"bash\">" . executeSysCommand('appraise_notification', ['title' => $title, 'body' => $body, 'attach' => $attach, 'cf' => $cf]) . "</pre>";
 
   die();
 }
@@ -294,19 +249,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
       <div class="brbanner"><h1>Basic Settings</h1></div><br>
     <form id="basicform" action=""  method="GET">
 <?php
-if (file_exists('./scripts/thisrun.txt')) {
-  $config = parse_ini_file('./scripts/thisrun.txt');
-} elseif (file_exists('./scripts/firstrun.ini')) {
-  $config = parse_ini_file('./scripts/firstrun.ini');
-}
-$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-$home = trim($home);
-if (file_exists($home."/BirdNET-Pi/apprise.txt")) {
-  $apprise_config = file_get_contents($home."/BirdNET-Pi/apprise.txt");
-} else {
-  $apprise_config = "";
-}
+$apprise_config = getAppriseConfig();
 $caddypwd = $config['CADDY_PWD'];
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
   header('WWW-Authenticate: Basic realm="My Realm"');
@@ -323,12 +266,12 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
     exit;
   }
 }
-?>    
+?>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('modelsel').addEventListener('change', function() {
-    if(this.value == "BirdNET_GLOBAL_3K_V2.3_Model_FP16"){ 
+    if(this.value == "BirdNET_GLOBAL_3K_V2.3_Model_FP16"){
       document.getElementById("soft").style.display="unset";
     } else {
       document.getElementById("soft").style.display="none";
@@ -344,13 +287,13 @@ function sendTestNotification(e) {
   var apprise_config = encodeURIComponent(document.getElementsByName("apprise_input")[0].value);
 
   var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
+    xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             document.getElementById("testsuccessmsg").innerHTML = this.responseText+" Test sent! Make sure to <b>Update Settings</b> below."
             e.classList.remove("disabled");
         }
     }
-    xmlHttp.open("GET", "scripts/config.php?sendtest=true&apprise_notification_title="+apprise_notification_title+"&apprise_notification_body="+apprise_notification_body+"&apprise_config="+apprise_config, true); // true for asynchronous 
+    xmlHttp.open("GET", "scripts/config.php?sendtest=true&apprise_notification_title="+apprise_notification_title+"&apprise_notification_body="+apprise_notification_body+"&apprise_config="+apprise_config, true); // true for asynchronous
     xmlHttp.send(null);
 }
 </script>
@@ -360,7 +303,6 @@ function sendTestNotification(e) {
       <label for="model">Select a Model: </label>
       <select id="modelsel" name="model">
       <?php
-      $models = array("BirdNET_6K_GLOBAL_MODEL", "BirdNET_GLOBAL_3K_V2.3_Model_FP16");
       foreach($models as $modelName){
           $isSelected = "";
           if($config['MODEL'] == $modelName){
@@ -575,39 +517,6 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <label for="language">Database Language: </label>
       <select name="language">
       <?php
-        $langs = array(
-          'not-selected' => 'Not Selected',
-          "af" => "Afrikaans",
-          "ca" => "Catalan",
-          "cs" => "Czech",
-          "zh" => "Chinese",
-          "hr" => "Croatian",
-          "da" => "Danish",
-          "nl" => "Dutch",
-          "en" => "English",
-          "et" => "Estonian",
-          "fi" => "Finnish",
-          "fr" => "French",
-          "de" => "German",
-          "hu" => "Hungarian",
-          "is" => "Icelandic",
-          "id" => "Indonesia",
-          "it" => "Italian",
-          "ja" => "Japanese",
-          "lv" => "Latvian",
-          "lt" => "Lithuania",
-          "no" => "Norwegian",
-          "pl" => "Polish",
-          "pt" => "Portugues",
-          "ru" => "Russian",
-          "sk" => "Slovak",
-          "sl" => "Slovenian",
-          "es" => "Spanish",
-          "sv" => "Swedish",
-          "th" => "Thai",
-          "uk" => "Ukrainian"
-        );
-
         // Create options for each language
         foreach($langs as $langTag => $langName){
           $isSelected = "";
@@ -638,7 +547,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       </script>
       <?php
       // if NTP service is active, show the checkboxes as checked, and disable the manual input
-      $tdc = trim(exec("sudo timedatectl | grep \"NTP service: active\""));
+      $tdc = trim(executeSysCommand('is_ntp_active'));
       if (strlen($tdc) > 0) {
         $checkedvalue = "checked";
         $disabledvalue = "disabled";
@@ -663,7 +572,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
         Select a timezone
       </option>
       <?php
-      $current_timezone = trim(shell_exec("cat /etc/timezone"));
+      $current_timezone = trim(executeSysCommand('current_timezone'));
       $timezone_identifiers = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
         
       $n = 425;

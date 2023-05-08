@@ -4,8 +4,16 @@ ini_set('user_agent', 'PHP_Flickr/1.0');
 ini_set('display_errors', 1);
 error_reporting(E_ERROR);
 
+//Setup the session if we're not using the API, since the API endpoint sets up it's own session
+if (!isset($api_incl)) {
+	$api_incl = false;
+	session_set_cookie_params(7200);
+	session_start();
+}
+
 //Get the user and home directory for the first user in the system (userid 1000)
 $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$user = trim($user);
 $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
 $home = trim($home);
 
@@ -30,19 +38,10 @@ if ($sys_timezone !== "") {
 	date_default_timezone_set($sys_timezone);
 }
 
-//Setup the session if we're not using the API, since the API endpoint sets up it's own session
-if (!isset($api_incl)) {
-	$api_incl = false;
-	session_set_cookie_params(7200);
-	session_start();
-}
 
 ////////// PARSES THE CONFIG FILE //////////
-if (file_exists('./scripts/thisrun.txt')) {
-	$config = parse_ini_file('./scripts/thisrun.txt');
-} elseif (file_exists('./scripts/firstrun.ini')) {
-	$config = parse_ini_file('./scripts/firstrun.ini');
-}
+$config = [];
+parseConfig();
 
 //Set a default site name if nothing iss configured
 if ($config["SITE_NAME"] == "") {
@@ -51,6 +50,43 @@ if ($config["SITE_NAME"] == "") {
 	$site_name = $config['SITE_NAME'];
 }
 
+$models = array("BirdNET_6K_GLOBAL_MODEL", "BirdNET_GLOBAL_3K_V2.3_Model_FP16");
+$audio_formats = array("8svx", "aif", "aifc", "aiff", "aiffc", "al", "amb", "amr-nb", "amr-wb", "anb", "au", "avr", "awb", "caf", "cdda", "cdr", "cvs", "cvsd", "cvu", "dat", "dvms", "f32", "f4", "f64", "f8", "fap", "flac", "fssd", "gsm", "gsrt", "hcom", "htk", "ima", "ircam", "la", "lpc", "lpc10", "lu", "mat", "mat4", "mat5", "maud", "mp2", "mp3", "nist", "ogg", "paf", "prc", "pvf", "raw", "s1", "s16", "s2", "s24", "s3", "s32", "s4", "s8", "sb", "sd2", "sds", "sf", "sl", "sln", "smp", "snd", "sndfile", "sndr", "sndt", "sou", "sox", "sph", "sw", "txw", "u1", "u16", "u2", "u24", "u3", "u32", "u4", "u8", "ub", "ul", "uw", "vms", "voc", "vorbis", "vox", "w64", "wav", "wavpcm", "wv", "wve", "xa", "xi");
+$freqshift_tools = array("sox", "ffmpeg");
+
+//Database Languages
+$langs = array(
+	'not-selected' => 'Not Selected',
+	"af" => "Afrikaans",
+	"ca" => "Catalan",
+	"cs" => "Czech",
+	"zh" => "Chinese",
+	"hr" => "Croatian",
+	"da" => "Danish",
+	"nl" => "Dutch",
+	"en" => "English",
+	"et" => "Estonian",
+	"fi" => "Finnish",
+	"fr" => "French",
+	"de" => "German",
+	"hu" => "Hungarian",
+	"is" => "Icelandic",
+	"id" => "Indonesia",
+	"it" => "Italian",
+	"ja" => "Japanese",
+	"lv" => "Latvian",
+	"lt" => "Lithuania",
+	"no" => "Norwegian",
+	"pl" => "Polish",
+	"pt" => "Portugues",
+	"ru" => "Russian",
+	"sk" => "Slovak",
+	"sl" => "Slovenian",
+	"es" => "Spanish",
+	"sv" => "Swedish",
+	"th" => "Thai",
+	"uk" => "Ukrainian"
+);
 
 //Reference to database connection
 $DB_CONN = null;
@@ -107,7 +143,7 @@ function disconnect_from_birdsdb()
  */
 function db_execute_query($query, $bind_params = [], $fetchAllRecords = false, $fetchMode = SQLITE3_ASSOC)
 {
-	global $DB_CONN, $api_incl;
+	global $DB_CONN;
 	$success = false;
 	$message = '';
 	$data_to_return = null;
@@ -188,6 +224,15 @@ function getDetectionCountAll()
 function getDetectionCountToday()
 {
 	return db_execute_query('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\', \'localtime\')');
+}
+
+/**
+ * Returns detection info for the most recent detection today
+ * @return array
+ */
+function getMostRecentDetectionToday()
+{
+	return db_execute_query('SELECT * FROM detections WHERE Date == DATE(\'now\', \'localtime\') ORDER BY TIME DESC LIMIT 1', [], true);
 }
 
 /**
@@ -937,6 +982,41 @@ function getLastWeekDates()
 }
 
 /**
+ * Change Database Language
+ *
+ * @param $model
+ * @param $language
+ * @return string|null
+ */
+function changeLanguage($model, $language)
+{
+	global $config, $user;
+	//Re-parse the config just in case
+	parseConfig();
+	$result = "";
+
+	// Update Language settings only if a change is requested
+	if ($model != $config['MODEL'] || $language != $config['DATABASE_LANG']) {
+		if (strlen($language) == 2) {
+			$scripts_dir = getDirectory('scripts');
+
+			// Archive old language file
+			$result = syslog_shell_exec("cp -f " . getFilePath('labels.txt') . " " . getFilePath('labels.txt.old'), $user);
+
+			if ($model == "BirdNET_GLOBAL_3K_V2.3_Model_FP16") {
+				// Install new language label file
+				$result = syslog_shell_exec("sudo chmod +x $scripts_dir/install_language_label_nm.sh && $scripts_dir/install_language_label_nm.sh -l $language", $user);
+			} else {
+				$result = syslog_shell_exec("$scripts_dir/install_language_label.sh -l $language", $user);
+			}
+
+			syslog(LOG_INFO, "Successfully changed language to '$language' and model to '$model'");
+		}
+	}
+	return $result;
+}
+
+/**
  * Directory Path Helper, returns a full directory path for a supplied directory name e.g home, processed, extracted
  *
  * @param string $dir The directory to obtain a path for
@@ -972,6 +1052,8 @@ function getDirectory($dir)
 		return getDirectory('birdnet_pi') . '/config';
 	} elseif ($dir == "models" || $dir == "model") {
 		return getDirectory('birdnet_pi') . '/model';
+	} elseif ($dir == "python3_ve") {
+		return getDirectory('birdnet_pi') . '/birdnet/bin';
 	} elseif ($dir == "scripts") {
 		return getDirectory('birdnet_pi') . '/scripts';
 	} elseif ($dir == "templates") {
@@ -993,43 +1075,594 @@ function getFilePath($filename)
 {
 	if ($filename == "analyzing_now.txt") {
 		return getDirectory('birdnet_pi') . "/analyzing_now.txt";
+		//
 	} else if ($filename == "apprise.txt") {
 		return getDirectory('birdnet_pi') . "/apprise.txt";
+		//
 	} else if ($filename == "birdnet.conf") {
 		return getDirectory('birdnet_pi') . "/birdnet.conf";
+		//
 	} else if ($filename == "BirdDB.txt") {
 		return getDirectory('birdnet_pi') . "/BirdDB.txt";
+		//
 	} else if ($filename == "birds.db") {
 		return getDirectory('scripts') . "/birds.db";
+		//
 	} else if ($filename == "blacklisted_images.txt") {
 		return getDirectory('scripts') . "/blacklisted_images.txt";
+		//
 	} else if ($filename == "disk_check_exclude.txt") {
 		return getDirectory('scripts') . "/disk_check_exclude.txt";
+		//
 	} else if ($filename == "exclude_species_list.txt") {
-		return getDirectory('home') . "/exclude_species_list.txt";
+		return getDirectory('scripts') . "/exclude_species_list.txt";
+		//
 	} else if ($filename == "firstrun.ini") {
 		return getDirectory('home') . "/firstrun.ini";
+		//
 	} else if ($filename == "HUMAN.txt") {
 		return getDirectory('birdnet_pi') . "/HUMAN.txt";
+		//
 	} else if ($filename == "include_species_list.txt") {
-		return getDirectory('birdnet_pi') . "/include_species_list.txt";
-	} else if ($filename == "labels.txt") {
-		return getDirectory('model') . "/labels.txt";
+		return getDirectory('scripts') . "/include_species_list.txt";
+		//
+	} else if ($filename == "labels.txt" || $filename == "labels.txt.old") {
+		return getDirectory('model') . "/$filename";
+		//
 	} else if ($filename == "labels_flickr.txt") {
 		return getDirectory('model') . "/labels_flickr.txt";
+		//
 	} else if ($filename == "labels_l18n.zip") {
 		return getDirectory('model') . "/labels_l18n.zip";
+		//
 	} else if ($filename == "labels_lang.txt") {
 		return getDirectory('model') . "/labels_lang.txt";
+		//
 	} else if ($filename == "labels_nm.zip") {
 		return getDirectory('model') . "/labels_nm.zip";
+		//
 	} else if ($filename == "lastrun.txt") {
 		return getDirectory('scripts') . "/lastrun.txt";
+		//
+	} else if ($filename == "python3") {
+		return getDirectory('python3_ve') . "/python3 ";
+		//
+	} else if ($filename == "python3_appraise") {
+		return getDirectory('python3_ve') . "/apprise ";
+		//
+	} else if ($filename == "species.py") {
+		return getDirectory('scripts') . "/species.py";
+		//
 	} else if ($filename == "thisrun.txt") {
 		return getDirectory('scripts') . "/thisrun.txt";
+		//
 	}
 
 	return "";
+}
+
+/**
+ * Updates the setting value for the supplied setting name, if the setting doesn't exist it will be created
+ *
+ * @param $setting_name string Setting Name e.g SITE_NAME, BIRDWEATHER_ID, MODEL etc
+ * @param $setting_value string|int Setting value - This value has to be exactly how it needs to be stored (same as what was used in preg_replace) and properly escaped eg "\"asetting"\"
+ * @param $post_save_command string CommaAnd to execute after saving
+ * @return void
+ */
+function setSetting($setting_name, $setting_value, $post_save_command = null)
+{
+	global $config;
+
+	//Setting exists already, see if the value changed
+	if (array_key_exists($setting_name, $config)) {
+		//Strip any outer quotes from the setting value (e.g "$rec_card") and then test if it change how it was originally tested
+		//https://stackoverflow.com/questions/9734758/remove-quotes-from-start-and-end-of-string-in-php
+		$setting_value_clean = preg_replace('~^"?(.*?)"?$~', '$1', $setting_value);
+
+		if (strcmp($setting_value_clean, $config[$setting_name]) !== 0) {
+			$contents = file_get_contents(getFilePath('birdnet.conf'));
+			$contents2 = file_get_contents(getFilePath('thisrun.txt'));
+			//
+			if ($contents !== false && $contents2 !== false) {
+				//Update the value
+				$contents = preg_replace("/$setting_name=.*/", "$setting_name=$setting_value", $contents);
+				$contents2 = preg_replace("/$setting_name=.*/", "$setting_name=$setting_value", $contents2);
+
+				//Write all the  data out again to the the respective files
+				//	$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+				$fh = fopen(getFilePath('birdnet.conf'), "w");
+				$fh2 = fopen(getFilePath('thisrun.txt'), "w");
+
+				if ($fh !== false && $fh2 !== false) {
+					fwrite($fh, $contents);
+					fwrite($fh2, $contents2);
+					//Check if we need to execute a command after saving
+					if (isset($post_save_command)) {
+						sleep(1);
+						if (!is_array($post_save_command)) {
+							executeSysCommand($post_save_command);
+						} else {
+							//array of commands
+							foreach ($post_save_command as $single_command) {
+								executeSysCommand($single_command);
+							}
+						}
+					}
+					//Reload the settings to update our global $config variable
+					parseConfig();
+				}
+			}
+		}
+	} else {
+		//Create the setting in the setting file
+		shell_exec('sudo echo "' . $setting_name . '=' . $setting_value . '" >> ' . getFilePath('birdnet.conf'));
+		//also update this run txt file
+		shell_exec('sudo echo "' . $setting_name . '=' . $setting_value . '" >> ' . getFilePath('thisrun.txt'));
+
+		//Check if we need to execute a command after saving
+		if (isset($post_save_command)) {
+			sleep(1);
+			if (!is_array($post_save_command)) {
+				executeSysCommand($post_save_command);
+			} else {
+				//array of commands
+				foreach ($post_save_command as $single_command) {
+					executeSysCommand($single_command);
+				}
+			}
+		}
+		//Reload the settings to update our global $config variable
+		parseConfig();
+	}
+}
+
+/**
+ * Returns the value for the supplied setting name
+ *
+ * @param $setting_name
+ * @return mixed|null
+ */
+function getSetting($setting_name)
+{
+	global $config;
+	$setting_value = null;
+	if (array_key_exists($setting_name, $config)) {
+		$setting_value = $config[$setting_name];
+	}
+
+	return $setting_value;
+}
+
+/**
+ * Returns the username of the user with User ID 1000
+ *
+ * @return string
+ */
+function getUser()
+{
+	global $user;
+	return $user;
+}
+
+/**
+ * Executes commands against the system through a shorthand command type
+ *
+ * @param $command_type string
+ * @param $extra_data_to_pass string|[] Data or params that will be passed through to the command
+ * @return false|string|null
+ */
+function executeSysCommand($command_type, $extra_data_to_pass = null)
+{
+	global $user, $home;
+
+	$command_type = strtolower($command_type);
+	$result = null;
+
+	if ($command_type == "appraise_notification") {
+		$result = shell_exec(getFilePath('python3_appraise') . " -vv --plugin-path " . $home . "/.apprise/plugins " . " -t '" . escapeshellcmd($extra_data_to_pass['title']) . "' -b '" . escapeshellcmd($extra_data_to_pass['body']) . "' " . $extra_data_to_pass['attach'] . " " . $extra_data_to_pass['cf'] . " ");
+		//
+	} else if ($command_type == "current_timezone") {
+		$result = shell_exec("cat /etc/timezone");
+		//
+	} else if ($command_type == "disable_ntp") {
+		$result = shell_exec("sudo timedatectl set-ntp false");
+		//
+	} else if ($command_type == "enable_ntp") {
+		$result = shell_exec("sudo timedatectl set-ntp true");
+		//
+	} else if ($command_type == "is_ntp_active") {
+		$result = shell_exec("sudo timedatectl | grep \"NTP service: active\"");
+		//
+	} else if ($command_type == "restart_php") {
+		$result = serviceMaintenance('restart php.service');
+		//
+	} else if ($command_type == "restart_services") {
+		syslog(LOG_INFO, "Restarting Services");
+		$result = serviceMaintenance('restart core.services');
+		//
+	} else if ($command_type == "restart birdnet_recording") {
+		$result = serviceMaintenance('restart birdnet_recording.service');
+		//
+	} else if ($command_type == "restart icecast2") {
+		$result = serviceMaintenance('restart icecast2.service');
+		//
+	} else if ($command_type == "restart livestream") {
+		$result = serviceMaintenance('restart livestream.service');
+		//
+	} else if ($command_type == "restart spectrogram_viewer") {
+		$result = serviceMaintenance('restart spectrogram_viewer.service');
+		//
+	} else if ($command_type == "set_date") {
+		$command = "sudo date -s '" . $extra_data_to_pass['date'] . " " . $extra_data_to_pass['time'] . "'";
+		$result = shell_exec($command);
+		//
+	} else if ($command_type == "set_timezone") {
+		$command = "sudo timedatectl set-timezone $extra_data_to_pass";
+		$result = shell_exec($command);
+		//
+	} else if ($command_type == "test_threshold") {
+		$command = "sudo -u $user " . getFilePath('python3') . ' ' . getFilePath('species.py') . " --threshold " . escapeshellcmd($extra_data_to_pass) . " 2>&1";
+		$result = shell_exec($command);
+		//
+	} else if ($command_type == "update_caddyfile") {
+		$result = exec("sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &");
+		//
+	} else if ($command_type == "update_birdnet") {
+		$result = shell_exec("update_birdnet.sh");
+		//
+	} else if ($command_type == "reboot_birdnet") {
+		$result = shell_exec("sudo reboot");
+		//
+	} else if ($command_type == "shutdown_birdnet") {
+		$result = shell_exec("sudo shutdown now");
+		//
+	} else if ($command_type == "clear_all_data") {
+		$result = shell_exec("sudo clear_all_data.sh");
+		//
+	}
+
+	return $result;
+}
+
+/**
+ * Performs tasks such as stop, restart, disable and enable on the supplied service
+ * input command must contain the service name and must contain a keyword that describes the action
+ * positioning does not matter
+ * eg. restart livestream.service, stop birdnet_recording.service
+ *
+ * @param $command String Command containing a keyword [stop,restart,disable,enable] and the service name
+ * @return false|string|null
+ */
+function serviceMaintenance($command)
+{
+	$command = trim($command);
+	$result = "";
+
+	///e.g $command = 'service stop livestream.service', match the service name
+	////// BIRDNET LOG SERVICE //////
+	if (strpos($command, 'birdnet_log.service') !== false) {
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('sudo systemctl stop birdnet_log.service 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('sudo systemctl restart birdnet_log.service 2>&1');
+		} else if (strpos($command, 'disable') !== false) {
+			$result = shell_exec('sudo systemctl disable --now birdnet_log.service 2>&1');
+		} else if (strpos($command, 'enable') !== false) {
+			$result = shell_exec('sudo systemctl enable --now birdnet_log.service 2>&1');
+		}
+	} ////// BIRDNET SERVER SERVICE //////
+	else if (strpos($command, 'birdnet_server.service') !== false) {
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('sudo systemctl stop birdnet_server.service 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('sudo systemctl restart birdnet_server.service 2>&1');
+		} else if (strpos($command, 'disable') !== false) {
+			$result = shell_exec('sudo systemctl disable --now birdnet_server.service 2>&1');
+		} else if (strpos($command, 'enable') !== false) {
+			$result = shell_exec('sudo systemctl enable --now birdnet_server.service 2>&1');
+		}
+	} ////// BIRDNET ANALYSIS SERVICE //////
+	else if (strpos($command, 'birdnet_analysis.service') !== false) {
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('sudo systemctl stop birdnet_analysis.service 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('sudo systemctl restart birdnet_analysis.service 2>&1');
+		} else if (strpos($command, 'disable') !== false) {
+			$result = shell_exec('sudo systemctl disable --now birdnet_analysis.service 2>&1');
+		} else if (strpos($command, 'enable') !== false) {
+			$result = shell_exec('sudo systemctl enable --now birdnet_analysis.service 2>&1');
+		}
+	} ////// BIRDNET STATS SERVICE //////
+	else if (strpos($command, 'birdnet_stats.service') !== false) {
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('sudo systemctl stop birdnet_stats.service 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('sudo systemctl restart birdnet_stats.service 2>&1');
+		} else if (strpos($command, 'disable') !== false) {
+			$result = shell_exec('sudo systemctl disable --now birdnet_stats.service 2>&1');
+		} else if (strpos($command, 'enable') !== false) {
+			$result = shell_exec('sudo systemctl enable --now birdnet_stats.service 2>&1');
+		}
+	} ////// BIRDNET RECORDING SERVICE //////
+	else if (strpos($command, 'birdnet_recording.service') !== false) {
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('sudo systemctl stop birdnet_recording.service 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('sudo systemctl restart birdnet_recording.service 2>&1');
+		} else if (strpos($command, 'disable') !== false) {
+			$result = shell_exec('sudo systemctl disable --now birdnet_recording.service 2>&1');
+		} else if (strpos($command, 'enable') !== false) {
+			$result = shell_exec('sudo systemctl enable --now birdnet_recording.service 2>&1');
+		}
+	} ////// LIVESTREAM SERVICE //////
+	else if (strpos($command, 'livestream.service') !== false) {
+		//Check which keyword exists
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('sudo systemctl stop livestream.service && sudo systemctl stop icecast2.service 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('sudo systemctl restart livestream.service && sudo systemctl restart icecast2.service 2>&1');
+		} else if (strpos($command, 'disable') !== false) {
+			$result = shell_exec('sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo systemctl stop icecast2.service 2>&1');
+		} else if (strpos($command, 'enable') !== false) {
+			$result = shell_exec('sudo systemctl enable icecast2 && sudo systemctl start icecast2.service && sudo systemctl enable --now livestream.service 2>&1');
+		}
+	} ////// WEB TERMINAL SERVICE //////
+	else if (strpos($command, 'web_terminal.service') !== false) {
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('sudo systemctl stop web_terminal.service 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('sudo systemctl restart web_terminal.service 2>&1');
+		} else if (strpos($command, 'disable') !== false) {
+			$result = shell_exec('sudo systemctl disable --now web_terminal.service 2>&1');
+		} else if (strpos($command, 'enable') !== false) {
+			$result = shell_exec('sudo systemctl enable --now web_terminal.service 2>&1');
+		}
+	} ////// EXTRACTION SERVICE //////
+	else if (strpos($command, 'extraction.service') !== false) {
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('sudo systemctl stop extraction.service 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('sudo systemctl restart extraction.service 2>&1');
+		} else if (strpos($command, 'disable') !== false) {
+			$result = shell_exec('sudo systemctl disable --now extraction.service 2>&1');
+		} else if (strpos($command, 'enable') !== false) {
+			$result = shell_exec('sudo systemctl enable --now extraction.service 2>&1');
+		}
+	}////// CHART VIEWER SERVICE //////
+	else if (strpos($command, 'chart_viewer.service') !== false) {
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('sudo systemctl stop chart_viewer.service 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('sudo systemctl restart chart_viewer.service 2>&1');
+		} else if (strpos($command, 'disable') !== false) {
+			$result = shell_exec('sudo systemctl disable --now chart_viewer.service 2>&1');
+		} else if (strpos($command, 'enable') !== false) {
+			$result = shell_exec('sudo systemctl enable --now chart_viewer.service 2>&1');
+		}
+	} ////// SPECTROGRAM VIEWER SERVICE //////
+	else if (strpos($command, 'spectrogram_viewer.service') !== false) {
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('sudo systemctl stop spectrogram_viewer.service 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('sudo systemctl restart spectrogram_viewer.service 2>&1');
+		} else if (strpos($command, 'disable') !== false) {
+			$result = shell_exec('sudo systemctl disable --now spectrogram_viewer.service 2>&1');
+		} else if (strpos($command, 'enable') !== false) {
+			$result = shell_exec('sudo systemctl enable --now spectrogram_viewer.service 2>&1');
+		}
+	} ////// CORE SERVICES //////
+	else if ((strpos($command, 'core.services') !== false) || (strpos($command, 'core services') !== false)) {
+		if (strpos($command, 'stop') !== false) {
+			$result = shell_exec('stop_core_services.sh 2>&1');
+		} else if (strpos($command, 'restart') !== false) {
+			$result = shell_exec('restart_services.sh 2>&1');
+		}
+	} ////// PHP FPM  //////
+	else if (strpos($command, 'php.service') !== false) {
+		if (strpos($command, 'restart') !== false) {
+			$result = shell_exec("sudo service php7.4-fpm restart");
+		}
+	}
+
+	return $result;
+}
+
+/**
+ * Returns a the supplied timestamp as sometime human-readable
+ * from https://stackoverflow.com/questions/2690504/php-producing-relative-date-time-from-timestamps
+ *
+ * @param $ts
+ * @return false|string
+ */
+function relativeTime($ts)
+{
+	if (!ctype_digit($ts))
+		$ts = strtotime($ts);
+
+	$diff = time() - $ts;
+	if ($diff == 0)
+		return 'now';
+	elseif ($diff > 0) {
+		$day_diff = floor($diff / 86400);
+		if ($day_diff == 0) {
+			if ($diff < 60) return 'just now';
+			if ($diff < 120) return '1 minute ago';
+			if ($diff < 3600) return floor($diff / 60) . ' minutes ago';
+			if ($diff < 7200) return '1 hour ago';
+			if ($diff < 86400) return floor($diff / 3600) . ' hours ago';
+		}
+		if ($day_diff == 1) return 'Yesterday';
+		if ($day_diff < 7) return $day_diff . ' days ago';
+		if ($day_diff < 31) return ceil($day_diff / 7) . ' weeks ago';
+		if ($day_diff < 60) return 'last month';
+		return date('F Y', $ts);
+	} else {
+		$diff = abs($diff);
+		$day_diff = floor($diff / 86400);
+		if ($day_diff == 0) {
+			if ($diff < 120) return 'in a minute';
+			if ($diff < 3600) return 'in ' . floor($diff / 60) . ' minutes';
+			if ($diff < 7200) return 'in an hour';
+			if ($diff < 86400) return 'in ' . floor($diff / 3600) . ' hours';
+		}
+		if ($day_diff == 1) return 'Tomorrow';
+		if ($day_diff < 4) return date('l', $ts);
+		if ($day_diff < 7 + (7 - date('w'))) return 'next week';
+		if (ceil($day_diff / 7) < 4) return 'in ' . ceil($day_diff / 7) . ' weeks';
+		if (date('n', $ts) == date('n') + 1) return 'next month';
+		return date('F Y', $ts);
+	}
+}
+
+/**
+ * Execute system command as SUDO and logs it's output in the syslog
+ *
+ * @param $cmd string Command to Execute
+ * @param $sudo_user string User to execute as
+ * @return string
+ */
+function syslog_shell_exec($cmd, $sudo_user = null)
+{
+	if ($sudo_user) {
+		$cmd = "sudo -u $sudo_user $cmd";
+	}
+	$output = shell_exec($cmd);
+
+	if (strlen($output) > 0) {
+		syslog(LOG_INFO, $output);
+	}
+
+	return $output;
+}
+
+/**
+ * Loads in configuration settings from either this or firstrun.txt
+ *
+ * @return void
+ */
+function parseConfig()
+{
+	global $config;
+
+	if (file_exists(getFilePath('thisrun.txt'))) {
+		$config = parse_ini_file(getFilePath('thisrun.txt'));
+	} elseif (file_exists(getFilePath('firstrun.txt'))) {
+		$config = parse_ini_file(getFilePath('firstrun.txt'));
+	}
+}
+
+/**
+ * Updates the apprise config file
+ *
+ * @param $apprise_config
+ * @return void
+ */
+function updateAppriseConfig($apprise_config)
+{
+	if (isset($apprise_config)) {
+		$appriseconfig = fopen(getFilePath("apprise.txt"), "w");
+		fwrite($appriseconfig, $apprise_config);
+	}
+}
+
+/**
+ * Returns the apprise config in apprise.txt
+ * @return false|string
+ */
+function getAppriseConfig()
+{
+	if (file_exists(getFilePath('apprise.txt'))) {
+		$apprise_config = file_get_contents(getFilePath('apprise.txt'));
+	} else {
+		$apprise_config = "";
+	}
+
+	return $apprise_config;
+}
+
+/**
+ * Return the linecount of labels.txt
+ * @return int
+ */
+function getLabelsCount()
+{
+	return count(file(getFilePath('labels.txt')));
+}
+
+/**
+ * Returns the current git commit hash of the BirdNET-Pi respository
+ * @return false|string|null
+ */
+function getGitCurrentHash()
+{
+	global $user;
+	return shell_exec("cd " . getDirectory('home') . "/BirdNET-Pi && sudo -u " . $user . " git rev-list --max-count=1 HEAD");
+}
+
+/**
+ * Runs git fetch against the BirdNET-Pi repository
+ * @return false|string|null
+ */
+function doGitFetch()
+{
+	global $user;
+	return shell_exec("sudo -u" . $user . " git -C " . getDirectory('home') . "/BirdNET-Pi fetch 2>&1");
+}
+
+/**
+ * Get the git status of the BirdNET-Pi repository
+ * @return false|string|null
+ */
+function getGitStatus()
+{
+	global $user;
+	$behind = 0;
+	//Fetch latest updates
+	doGitFetch();
+	$git_status = trim(shell_exec("sudo -u" . $user . " git -C " . getDirectory('home') . "/BirdNET-Pi status"));
+
+	//Extract the text numberof commits from 'Your branch is behind '....' by XX commits,
+	if (preg_match("/behind '.*?' by (\d+) commit(s?)\b/", $git_status, $matches)) {
+		$num_commits_behind = $matches[1];
+		$behind = $num_commits_behind;
+	}
+
+	if (preg_match('/\b(\d+)\b and \b(\d+)\b different commits each/', $git_status, $matches)) {
+		$num1 = (int)$matches[1];
+		$num2 = (int)$matches[2];
+		$sum = $num1 + $num2;
+		$behind = $sum;
+	}
+
+	return $behind;
+}
+
+/**
+ * Returns the status of the specified service
+ *
+ * @param $name string Name of the service
+ * @return string[]
+ */
+function getServiceStatus($name)
+{
+	$message = '';
+	$status = '';
+
+	if ($name == "birdnet_server.service") {
+		$filesinproc = trim(shell_exec("ls " . getDirectory('home') . "/BirdSongs/Processed | wc -l"));
+		if ($filesinproc > 200) {
+			$message = "stalled - backlog of " . $filesinproc . " files in ~/BirdSongs/Processed/";
+
+		}
+	}
+	$status = shell_exec("sudo systemctl status " . $name . " | grep Active | grep ' active\| activating\|running\|waiting\|start'");
+	if (strlen($status) > 0) {
+		$message = "(active)";
+	} else {
+		$message = "(inactive)";
+	}
+
+	return ["status" => $status, "message" => $message];
 }
 
 /**
@@ -1040,7 +1673,7 @@ function getFilePath($filename)
  */
 function birdnet_error_log($message, $level = 'error')
 {
-	$logfile_path = "./scripts/web-ui-error.log";
+	$logfile_path = getDirectory('scripts') . "/web-ui-error.log";
 
 	if (!file_exists($logfile_path)) {
 		touch($logfile_path);
