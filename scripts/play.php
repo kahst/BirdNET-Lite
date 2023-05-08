@@ -254,21 +254,35 @@ function toggleShiftFreq(filename, shiftAction, elem) {
         elem.setAttribute("title", "This file has been shifted down in frequency.");
         elem.setAttribute("onclick", elem.getAttribute("onclick").replace("shift","unshift"));
         console.log("shifted freqs of " + filename);
-  video=elem.parentNode.getElementsByTagName("video")[0];
-  video.setAttribute("title", video.getAttribute("title").replace("/By_Date/","/By_Date/shifted/"));
-  source = video.getElementsByTagName("source")[0];
-  source.setAttribute("src", source.getAttribute("src").replace("/By_Date/","/By_Date/shifted/"));
-  video.load();
+          video=elem.parentNode.getElementsByTagName("video");
+          console.log(video)
+          console.log("len of video: " + video.length)
+          if (video.length > 0) {
+            video[0].setAttribute("title", video[0].getAttribute("title").replace("/By_Date/","/By_Date/shifted/"));
+            source = video[0].getElementsByTagName("source")[0];
+            source.setAttribute("src", source.getAttribute("src").replace("/By_Date/","/By_Date/shifted/"));
+            video[0].load();
+          } else {
+            atag=elem.parentNode.getElementsByTagName("a")[0];
+            atag.setAttribute("href", atag.getAttribute("href").replace("/By_Date/","/By_Date/shifted/"));
+          }
       } else {
         elem.setAttribute("src","images/shift.svg");
         elem.setAttribute("title", "This file is not shifted in frequency.");
         elem.setAttribute("onclick", elem.getAttribute("onclick").replace("unshift","shift"));
         console.log("unshifted freqs of " + filename);
-  video=elem.parentNode.getElementsByTagName("video")[0];
-  video.setAttribute("title", video.getAttribute("title").replace("/By_Date/shifted/","/By_Date/"));
-  source = video.getElementsByTagName("source")[0];
-  source.setAttribute("src", source.getAttribute("src").replace("/By_Date/shifted/","/By_Date/"));
-  video.load();
+          video=elem.parentNode.getElementsByTagName("video");
+          console.log(video)
+          console.log("len of video: " + video.length)
+          if (video.length > 0) {
+            video[0].setAttribute("title", video[0].getAttribute("title").replace("/By_Date/shifted/","/By_Date/"));
+            source = video[0].getElementsByTagName("source")[0];
+            source.setAttribute("src", source.getAttribute("src").replace("/By_Date/shifted/","/By_Date/"));
+            video[0].load();
+          } else {
+            atag=elem.parentNode.getElementsByTagName("a")[0];
+            atag.setAttribute("href", atag.getAttribute("href").replace("/By_Date/shifted/","/By_Date/"));
+          }
       }
     }
   }
