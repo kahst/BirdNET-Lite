@@ -255,8 +255,6 @@ function toggleShiftFreq(filename, shiftAction, elem) {
         elem.setAttribute("onclick", elem.getAttribute("onclick").replace("shift","unshift"));
         console.log("shifted freqs of " + filename);
           video=elem.parentNode.getElementsByTagName("video");
-          console.log(video)
-          console.log("len of video: " + video.length)
           if (video.length > 0) {
             video[0].setAttribute("title", video[0].getAttribute("title").replace("/By_Date/","/By_Date/shifted/"));
             source = video[0].getElementsByTagName("source")[0];
@@ -272,8 +270,6 @@ function toggleShiftFreq(filename, shiftAction, elem) {
         elem.setAttribute("onclick", elem.getAttribute("onclick").replace("unshift","shift"));
         console.log("unshifted freqs of " + filename);
           video=elem.parentNode.getElementsByTagName("video");
-          console.log(video)
-          console.log("len of video: " + video.length)
           if (video.length > 0) {
             video[0].setAttribute("title", video[0].getAttribute("title").replace("/By_Date/shifted/","/By_Date/"));
             source = video[0].getElementsByTagName("source")[0];
