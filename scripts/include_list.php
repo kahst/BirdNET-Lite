@@ -44,7 +44,7 @@ $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
   <select name="species[]" id="value2" multiple size="30">
     <option selected value="base">Please Select</option>
       <?php
-        $filename = getFilePath('include_species_list');
+        $filename = getFilePath('include_species_list.txt');
         $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
         foreach($eachlines as $lines){echo 
     "<option value=\"".$lines."\">$lines</option>";}

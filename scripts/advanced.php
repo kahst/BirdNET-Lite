@@ -25,142 +25,142 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 if(isset($_GET['submit'])) {
   if(isset($_GET["caddy_pwd"])) {
     $caddy_pwd = $_GET["caddy_pwd"];
-	  setSetting('CADDY_PWD', "\"$caddy_pwd\"",'update_caddyfile');
+	  saveSetting('CADDY_PWD', "\"$caddy_pwd\"",'update_caddyfile');
   }
 
   if(isset($_GET["ice_pwd"])) {
     $ice_pwd = $_GET["ice_pwd"];
-	setSetting('ICE_PWD', $ice_pwd);
+	saveSetting('ICE_PWD', $ice_pwd);
   }
 
   if(isset($_GET["birdnetpi_url"])) {
     $birdnetpi_url = $_GET["birdnetpi_url"];
     // remove trailing slash to prevent conf from becoming broken
     $birdnetpi_url = rtrim($birdnetpi_url, '/');
-	setSetting('BIRDNETPI_URL', $birdnetpi_url,'update_caddyfile');
+	saveSetting('BIRDNETPI_URL', $birdnetpi_url,'update_caddyfile');
   }
 
   if(isset($_GET["rtsp_stream"])) {
     $rtsp_stream = str_replace("\r\n", ",", $_GET["rtsp_stream"]);
-	  setSetting('RTSP_STREAM', "\"$rtsp_stream\"", ['restart birdnet_recording', 'restart livestream']);
+	  saveSetting('RTSP_STREAM', "\"$rtsp_stream\"", ['restart birdnet_recording', 'restart livestream']);
   }
 
   if (isset($_GET["rtsp_stream_to_livestream"])) {
     $rtsp_stream_selected = trim($_GET["rtsp_stream_to_livestream"]);
-	setSetting('RTSP_STREAM_TO_LIVESTREAM', "\"$rtsp_stream_selected\"", 'restart livestream');
+	saveSetting('RTSP_STREAM_TO_LIVESTREAM', "\"$rtsp_stream_selected\"", 'restart livestream');
   }
   
   if(isset($_GET["overlap"])) {
     $overlap = $_GET["overlap"];
-	setSetting('OVERLAP', $overlap);
+	saveSetting('OVERLAP', $overlap);
   }
 
   if(isset($_GET["confidence"])) {
     $confidence = $_GET["confidence"];
-	setSetting('CONFIDENCE', $confidence);
+	saveSetting('CONFIDENCE', $confidence);
   }
 
   if(isset($_GET["sensitivity"])) {
     $sensitivity = $_GET["sensitivity"];
-	setSetting('SENSITIVITY', $sensitivity);
+	saveSetting('SENSITIVITY', $sensitivity);
   }
 
   if(isset($_GET["freqshift_hi"]) && is_numeric($_GET['freqshift_hi'])) {
     $freqshift_hi = $_GET["freqshift_hi"];
-	setSetting('FREQSHIFT_HI', $freqshift_hi);
+	saveSetting('FREQSHIFT_HI', $freqshift_hi);
   }
 
   if(isset($_GET["freqshift_lo"]) && is_numeric($_GET['freqshift_lo'])) {
     $freqshift_lo = $_GET["freqshift_lo"];
-	setSetting('FREQSHIFT_HI', $freqshift_hi);
+	saveSetting('FREQSHIFT_HI', $freqshift_hi);
   }
 
   if(isset($_GET["freqshift_pitch"]) && is_numeric($_GET['freqshift_pitch'])) {
     $freqshift_pitch = $_GET["freqshift_pitch"];
-	setSetting('FREQSHIFT_PITCH', $freqshift_pitch);
+	saveSetting('FREQSHIFT_PITCH', $freqshift_pitch);
   }
 
   if(isset($_GET["freqshift_tool"])) {
     $freqshift_tool = $_GET["freqshift_tool"];
-	setSetting('FREQSHIFT_TOOL', $freqshift_tool);
+	saveSetting('FREQSHIFT_TOOL', $freqshift_tool);
   }
 
   if(isset($_GET["full_disk"])) {
     $full_disk = $_GET["full_disk"];
-	setSetting('FULL_DISK', $full_disk);
+	saveSetting('FULL_DISK', $full_disk);
   }
 
   if(isset($_GET["privacy_threshold"])) {
     $privacy_threshold = $_GET["privacy_threshold"];
-	setSetting('PRIVACY_THRESHOLD', $privacy_threshold,'restart_services');
+	saveSetting('PRIVACY_THRESHOLD', $privacy_threshold,'restart_services');
   }
 
   if(isset($_GET["rec_card"])) {
     $rec_card = trim($_GET["rec_card"]);
-	setSetting('REC_CARD', "\"$rec_card\"");
+	saveSetting('REC_CARD', "\"$rec_card\"");
   }
 
   if(isset($_GET["channels"])) {
     $channels = $_GET["channels"];
-	setSetting('CHANNELS', $channels);
+	saveSetting('CHANNELS', $channels);
   }
 
   if(isset($_GET["recording_length"])) {
     $recording_length = $_GET["recording_length"];
-	setSetting('RECORDING_LENGTH', $recording_length);
+	saveSetting('RECORDING_LENGTH', $recording_length);
   }
 
   if(isset($_GET["extraction_length"])) {
     $extraction_length = $_GET["extraction_length"];
-	setSetting('EXTRACTION_LENGTH', $extraction_length);
+	saveSetting('EXTRACTION_LENGTH', $extraction_length);
   }
 
   if(isset($_GET["audiofmt"])) {
     $audiofmt = $_GET["audiofmt"];
-	setSetting('AUDIOFMT', $audiofmt);
+	saveSetting('AUDIOFMT', $audiofmt);
   }
   if(isset($_GET["silence_update_indicator"])) {
     $silence_update_indicator = 1;
-	setSetting('SILENCE_UPDATE_INDICATOR', $silence_update_indicator);
+	saveSetting('SILENCE_UPDATE_INDICATOR', $silence_update_indicator);
   } else {
-	setSetting('SILENCE_UPDATE_INDICATOR', 0);
+	saveSetting('SILENCE_UPDATE_INDICATOR', 0);
   }
 
   if(isset($_GET["raw_spectrogram"])) {
     $raw_spectrogram = 1;
-	setSetting('RAW_SPECTROGRAM', $raw_spectrogram);
+	saveSetting('RAW_SPECTROGRAM', $raw_spectrogram);
   } else {
-	setSetting('RAW_SPECTROGRAM', 0);
+	saveSetting('RAW_SPECTROGRAM', 0);
   }
 
   if(isset($_GET["custom_image"])) {
     $custom_image = $_GET["custom_image"];
 
-    setSetting('CUSTOM_IMAGE', $custom_image);
+    saveSetting('CUSTOM_IMAGE', $custom_image);
   }
 
   if(isset($_GET["custom_image_label"])) {
     $custom_image_label = $_GET["custom_image_label"];
 
-	setSetting('CUSTOM_IMAGE_TITLE', "\"$custom_image_label\"");
+	saveSetting('CUSTOM_IMAGE_TITLE', "\"$custom_image_label\"");
   }
 
 	if (isset($_GET["LogLevel_BirdnetRecordingService"])) {
 		$birdnet_recording_service_log_level = trim($_GET["LogLevel_BirdnetRecordingService"]);
 
-		setSetting('LogLevel_BirdnetRecordingService', "\"$birdnet_recording_service_log_level\"",'restart birdnet_recording');
+		saveSetting('LogLevel_BirdnetRecordingService', "\"$birdnet_recording_service_log_level\"",'restart birdnet_recording');
 	}
 
 	if (isset($_GET["LogLevel_SpectrogramViewerService"])) {
 		$spectrogram_viewer_service_log_level = trim($_GET["LogLevel_SpectrogramViewerService"]);
 
-		setSetting('LogLevel_SpectrogramViewerService', "\"$spectrogram_viewer_service_log_level\"",'restart spectrogram_viewer');
+		saveSetting('LogLevel_SpectrogramViewerService', "\"$spectrogram_viewer_service_log_level\"",'restart spectrogram_viewer');
 	}
 
 	if (isset($_GET["LogLevel_LiveAudioStreamService"])) {
 		$livestream_audio_service_log_level = trim($_GET["LogLevel_LiveAudioStreamService"]);
 
-		setSetting('LogLevel_LiveAudioStreamService', "\"$livestream_audio_service_log_level\"",['restart livestream','restart icecast2']);
+		saveSetting('LogLevel_LiveAudioStreamService', "\"$livestream_audio_service_log_level\"",['restart livestream','restart icecast2']);
 	}
 }
 

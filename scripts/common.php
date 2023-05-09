@@ -104,10 +104,6 @@ function connect_to_birdsdb()
 		try {
 			$DB_CONN = new SQLite3(getFilePath('birds.db'), SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 			if ($DB_CONN == False) {
-				if (!$api_incl) {
-					echo "connect_to_birdsdb:: Database is busy";
-					header("refresh: 0;");
-				}
 				birdnet_error_log("connect_to_birdsdb:: birds.db database is busy");
 			}
 		} catch (Exception $sql_exec) {
@@ -445,10 +441,10 @@ function getDetectionsBySpecies($species_name = null, $sort = null)
 
 	//Rearrange data
 	$newReturnData = [];
-	$newReturnData['species'] = $speciesDetections;
+	$newReturnData['species'] = $speciesDetections['data'];
 	//Check to see if we have to get max confidence results for the species also
 	if (isset($speciesDetections_MaxConf)) {
-		$newReturnData['species_MaxConf'] = $speciesDetections_MaxConf;
+		$newReturnData['species_MaxConf'] = $speciesDetections_MaxConf['data'];
 	}
 
 	$speciesDetections['data'] = $newReturnData;
@@ -1040,9 +1036,9 @@ function getDirectory($dir)
 	} else if ($dir == "extracted") {
 		$extracted_dir_setting = $config['EXTRACTED'];
 		return getDirectory('recs_dir') . str_replace('${RECS_DIR}', '', $extracted_dir_setting);
-	} elseif ($dir == "extracted_bydate") {
+	} elseif ($dir == "extracted_bydate" || $dir == "extracted_by_date") {
 		return getDirectory('extracted') . '/By_Date';
-	} elseif ($dir == "shifted_audio") {
+	} elseif ($dir == "shifted_audio" || $dir == "shifted_dir") {
 		return getDirectory('home') . '/BirdSongs/Extracted/By_Date/shifted';
 	} elseif ($dir == "database") {
 		// NOT USED
@@ -1093,6 +1089,12 @@ function getFilePath($filename)
 		//
 	} else if ($filename == "disk_check_exclude.txt") {
 		return getDirectory('scripts') . "/disk_check_exclude.txt";
+		//
+	} else if ($filename == "email_template") {
+		return getDirectory('scripts') . "/email_template";
+		//
+	} else if ($filename == "email_template2") {
+		return getDirectory('scripts') . "/email_template2";
 		//
 	} else if ($filename == "exclude_species_list.txt") {
 		return getDirectory('scripts') . "/exclude_species_list.txt";
@@ -1149,7 +1151,7 @@ function getFilePath($filename)
  * @param $post_save_command string CommaAnd to execute after saving
  * @return void
  */
-function setSetting($setting_name, $setting_value, $post_save_command = null)
+function saveSetting($setting_name, $setting_value, $post_save_command = null)
 {
 	global $config;
 

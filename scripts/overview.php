@@ -1,31 +1,12 @@
 <?php
-include_once "./scripts/common.php";
-
-//error_reporting(E_ERROR);
-//ini_set('display_errors',1);
-//ini_set('session.gc_maxlifetime', 7200);
-//ini_set('user_agent', 'PHP_Flickr/1.0');
-//session_set_cookie_params(7200);
-//session_start();
+if(file_exists('./scripts/common.php')){
+	include_once "./scripts/common.php";
+}else{
+	include_once "./common.php";
+}
 
 $myDate = date('Y-m-d');
 $chart = "Combo-$myDate.png";
-
-//$db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
-//if($db == False) {
-//  echo "Database is busy";
-//  header("refresh: 0;");
-//}
-//
-//if (file_exists('./scripts/thisrun.txt')) {
-//  $config = parse_ini_file('./scripts/thisrun.txt');
-//} elseif (file_exists('./scripts/firstrun.ini')) {
-//  $config = parse_ini_file('./scripts/firstrun.ini');
-//}
-//
-//$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-//$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-//$home = trim($home);
 
 $todaycount_data = getDetectionCountToday();
 
@@ -109,7 +90,7 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
 			  echo $comname . "," . $filename;
 			  die();
 		  }
-
+          //Because the spectrogram image exists for this detection it's been processed
 		  $processed_detections++;
 
 		  //Get the flickr image for this detection
@@ -167,13 +148,13 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
         </table> <?php break;
       }
   }
-  if($processed_detections == 0) {
     if($todaycount['COUNT(*)'] > 0) {
-      echo "<h3>Your system is currently processing a backlog of audio. This can take several hours before normal functionality of your BirdNET-Pi resumes.</h3>";
+		if($processed_detections == 0) {
+			echo "<h3>Your system is currently processing a backlog of audio. This can take several hours before normal functionality of your BirdNET-Pi resumes.</h3>";
+		}
     } else {
       echo "<h3>No Detections For Today.</h3>";
     }
-  }
   die();
 }
 

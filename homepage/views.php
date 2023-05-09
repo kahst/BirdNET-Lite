@@ -6,6 +6,7 @@ if(file_exists('./scripts/common.php')){
 }
 
 session_start();
+
 if(!isset($_SESSION['behind'])) {
    $_SESSION['behind'] = getGitStatus();
   if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>

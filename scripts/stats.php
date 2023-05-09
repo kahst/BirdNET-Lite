@@ -1,31 +1,14 @@
 <?php
-include_once "./scripts/common.php";
+if(file_exists('./scripts/common.php')){
+	include_once "./scripts/common.php";
+}else{
+	include_once "./common.php";
+}
 
-//$db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
-//if($db == False) {
-//  echo "Database busy";
-//  header("refresh: 0;");
-//}
-
+$disk_check_exclude_path = getFilePath('disk_check_exclude.txt');
 
 if(isset($_GET['sort']) && $_GET['sort'] == "occurrences") {
-
-//  $statement = $db->prepare('SELECT Date, Time, File_Name, Com_Name, COUNT(*), MAX(Confidence) FROM detections GROUP BY Com_Name ORDER BY COUNT(*) DESC');
-//  if($statement == False) {
-//    echo "Database busy";
-//    header("refresh: 0;");
-//  }
-//  $result = $statement->execute();
-//
-//  $statement2 = $db->prepare('SELECT Date, Time, File_Name, Com_Name, COUNT(*), MAX(Confidence) FROM detections GROUP BY Com_Name ORDER BY COUNT(*) DESC');
-//  if($statement == False) {
-//    echo "Database busy";
-//    header("refresh: 0;");
-//  }
-//
-//  $result2 = $statement2->execute();
-
-	$sort = "occurrences";
+    $sort = "occurrences";
 	$result2_data = getSpeciesBestRecordingList($sort);
 
 	if ($result2_data['success'] == False) {
@@ -34,21 +17,6 @@ if(isset($_GET['sort']) && $_GET['sort'] == "occurrences") {
 	}
 	$result2 = $result2_data['data'];
 } else {
-
-//  $statement = $db->prepare('SELECT Date, Time, File_Name, Com_Name, COUNT(*), MAX(Confidence) FROM detections GROUP BY Com_Name ORDER BY Com_Name ASC');
-//  if($statement == False) {
-//    echo "Database busy";
-//    header("refresh: 0;");
-//  }
-//  $result = $statement->execute();
-//
-//  $statement2 = $db->prepare('SELECT Date, Time, File_Name, Com_Name, COUNT(*), MAX(Confidence) FROM detections GROUP BY Com_Name ORDER BY Com_Name ASC');
-//  if($statement == False) {
-//    echo "Database busy";
-//    header("refresh: 0;");
-//  }
-//  $result2 = $statement2->execute();
-
 	$result2_data = getSpeciesBestRecordingList();
 
 	if ($result2_data['success'] == False) {
@@ -62,12 +30,6 @@ if(isset($_GET['sort']) && $_GET['sort'] == "occurrences") {
 
 if(isset($_GET['species'])){
   $selection = $_GET['species'];
-//  $statement3 = $db->prepare("SELECT Com_Name, Sci_Name, COUNT(*), MAX(Confidence), File_Name, Date, Time from detections WHERE Com_Name = \"$selection\"");
-//  if($statement3 == False) {
-//    echo "Database busy";
-//    header("refresh: 0;");
-//  }
-//  $result3 = $statement3->execute();
 	$result3_data = getBestRecordingsForSpecies($selection);
 	if($result3_data['success'] == False){
 		echo $result3_data['message'];
@@ -76,12 +38,9 @@ if(isset($_GET['species'])){
 	$result3 = $result3_data['data'];
 }
 
-//$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-//$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-//$home = trim($home);
-if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt") || strpos(file_get_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt"),"##start") === false) {
-  file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "");
-  file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end\n");
+if(!file_exists($disk_check_exclude_path) || strpos(file_get_contents($disk_check_exclude_path),"##start") === false) {
+  file_put_contents($disk_check_exclude_path, "");
+  file_put_contents($disk_check_exclude_path, "##start\n##end\n");
 }
 ?>
 
@@ -276,8 +235,8 @@ array_push($excludelines, $results['Date']."/".$comname."/".$results['File_Name'
 <?php
 }
 
-$file = file_get_contents(getDirectory('home')."/BirdNET-Pi/scripts/disk_check_exclude.txt");
-file_put_contents(getDirectory('home')."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start"."\n".implode("\n",$excludelines)."\n".substr($file, strpos($file, "##end")));
+$file = file_get_contents($disk_check_exclude_path);
+file_put_contents($disk_check_exclude_path, "##start"."\n".implode("\n",$excludelines)."\n".substr($file, strpos($file, "##end")));
 ?>
     </table>
       </form>

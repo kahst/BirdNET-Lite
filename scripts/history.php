@@ -1,5 +1,9 @@
 <?php
-include_once "./scripts/common.php";
+if(file_exists('./scripts/common.php')){
+	include_once "./scripts/common.php";
+}else{
+	include_once "./common.php";
+}
 
 if(isset($_GET['date'])){
 $theDate = $_GET['date'];
@@ -21,10 +25,6 @@ if(isset($_GET['blocation']) ) {
 	header("Content-Disposition: attachment; filename=result_file.csv");
 	header("Pragma: no-cache");
 	header("Expires: 0");
-
-
-	$user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
-	$home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
 
 
 	//$sunrise = date_sunrise(time(), SUNFUNCS_RET_TIMESTAMP, $config["LATITUDE"], $config["LONGITUDE"]);

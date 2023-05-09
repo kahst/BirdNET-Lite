@@ -1,5 +1,9 @@
 <?php
-include_once "./scripts/common.php";
+if(file_exists('./scripts/common.php')){
+	include_once "./scripts/common.php";
+}else{
+	include_once "./common.php";
+}
 
 $startdate = strtotime('last sunday') - (7*86400);
 $enddate = strtotime('last sunday') - (1*86400);
@@ -7,13 +11,6 @@ $enddate = strtotime('last sunday') - (1*86400);
 $debug = false;
 
 if(isset($_GET['ascii'])) {
-
-	$db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
-	if($db == False){
-	  echo "Database is busy";
-	  header("refresh: 0;");
-	}
-
 	$weekly_species_counts = getWeeklyReportSpeciesDetectionCounts();
 
 	if($weekly_species_counts['detections']['success'] == False){

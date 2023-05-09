@@ -1,5 +1,9 @@
 <?php
-include_once "./scripts/common.php";
+if(file_exists('./scripts/common.php')){
+	include_once "./scripts/common.php";
+}else{
+	include_once "./common.php";
+}
 
 if(isset($_GET['deletefile'])) {
   if(isset($_SERVER['PHP_AUTH_USER'])) {
@@ -56,7 +60,7 @@ if(isset($_GET['excludefile'])) {
   }
 }
 
-$shifted_path = $home."/BirdSongs/Extracted/By_Date/shifted/";
+$shifted_path = getDirectory('shifted_dir');
 
 if(isset($_GET['shiftfile'])) {
 
@@ -261,7 +265,7 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
   if($view == "bydate") {
       foreach ($result as $bd_result){
 		  $date = $bd_result['Date'];
-		  if(realpath($home."/BirdSongs/Extracted/By_Date/".$date) !== false){
+		  if(realpath(getDirectory('extracted_by_date') . "/" . $date) !== false){
 			  echo "<td>
           <button action=\"submit\" name=\"date\" value=\"$date\">".($date == date('Y-m-d') ? "Today" : $date)."</button></td></tr>";}
 	  }
@@ -304,7 +308,7 @@ if(!isset($_GET['species']) && !isset($_GET['filename'])){
     $birds = array();
 	  foreach ($result as $species_bird_name) {
 		  $name = $species_bird_name['Com_Name'];
-		  if (realpath($home . "/BirdSongs/Extracted/By_Date/" . $date . "/" . str_replace(" ", "_", $name)) !== false) {
+		  if (realpath(getDirectory('extracted_by_date') . "/" . $date . "/" . str_replace(" ", "_", $name)) !== false) {
 			  $birds[] = $name;
 		  }
 	  }
@@ -367,10 +371,11 @@ if(isset($_GET['species'])){ ?>
    </form>
 </div>
 <?php
+  $disk_check_exclude_path = getFilePath('disk_check_exclude.txt');
   // add disk_check_exclude.txt lines into an array for grepping
-  $fp = @fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", 'r'); 
+  $fp = @fopen($disk_check_exclude_path, 'r');
 if ($fp) {
-  $disk_check_exclude_arr = explode("\n", fread($fp, filesize($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")));
+  $disk_check_exclude_arr = explode("\n", fread($fp, filesize($disk_check_exclude_path)));
 }
 
 $name = $_GET['species'];
@@ -419,7 +424,7 @@ echo "<table>
 
 	$iter++;
     // file was deleted by disk check, no need to show the detection in recordings
-    if(!file_exists($home."/BirdSongs/Extracted/".$filename)) {
+    if(!file_exists(getDirectory('extracted') . "/" . $filename)) {
       continue;
     }
     if(!in_array($filename_formatted, $disk_check_exclude_arr) && isset($_GET['only_excluded'])) {
@@ -476,7 +481,8 @@ echo "<table>
   }if($iter == 0){ echo "<tr><td><b>No recordings were found.</b><br><br><span style='font-size:medium'>They may have been deleted to make space for new recordings. You can prevent this from happening in the future by clicking the <img src='images/unlock.svg' style='width:20px'> icon in the top right of a recording.<br>You can also modify this behavior globally under \"Full Disk Behavior\" <a href='views.php?view=Advanced'>here.</a></span></td></tr>";}echo "</table>";}
 
   if(isset($_GET['filename'])){
-    $name = $_GET['filename'];
+	$disk_check_exclude_path = getFilePath('disk_check_exclude.txt');
+	$name = $_GET['filename'];
     $result2_data = getDetectionsByFilename($name);
 	  if($result2_data['success'] == False){
 		  echo $result2_data['message'];
@@ -502,9 +508,9 @@ echo "<table>
         $filename_formatted = $date."/".$comname."/".$results['File_Name'];
 
         // add disk_check_exclude.txt lines into an array for grepping
-        $fp = @fopen($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", 'r'); 
+        $fp = @fopen($disk_check_exclude_path, 'r');
         if ($fp) {
-          $disk_check_exclude_arr = explode("\n", fread($fp, filesize($home."/BirdNET-Pi/scripts/disk_check_exclude.txt")));
+          $disk_check_exclude_arr = explode("\n", fread($fp, filesize($disk_check_exclude_path)));
         }
 
         if($config["FULL_DISK"] == "purge") {

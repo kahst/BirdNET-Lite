@@ -95,24 +95,24 @@ if(isset($_GET["latitude"])){
 
   changeLanguage($model, $language);
 
-	setSetting('SITE_NAME', "\"$site_name\"");
-	setSetting('LATITUDE', $latitude);
-	setSetting('LONGITUDE', $longitude);
-	setSetting('BIRDWEATHER_ID', $birdweather_id);
-	setSetting('APPRISE_NOTIFICATION_TITLE', "\"$apprise_notification_title\"");
-	setSetting('APPRISE_NOTIFICATION_BODY', "'$apprise_notification_body'");
-	setSetting('APPRISE_NOTIFY_EACH_DETECTION', $apprise_notify_each_detection);
-	setSetting('APPRISE_NOTIFY_NEW_SPECIES', $apprise_notify_new_species);
-	setSetting('APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY', $apprise_notify_new_species_each_day);
-	setSetting('APPRISE_WEEKLY_REPORT', $apprise_weekly_report);
-	setSetting('FLICKR_API_KEY', $flickr_api_key);
-	setSetting('DATABASE_LANG', $language);
-	setSetting('FLICKR_FILTER_EMAIL', $flickr_filter_email);
-	setSetting('APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES', $minimum_time_limit);
-	setSetting('MODEL', $model);
-	setSetting('SF_THRESH', $sf_thresh);
-	setSetting('APPRISE_ONLY_NOTIFY_SPECIES_NAMES', "\"$only_notify_species_names\"");
-	setSetting('APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2', "\"$only_notify_species_names_2\"");
+	saveSetting('SITE_NAME', "\"$site_name\"");
+	saveSetting('LATITUDE', $latitude);
+	saveSetting('LONGITUDE', $longitude);
+	saveSetting('BIRDWEATHER_ID', $birdweather_id);
+	saveSetting('APPRISE_NOTIFICATION_TITLE', "\"$apprise_notification_title\"");
+	saveSetting('APPRISE_NOTIFICATION_BODY', "'$apprise_notification_body'");
+	saveSetting('APPRISE_NOTIFY_EACH_DETECTION', $apprise_notify_each_detection);
+	saveSetting('APPRISE_NOTIFY_NEW_SPECIES', $apprise_notify_new_species);
+	saveSetting('APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY', $apprise_notify_new_species_each_day);
+	saveSetting('APPRISE_WEEKLY_REPORT', $apprise_weekly_report);
+	saveSetting('FLICKR_API_KEY', $flickr_api_key);
+	saveSetting('DATABASE_LANG', $language);
+	saveSetting('FLICKR_FILTER_EMAIL', $flickr_filter_email);
+	saveSetting('APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES', $minimum_time_limit);
+	saveSetting('MODEL', $model);
+	saveSetting('SF_THRESH', $sf_thresh);
+	saveSetting('APPRISE_ONLY_NOTIFY_SPECIES_NAMES', "\"$only_notify_species_names\"");
+	saveSetting('APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2', "\"$only_notify_species_names_2\"");
 
 
   if($site_name != $config["SITE_NAME"]) {
