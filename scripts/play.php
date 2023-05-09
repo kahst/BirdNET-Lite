@@ -112,18 +112,18 @@ if(isset($_GET['shiftfile'])) {
   $freqshift_tool = $config['FREQSHIFT_TOOL'];
 
   if ($freqshift_tool == "ffmpeg") {
-    $cmd = "sudo /usr/bin/nohup /usr/bin/ffmpeg -y -i \"".$pi.$filename."\" -af \"rubberband=pitch=".$config['FREQSHIFT_LO']."/".$config['FREQSHIFT_HI']."\" \"".$shifted_path.$filename."\"";
+    $cmd = "sudo /usr/bin/nohup /usr/bin/ffmpeg -y -i ".escapeshellarg($pi.$filename)." -af \"rubberband=pitch=".$config['FREQSHIFT_LO']."/".$config['FREQSHIFT_HI']."\" ".escapeshellarg($shifted_path.$filename)."";
     shell_exec("sudo mkdir -p ".$shifted_path.$dir." && ".$cmd);
 
   } else if ($freqshift_tool == "sox") {
     //linux.die.net/man/1/sox
     $soxopt = "-q";
     $soxpitch = $config['FREQSHIFT_PITCH'];
-    $cmd = "sudo /usr/bin/nohup /usr/bin/sox \"".$pi.$filename."\" \"".$shifted_path.$filename."\" pitch ".$soxopt." ".$soxpitch;
+    $cmd = "sudo /usr/bin/nohup /usr/bin/sox ".escapeshellarg($pi.$filename)." ".escapeshellarg($shifted_path.$filename)." pitch ".$soxopt." ".$soxpitch;
    shell_exec("sudo mkdir -p ".$shifted_path.$dir." && ".$cmd);
   }
     } else {
-     $cmd = "sudo rm -f " . $shifted_path.$filename;
+     $cmd = "sudo rm -f " . escapeshellarg($shifted_path.$filename);
      shell_exec($cmd);
     }
 

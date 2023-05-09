@@ -7,14 +7,14 @@ if (file_exists('/etc/timezone')) {
 		$sys_timezone = trim($tz_data);
 	}
 } else {
-// Else get timezone from the timedatectl command
+// else get timezone from the timedatectl command
 	$tz_data = shell_exec('timedatectl show');
 	$tz_data_array = parse_ini_string($tz_data);
 	if (is_array($tz_data_array) && array_key_exists('Timezone', $tz_data_array)) {
 		$sys_timezone = $tz_data_array['Timezone'];
 	}
 }
-//Finally if we have a valod timezone, set it as the one PHP uses
+// finally if we have a valod timezone, set it as the one PHP uses
 if ($sys_timezone !== "") {
 	date_default_timezone_set($sys_timezone);
 }
