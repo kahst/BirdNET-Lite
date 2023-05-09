@@ -309,8 +309,8 @@ body::-webkit-scrollbar {
 </style>
 </head>
 <div class="overview">
-  <dialog style="margin-top: 5px;max-height: 100vh;
-  overflow-y: auto;" id="attribution-dialog">
+  <dialog style="margin-top: 5px;max-height: 95vh;
+  overflow-y: auto;overscroll-behavior:contain" id="attribution-dialog">
     <h1 id="modalHeading"></h1>
     <p id="modalText"></p>
     <button onclick="hideDialog()">Close</button>
@@ -349,7 +349,7 @@ body::-webkit-scrollbar {
 
   function setModalText(iter, title, text, authorlink, photolink, licenseurl) {
     document.getElementById('modalHeading').innerHTML = "Photo: \""+decodeURIComponent(title.replaceAll("+"," "))+"\" Attribution";
-    document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px;max-height: calc(100vh - 15rem);display: block;margin: 0 auto;' src='"+photolink+"'></div><br><div>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a><br>License URL: <a href="+licenseurl+" target='_blank'>"+licenseurl+"</a></div>";
+    document.getElementById('modalText').innerHTML = "<div><img style='border-radius:5px;max-height: calc(100vh - 15rem);display: block;margin: 0 auto;' src='"+photolink+"'></div><br><div style='white-space:nowrap'>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a><br>License URL: <a href="+licenseurl+" target='_blank'>"+licenseurl+"</a></div>";
     last_photo_link = text;
     showDialog();
   }
@@ -495,6 +495,7 @@ window.setInterval(function(){
 </style>
 <script>
 function generateMiniGraph(elem, comname) {
+
   // Make an AJAX call to fetch the number of detections for the bird species
   var xhr = new XMLHttpRequest();
   xhr.open('GET', '/todays_detections.php?comname=' + comname);
@@ -502,9 +503,10 @@ function generateMiniGraph(elem, comname) {
     if (xhr.status === 200) {
       var detections = JSON.parse(xhr.responseText);
 
-      console.log(detections)
-
       // Create a div element for the chart window
+      if (typeof(window.chartWindow) != 'undefined') {
+        document.body.removeChild(window.chartWindow);
+      }
       var chartWindow = document.createElement('div');
       chartWindow.className = "chartdiv"
       chartWindow.style.position = 'fixed';
@@ -615,6 +617,7 @@ function generateMiniGraph(elem, comname) {
         document.body.removeChild(chartWindow);
       });
       chartWindow.appendChild(closeButton);
+      window.chartWindow = chartWindow;
     }
   };
   xhr.send();
