@@ -101,6 +101,31 @@ $shifted_path = $home."/BirdSongs/Extracted/By_Date/shifted/";
 
 if(isset($_GET['shiftfile'])) {
 
+  if (file_exists('./scripts/thisrun.txt')) {
+  $config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
+}
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
+$caddypwd = $config['CADDY_PWD'];
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+  header('WWW-Authenticate: Basic realm="My Realm"');
+  header('HTTP/1.0 401 Unauthorized');
+  echo '<table><tr><td>You cannot shift files for this installation</td></tr></table>';
+  exit;
+} else {
+  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+  $submitteduser = $_SERVER['PHP_AUTH_USER'];
+  if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo '<table><tr><td>You cannot shift files for this installation<</td></tr></table>';
+    exit;
+  }
+}
+
     $filename = $_GET['shiftfile'];
     $pp = pathinfo($filename);
     $dir = $pp['dirname'];
