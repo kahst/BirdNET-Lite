@@ -1,4 +1,8 @@
 <?php
+if (realpath(__FILE__) == realpath($_SERVER['SCRIPT_FILENAME'])) {
+	header('HTTP/1.1 403 Forbidden', TRUE, 403);
+}
+
 ini_set('session.gc_maxlifetime', 7200);
 ini_set('user_agent', 'PHP_Flickr/1.0');
 ini_set('display_errors', 1);
