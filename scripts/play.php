@@ -64,6 +64,28 @@ $shifted_path = getDirectory('shifted_dir');
 
 if(isset($_GET['shiftfile'])) {
 
+//Parse the ini files
+parseConfig();
+
+//Authenticate before going any further
+$caddypwd = $config['CADDY_PWD'];
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+  header('WWW-Authenticate: Basic realm="My Realm"');
+  header('HTTP/1.0 401 Unauthorized');
+  echo '<table><tr><td>You cannot shift files for this installation</td></tr></table>';
+  exit;
+} else {
+  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+  $submitteduser = $_SERVER['PHP_AUTH_USER'];
+  if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo '<table><tr><td>You cannot shift files for this installation<</td></tr></table>';
+    exit;
+  }
+}
+
+//Authenticated
 	$filename = $_GET['shiftfile'];
 	$doShift = null;
 	if (isset($_GET['doshift'])) {
@@ -403,11 +425,11 @@ if(isset($_SESSION['date'])) {
 	$result2_data = getSpeciesDetectionInfo($name, null, $confidence);
 }
 
-	if ($result2_data['success'] == False) {
-		echo $result2_data['message'];
-		header("refresh: 0;");
-	}
-	$result2 = $result2_data['data'];
+if ($result2_data['success'] == False) {
+    echo $result2_data['message'];
+    header("refresh: 0;");
+}
+$result2 = $result2_data['data'];
 
 //Count number of records we have
 $num_rows = count($result2);

@@ -3,7 +3,31 @@ if(file_exists('./scripts/common.php')){
 	include_once "./scripts/common.php";
 }else{
 	include_once "./common.php";
+
+//Parse the ini files to get the current config
+parseConfig();
+
+//Authenticate first before allowing further execution
+$caddypwd = $config['CADDY_PWD'];
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+  header('WWW-Authenticate: Basic realm="My Realm"');
+  header('HTTP/1.0 401 Unauthorized');
+  echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
+  exit;
+} else {
+  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+  $submitteduser = $_SERVER['PHP_AUTH_USER'];
+  if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
+    exit;
+  }
 }
+
+//Authenticated
+//Read in the apprise config
+$apprise_config = getAppriseConfig();
 
 if(isset($_GET['threshold'])) {
   $threshold = $_GET['threshold'];
@@ -207,25 +231,6 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
 <div class="settings">
       <div class="brbanner"><h1>Basic Settings</h1></div><br>
     <form id="basicform" action=""  method="GET">
-<?php
-$apprise_config = getAppriseConfig();
-$caddypwd = $config['CADDY_PWD'];
-if (!isset($_SERVER['PHP_AUTH_USER'])) {
-  header('WWW-Authenticate: Basic realm="My Realm"');
-  header('HTTP/1.0 401 Unauthorized');
-  echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
-  exit;
-} else {
-  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
-  $submitteduser = $_SERVER['PHP_AUTH_USER'];
-  if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
-    header('WWW-Authenticate: Basic realm="My Realm"');
-    header('HTTP/1.0 401 Unauthorized');
-    echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
-    exit;
-  }
-}
-?>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {

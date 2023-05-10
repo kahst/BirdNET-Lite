@@ -118,6 +118,8 @@ if(isset($_GET['view'])){
   if($_GET['view'] == "Streamlit"){echo "<iframe src=\"/stats\"></iframe>";}
   if($_GET['view'] == "Daily Charts"){include('history.php');}
   if($_GET['view'] == "Tools"){
+    parseConfig();
+	//Authenticate before proceeding
     $caddypwd = $config['CADDY_PWD'];
     if (!isset($_SERVER['PHP_AUTH_USER'])) {
       header('WWW-Authenticate: Basic realm="My Realm"');
@@ -210,6 +212,7 @@ if(isset($_GET['view'])){
   }
   if($_GET['view'] == "Webterm"){
 	parseConfig();
+    //Authenticate before proceeding
     $caddypwd = $config['CADDY_PWD'];
     if (!isset($_SERVER['PHP_AUTH_USER'])) {
       header('WWW-Authenticate: Basic realm="My Realm"');
@@ -232,6 +235,7 @@ if(isset($_GET['view'])){
   }
 } elseif(isset($_GET['submit'])) {
   parseConfig();
+  //Authenticate before proceeding
   $caddypwd = $config['CADDY_PWD'];
   if (!isset($_SERVER['PHP_AUTH_USER'])) {
     header('WWW-Authenticate: Basic realm="My Realm"');
@@ -310,7 +314,7 @@ if(isset($_GET['view'])){
 					  //explode the string by " " space so we can get each individual component of the command
 					  //and eventually the service name at the end
 					  $separate_command_tmp = explode(" ", trim($indiv_service_command));
-					  //get the service names so we can poll th status
+					  //get the service names so we can poll the status
 					  $new_multiservice_status_command .= " " . trim(end($separate_command_tmp));
 				  }
 
