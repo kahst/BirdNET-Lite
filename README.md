@@ -18,17 +18,6 @@ BirdNET-Pi is built on the [BirdNET framework](https://github.com/kahst/BirdNET-
 
 Check out birds from around the world
 - [BirdWeather](https://app.birdweather.com)<br>
-- [Johannesburg, South Africa](https://joburg.birdnetpi.com)<br>
-- [Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
-- [Berowra, New South Wales, Australia](https://birds.lloydsplace.au/)
-- [Dundas, Ontario, Canada](https://dundasontario.birdnetpi.com)
-- [Bungendore, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
-- [Rivers Bend, Ohio, United States](https://riversbendoh.birdnetpi.com)
-- [Vienna, Virginia, United States](https://viennava.birdnetpi.com)
-- [Occoquan, Virginia, United States](https://occoquanva.birdnetpi.com)
-
-[Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
-Have a public installation not in the list above? Let me know!! I'd be happy to add it.
 
 Currently listening in these countries . . . that I know of . . .
 - The United States
@@ -60,6 +49,11 @@ Currently listening in these countries . . . that I know of . . .
 - South Sudan
 - Argentina
 - Brazil
+- Thailand
+- Colombia
+- Estonia
+- Tasmania
+- Luxembourgh
 
 ## Features
 * **24/7 recording and automatic identification** of bird songs, chirps, and peeps using BirdNET machine learning
