@@ -25,7 +25,9 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 if(isset($_GET['submit'])) {
   if(isset($_GET["caddy_pwd"])) {
     $caddy_pwd = $_GET["caddy_pwd"];
-	  saveSetting('CADDY_PWD', "\"$caddy_pwd\"",'update_caddyfile');
+	  saveSetting('CADDY_PWD', "\"$caddy_pwd\"");
+      //Make sure the caddy file is set directly
+	  update_caddyfile();
   }
 
   if(isset($_GET["ice_pwd"])) {
@@ -37,7 +39,8 @@ if(isset($_GET['submit'])) {
     $birdnetpi_url = $_GET["birdnetpi_url"];
     // remove trailing slash to prevent conf from becoming broken
     $birdnetpi_url = rtrim($birdnetpi_url, '/');
-	saveSetting('BIRDNETPI_URL', $birdnetpi_url,'update_caddyfile');
+	saveSetting('BIRDNETPI_URL', $birdnetpi_url);
+	update_caddyfile();
   }
 
   if(isset($_GET["rtsp_stream"])) {

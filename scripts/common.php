@@ -1338,9 +1338,6 @@ function executeSysCommand($command_type, $extra_data_to_pass = null)
 		$command = "sudo -u $user " . getFilePath('python3') . ' ' . getFilePath('species.py') . " --threshold " . escapeshellcmd($extra_data_to_pass) . " 2>&1";
 		$result = shell_exec($command);
 		//
-	} else if ($command_type == "update_caddyfile") {
-		$result = exec("sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &");
-		//
 	} else if ($command_type == "update_birdnet") {
 		$result = shell_exec("update_birdnet.sh");
 		//
@@ -1356,6 +1353,16 @@ function executeSysCommand($command_type, $extra_data_to_pass = null)
 	}
 
 	return $result;
+}
+
+/**
+ * Updates the caddy configuration, only ever called when BirdNET-Pi Password or Site URL is set
+ *
+ * @return void
+ */
+function update_caddyfile()
+{
+	 exec("sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &");
 }
 
 /**
