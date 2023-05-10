@@ -447,13 +447,13 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <input name="apprise_notification_title" type="text" value="<?php print($config['APPRISE_NOTIFICATION_TITLE']);?>" /><br>
       <label for="apprise_notification_body">Notification Body: </label>
       <input name="apprise_notification_body" type="text" value='<?php print($config['APPRISE_NOTIFICATION_BODY']);?>' /><br>
-      <input type="checkbox" name="apprise_notify_new_species" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
+      <input type="checkbox" name="apprise_notify_new_species" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES'] == 1 && filesize(getFilePath('apprise.txt')) != 0) { echo "checked"; };?> >
       <label for="apprise_notify_new_species">Notify each new infrequent species detection (<5 visits per week)</label><br>
-      <input type="checkbox" name="apprise_notify_new_species_each_day" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
+      <input type="checkbox" name="apprise_notify_new_species_each_day" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY'] == 1 && filesize(getFilePath('apprise.txt')) != 0) { echo "checked"; };?> >
       <label for="apprise_notify_new_species_each_day">Notify each species first detection of the day</label><br>
-      <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
+      <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize(getFilePath('apprise.txt')) != 0) { echo "checked"; };?> >
       <label for="apprise_weekly_report">Notify each new detection</label><br>
-      <input type="checkbox" name="apprise_weekly_report" <?php if($config['APPRISE_WEEKLY_REPORT'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
+      <input type="checkbox" name="apprise_weekly_report" <?php if($config['APPRISE_WEEKLY_REPORT'] == 1 && filesize(getFilePath('apprise.txt')) != 0) { echo "checked"; };?> >
       <label for="apprise_weekly_report">Send <a href="views.php?view=Weekly%20Report"> weekly report</a></label><br>
 
       <hr>
