@@ -94,6 +94,7 @@ $langs = array(
 
 //Reference to database connection
 $DB_CONN = null;
+$USER_AUTHENTICATED = false;
 
 /**
  * Connects to the bird.db SQLite3 database
@@ -610,6 +611,13 @@ function deleteDetection($filename)
 	$message = '';
 	$data_to_return = null;
 
+	//Check authentication before going any further
+	//the front end would have done this check already and such should pass
+	authenticateUser();
+	if (!userIsAuthenticated()) {
+		return [];
+	}
+
 	$filename_exploded = explode("/", $filename);
 	$actual_filename = $filename_exploded[2];
 
@@ -717,6 +725,13 @@ function frequencyShiftDetectionAudio($filename, $performShift = null)
 	$message = '';
 	$data_to_return = null;
 
+	//Check authentication before going any further
+	//the front end would have done this check already and such should pass
+	authenticateUser();
+	if (!userIsAuthenticated()) {
+		return [];
+	}
+
 	$shifted_path = getDirectory('shifted_audio') . '/';
 
 	$pp = pathinfo($filename);
@@ -729,18 +744,17 @@ function frequencyShiftDetectionAudio($filename, $performShift = null)
 		$freqshift_tool = $config['FREQSHIFT_TOOL'];
 
 		if ($freqshift_tool == "ffmpeg") {
-			$cmd = "sudo /usr/bin/nohup /usr/bin/ffmpeg -y -i \"" . $pi . $filename . "\" -af \"rubberband=pitch=" . $config['FREQSHIFT_LO'] . "/" . $config['FREQSHIFT_HI'] . "\" \"" . $shifted_path . $filename . "\"";
+			$cmd = "sudo /usr/bin/nohup /usr/bin/ffmpeg -y -i " . escapeshellarg($pi . $filename) . " -af \"rubberband=pitch=" . $config['FREQSHIFT_LO'] . "/" . $config['FREQSHIFT_HI'] . "\" " . escapeshellarg($shifted_path . $filename) . "";
 			shell_exec("sudo mkdir -p " . $shifted_path . $dir . " && " . $cmd);
-
 		} else if ($freqshift_tool == "sox") {
 			//linux.die.net/man/1/sox
 			$soxopt = "-q";
 			$soxpitch = $config['FREQSHIFT_PITCH'];
-			$cmd = "sudo /usr/bin/nohup /usr/bin/sox \"" . $pi . $filename . "\" \"" . $shifted_path . $filename . "\" pitch " . $soxopt . " " . $soxpitch;
+			$cmd = "sudo /usr/bin/nohup /usr/bin/sox " . escapeshellarg($pi . $filename) . " " . escapeshellarg($shifted_path . $filename) . " pitch " . $soxopt . " " . $soxpitch;
 			shell_exec("sudo mkdir -p " . $shifted_path . $dir . " && " . $cmd);
 		}
 	} else {
-		$cmd = "sudo rm -f " . $shifted_path . $filename;
+		$cmd = "sudo rm -f " . escapeshellarg($shifted_path . $filename);
 		shell_exec($cmd);
 	}
 
@@ -1159,6 +1173,13 @@ function saveSetting($setting_name, $setting_value, $post_save_command = null)
 {
 	global $config;
 
+	//Check authentication before going any further
+	//the front end would have done this check already and such should pass
+	authenticateUser();
+	if(!userIsAuthenticated()){
+		return;
+	}
+
 	//Setting exists already, see if the value changed
 	if (array_key_exists($setting_name, $config)) {
 		//Strip any outer quotes from the setting value (e.g "$rec_card") and then test if it change how it was originally tested
@@ -1261,6 +1282,13 @@ function executeSysCommand($command_type, $extra_data_to_pass = null)
 {
 	global $user, $home;
 
+	//Check authentication before going any further
+	//the front end would have done this check already and such should pass
+	authenticateUser();
+	if(!userIsAuthenticated()){
+		return "";
+	}
+
 	$command_type = strtolower($command_type);
 	$result = null;
 
@@ -1299,11 +1327,11 @@ function executeSysCommand($command_type, $extra_data_to_pass = null)
 		$result = serviceMaintenance('restart spectrogram_viewer.service');
 		//
 	} else if ($command_type == "set_date") {
-		$command = "sudo date -s '" . $extra_data_to_pass['date'] . " " . $extra_data_to_pass['time'] . "'";
+		$command = "sudo date -s '" . escapeshellcmd($extra_data_to_pass['date']) . " " . escapeshellcmd($extra_data_to_pass['time']) . "'";
 		$result = shell_exec($command);
 		//
 	} else if ($command_type == "set_timezone") {
-		$command = "sudo timedatectl set-timezone $extra_data_to_pass";
+		$command = "sudo timedatectl set-timezone " . escapeshellcmd($extra_data_to_pass);
 		$result = shell_exec($command);
 		//
 	} else if ($command_type == "test_threshold") {
@@ -1343,6 +1371,13 @@ function serviceMaintenance($command)
 {
 	$command = trim($command);
 	$result = "";
+
+	//Check authentication before going any further
+	//the front end would have done this check already and such should pass
+	authenticateUser();
+	if(!userIsAuthenticated()){
+		return "";
+	}
 
 	///e.g $command = 'service stop livestream.service', match the service name
 	////// BIRDNET LOG SERVICE //////
@@ -1529,20 +1564,26 @@ function relativeTime($ts)
  */
 function syslog_shell_exec($cmd, $sudo_user = null)
 {
-	if ($sudo_user) {
-		$cmd = "sudo -u $sudo_user $cmd";
-	}
-	$output = shell_exec($cmd);
+	$output = "";
+	//Check authentication before going any further
+	//the front end would have done this check already and such should pass
+	authenticateUser();
+	if(userIsAuthenticated()){
+		if ($sudo_user) {
+			$cmd = "sudo -u $sudo_user $cmd";
+		}
+		$output = shell_exec($cmd);
 
-	if (strlen($output) > 0) {
-		syslog(LOG_INFO, $output);
+		if (strlen($output) > 0) {
+			syslog(LOG_INFO, $output);
+		}
 	}
 
 	return $output;
 }
 
 /**
- * Loads in configuration settings from either this or firstrun.txt
+ * Loads in configuration settings from either thisrun or firstrun.txt
  *
  * @return void
  */
@@ -1566,8 +1607,8 @@ function parseConfig()
 function updateAppriseConfig($apprise_config)
 {
 	if (isset($apprise_config)) {
-		$appriseconfig = fopen(getFilePath("apprise.txt"), "w");
-		fwrite($appriseconfig, $apprise_config);
+		$appriseconfig_config_file = fopen(getFilePath("apprise.txt"), "w");
+		fwrite($appriseconfig_config_file, $apprise_config);
 	}
 }
 
@@ -1669,6 +1710,50 @@ function getServiceStatus($name)
 	}
 
 	return ["status" => $status, "message" => $message];
+}
+
+/**
+ * Returns the boolean flag
+ * @return false
+ */
+function userIsAuthenticated()
+{
+	global $USER_AUTHENTICATED;
+	return $USER_AUTHENTICATED;
+}
+
+/**
+ * When called authenticates the user using the built in PHP_AUTH
+ * This will automatically
+ *
+ * @return void
+ */
+function authenticateUser()
+{
+	global $config, $USER_AUTHENTICATED;
+	parseConfig();
+	$USER_AUTHENTICATED = false;
+
+	$caddypwd = $config['CADDY_PWD'];
+	if (!isset($_SERVER['PHP_AUTH_USER'])) {
+		header('WWW-Authenticate: Basic realm="My Realm"');
+		header('HTTP/1.0 401 Unauthorized');
+		echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
+		exit;
+	} else {
+		//Read the supplied details
+		$submittedpwd = $_SERVER['PHP_AUTH_PW'];
+		$submitteduser = $_SERVER['PHP_AUTH_USER'];
+		//
+		if ($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet') {
+			header('WWW-Authenticate: Basic realm="My Realm"');
+			header('HTTP/1.0 401 Unauthorized');
+			echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
+			exit;
+		} else {
+			$USER_AUTHENTICATED = true;
+		}
+	}
 }
 
 /**

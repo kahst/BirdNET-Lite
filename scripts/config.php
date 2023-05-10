@@ -1,8 +1,9 @@
 <?php
-if(file_exists('./scripts/common.php')){
+if (file_exists('./scripts/common.php')) {
 	include_once "./scripts/common.php";
-}else{
+} else {
 	include_once "./common.php";
+}
 
 //Parse the ini files to get the current config
 parseConfig();
