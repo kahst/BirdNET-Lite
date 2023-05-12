@@ -614,9 +614,6 @@ function deleteDetection($filename)
 	//Check authentication before going any further
 	//the front end would have done this check already and such should pass
 	authenticateUser();
-	if (!userIsAuthenticated()) {
-		return [];
-	}
 
 	$filename_exploded = explode("/", $filename);
 	$actual_filename = $filename_exploded[2];
@@ -728,9 +725,6 @@ function frequencyShiftDetectionAudio($filename, $performShift = null)
 	//Check authentication before going any further
 	//the front end would have done this check already and such should pass
 	authenticateUser();
-	if (!userIsAuthenticated()) {
-		return [];
-	}
 
 	$shifted_path = getDirectory('shifted_audio') . '/';
 
@@ -1176,9 +1170,6 @@ function saveSetting($setting_name, $setting_value, $post_save_command = null)
 	//Check authentication before going any further
 	//the front end would have done this check already and such should pass
 	authenticateUser();
-	if(!userIsAuthenticated()){
-		return;
-	}
 
 	//Setting exists already, see if the value changed
 	if (array_key_exists($setting_name, $config)) {
@@ -1285,9 +1276,6 @@ function executeSysCommand($command_type, $extra_data_to_pass = null)
 	//Check authentication before going any further
 	//the front end would have done this check already and such should pass
 	authenticateUser();
-	if(!userIsAuthenticated()){
-		return "";
-	}
 
 	$command_type = strtolower($command_type);
 	$result = null;
@@ -1382,9 +1370,6 @@ function serviceMaintenance($command)
 	//Check authentication before going any further
 	//the front end would have done this check already and such should pass
 	authenticateUser();
-	if(!userIsAuthenticated()){
-		return "";
-	}
 
 	///e.g $command = 'service stop livestream.service', match the service name
 	////// BIRDNET LOG SERVICE //////
@@ -1575,15 +1560,14 @@ function syslog_shell_exec($cmd, $sudo_user = null)
 	//Check authentication before going any further
 	//the front end would have done this check already and such should pass
 	authenticateUser();
-	if(userIsAuthenticated()){
-		if ($sudo_user) {
-			$cmd = "sudo -u $sudo_user $cmd";
-		}
-		$output = shell_exec($cmd);
 
-		if (strlen($output) > 0) {
-			syslog(LOG_INFO, $output);
-		}
+	if ($sudo_user) {
+		$cmd = "sudo -u $sudo_user $cmd";
+	}
+	$output = shell_exec($cmd);
+
+	if (strlen($output) > 0) {
+		syslog(LOG_INFO, $output);
 	}
 
 	return $output;

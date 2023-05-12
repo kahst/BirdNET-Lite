@@ -23,24 +23,9 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 }
 
 if(isset($_GET['submit'])) {
-  if(isset($_GET["caddy_pwd"])) {
-    $caddy_pwd = $_GET["caddy_pwd"];
-	  saveSetting('CADDY_PWD', "\"$caddy_pwd\"");
-      //Make sure the caddy file is set directly
-	  update_caddyfile();
-  }
-
   if(isset($_GET["ice_pwd"])) {
     $ice_pwd = $_GET["ice_pwd"];
 	saveSetting('ICE_PWD', $ice_pwd);
-  }
-
-  if(isset($_GET["birdnetpi_url"])) {
-    $birdnetpi_url = $_GET["birdnetpi_url"];
-    // remove trailing slash to prevent conf from becoming broken
-    $birdnetpi_url = rtrim($birdnetpi_url, '/');
-	saveSetting('BIRDNETPI_URL', $birdnetpi_url);
-	update_caddyfile();
   }
 
   if(isset($_GET["rtsp_stream"])) {
@@ -164,6 +149,28 @@ if(isset($_GET['submit'])) {
 		$livestream_audio_service_log_level = trim($_GET["LogLevel_LiveAudioStreamService"]);
 
 		saveSetting('LogLevel_LiveAudioStreamService', "\"$livestream_audio_service_log_level\"",['restart livestream','restart icecast2']);
+	}
+
+	if(isset($_GET["birdnetpi_url"])) {
+		$birdnetpi_url = $_GET["birdnetpi_url"];
+		// remove trailing slash to prevent conf from becoming broken
+		$birdnetpi_url = rtrim($birdnetpi_url, '/');
+		saveSetting('BIRDNETPI_URL', $birdnetpi_url);
+		update_caddyfile();
+	}
+
+	if(isset($_GET["caddy_pwd"])) {
+		$caddy_pwd_value = "";
+		$caddy_pwd = $_GET["caddy_pwd"];
+        //If the BirdNET-Pi Password is empty, return a empty string instead of a string that was surrounded by double quotes
+        //else return the supplied password
+        //so in the ini file ['CADDY_PWD']=  , instead of ['CADDY_PWD']="" (which still prompts for auth but password is required)
+        //this returns the password setting to it's default state when no password is set
+		$caddy_pwd_value = !empty($caddy_pwd) ? "\"$caddy_pwd\"" : "";
+
+		saveSetting('CADDY_PWD', "$caddy_pwd_value");
+		//Make sure the caddy file is set directly
+		update_caddyfile();
 	}
 }
 
