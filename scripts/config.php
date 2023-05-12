@@ -2,6 +2,36 @@
 error_reporting(E_ERROR);
 ini_set('display_errors',1);
 
+if (file_exists('./scripts/thisrun.txt')) {
+  $config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
+}
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
+if (file_exists($home."/BirdNET-Pi/apprise.txt")) {
+  $apprise_config = file_get_contents($home."/BirdNET-Pi/apprise.txt");
+} else {
+  $apprise_config = "";
+}
+$caddypwd = $config['CADDY_PWD'];
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+  header('WWW-Authenticate: Basic realm="My Realm"');
+  header('HTTP/1.0 401 Unauthorized');
+  echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
+  exit;
+} else {
+  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+  $submitteduser = $_SERVER['PHP_AUTH_USER'];
+  if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
+    exit;
+  }
+}
+
 function syslog_shell_exec($cmd, $sudo_user = null) {
   if ($sudo_user) {
     $cmd = "sudo -u $sudo_user $cmd";
@@ -293,37 +323,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
 <div class="settings">
       <div class="brbanner"><h1>Basic Settings</h1></div><br>
     <form id="basicform" action=""  method="GET">
-<?php
-if (file_exists('./scripts/thisrun.txt')) {
-  $config = parse_ini_file('./scripts/thisrun.txt');
-} elseif (file_exists('./scripts/firstrun.ini')) {
-  $config = parse_ini_file('./scripts/firstrun.ini');
-}
-$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-$home = trim($home);
-if (file_exists($home."/BirdNET-Pi/apprise.txt")) {
-  $apprise_config = file_get_contents($home."/BirdNET-Pi/apprise.txt");
-} else {
-  $apprise_config = "";
-}
-$caddypwd = $config['CADDY_PWD'];
-if (!isset($_SERVER['PHP_AUTH_USER'])) {
-  header('WWW-Authenticate: Basic realm="My Realm"');
-  header('HTTP/1.0 401 Unauthorized');
-  echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
-  exit;
-} else {
-  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
-  $submitteduser = $_SERVER['PHP_AUTH_USER'];
-  if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
-    header('WWW-Authenticate: Basic realm="My Realm"');
-    header('HTTP/1.0 401 Unauthorized');
-    echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
-    exit;
-  }
-}
-?>    
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
