@@ -1714,12 +1714,13 @@ function userIsAuthenticated()
 }
 
 /**
- * When called authenticates the user using the built in PHP_AUTH
- * This will automatically
+ * When called, authenticates the user using the built-in PHP_AUTH. This is the orignial authentication code just wrapped in a function
+ * This will automatically terminate the script if authentication fails
  *
- * @return void
+ * @param $rejection_message string Message to return to the user if authentication fails
+ * @return bool
  */
-function authenticateUser()
+function authenticateUser($rejection_message = "You cannot edit the settings for this installation")
 {
 	global $config, $USER_AUTHENTICATED;
 	parseConfig();
@@ -1727,9 +1728,9 @@ function authenticateUser()
 
 	$caddypwd = $config['CADDY_PWD'];
 	if (!isset($_SERVER['PHP_AUTH_USER'])) {
-		header('WWW-Authenticate: Basic realm="My Realm"');
+		header('WWW-Authenticate: Basic realm="BirdNET-Pi"');
 		header('HTTP/1.0 401 Unauthorized');
-		echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
+		echo '<table><tr><td>' . $rejection_message . '</td></tr></table>';
 		exit;
 	} else {
 		//Read the supplied details
@@ -1737,14 +1738,16 @@ function authenticateUser()
 		$submitteduser = $_SERVER['PHP_AUTH_USER'];
 		//
 		if ($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet') {
-			header('WWW-Authenticate: Basic realm="My Realm"');
+			header('WWW-Authenticate: Basic realm="BirdNET-Pi"');
 			header('HTTP/1.0 401 Unauthorized');
-			echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
+			echo '<table><tr><td>' . $rejection_message . '</td></tr></table>';
 			exit;
 		} else {
 			$USER_AUTHENTICATED = true;
 		}
 	}
+
+	return $USER_AUTHENTICATED;
 }
 
 /**

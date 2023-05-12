@@ -31,28 +31,13 @@ if(isset($_GET['custom_image'])){
 }
 
 if(isset($_GET['blacklistimage'])) {
-  if(isset($_SERVER['PHP_AUTH_USER'])) {
-    $submittedpwd = $_SERVER['PHP_AUTH_PW'];
-    $submitteduser = $_SERVER['PHP_AUTH_USER'];
-    if($submittedpwd == $config['CADDY_PWD'] && $submitteduser == 'birdnet'){
-
-      $imageid = $_GET['blacklistimage'];
-      $result = blacklistFlickrImage($imageid);
-      unset($_SESSION['images']);
-      die($result['message']);
-    } else {
-      header('WWW-Authenticate: Basic realm="My Realm"');
-      header('HTTP/1.0 401 Unauthorized');
-      echo 'You must be authenticated.';
-      exit;
+	$user_is_authenticated = authenticateUser('You cannot modify the system');
+    if($user_is_authenticated){
+		$imageid = $_GET['blacklistimage'];
+		$result = blacklistFlickrImage($imageid);
+		unset($_SESSION['images']);
+		die($result['message']);
     }
-  } else {
-    header('WWW-Authenticate: Basic realm="My Realm"');
-    header('HTTP/1.0 401 Unauthorized');
-    echo 'You must be authenticated.';
-    exit;
-  }
-
 }
 
 if(isset($_GET['fetch_chart_string']) && $_GET['fetch_chart_string'] == "true") {

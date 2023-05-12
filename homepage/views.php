@@ -118,20 +118,11 @@ if(isset($_GET['view'])){
   if($_GET['view'] == "Streamlit"){echo "<iframe src=\"/stats\"></iframe>";}
   if($_GET['view'] == "Daily Charts"){include('history.php');}
   if($_GET['view'] == "Tools"){
-    parseConfig();
 	//Authenticate before proceeding
-    $caddypwd = $config['CADDY_PWD'];
-    if (!isset($_SERVER['PHP_AUTH_USER'])) {
-      header('WWW-Authenticate: Basic realm="My Realm"');
-      header('HTTP/1.0 401 Unauthorized');
-      echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
-      exit;
-    } else {
-      $submittedpwd = $_SERVER['PHP_AUTH_PW'];
-      $submitteduser = $_SERVER['PHP_AUTH_USER'];
-      if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
-        $url = $_SERVER['SERVER_NAME']."/scripts/adminer.php";
-        echo "<div class=\"centered\">
+    $user_is_authenticated =  authenticateUser();
+	  if ($user_is_authenticated) {
+		  $url = $_SERVER['SERVER_NAME'] . "/scripts/adminer.php";
+		  echo "<div class=\"centered\">
           <form action=\"\" method=\"GET\" id=\"views\">
           <button type=\"submit\" name=\"view\" value=\"Settings\" form=\"views\">Settings</button>
           <button type=\"submit\" name=\"view\" value=\"System Info\" form=\"views\">System Info</button>
@@ -144,19 +135,14 @@ if(isset($_GET['view'])){
           <button type=\"submit\" name=\"view\" value=\"Excluded\" form=\"views\">Excluded Species List</button>
           </form>
           </div>";
-      } else {
-        header('WWW-Authenticate: Basic realm="My Realm"');
-        header('HTTP/1.0 401 Unauthorized');
-        echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
-        exit;
-      }
-    }
+	  }
   }
   if($_GET['view'] == "Recordings"){include('play.php');}
   if($_GET['view'] == "Settings"){include('scripts/config.php');} 
   if($_GET['view'] == "Advanced"){include('scripts/advanced.php');}
   if($_GET['view'] == "Included"){
-    if(isset($_GET['species']) && isset($_GET['add'])){
+	  $user_is_authenticated = authenticateUser('You cannot modify the system');
+	  if(isset($_GET['species']) && isset($_GET['add']) && $user_is_authenticated){
       $file = getFilePath('include_species_list.txt');
       $str = file_get_contents("$file");
       $str = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $str);
@@ -183,7 +169,8 @@ if(isset($_GET['view'])){
     include('./scripts/include_list.php');
   }
   if($_GET['view'] == "Excluded"){
-    if(isset($_GET['species']) && isset($_GET['add'])){
+	  $user_is_authenticated = authenticateUser('You cannot modify the system');
+	  if(isset($_GET['species']) && isset($_GET['add']) && $user_is_authenticated){
       $file = getFilePath('exclude_species_list.txt');
       $str = file_get_contents("$file");
       $str = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $str);
@@ -211,40 +198,17 @@ if(isset($_GET['view'])){
     echo "<iframe src='scripts/filemanager/filemanager.php'></iframe>";
   }
   if($_GET['view'] == "Webterm"){
-	parseConfig();
-    //Authenticate before proceeding
-    $caddypwd = $config['CADDY_PWD'];
-    if (!isset($_SERVER['PHP_AUTH_USER'])) {
-      header('WWW-Authenticate: Basic realm="My Realm"');
-      header('HTTP/1.0 401 Unauthorized');
-      echo '<table><tr><td>You cannot access the web terminal</td></tr></table>';
-      exit;
-    } else {
-      $submittedpwd = $_SERVER['PHP_AUTH_PW'];
-      $submitteduser = $_SERVER['PHP_AUTH_USER'];
-      if($submittedpwd == $caddypwd && $submitteduser == 'birdnet'){
+	//Authenticate before proceeding
+	$user_is_authenticated = authenticateUser("You cannot access the web terminal");
+	if ($user_is_authenticated) {
         #ACCESS THE WEB TERMINAL
         echo "<iframe src='/terminal'></iframe>";
-      } else {
-        header('WWW-Authenticate: Basic realm="My Realm"');
-        header('HTTP/1.0 401 Unauthorized');
-        echo '<table><tr><td>You cannot access the web terminal</td></tr></table>';
-        exit;
-      }
-    }
+	}
   }
 } elseif(isset($_GET['submit'])) {
-  parseConfig();
   //Authenticate before proceeding
-  $caddypwd = $config['CADDY_PWD'];
-  if (!isset($_SERVER['PHP_AUTH_USER'])) {
-    header('WWW-Authenticate: Basic realm="My Realm"');
-    header('HTTP/1.0 401 Unauthorized');
-    echo 'You cannot access the web terminal';
-    exit;
-  } else {
-    $submittedpwd = $_SERVER['PHP_AUTH_PW'];
-    $submitteduser = $_SERVER['PHP_AUTH_USER'];
+  $user_is_authenticated = authenticateUser('You cannot modify the system');
+
     $allowedCommands = array('service stop livestream.service && service stop icecast2.service',
                        'service restart livestream.service && service restart icecast2.service',
                        'service disable livestream.service && service disable icecast2 && service stop icecast2.service',
@@ -292,7 +256,7 @@ if(isset($_GET['view'])){
                        'sudo shutdown now',
                        'sudo clear_all_data.sh');
       $command = $_GET['submit'];
-    if($submittedpwd == $caddypwd && $submitteduser == 'birdnet' && in_array($command,$allowedCommands)){
+    if($user_is_authenticated && in_array($command,$allowedCommands)){
       if(isset($command)){
         $initcommand = $command;
         $results = "";
@@ -383,15 +347,16 @@ if(isset($_GET['view'])){
         }
         echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$initcommand."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td style='padding-left: 0px;padding-right: 0px;padding-bottom: 0px;padding-top: 0px;'><pre class='bash' style='text-align:left;margin:0px'>$results</pre></td></tr></table>"; 
       } else {
-        header('WWW-Authenticate: Basic realm="My Realm"');
+        header('WWW-Authenticate: Basic realm="BirdNET-Pi"');
         header('HTTP/1.0 401 Unauthorized');
-        echo 'You cannot access the web terminal';
+        echo 'You cannot modify the system';
         exit;
       }
     }
-  }
   ob_end_flush();
-} else {include('overview.php');}
+} else {
+	include('overview.php');
+}
 ?>
 <script>
 function myFunction() {
