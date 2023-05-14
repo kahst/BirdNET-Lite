@@ -1039,35 +1039,57 @@ function getDirectory($dir)
 		return $home;
 	} else if ($dir == "birdnet-pi" || $dir == "birdnet_pi") {
 		return getDirectory('home') . '/BirdNET-Pi';
+		//
 	} else if ($dir == "recs_dir" || $dir == "recordings_dir") {
 		$recs_dir_setting = $config['RECS_DIR'];
 		return str_replace('$HOME', getDirectory('home'), $recs_dir_setting);
+		//
 	} else if ($dir == "processed") {
 		$processed_dir_setting = $config['PROCESSED'];
 		return getDirectory('recs_dir') . str_replace('${RECS_DIR}', '', $processed_dir_setting);
+		//
 	} else if ($dir == "extracted") {
 		$extracted_dir_setting = $config['EXTRACTED'];
 		return getDirectory('recs_dir') . str_replace('${RECS_DIR}', '', $extracted_dir_setting);
+		//
 	} elseif ($dir == "extracted_bydate" || $dir == "extracted_by_date") {
 		return getDirectory('extracted') . '/By_Date';
+		//
+	} elseif ($dir == "extracted_charts") {
+		return getDirectory('extracted') . '/Charts';
+		//
 	} elseif ($dir == "shifted_audio" || $dir == "shifted_dir") {
 		return getDirectory('home') . '/BirdSongs/Extracted/By_Date/shifted';
+		//
 	} elseif ($dir == "database") {
 		// NOT USED
 		return getDirectory('birdnet_pi') . '/database';
+		//
 	} elseif ($dir == "config") {
 		// NOT USED
 		return getDirectory('birdnet_pi') . '/config';
+		//
 	} elseif ($dir == "models" || $dir == "model") {
 		return getDirectory('birdnet_pi') . '/model';
+		//
 	} elseif ($dir == "python3_ve") {
 		return getDirectory('birdnet_pi') . '/birdnet/bin';
+		//
 	} elseif ($dir == "scripts") {
 		return getDirectory('birdnet_pi') . '/scripts';
+		//
+	} elseif ($dir == "stream_data") {
+		return getDirectory('recs_dir') . '/StreamData';
+		//
 	} elseif ($dir == "templates") {
 		return getDirectory('birdnet_pi') . '/templates';
+		//
 	} elseif ($dir == "web" || $dir == "www") {
 		return getDirectory('birdnet_pi') . '/homepage';
+		//
+	} elseif ($dir == "web_fonts" || $dir == "www_fonts") {
+		return getDirectory('www') . '/static';
+		//
 	}
 
 	return "";
@@ -1089,6 +1111,9 @@ function getFilePath($filename)
 		//
 	} else if ($filename == "birdnet.conf") {
 		return getDirectory('birdnet_pi') . "/birdnet.conf";
+		//
+	} else if ($filename == "etc_birdnet.conf") {
+		return "/etc/birdnet/birdnet.conf";
 		//
 	} else if ($filename == "BirdDB.txt") {
 		return getDirectory('birdnet_pi') . "/BirdDB.txt";
@@ -1113,6 +1138,9 @@ function getFilePath($filename)
 		//
 	} else if ($filename == "firstrun.ini") {
 		return getDirectory('home') . "/firstrun.ini";
+		//
+	} else if ($filename == ".gotty") {
+		return getDirectory('home') . "/.gotty";
 		//
 	} else if ($filename == "HUMAN.txt") {
 		return getDirectory('birdnet_pi') . "/HUMAN.txt";
@@ -1350,7 +1378,7 @@ function executeSysCommand($command_type, $extra_data_to_pass = null)
  */
 function update_caddyfile()
 {
-	 exec("sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &");
+	exec("sudo /usr/local/bin/update_caddyfile.sh > /dev/null 2>&1 &");
 }
 
 /**
@@ -1502,7 +1530,7 @@ function serviceMaintenance($command)
 
 /**
  * Returns a the supplied timestamp as sometime human-readable
- * from https://stackoverflow.com/questions/2690504/php-producing-relative-date-time-from-timestamps
+ * @link https://stackoverflow.com/questions/2690504/php-producing-relative-date-time-from-timestamps
  *
  * @param $ts
  * @return false|string
