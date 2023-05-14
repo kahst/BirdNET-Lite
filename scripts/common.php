@@ -1137,7 +1137,7 @@ function getFilePath($filename)
 		return getDirectory('scripts') . "/exclude_species_list.txt";
 		//
 	} else if ($filename == "firstrun.ini") {
-		return getDirectory('home') . "/firstrun.ini";
+		return getDirectory('birdnet_pi') . "/firstrun.ini";
 		//
 	} else if ($filename == ".gotty") {
 		return getDirectory('home') . "/.gotty";
