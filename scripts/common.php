@@ -1103,6 +1103,8 @@ function getDirectory($dir)
  */
 function getFilePath($filename)
 {
+	global $config;
+
 	if ($filename == "analyzing_now.txt") {
 		return getDirectory('birdnet_pi') . "/analyzing_now.txt";
 		//
@@ -1144,6 +1146,10 @@ function getFilePath($filename)
 		//
 	} else if ($filename == "HUMAN.txt") {
 		return getDirectory('birdnet_pi') . "/HUMAN.txt";
+		//
+	} else if ($filename == "IdentifiedSoFar.txt" ||$filename == "IDFILE" ) {
+		$id_file_setting = $config['IDFILE'];
+		return getDirectory('home') . str_replace('$HOME', '', $id_file_setting);
 		//
 	} else if ($filename == "include_species_list.txt") {
 		return getDirectory('scripts') . "/include_species_list.txt";

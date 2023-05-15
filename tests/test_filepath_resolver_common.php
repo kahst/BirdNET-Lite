@@ -6,7 +6,8 @@ const TEST_HOMES = ['/home/pi', '/home/another_user', '/opt/birdnet'];
 $config = [
 	"RECS_DIR" => "\$HOME/BirdSongs",
 	"PROCESSED" => "\${RECS_DIR}/Processed",
-	"EXTRACTED" => "\${RECS_DIR}/Extracted"
+	"EXTRACTED" => "\${RECS_DIR}/Extracted",
+	"IDFILE" => "\$HOME/BirdNET-Pi/IdentifiedSoFar.txt"
 ];
 
 function test()
@@ -134,6 +135,10 @@ function test()
 		$result = getFilePath('HUMAN.txt');
 		$expected = $_test_home . "/BirdNET-Pi/HUMAN.txt";
 		($result == $expected) ?: (print "failed file path 'HUMAN.txt', expected: " . ($expected) . " got: " . ($result) . "\r\n");
+
+		$result = getFilePath('IdentifiedSoFar.txt');
+		$expected = $_test_home . "/BirdNET-Pi/IdentifiedSoFar.txt";
+		($result == $expected) ?: (print "failed file path 'IdentifiedSoFar.txt', expected: " . ($expected) . " got: " . ($result) . "\r\n");
 
 		$result = getFilePath('include_species_list.txt');
 		$expected = $_test_home . "/BirdNET-Pi/scripts/include_species_list.txt";
