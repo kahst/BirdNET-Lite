@@ -17,6 +17,13 @@ function test()
 	foreach (TEST_HOMES as $_test_home) {
 		$home = $_test_home;
 
+		############################
+		## Directory Path Tests
+		############################
+		$result = getDirectory('home');
+		$expected = $_test_home;
+		($result == $expected) ?: (print "failed directory 'home', expected: " . ($expected) . " got: " . ($result) . "\r\n");
+
 		# DIRECTORY TESTS
 		$result = getDirectory('birdnet_pi');
 		$expected = $_test_home . "/BirdNET-Pi";
@@ -78,8 +85,9 @@ function test()
 		$expected = $_test_home . "/BirdNET-Pi/homepage/static";
 		($result == $expected) ?: (print "failed directory 'web_fonts', expected: " . ($expected) . " got: " . ($result) . "\r\n");
 
-
+		############################
 		# FILE PATH TESTS
+		############################
 		$result = getFilePath('analyzing_now.txt');
 		$expected = $_test_home . "/BirdNET-Pi/analyzing_now.txt";
 		($result == $expected) ?: (print "failed file path 'analyzing_now.txt', expected: " . ($expected) . " got: " . ($result) . "\r\n");
@@ -127,6 +135,10 @@ function test()
 		$result = getFilePath('firstrun.ini');
 		$expected = $_test_home . "/BirdNET-Pi/firstrun.ini";
 		($result == $expected) ?: (print "failed file path 'firstrun.ini', expected: " . ($expected) . " got: " . ($result) . "\r\n");
+
+		$result = getFilePath('filepath_map.json');
+		$expected = $_test_home . "/BirdNET-Pi/config/filepath_map.json";
+		($result == $expected) ?: (print "failed file path 'filepath_map.json', expected: " . ($expected) . " got: " . ($result) . "\r\n");
 
 		$result = getFilePath('.gotty');
 		$expected = $_test_home . "/.gotty";

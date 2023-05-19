@@ -1,0 +1,280 @@
+{
+    "directories": {
+        "home": {
+            "description": "The home path for the user with User ID of 1000, this is normally the 'pi' user",
+            "read_setting": null,
+            "return_var": "home"
+        },
+        "birdnet-pi": {
+            "alias_for": "birdnet_pi"
+        },
+        "birdnet_pi": {
+            "description": "The root directory of the BirdNET-pi install",
+            "lives_under": "home",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/BirdNET-Pi",
+            "return_var": ""
+        },
+        "recs_dir": {
+            "alias_for": "recordings_dir"
+        },
+        "recordings_dir": {
+            "description": "The recording directory as specified in the config file (default: BirdSongs)",
+            "lives_under": "home",
+            "read_setting": "RECS_DIR",
+            "replace_setting_text": "$HOME",
+            "replace_setting_text_with": "",
+            "append": ""
+        },
+        "processed": {
+            "description": "The directory which holds the recordings that have been processed",
+            "lives_under": "recordings_dir",
+            "read_setting": "PROCESSED",
+            "replace_setting_text": "${RECS_DIR}",
+            "replace_setting_text_with": "",
+            "append": ""
+        },
+        "extracted": {
+            "description": "The directory which holds the extraction related data from detections",
+            "lives_under": "recordings_dir",
+            "read_setting": "EXTRACTED",
+            "replace_setting_text": "${RECS_DIR}",
+            "replace_setting_text_with": "",
+            "append": ""
+        },
+        "extracted_bydate": {
+            "alias_for": "extracted_by_date"
+        },
+        "extracted_by_date": {
+            "description": "The directory which holds the the extractions from detections as folders by date",
+            "lives_under": "extracted",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/By_Date"
+        },
+        "extracted_charts": {
+            "description": "The directory which holds the spectrogram charts for detections",
+            "lives_under": "extracted",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/Charts"
+        },
+        "shifted_dir": {
+            "alias_for": "shifted_audio"
+        },
+        "shifted_audio": {
+            "description": "The directory which stores any frequency shifted audio",
+            "lives_under": "extracted_by_date",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/shifted"
+        },
+        "database": {
+            "description": "**NOT CURRENTLY USED** The directory which holds files related to the detections database",
+            "lives_under": "birdnet_pi",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/database"
+        },
+        "config": {
+            "description": "The directory which holds configuration files for BirdNET-pi",
+            "lives_under": "birdnet_pi",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/config"
+        },
+        "models": {
+            "alias_for": "model"
+        },
+        "model": {
+            "description": "The directory which holds AI detection models",
+            "lives_under": "birdnet_pi",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/model"
+        },
+        "python3_ve": {
+            "description": "The directory which contains the Python 3 Virtual Environment",
+            "lives_under": "birdnet_pi",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/birdnet\/bin"
+        },
+        "scripts": {
+            "description": "The directory which contains the script files like PHP and Shell scripts",
+            "lives_under": "birdnet_pi",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/scripts"
+        },
+        "stream_data": {
+            "description": "The directory which contains the recordings from RTSP streams",
+            "lives_under": "recordings_dir",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/StreamData"
+        },
+        "templates": {
+            "description": "The directory which contains the templates, like html, CRON script templates",
+            "lives_under": "birdnet_pi",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/templates"
+        },
+        "www": {
+            "alias_for": "web"
+        },
+        "web": {
+            "description": "The directory which any files related to generating the Web UI, index.php, views.php, stylesheets etc",
+            "lives_under": "birdnet_pi",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/homepage"
+        },
+        "www_fonts": {
+            "alias_for": "web_fonts"
+        },
+        "web_fonts": {
+            "description": "The directory which any fonts used by the WebUI or Python scripts",
+            "lives_under": "www",
+            "read_setting": "",
+            "replace_setting_text": "",
+            "replace_setting_text_with": "",
+            "append": "\/static"
+        }
+    },
+    "files": {
+        "analyzing_now.txt": {
+            "lives_under": "birdnet_pi",
+            "append": "\/analyzing_now.txt"
+        },
+        "apprise.txt": {
+            "lives_under": "birdnet_pi",
+            "append": "\/apprise.txt"
+        },
+        "birdnet.conf": {
+            "lives_under": "birdnet_pi",
+            "append": "\/birdnet.conf"
+        },
+        "etc_birdnet.conf": {
+            "lives_under": "",
+            "append": "",
+            "return_var": "\/etc\/birdnet\/birdnet.conf"
+        },
+        "BirdDB.txt": {
+            "lives_under": "birdnet_pi",
+            "append": "\/BirdDB.txt"
+        },
+        "birds.db": {
+            "lives_under": "scripts",
+            "append": "\/birds.db"
+        },
+        "blacklisted_images.txt": {
+            "lives_under": "scripts",
+            "append": "\/blacklisted_images.txt"
+        },
+        "disk_check_exclude.txt": {
+            "lives_under": "scripts",
+            "append": "\/disk_check_exclude.txt"
+        },
+        "email_template": {
+            "lives_under": "scripts",
+            "append": "\/email_template"
+        },
+        "email_template2": {
+            "lives_under": "scripts",
+            "append": "\/email_template2"
+        },
+        "exclude_species_list.txt": {
+            "lives_under": "scripts",
+            "append": "\/exclude_species_list.txt"
+        },
+        "filepath_map.json": {
+            "lives_under": "config",
+            "append": "\/filepath_map.json"
+        },
+        "firstrun.ini": {
+            "lives_under": "birdnet_pi",
+            "append": "\/firstrun.ini"
+        },
+        ".gotty": {
+            "lives_under": "home",
+            "append": "\/.gotty"
+        },
+        "HUMAN.txt": {
+            "lives_under": "birdnet_pi",
+            "append": "\/HUMAN.txt"
+        },
+        "IDFILE": {
+            "alias_for": "IdentifiedSoFar.txt"
+        },
+        "IdentifiedSoFar.txt": {
+            "lives_under": "home",
+            "read_setting": "IDFILE",
+            "replace_setting_text": "$HOME",
+            "replace_setting_text_with": "",
+            "append": ""
+        },
+        "include_species_list.txt": {
+            "lives_under": "scripts",
+            "append": "\/include_species_list.txt"
+        },
+        "labels.txt": {
+            "lives_under": "model",
+            "append": "\/labels.txt"
+        },
+        "labels.txt.old": {
+            "lives_under": "model",
+            "append": "\/labels.txt.old"
+        },
+        "labels_flickr.txt": {
+            "lives_under": "model",
+            "append": "\/labels_flickr.txt"
+        },
+        "labels_lang.txt": {
+            "lives_under": "model",
+            "append": "\/labels_lang.txt"
+        },
+        "labels_l18n.zip": {
+            "lives_under": "model",
+            "append": "\/labels_l18n.zip"
+        },
+        "labels_nm.zip": {
+            "lives_under": "model",
+            "append": "\/labels_nm.zip"
+        },
+        "lastrun.txt": {
+            "lives_under": "scripts",
+            "append": "\/lastrun.txt"
+        },
+        "python3": {
+            "lives_under": "python3_ve",
+            "append": "\/python3 "
+        },
+        "python3_appraise": {
+            "lives_under": "python3_ve",
+            "append": "\/apprise "
+        },
+        "species.py": {
+            "lives_under": "scripts",
+            "append": "\/species.py"
+        },
+        "thisrun.txt": {
+            "lives_under": "scripts",
+            "append": "\/thisrun.txt"
+        }
+    }
+}
