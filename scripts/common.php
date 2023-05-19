@@ -1075,7 +1075,7 @@ function getDirectory($dir)
 
 		//Get the directory which the directory we're processing lives under
 		if (!empty($lives_under)) {
-			$under_directory = call_user_func('getDirectory', $lives_under);
+			$under_directory = getDirectory($lives_under);
 		}
 
 		//Read the specified config file setting
@@ -1133,7 +1133,7 @@ function getFilePath($filename)
 
 		//Get the directory which the directory we're processing lives under
 		if (!empty($lives_under)) {
-			$under_directory = call_user_func('getDirectory', $lives_under);
+			$under_directory = getDirectory($lives_under);
 		}
 
 		//Read the specified config file setting if any
