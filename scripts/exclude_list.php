@@ -12,7 +12,10 @@
   <select name="species[]" id="species" multiple size="auto">
   <option>Choose a species below to add to the Excluded Species List</option>
   <?php
-    $filename = getFilePath('labels.txt');
+    error_reporting(E_ALL);
+    ini_set('display_errors',1);
+    
+    $filename = './scripts/labels.txt';
     $eachline = file($filename, FILE_IGNORE_NEW_LINES);
     
     foreach($eachline as $lines){echo 
@@ -40,7 +43,7 @@
   <br><br>
   <select name="species[]" id="value2" multiple size="auto">
 <?php
-  $filename = getFilePath('exclude_species_list.txt');
+  $filename = './scripts/exclude_species_list.txt';
   $eachline = file($filename, FILE_IGNORE_NEW_LINES);
   foreach($eachline as $lines){
     echo 

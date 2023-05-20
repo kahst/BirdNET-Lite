@@ -1,14 +1,22 @@
 <?php
-if(file_exists('./scripts/common.php')){
-	include_once "./scripts/common.php";
-}else{
-	include_once "./common.php";
+error_reporting(E_ERROR);
+ini_set('display_errors',1);
+
+if (file_exists('./scripts/thisrun.txt')) {
+	$config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('./scripts/firstrun.ini')) {
+	$config = parse_ini_file('./scripts/firstrun.ini');
 }
 
 if(isset($_GET['ajax_csv'])) {
 $RECS_DIR = $config["RECS_DIR"];
+
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
+
 //Replace variables to Fix up the file paths just in case the ENV environment variables don't resolve via PHP
-$RECS_DIR = str_replace("\$HOME", getDirectory('home'), $RECS_DIR);
+$RECS_DIR = str_replace("\$HOME", $home, $RECS_DIR);
 $STREAM_DATA_DIR = $RECS_DIR . "/StreamData/";
 
 //Try find the latest file out of the soundcard recording folder
@@ -136,7 +144,12 @@ window.onload = function(){
     document.body.querySelector('h1').remove();
     document.getElementsByClassName("centered")[0].remove()
 
-    <?php
+    <?php 
+    if (file_exists('./scripts/thisrun.txt')) {
+    $config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+    $config = parse_ini_file('./scripts/firstrun.ini');
+  }
   $refresh = $config['RECORDING_LENGTH'];
   $time = time();
   ?>
@@ -419,7 +432,15 @@ h1 {
 				//maybe the list of streams has been modified
                 //This isn't the ideal for this, but needed a way to fix this setting without calling the advanced setting page
 				if (array_key_exists($config['RTSP_STREAM_TO_LIVESTREAM'], $RTSP_Stream_Config) === false) {
-                    saveSetting('RTSP_STREAM_TO_LIVESTREAM',"\"0\"",'restart livestream"');
+					$contents = file_get_contents('/etc/birdnet/birdnet.conf');
+					$contents2 = file_get_contents('./scripts/thisrun.txt');
+					$contents = preg_replace("/RTSP_STREAM_TO_LIVESTREAM=.*/", "RTSP_STREAM_TO_LIVESTREAM=\"0\"", $contents);
+					$contents2 = preg_replace("/RTSP_STREAM_TO_LIVESTREAM=.*/", "RTSP_STREAM_TO_LIVESTREAM=\"0\"", $contents2);
+					$fh = fopen("/etc/birdnet/birdnet.conf", "w");
+					$fh2 = fopen("./scripts/thisrun.txt", "w");
+					fwrite($fh, $contents);
+					fwrite($fh2, $contents2);
+					exec("sudo systemctl restart livestream.service");
 				}
 
 				//Print out the dropdown list for the RTSP streams

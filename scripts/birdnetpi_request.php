@@ -1,10 +1,10 @@
 <?php
-if(file_exists('./scripts/common.php')){
-    include_once "./scripts/common.php";
-}else{
-    include_once "./common.php";
-}
-$template = file_get_contents(getFilePath('email_template2'));
+if (file_exists('thisrun.txt')) {
+  $config = parse_ini_file('thisrun.txt');
+} elseif (file_exists('firstrun.ini')) {
+  $config = parse_ini_file('firstrun.ini');
+} 
+$template = file_get_contents("./scripts/email_template2");
 
 foreach($config as $key => $value)
 {
