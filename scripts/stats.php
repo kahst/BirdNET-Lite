@@ -1,46 +1,64 @@
 <?php
-if(file_exists('./scripts/common.php')){
-	include_once "./scripts/common.php";
-}else{
-	include_once "./common.php";
+ini_set('user_agent', 'PHP_Flickr/1.0');
+error_reporting(0);
+ini_set('display_errors', 0);
+
+$db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+if($db == False) {
+  echo "Database busy";
+  header("refresh: 0;");
 }
 
-$disk_check_exclude_path = getFilePath('disk_check_exclude.txt');
-
 if(isset($_GET['sort']) && $_GET['sort'] == "occurrences") {
-    $sort = "occurrences";
-	$result2_data = getSpeciesBestRecordingList($sort);
+  
+  $statement = $db->prepare('SELECT Date, Time, File_Name, Com_Name, COUNT(*), MAX(Confidence) FROM detections GROUP BY Com_Name ORDER BY COUNT(*) DESC');
+  if($statement == False) {
+    echo "Database busy";
+    header("refresh: 0;");
+  }
+  $result = $statement->execute();
 
-	if ($result2_data['success'] == False) {
-		echo $result2_data['message'];
-		header("refresh: 0;");
-	}
-	$result2 = $result2_data['data'];
+  $statement2 = $db->prepare('SELECT Date, Time, File_Name, Com_Name, COUNT(*), MAX(Confidence) FROM detections GROUP BY Com_Name ORDER BY COUNT(*) DESC');
+  if($statement == False) {
+    echo "Database busy";
+    header("refresh: 0;");
+  }
+  $result2 = $statement2->execute();
 } else {
-	$result2_data = getSpeciesBestRecordingList();
 
-	if ($result2_data['success'] == False) {
-		echo $result2_data['message'];
-		header("refresh: 0;");
-	}
-	$result2 = $result2_data['data'];
+  $statement = $db->prepare('SELECT Date, Time, File_Name, Com_Name, COUNT(*), MAX(Confidence) FROM detections GROUP BY Com_Name ORDER BY Com_Name ASC');
+  if($statement == False) {
+    echo "Database busy";
+    header("refresh: 0;");
+  }
+  $result = $statement->execute();
+
+  $statement2 = $db->prepare('SELECT Date, Time, File_Name, Com_Name, COUNT(*), MAX(Confidence) FROM detections GROUP BY Com_Name ORDER BY Com_Name ASC');
+  if($statement == False) {
+    echo "Database busy";
+    header("refresh: 0;");
+  }
+  $result2 = $statement2->execute();
 }
 
 
 
 if(isset($_GET['species'])){
   $selection = $_GET['species'];
-	$result3_data = getBestRecordingsForSpecies($selection);
-	if($result3_data['success'] == False){
-		echo $result3_data['message'];
-		header("refresh: 0;");
-	}
-	$result3 = $result3_data['data'];
+  $statement3 = $db->prepare("SELECT Com_Name, Sci_Name, COUNT(*), MAX(Confidence), File_Name, Date, Time from detections WHERE Com_Name = \"$selection\"");
+  if($statement3 == False) {
+    echo "Database busy";
+    header("refresh: 0;");
+  }
+  $result3 = $statement3->execute();
 }
 
-if(!file_exists($disk_check_exclude_path) || strpos(file_get_contents($disk_check_exclude_path),"##start") === false) {
-  file_put_contents($disk_check_exclude_path, "");
-  file_put_contents($disk_check_exclude_path, "##start\n##end\n");
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
+if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt") || strpos(file_get_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt"),"##start") === false) {
+  file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "");
+  file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start\n##end\n");
 }
 ?>
 
@@ -73,7 +91,7 @@ if(!file_exists($disk_check_exclude_path) || strpos(file_get_contents($disk_chec
 <table style="padding-top:10px">
   <?php
   $birds = array();
-  foreach($result2 as $results)
+  while($results=$result2->fetchArray(SQLITE3_ASSOC))
   {
     $comname = preg_replace('/ /', '_', $results['Com_Name']);
     $comname = preg_replace('/\'/', '', $comname);
@@ -158,7 +176,7 @@ function setModalText(iter, title, text, authorlink) {
   $species = $_GET['species'];
   $iter=0;
   $lines;
-foreach ($result3 as $results){
+while($results=$result3->fetchArray(SQLITE3_ASSOC)){
   $count = $results['COUNT(*)'];
   $maxconf = round((float)round($results['MAX(Confidence)'],2) * 100 ) . '%';
   $date = $results['Date'];
@@ -186,22 +204,35 @@ foreach ($result3 as $results){
   
   ob_flush();
   flush();
-	$flickr_data = getFlickrImage($results, true);
+  if (file_exists('./scripts/thisrun.txt')) {
+    $config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+    $config = parse_ini_file('./scripts/firstrun.ini');
+  }
+  if (! empty($config["FLICKR_API_KEY"])) {
+    // only open the file once per script execution
+    if(!isset($lines)) {
+      $lines = file($home."/BirdNET-Pi/model/labels_flickr.txt");
+    }
+    // convert sci name to English name
+    foreach($lines as $line){ 
+      if(strpos($line, $results['Sci_Name']) !== false){
+        $engname = trim(explode("_", $line)[1]);
+        break;
+      }
+    }
 
-	//Loop over the photos data
-	if ($flickr_data['image_found']) {
-		$flickr_image_data = $flickr_data['data']['photos'];
-		$iter = 0;
-		foreach ($flickr_image_data as $key => $img_data) {
-			$imageurl = $img_data['image_url'];
-			$title = $img_data['photo_title'];
-			$modaltext = $img_data['modal_text'];
-			$authorlink = $img_data['author_link'];
+    $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=\"".str_replace(' ', '%20', $engname)."\"&license=2%2C3%2C4%2C5%2C6%2C9&sort=relevance&per_page=15&format=json&nojsoncallback=1"), true)["photos"]["photo"];
 
-			echo "<span style='cursor:pointer;' onclick='setModalText(" . $iter . ",\"" . $title . "\",\"" . $modaltext . "\", \"" . $authorlink . "\")'><img style='vertical-align:top' src=\"$imageurl\"></span>";
-			$iter++;
-		}
-	}
+    foreach ($flickrjson as $val) {
+
+      $iter++;
+      $modaltext = "https://flickr.com/photos/".$val["owner"]."/".$val["id"];
+      $authorlink = "https://flickr.com/people/".$val["owner"];
+      $imageurl = 'https://farm' .$val["farm"]. '.static.flickr.com/' .$val["server"]. '/' .$val["id"]. '_'  .$val["secret"].  '.jpg';
+      echo "<span style='cursor:pointer;' onclick='setModalText(".$iter.",\"".$val["title"]."\",\"".$modaltext."\", \"".$authorlink."\")'><img style='vertical-align:top' src=\"$imageurl\"></span>";
+    }
+  }
 }
 }
 ?>
@@ -215,7 +246,7 @@ foreach ($result3 as $results){
     <table>
 <?php
 $excludelines = [];
-foreach($result2 as $results)
+while($results=$result->fetchArray(SQLITE3_ASSOC))
 {
 $comname = preg_replace('/ /', '_', $results['Com_Name']);
 $comname = preg_replace('/\'/', '', $comname);
@@ -235,8 +266,8 @@ array_push($excludelines, $results['Date']."/".$comname."/".$results['File_Name'
 <?php
 }
 
-$file = file_get_contents($disk_check_exclude_path);
-file_put_contents($disk_check_exclude_path, "##start"."\n".implode("\n",$excludelines)."\n".substr($file, strpos($file, "##end")));
+$file = file_get_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt");
+file_put_contents($home."/BirdNET-Pi/scripts/disk_check_exclude.txt", "##start"."\n".implode("\n",$excludelines)."\n".substr($file, strpos($file, "##end")));
 ?>
     </table>
       </form>

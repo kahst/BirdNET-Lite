@@ -1,19 +1,47 @@
 <?php
-if (file_exists('./scripts/common.php')) {
-	include_once "./scripts/common.php";
+error_reporting(E_ERROR);
+ini_set('display_errors',1);
+
+if (file_exists('./scripts/thisrun.txt')) {
+  $config = parse_ini_file('./scripts/thisrun.txt');
+} elseif (file_exists('./scripts/firstrun.ini')) {
+  $config = parse_ini_file('./scripts/firstrun.ini');
+}
+$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+$home = trim($home);
+if (file_exists($home."/BirdNET-Pi/apprise.txt")) {
+  $apprise_config = file_get_contents($home."/BirdNET-Pi/apprise.txt");
 } else {
-	include_once "./common.php";
+  $apprise_config = "";
+}
+$caddypwd = $config['CADDY_PWD'];
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+  header('WWW-Authenticate: Basic realm="My Realm"');
+  header('HTTP/1.0 401 Unauthorized');
+  echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
+  exit;
+} else {
+  $submittedpwd = $_SERVER['PHP_AUTH_PW'];
+  $submitteduser = $_SERVER['PHP_AUTH_USER'];
+  if($submittedpwd !== $caddypwd || $submitteduser !== 'birdnet'){
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo '<table><tr><td>You cannot edit the settings for this installation</td></tr></table>';
+    exit;
+  }
 }
 
-//Parse the ini files to get the current config
-parseConfig();
+function syslog_shell_exec($cmd, $sudo_user = null) {
+  if ($sudo_user) {
+    $cmd = "sudo -u $sudo_user $cmd";
+  }
+  $output = shell_exec($cmd);
 
-//Authenticate first before allowing further execution
-authenticateUser();
-
-//Authenticated
-//Read in the apprise config
-$apprise_config = getAppriseConfig();
+  if (strlen($output) > 0) {
+    syslog(LOG_INFO, $output);
+  }
+}
 
 if(isset($_GET['threshold'])) {
   $threshold = $_GET['threshold'];
@@ -21,12 +49,19 @@ if(isset($_GET['threshold'])) {
     die('Invalid threshold value');
   }
 
-  echo executeSysCommand('test_threshold', $threshold);
+  $user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
+  $home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
+
+  $command = "sudo -u $user ".$home."/BirdNET-Pi/birdnet/bin/python3 ".$home."/BirdNET-Pi/scripts/species.py --threshold $threshold 2>&1";
+
+  $output = shell_exec($command);
+
+  echo $output;
   die();
 }
 
 if(isset($_GET['restart_php']) && $_GET['restart_php'] == "true") {
-  executeSysCommand('restart_php');
+  shell_exec("sudo service php7.4-fpm restart");
   die();
 }
 
@@ -73,7 +108,7 @@ if(isset($_GET["latitude"])){
   }
 
   if(isset($timezone) && in_array($timezone, DateTimeZone::listIdentifiers())) {
-    executeSysCommand('set_timezone',$timezone);
+    shell_exec("sudo timedatectl set-timezone ".$timezone);
     date_default_timezone_set($timezone);
     echo "<script>setTimeout(
     function() {
@@ -86,43 +121,88 @@ if(isset($_GET["latitude"])){
   // logic for setting the date and time based on user inputs from the form below
   if(isset($_GET['date']) && isset($_GET['time'])) {
     // can't set the date manually if it's getting it from the internet, disable ntp
-    executeSysCommand('disable_ntp');
+    exec("sudo timedatectl set-ntp false");
 
     // check if valid date and time
     $datetime = DateTime::createFromFormat('Y-m-d H:i', $_GET['date'] . ' ' . $_GET['time']);
     if ($datetime && $datetime->format('Y-m-d H:i') === $_GET['date'] . ' ' . $_GET['time']) {
-		executeSysCommand('set_date', ['date' => $_GET['date'], 'time' => $_GET['time']]);
+      exec("sudo date -s '".$_GET['date']." ".$_GET['time']."'");
     }
   } else {
     // user checked 'use time from internet if available,' so make sure that's on
-    if(strlen(trim(executeSysCommand('is_ntp_active'))) == 0){
-		executeSysCommand('enable_ntp');
-		sleep(3);
+    if(strlen(trim(exec("sudo timedatectl | grep \"NTP service: active\""))) == 0){
+      exec("sudo timedatectl set-ntp true");
+      sleep(3);
     }
   }
 
   // Update Language settings only if a change is requested
+  if (file_exists('./scripts/thisrun.txt')) {
+    $lang_config = parse_ini_file('./scripts/thisrun.txt');
+  } elseif (file_exists('./scripts/firstrun.ini')) {
+    $lang_config = parse_ini_file('./scripts/firstrun.ini');
+  }
 
-  changeLanguage($model, $language);
+  if ($model != $lang_config['MODEL'] || $language != $lang_config['DATABASE_LANG']){
+    if(strlen($language) == 2){
+      $user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
+      $home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
 
-	saveSetting('SITE_NAME', "\"$site_name\"");
-	saveSetting('LATITUDE', $latitude);
-	saveSetting('LONGITUDE', $longitude);
-	saveSetting('BIRDWEATHER_ID', $birdweather_id);
-	saveSetting('APPRISE_NOTIFICATION_TITLE', "\"$apprise_notification_title\"");
-	saveSetting('APPRISE_NOTIFICATION_BODY', "'$apprise_notification_body'");
-	saveSetting('APPRISE_NOTIFY_EACH_DETECTION', $apprise_notify_each_detection);
-	saveSetting('APPRISE_NOTIFY_NEW_SPECIES', $apprise_notify_new_species);
-	saveSetting('APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY', $apprise_notify_new_species_each_day);
-	saveSetting('APPRISE_WEEKLY_REPORT', $apprise_weekly_report);
-	saveSetting('FLICKR_API_KEY', $flickr_api_key);
-	saveSetting('DATABASE_LANG', $language);
-	saveSetting('FLICKR_FILTER_EMAIL', $flickr_filter_email);
-	saveSetting('APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES', $minimum_time_limit);
-	saveSetting('MODEL', $model);
-	saveSetting('SF_THRESH', $sf_thresh);
-	saveSetting('APPRISE_ONLY_NOTIFY_SPECIES_NAMES', "\"$only_notify_species_names\"");
-	saveSetting('APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2', "\"$only_notify_species_names_2\"");
+      // Archive old language file
+      syslog_shell_exec("cp -f $home/BirdNET-Pi/model/labels.txt $home/BirdNET-Pi/model/labels.txt.old", $user);
+
+      if($model == "BirdNET_GLOBAL_3K_V2.3_Model_FP16"){
+      // Install new language label file
+        syslog_shell_exec("chmod +x $home/BirdNET-Pi/scripts/install_language_label_nm.sh && $home/BirdNET-Pi/scripts/install_language_label_nm.sh -l $language", $user);
+      } else {
+        syslog_shell_exec("$home/BirdNET-Pi/scripts/install_language_label.sh -l $language", $user);
+      }
+
+      syslog(LOG_INFO, "Successfully changed language to '$language' and model to '$model'");
+    }
+  }
+
+
+  $contents = file_get_contents("/etc/birdnet/birdnet.conf");
+  $contents = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents);
+  $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
+  $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
+  $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
+  $contents = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents);
+  $contents = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY='$apprise_notification_body'", $contents);
+  $contents = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents);
+  $contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents);
+  $contents = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=.*/", "APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=$apprise_notify_new_species_each_day", $contents);
+  $contents = preg_replace("/APPRISE_WEEKLY_REPORT=.*/", "APPRISE_WEEKLY_REPORT=$apprise_weekly_report", $contents);
+  $contents = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents);
+  $contents = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents);
+  $contents = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents);
+  $contents = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents);
+  $contents = preg_replace("/MODEL=.*/", "MODEL=$model", $contents);
+  $contents = preg_replace("/SF_THRESH=.*/", "SF_THRESH=$sf_thresh", $contents);
+  $contents = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES=\"$only_notify_species_names\"", $contents);
+  $contents = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=\"$only_notify_species_names_2\"", $contents);
+
+  $contents2 = file_get_contents("./scripts/thisrun.txt");
+  $contents2 = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents2);
+  $contents2 = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents2);
+  $contents2 = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents2);
+  $contents2 = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents2);
+  $contents2 = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents2);
+  $contents2 = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY='$apprise_notification_body'", $contents2);
+  $contents2 = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents2);
+  $contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES=.*/", "APPRISE_NOTIFY_NEW_SPECIES=$apprise_notify_new_species", $contents2);
+  $contents2 = preg_replace("/APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=.*/", "APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY=$apprise_notify_new_species_each_day", $contents2);
+  $contents2 = preg_replace("/APPRISE_WEEKLY_REPORT=.*/", "APPRISE_WEEKLY_REPORT=$apprise_weekly_report", $contents2);
+  $contents2 = preg_replace("/FLICKR_API_KEY=.*/", "FLICKR_API_KEY=$flickr_api_key", $contents2);
+  $contents2 = preg_replace("/DATABASE_LANG=.*/", "DATABASE_LANG=$language", $contents2);
+  $contents2 = preg_replace("/FLICKR_FILTER_EMAIL=.*/", "FLICKR_FILTER_EMAIL=$flickr_filter_email", $contents2);
+  $contents2 = preg_replace("/APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=.*/", "APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES=$minimum_time_limit", $contents2);
+  $contents2 = preg_replace("/MODEL=.*/", "MODEL=$model", $contents2);
+  $contents2 = preg_replace("/SF_THRESH=.*/", "SF_THRESH=$sf_thresh", $contents2);
+  $contents2 = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES=\"$only_notify_species_names\"", $contents2);
+  $contents2 = preg_replace("/APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=.*/", "APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=\"$only_notify_species_names_2\"", $contents2);
+
 
 
   if($site_name != $config["SITE_NAME"]) {
@@ -132,17 +212,43 @@ if(isset($_GET["latitude"])){
     }, 1000);</script>";
   }
 
-	updateAppriseConfig($apprise_input);
+  $fh = fopen("/etc/birdnet/birdnet.conf", "w");
+  $fh2 = fopen("./scripts/thisrun.txt", "w");
+  fwrite($fh, $contents);
+  fwrite($fh2, $contents2);
 
-    serviceMaintenance('restart core.services');
+  if(isset($apprise_input)){
+    $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+    $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+    $home = trim($home);
+
+    $appriseconfig = fopen($home."/BirdNET-Pi/apprise.txt", "w");
+    fwrite($appriseconfig, $apprise_input);
+  }
+
+  syslog(LOG_INFO, "Restarting Services");
+  shell_exec("sudo restart_services.sh");
 }
 
 if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
+  $db = new SQLite3('./birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+
+  $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
+  $home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
+  $home = trim($home);
+
+  if (file_exists('./thisrun.txt')) {
+    $config = parse_ini_file('./thisrun.txt');
+  } elseif (file_exists('./firstrun.ini')) {
+    $config = parse_ini_file('./firstrun.ini');
+  }
+
   $cf = explode("\n",$_GET['apprise_config']);
   $cf = "'".implode("' '", $cf)."'";
 
-  $result0 = getMostRecentDetectionToday();
-  foreach ($result0['data'] as $todaytable)
+  $statement0 = $db->prepare('SELECT * FROM detections WHERE Date == DATE(\'now\', \'localtime\') ORDER BY TIME DESC LIMIT 1');
+  $result0 = $statement0->execute();
+  while($todaytable=$result0->fetchArray(SQLITE3_ASSOC))
   {
     $sciname = $todaytable['Sci_Name'];
     $comname = $todaytable['Com_Name'];
@@ -204,7 +310,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   $body = str_replace("\$overlap", $overlap, $body);
   $body = str_replace("\$flickrimage", $exampleimage, $body);
 
-	echo "<pre class=\"bash\">" . executeSysCommand('appraise_notification', ['title' => $title, 'body' => $body, 'attach' => $attach, 'cf' => $cf]) . "</pre>";
+  echo "<pre class=\"bash\">".shell_exec($home."/BirdNET-Pi/birdnet/bin/apprise -vv --plugin-path ".$home."/.apprise/plugins "." -t '".escapeshellcmd($title)."' -b '".escapeshellcmd($body)."' ".$attach." ".$cf." ")."</pre>";
 
   die();
 }
@@ -218,10 +324,11 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
       <div class="brbanner"><h1>Basic Settings</h1></div><br>
     <form id="basicform" action=""  method="GET">
 
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('modelsel').addEventListener('change', function() {
-    if(this.value == "BirdNET_GLOBAL_3K_V2.3_Model_FP16"){
+    if(this.value == "BirdNET_GLOBAL_3K_V2.3_Model_FP16"){ 
       document.getElementById("soft").style.display="unset";
     } else {
       document.getElementById("soft").style.display="none";
@@ -237,13 +344,13 @@ function sendTestNotification(e) {
   var apprise_config = encodeURIComponent(document.getElementsByName("apprise_input")[0].value);
 
   var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() {
+    xmlHttp.onreadystatechange = function() { 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             document.getElementById("testsuccessmsg").innerHTML = this.responseText+" Test sent! Make sure to <b>Update Settings</b> below."
             e.classList.remove("disabled");
         }
     }
-    xmlHttp.open("GET", "scripts/config.php?sendtest=true&apprise_notification_title="+apprise_notification_title+"&apprise_notification_body="+apprise_notification_body+"&apprise_config="+apprise_config, true); // true for asynchronous
+    xmlHttp.open("GET", "scripts/config.php?sendtest=true&apprise_notification_title="+apprise_notification_title+"&apprise_notification_body="+apprise_notification_body+"&apprise_config="+apprise_config, true); // true for asynchronous 
     xmlHttp.send(null);
 }
 </script>
@@ -253,6 +360,7 @@ function sendTestNotification(e) {
       <label for="model">Select a Model: </label>
       <select id="modelsel" name="model">
       <?php
+      $models = array("BirdNET_6K_GLOBAL_MODEL", "BirdNET_GLOBAL_3K_V2.3_Model_FP16");
       foreach($models as $modelName){
           $isSelected = "";
           if($config['MODEL'] == $modelName){
@@ -432,13 +540,13 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <input name="apprise_notification_title" type="text" value="<?php print($config['APPRISE_NOTIFICATION_TITLE']);?>" /><br>
       <label for="apprise_notification_body">Notification Body: </label>
       <input name="apprise_notification_body" type="text" value='<?php print($config['APPRISE_NOTIFICATION_BODY']);?>' /><br>
-      <input type="checkbox" name="apprise_notify_new_species" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES'] == 1 && filesize(getFilePath('apprise.txt')) != 0) { echo "checked"; };?> >
+      <input type="checkbox" name="apprise_notify_new_species" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_notify_new_species">Notify each new infrequent species detection (<5 visits per week)</label><br>
-      <input type="checkbox" name="apprise_notify_new_species_each_day" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY'] == 1 && filesize(getFilePath('apprise.txt')) != 0) { echo "checked"; };?> >
+      <input type="checkbox" name="apprise_notify_new_species_each_day" <?php if($config['APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_notify_new_species_each_day">Notify each species first detection of the day</label><br>
-      <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize(getFilePath('apprise.txt')) != 0) { echo "checked"; };?> >
+      <input type="checkbox" name="apprise_notify_each_detection" <?php if($config['APPRISE_NOTIFY_EACH_DETECTION'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_weekly_report">Notify each new detection</label><br>
-      <input type="checkbox" name="apprise_weekly_report" <?php if($config['APPRISE_WEEKLY_REPORT'] == 1 && filesize(getFilePath('apprise.txt')) != 0) { echo "checked"; };?> >
+      <input type="checkbox" name="apprise_weekly_report" <?php if($config['APPRISE_WEEKLY_REPORT'] == 1 && filesize($home."/BirdNET-Pi/apprise.txt") != 0) { echo "checked"; };?> >
       <label for="apprise_weekly_report">Send <a href="views.php?view=Weekly%20Report"> weekly report</a></label><br>
 
       <hr>
@@ -467,6 +575,39 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       <label for="language">Database Language: </label>
       <select name="language">
       <?php
+        $langs = array(
+          'not-selected' => 'Not Selected',
+          "af" => "Afrikaans",
+          "ca" => "Catalan",
+          "cs" => "Czech",
+          "zh" => "Chinese",
+          "hr" => "Croatian",
+          "da" => "Danish",
+          "nl" => "Dutch",
+          "en" => "English",
+          "et" => "Estonian",
+          "fi" => "Finnish",
+          "fr" => "French",
+          "de" => "German",
+          "hu" => "Hungarian",
+          "is" => "Icelandic",
+          "id" => "Indonesia",
+          "it" => "Italian",
+          "ja" => "Japanese",
+          "lv" => "Latvian",
+          "lt" => "Lithuania",
+          "no" => "Norwegian",
+          "pl" => "Polish",
+          "pt" => "Portugues",
+          "ru" => "Russian",
+          "sk" => "Slovak",
+          "sl" => "Slovenian",
+          "es" => "Spanish",
+          "sv" => "Swedish",
+          "th" => "Thai",
+          "uk" => "Ukrainian"
+        );
+
         // Create options for each language
         foreach($langs as $langTag => $langName){
           $isSelected = "";
@@ -497,7 +638,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
       </script>
       <?php
       // if NTP service is active, show the checkboxes as checked, and disable the manual input
-      $tdc = trim(executeSysCommand('is_ntp_active'));
+      $tdc = trim(exec("sudo timedatectl | grep \"NTP service: active\""));
       if (strlen($tdc) > 0) {
         $checkedvalue = "checked";
         $disabledvalue = "disabled";
@@ -522,7 +663,7 @@ https://discordapp.com/api/webhooks/{WebhookID}/{WebhookToken}
         Select a timezone
       </option>
       <?php
-      $current_timezone = trim(executeSysCommand('current_timezone'));
+      $current_timezone = trim(shell_exec("cat /etc/timezone"));
       $timezone_identifiers = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
         
       $n = 425;
