@@ -148,7 +148,7 @@ fi
 if ! grep FREQSHIFT_PITCH /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "FREQSHIFT_PITCH=-1500" >> /etc/birdnet/birdnet.conf
 fi
-if ! grep FREQSHIFT_PITCH /etc/birdnet/birdnet.conf &>/dev/null;then
+if ! grep ACTIVATE_FREQSHIFT_IN_LIVESTREAM /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "ACTIVATE_FREQSHIFT_IN_LIVESTREAM=\"false\"" >> /etc/birdnet/birdnet.conf
 fi
 if ! grep HEARTBEAT_URL /etc/birdnet/birdnet.conf &>/dev/null;then
