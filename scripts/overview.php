@@ -1,36 +1,20 @@
 <?php
-error_reporting(E_ERROR);
-ini_set('display_errors',1);
-ini_set('session.gc_maxlifetime', 7200);
-ini_set('user_agent', 'PHP_Flickr/1.0');
-session_set_cookie_params(7200);
-session_start();
+if(file_exists('./scripts/common.php')){
+	include_once "./scripts/common.php";
+}else{
+	include_once "./common.php";
+}
+
 $myDate = date('Y-m-d');
 $chart = "Combo-$myDate.png";
 
-$db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
-if($db == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
+$todaycount_data = getDetectionCountToday();
 
-if (file_exists('./scripts/thisrun.txt')) {
-  $config = parse_ini_file('./scripts/thisrun.txt');
-} elseif (file_exists('./scripts/firstrun.ini')) {
-  $config = parse_ini_file('./scripts/firstrun.ini');
+if($todaycount_data['success'] == False){
+	echo $todaycount_data['message'];
+	header("refresh: 0;");
 }
-
-$user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
-$home = shell_exec("awk -F: '/1000/{print $6}' /etc/passwd");
-$home = trim($home);
-
-$statement2 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == DATE(\'now\', \'localtime\')');
-if($statement2 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result2 = $statement2->execute();
-$todaycount = $result2->fetchArray(SQLITE3_ASSOC);
+$todaycount = $todaycount_data['data'];
 
 if(isset($_GET['custom_image'])){
   if(isset($config["CUSTOM_IMAGE"])) {
@@ -47,143 +31,69 @@ if(isset($_GET['custom_image'])){
 }
 
 if(isset($_GET['blacklistimage'])) {
-  if(isset($_SERVER['PHP_AUTH_USER'])) {
-    $submittedpwd = $_SERVER['PHP_AUTH_PW'];
-    $submitteduser = $_SERVER['PHP_AUTH_USER'];
-    if($submittedpwd == $config['CADDY_PWD'] && $submitteduser == 'birdnet'){
-
-      $imageid = $_GET['blacklistimage'];
-      $file_handle = fopen($home."/BirdNET-Pi/scripts/blacklisted_images.txt", 'a+');
-      fwrite($file_handle, $imageid . "\n");
-      fclose($file_handle);
-      unset($_SESSION['images']);
-      die("OK");
-    } else {
-      header('WWW-Authenticate: Basic realm="My Realm"');
-      header('HTTP/1.0 401 Unauthorized');
-      echo 'You must be authenticated.';
-      exit;
+	$user_is_authenticated = authenticateUser('You cannot modify the system');
+    if($user_is_authenticated){
+		$imageid = $_GET['blacklistimage'];
+		$result = blacklistFlickrImage($imageid);
+		unset($_SESSION['images']);
+		die($result['message']);
     }
-  } else {
-    header('WWW-Authenticate: Basic realm="My Realm"');
-    header('HTTP/1.0 401 Unauthorized');
-    echo 'You must be authenticated.';
-    exit;
-  }
-
 }
 
 if(isset($_GET['fetch_chart_string']) && $_GET['fetch_chart_string'] == "true") {
-  $myDate = date('Y-m-d');
-  $chart = "Combo-$myDate.png";
+  $chart = getChartString();
   echo $chart;
   die();
 }
 
 if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isset($_GET['previous_detection_identifier'])) {
 
-  $statement4 = $db->prepare('SELECT Com_Name, Sci_Name, Date, Time, Confidence, File_Name FROM detections ORDER BY Date DESC, Time DESC LIMIT 15');
-  if($statement4 == False) {
-    echo "Database is busy";
-    header("refresh: 0;");
-  }
-  $result4 = $statement4->execute();
-  if(!isset($_SESSION['images'])) {
-    $_SESSION['images'] = [];
-  }
-  $iterations = 0;
-  $lines;
-  $licenses_urls = array();
+	$result4 = getMostRecentDetection(15);
+
+	if ($result4['success'] == False) {
+		echo $result4['message'];
+		header("refresh: 0;");
+	}
+	$result4 = $result4['data'];
+
+	$iterations = 0;
+	$processed_detections = 0;
+
   // hopefully one of the 5 most recent detections has an image that is valid, we'll use that one as the most recent detection until the newer ones get their images created
-  while($mostrecent = $result4->fetchArray(SQLITE3_ASSOC)) {
-    $comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
+  foreach ($result4 as $mostrecent){
+    $iterations++;
+	$comname = preg_replace('/ /', '_', $mostrecent['Com_Name']);
     $sciname = preg_replace('/ /', '_', $mostrecent['Sci_Name']);
     $comname = preg_replace('/\'/', '', $comname);
     $filename = "/By_Date/".$mostrecent['Date']."/".$comname."/".$mostrecent['File_Name'];
-    $args = "&license=2%2C3%2C4%2C5%2C6%2C9&orientation=square,portrait";
-    $comnameprefix = "%20bird";
-    
-      // check to make sure the image actually exists, sometimes it takes a minute to be created\
-      if(file_exists($home."/BirdSongs/Extracted".$filename.".png")){
-          if($_GET['previous_detection_identifier'] == $filename) { die(); }
-          if($_GET['only_name'] == "true") { echo $comname.",".$filename;die(); }
+	  // check to make sure the image actually exists, sometimes it takes a minute to be created\
+	  if (file_exists(getDirectory('extracted') . "/" . $filename . ".png")) {
+		  if ($_GET['previous_detection_identifier'] == $filename) {
+			  die();
+		  }
+		  if ($_GET['only_name'] == "true") {
+			  echo $comname . "," . $filename;
+			  die();
+		  }
+          //Because the spectrogram image exists for this detection it's been processed
+		  $processed_detections++;
 
-          $iterations++;
+		  //Get the flickr image for this detection
+		  $flickr_Image = getFlickrImage($mostrecent);
 
-      if (!empty($config["FLICKR_API_KEY"])) {
-
-        if(!empty($config["FLICKR_FILTER_EMAIL"])) {
-          if(!isset($_SESSION["FLICKR_FILTER_EMAIL"])) {
-            unset($_SESSION['images']);
-            $_SESSION['FLICKR_FILTER_EMAIL'] = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.people.findByEmail&api_key=".$config["FLICKR_API_KEY"]."&find_email=".$config["FLICKR_FILTER_EMAIL"]."&format=json&nojsoncallback=1"), true)["user"]["nsid"];
-          }
-          $args = "&user_id=".$_SESSION['FLICKR_FILTER_EMAIL'];
-          $comnameprefix = "";
-        } else {
-          if(isset($_SESSION["FLICKR_FILTER_EMAIL"])) {
-            unset($_SESSION["FLICKR_FILTER_EMAIL"]);
-            unset($_SESSION['images']);
-          }
-        }
-   
-
-        // if we already searched flickr for this species before, use the previous image rather than doing an unneccesary api call
-        $key = array_search($comname, array_column($_SESSION['images'], 0));
-        if($key !== false) {
-          $image = $_SESSION['images'][$key];
-        } else {
-          // Get license information if we haven't already
-          if (empty($licenses_urls)) {
-            $licenses_url = "https://api.flickr.com/services/rest/?method=flickr.photos.licenses.getInfo&api_key=".$config["FLICKR_API_KEY"]."&format=json&nojsoncallback=1";
-            $licenses_response = file_get_contents($licenses_url);
-            $licenses_data = json_decode($licenses_response, true)["licenses"]["license"];
-            foreach ($licenses_data as $license) {
-              $license_id = $license["id"];
-              $license_name = $license["name"];
-              $license_url = $license["url"];
-              $licenses_urls[$license_id] = $license_url;
-            }
-          }
-
-          // only open the file once per script execution
-          if(!isset($lines)) {
-            $lines = file($home."/BirdNET-Pi/model/labels_flickr.txt");
-          }
-          // convert sci name to English name
-          foreach($lines as $line){ 
-            if(strpos($line, $mostrecent['Sci_Name']) !== false){
-              $engname = trim(explode("_", $line)[1]);
-              break;
-            }
-          }
-
-           // Read the blacklisted image ids from the file into an array
-          $blacklisted_ids = array_map('trim', file($home."/BirdNET-Pi/scripts/blacklisted_images.txt"));
-
-          // Make the API call
-          $flickrjson = json_decode(file_get_contents("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=".$config["FLICKR_API_KEY"]."&text=".str_replace(" ", "%20", $engname).$comnameprefix."&sort=relevance".$args."&per_page=5&media=photos&format=json&nojsoncallback=1"), true)["photos"]["photo"];
-
-          // Find the first photo that is not blacklisted or is not the specific blacklisted id
-          $photo = null;
-          foreach ($flickrjson as $flickrphoto) {
-              if ($flickrphoto["id"] !== "4892923285" && !in_array($flickrphoto["id"], $blacklisted_ids)) {
-                  $photo = $flickrphoto;
-                  break;
-              }
-          }
-
-          $license_url = "https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=".$config["FLICKR_API_KEY"]."&photo_id=".$photo["id"]."&format=json&nojsoncallback=1";
-          $license_response = file_get_contents($license_url);
-          $license_info = json_decode($license_response, true)["photo"]["license"];
-          $license_url = $licenses_urls[$license_info];
-
-          $modaltext = "https://flickr.com/photos/".$photo["owner"]."/".$photo["id"];
-          $authorlink = "https://flickr.com/people/".$photo["owner"];
-          $imageurl = 'https://farm' .$photo["farm"]. '.static.flickr.com/' .$photo["server"]. '/' .$photo["id"]. '_'  .$photo["secret"].  '.jpg';
-          array_push($_SESSION['images'], array($comname,$imageurl,$photo["title"], $modaltext, $authorlink, $license_url));
-          $image = $_SESSION['images'][count($_SESSION['images'])-1];
-        }
-      }
+		  if ($flickr_Image['image_found']) {
+			  //Remap the data from returned data into an array that is referenced in our HTML
+			  //to save have to rewrite or adjust it
+			  $flickr_Image_data = $flickr_Image['data'];
+			  $image = [
+				  0 => $flickr_Image_data['Com_Name_clean'],
+				  1 => $flickr_Image_data['photos'][0]['image_url'],
+				  2 => $flickr_Image_data['photos'][0]['photo_title'],
+				  3 => $flickr_Image_data['photos'][0]['modal_text'],
+				  4 => $flickr_Image_data['photos'][0]['author_link'],
+				  5 => $flickr_Image_data['photos'][0]['license_url']
+			  ];
+		  }
 
       ?>
         <style>
@@ -223,49 +133,48 @@ if(isset($_GET['ajax_detections']) && $_GET['ajax_detections'] == "true" && isse
         </table> <?php break;
       }
   }
-  if($iterations == 0) {
     if($todaycount['COUNT(*)'] > 0) {
-      echo "<h3>Your system is currently processing a backlog of audio. This can take several hours before normal functionality of your BirdNET-Pi resumes.</h3>";
+		if($processed_detections == 0) {
+			echo "<h3>Your system is currently processing a backlog of audio. This can take several hours before normal functionality of your BirdNET-Pi resumes.</h3>";
+		}
     } else {
       echo "<h3>No Detections For Today.</h3>";
     }
-  }
   die();
 }
 
 if(isset($_GET['ajax_left_chart']) && $_GET['ajax_left_chart'] == "true") {
 
-$statement = $db->prepare('SELECT COUNT(*) FROM detections');
-if($statement == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result = $statement->execute();
-$totalcount = $result->fetchArray(SQLITE3_ASSOC);
+	$totalcount_data = getDetectionCountAll();
+	if($totalcount_data['success'] == False){
+		echo $totalcount_data['message'];
+		header("refresh: 0;");
+	}
+	$totalcount = $totalcount_data['data'];
 
-$statement3 = $db->prepare('SELECT COUNT(*) FROM detections WHERE Date == Date(\'now\', \'localtime\') AND TIME >= TIME(\'now\', \'localtime\', \'-1 hour\')');
-if($statement3 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result3 = $statement3->execute();
-$hourcount = $result3->fetchArray(SQLITE3_ASSOC);
 
-$statement5 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections WHERE Date == Date(\'now\',\'localtime\')');
-if($statement5 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result5 = $statement5->execute();
-$speciestally = $result5->fetchArray(SQLITE3_ASSOC);
+	$hourcount_data = getDetectionCountLastHour();
+	if($hourcount_data['success'] == False){
+		echo $hourcount_data['message'];
+		header("refresh: 0;");
+	}
+	$hourcount = $hourcount_data['data'];
 
-$statement6 = $db->prepare('SELECT COUNT(DISTINCT(Com_Name)) FROM detections');
-if($statement6 == False) {
-  echo "Database is busy";
-  header("refresh: 0;");
-}
-$result6 = $statement6->execute();
-$totalspeciestally = $result6->fetchArray(SQLITE3_ASSOC);
+
+	$speciestally_data = getSpeciesTalley();
+	if($speciestally_data['success'] == False){
+		echo $speciestally_data['message'];
+		header("refresh: 0;");
+	}
+	$speciestally = $speciestally_data['data'];
+
+
+	$totalspeciestally_data = getAllSpeciesTalley();
+	if($totalspeciestally_data['success'] == False){
+		echo $totalspeciestally_data['message'];
+		header("refresh: 0;");
+	}
+	$totalspeciestally = $totalspeciestally_data['data'];
   
 ?>
 <table>

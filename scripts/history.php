@@ -1,12 +1,8 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors',1);
-ini_set('display_startup_errors',1);
-
-if (file_exists('./scripts/thisrun.txt')) {
-  $config = parse_ini_file('./scripts/thisrun.txt');
-} elseif (file_exists('./scripts/firstrun.ini')) {
-  $config = parse_ini_file('./scripts/firstrun.ini');
+if(file_exists('./scripts/common.php')){
+	include_once "./scripts/common.php";
+}else{
+	include_once "./common.php";
 }
 
 if(isset($_GET['date'])){
@@ -17,12 +13,11 @@ $theDate = date('Y-m-d');
 $chart = "Combo-$theDate.png";
 $chart2 = "Combo2-$theDate.png";
 
-$db = new SQLite3('./scripts/birds.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
-
-$statement1 = $db->prepare("SELECT COUNT(*) FROM detections
-	WHERE Date == \"$theDate\"");
-$result1 = $statement1->execute();
-$totalcount = $result1->fetchArray(SQLITE3_ASSOC);
+$statement1 = getDetectionCountByDate($theDate);
+if($statement1['success'] == False){
+	echo $statement1['message'];
+	header("refresh: 0;");
+}
 
 if(isset($_GET['blocation']) ) {
 
@@ -30,10 +25,6 @@ if(isset($_GET['blocation']) ) {
 	header("Content-Disposition: attachment; filename=result_file.csv");
 	header("Pragma: no-cache");
 	header("Expires: 0");
-
-
-	$user = trim(shell_exec("awk -F: '/1000/{print $1}' /etc/passwd"));
-	$home = trim(shell_exec("awk -F: '/1000/{print $6}' /etc/passwd"));
 
 
 	//$sunrise = date_sunrise(time(), SUNFUNCS_RET_TIMESTAMP, $config["LATITUDE"], $config["LONGITUDE"]);
@@ -45,16 +36,17 @@ if(isset($_GET['blocation']) ) {
 	$hrsinday = 24;
 	for($i=0;$i<$hrsinday;$i++) {
 		$starttime = strtotime("12 AM") + (3600*$i);
+        $endtime = date("H:i",$starttime + 3600);
 
-		$statement1 = $db->prepare("SELECT DISTINCT(Com_Name), COUNT(*) FROM detections WHERE Date == \"$theDate\" AND Time > '".date("H:i", $starttime)."' AND Time < '".date("H:i",$starttime + 3600)."' AND Confidence > 0.75 GROUP By Com_Name ORDER BY COUNT(*) DESC");
-		if($statement1 == False){
-		  echo "Database is busy";
-		  header("refresh: 0;");
+		$statement1 = getDetectionBreakdownByTime($theDate,$starttime,$endtime);
+		if($statement1['success'] == False){
+			echo $statement1['message'];
+			header("refresh: 0;");
 		}
-		$result1 = $statement1->execute();
+		$result1 = $statement1['data'];
 
 		$detections = [];
-		while($detection=$result1->fetchArray(SQLITE3_ASSOC))
+        foreach ($result1 as $detection)
 		{
 			$detections[$detection["Com_Name"]] = $detection["COUNT(*)"];
 		}
