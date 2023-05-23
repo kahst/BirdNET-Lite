@@ -113,7 +113,7 @@ if(isset($_GET["latitude"])){
     echo "<script>setTimeout(
     function() {
       const xhttp = new XMLHttpRequest();
-    xhttp.open(\"GET\", \"./config.php?restart_php=true\", true);
+    xhttp.open(\"GET\", \"./views.php?view=Settings&restart_php=true\", true);
     xhttp.send();
     }, 1000);</script>";
   }
@@ -467,7 +467,7 @@ function runProcess() {
       output.innerHTML = xhr.responseText;
     }
   };
-  xhr.open('GET', `scripts/config.php?threshold=${threshold}`);
+  xhr.open('GET', `views.php?view=Settings&threshold=${threshold}`);
   xhr.send();
 }
 </script>
