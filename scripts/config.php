@@ -313,6 +313,12 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
   die();
 }
 
+// have to get the config again after we change the variables, so the UI reflects the changes too
+if (file_exists($home.'/BirdNET-Pi/scripts/thisrun.txt')) {
+  $config = parse_ini_file($home.'/BirdNET-Pi/scripts/thisrun.txt');
+} elseif (file_exists($home.'/BirdNET-Pi/scripts/thisrun.ini')) {
+  $config = parse_ini_file($home.'/BirdNET-Pi/scripts/thisrun.ini');
+}
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
