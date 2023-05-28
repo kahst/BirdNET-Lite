@@ -42,13 +42,14 @@ if(!isset($_SESSION['behind'])) {
       $sum = $num1 + $num2;
       $_SESSION['behind'] = $sum; 
   }
-  if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>
+}
+if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>
   <style>
   .updatenumber { 
     width:30px !important;
   }
   </style>
-<?php }}
+<?php }
 
 if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/thisrun.txt');
