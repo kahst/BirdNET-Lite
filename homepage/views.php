@@ -67,7 +67,6 @@ elseif ($config["LONGITUDE"] == "0.000") {
   echo "<center style='color:red'><b>WARNING: Your longitude is not set properly. Please do so now in Tools -> Settings.</center></b>";
 }
 ?>
-<?php if(!isset($_GET['hidehtml'])){?>
 <link rel="stylesheet" href="style.css?v=<?php echo date ('n.d.y', filemtime('style.css')); ?>">
 <style>
 body::-webkit-scrollbar {
@@ -140,7 +139,7 @@ function copyOutput(elem) {
   document.execCommand("copy");
 }
 </script>
-<?php } //hidehtml ?>
+
 <div class="views">
 <?php
 if(isset($_GET['view'])){
@@ -453,4 +452,3 @@ window.onbeforeunload = function(event) {
 </script>
 </div>
 </body>
-

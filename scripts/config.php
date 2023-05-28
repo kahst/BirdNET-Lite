@@ -113,7 +113,7 @@ if(isset($_GET["latitude"])){
     echo "<script>setTimeout(
     function() {
       const xhttp = new XMLHttpRequest();
-    xhttp.open(\"GET\", \"./views.php?view=Settings&restart_php=true&hidehtml=true\", true);
+    xhttp.open(\"GET\", \"./views.php?view=Settings&restart_php=true\", true);
     xhttp.send();
     }, 1000);</script>";
   }
@@ -348,7 +348,7 @@ function sendTestNotification(e) {
             e.classList.remove("disabled");
         }
     }
-    xmlHttp.open("GET", "views.php?view=Settings&hidehtml=true&sendtest=true&apprise_notification_title="+apprise_notification_title+"&apprise_notification_body="+apprise_notification_body+"&apprise_config="+apprise_config, true); // true for asynchronous 
+    xmlHttp.open("GET", "scripts/config.php?sendtest=true&apprise_notification_title="+apprise_notification_title+"&apprise_notification_body="+apprise_notification_body+"&apprise_config="+apprise_config, true); // true for asynchronous 
     xmlHttp.send(null);
 }
 </script>
@@ -466,7 +466,7 @@ function runProcess() {
       output.innerHTML = xhr.responseText;
     }
   };
-  xhr.open('GET', `views.php?view=Settings&threshold=${threshold}&hidehtml=true`);
+  xhr.open('GET', `views.php?view=Settings&threshold=${threshold}`);
   xhr.send();
 }
 </script>
