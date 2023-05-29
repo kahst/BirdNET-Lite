@@ -1,4 +1,9 @@
 <?php
+
+/* Prevent XSS input */
+$_GET   = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
 $sys_timezone = "";
 // If we can get the timezome from the systems timezone file ust that
 if (file_exists('/etc/timezone')) {
@@ -37,13 +42,14 @@ if(!isset($_SESSION['behind'])) {
       $sum = $num1 + $num2;
       $_SESSION['behind'] = $sum; 
   }
-  if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>
+}
+if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>
   <style>
   .updatenumber { 
     width:30px !important;
   }
   </style>
-<?php }}
+<?php }
 
 if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/thisrun.txt');
@@ -73,7 +79,7 @@ body::-webkit-scrollbar {
   <button type="submit" name="view" value="Overview" form="views">Overview</button>
 </form>
 <form action="" method="GET" id="views">
-  <button type="submit" name="view" value="Today's Detections" form="views">Today's Detections</button>
+  <button type="submit" name="view" value="Todays Detections" form="views">Today's Detections</button>
 </form>
 <form action="" method="GET" id="views">
   <button type="submit" name="view" value="Spectrogram" form="views">Spectrogram</button>
@@ -143,7 +149,7 @@ if(isset($_GET['view'])){
   if($_GET['view'] == "Spectrogram"){include('spectrogram.php');}
   if($_GET['view'] == "View Log"){echo "<body style=\"scroll:no;overflow-x:hidden;\"><iframe style=\"width:calc( 100% + 1em);\" src=\"/log\"></iframe></body>";}
   if($_GET['view'] == "Overview"){include('overview.php');}
-  if($_GET['view'] == "Today's Detections"){include('todays_detections.php');}
+  if($_GET['view'] == "Todays Detections"){include('todays_detections.php');}
   if($_GET['view'] == "Kiosk"){$kiosk = true;include('todays_detections.php');}
   if($_GET['view'] == "Species Stats"){include('stats.php');}
   if($_GET['view'] == "Weekly Report"){include('weekly_report.php');}
