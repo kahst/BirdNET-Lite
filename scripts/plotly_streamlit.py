@@ -95,7 +95,7 @@ else:
 def date_filter(df, start_date, end_date):
     filt = (df2.index >= pd.Timestamp(start_date)) & (df2.index <= pd.Timestamp(end_date + timedelta(days=1)))
     df = df[filt]
-    return(df)
+    return (df)
 
 
 df2 = date_filter(df2, start_date, end_date)
@@ -142,7 +142,7 @@ def time_resample(df, resample_time):
     else:
         df_resample = df.resample(resample_time)['Com_Name'].aggregate('unique').explode()
 
-    return(df_resample)
+    return (df_resample)
 
 
 top_bird = df2['Com_Name'].mode()[0]
@@ -236,10 +236,10 @@ if daily is False:
 
     if resample_time != '1D':
         specie = st.selectbox(
-                'Which bird would you like to explore for the dates '
-                + str(start_date) + ' to ' + str(end_date) + '?',
-                species,
-                index=0)
+            'Which bird would you like to explore for the dates '
+            + str(start_date) + ' to ' + str(end_date) + '?',
+            species,
+            index=0)
 
     # filt = df2['Com_Name'] == specie
         if specie == 'All':
@@ -256,7 +256,7 @@ if daily is False:
                                 #     '{:.2f}%'.format(max(df2[df2['Com_Name'] == specie]['Confidence']) * 100)) +
                                 # '   ' + '   Median:' + str(
                                 #     '{:.2f}%'.format(np.median(df2[df2['Com_Name'] == specie]['Confidence']) * 100))
-                                )
+                )
             )
             fig.layout.annotations[1].update(x=0.7, y=0.25, font_size=15)
 
@@ -316,7 +316,7 @@ if daily is False:
                 fig = make_subplots(
                     rows=3, cols=1,
                     specs=[[{"type": "polar", "rowspan": 2}], [{"rowspan": 1}], [{"type": "xy", "rowspan": 1}]]
-                            )
+                )
                 # Set 360 degrees, 24 hours for polar plot
                 theta = np.linspace(0.0, 360, 24, endpoint=False)
 

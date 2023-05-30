@@ -57,9 +57,10 @@ with open(userDir + '/BirdNET-Pi/scripts/thisrun.txt', 'r') as f:
     try:
         model = str(str(str([i for i in this_run if i.startswith('MODEL')]).split('=')[1]).split('\\')[0])
         sf_thresh = str(str(str([i for i in this_run if i.startswith('SF_THRESH')]).split('=')[1]).split('\\')[0])
-    except Exception as e:
+    except Exception:
         model = "BirdNET_6K_GLOBAL_MODEL"
         sf_thresh = 0.03
+
 
 def loadModel():
 
@@ -97,6 +98,7 @@ def loadModel():
 
     return myinterpreter
 
+
 def loadMetaModel():
 
     global M_INTERPRETER
@@ -117,15 +119,16 @@ def loadMetaModel():
 
     print("loaded META model")
 
+
 def predictFilter(lat, lon, week):
 
     global M_INTERPRETER
 
     # Does interpreter exist?
     try:
-        if M_INTERPRETER == None:
+        if M_INTERPRETER is None:
             loadMetaModel()
-    except Exception as e:
+    except Exception:
         loadMetaModel()
 
     # Prepare mdata as sample
@@ -136,6 +139,7 @@ def predictFilter(lat, lon, week):
     M_INTERPRETER.invoke()
 
     return M_INTERPRETER.get_tensor(M_OUTPUT_LAYER_INDEX)[0]
+
 
 def explore(lat, lon, week):
 
@@ -153,14 +157,16 @@ def explore(lat, lon, week):
 
     return l_filter
 
+
 def predictSpeciesList(lat, lon, week):
 
     l_filter = explore(lat, lon, week)
     for s in l_filter:
         if s[0] >= float(sf_thresh):
-            #if there's a custom user-made include list, we only want to use the species in that
-            if(len(INCLUDE_LIST) == 0):
+            # if there's a custom user-made include list, we only want to use the species in that
+            if (len(INCLUDE_LIST) == 0):
                 PREDICTED_SPECIES_LIST.append(s[1])
+
 
 def loadCustomSpeciesList(path):
 
@@ -274,8 +280,7 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
 
     if model == "BirdNET_GLOBAL_3K_V2.3_Model_FP16":
         if len(PREDICTED_SPECIES_LIST) == 0 or len(INCLUDE_LIST) != 0:
-            predictSpeciesList(lat,lon,week)
-
+            predictSpeciesList(lat, lon, week)
 
     # Convert and prepare metadata
     mdata = convertMetadata(np.array([lat, lon, week]))
@@ -322,7 +327,9 @@ def writeResultsToFile(detections, min_conf, path):
         rfile.write('Start (s);End (s);Scientific name;Common name;Confidence\n')
         for d in detections:
             for entry in detections[d]:
-                if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0) and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) and (entry[0] in PREDICTED_SPECIES_LIST or len(PREDICTED_SPECIES_LIST) == 0) ):
+                if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0)
+                                             and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0)
+                                             and (entry[0] in PREDICTED_SPECIES_LIST or len(PREDICTED_SPECIES_LIST) == 0)):
                     rfile.write(d + ';' + entry[0].replace('_', ';').split("/")[0] + ';' + str(entry[1]) + '\n')
                     rcnt += 1
     print('DONE! WROTE', rcnt, 'RESULTS.')
@@ -468,7 +475,8 @@ def handle_client(conn, addr):
                         species_apprised_this_run = []
                         for entry in detections[d]:
                             if entry[1] >= min_conf and ((entry[0] in INCLUDE_LIST or len(INCLUDE_LIST) == 0)
-                                                         and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0) and (entry[0] in PREDICTED_SPECIES_LIST or len(PREDICTED_SPECIES_LIST) == 0) ):
+                                                         and (entry[0] not in EXCLUDE_LIST or len(EXCLUDE_LIST) == 0)
+                                                         and (entry[0] in PREDICTED_SPECIES_LIST or len(PREDICTED_SPECIES_LIST) == 0)):
                                 # Write to text file.
                                 rfile.write(str(current_date) + ';' + str(current_time) + ';' + entry[0].replace('_', ';').split("/")[0] + ';'
                                             + str(entry[1]) + ";" + str(args.lat) + ';' + str(args.lon) + ';' + str(min_conf) + ';' + str(week) + ';'
@@ -511,6 +519,7 @@ def handle_client(conn, addr):
                                     settings_dict = config_to_settings(userDir + '/BirdNET-Pi/scripts/thisrun.txt')
                                     sendAppriseNotifications(species,
                                                              str(score),
+                                                             str(round(score * 100)),
                                                              File_Name,
                                                              Date,
                                                              Time,

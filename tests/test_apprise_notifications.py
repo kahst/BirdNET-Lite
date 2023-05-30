@@ -50,6 +50,7 @@ def test_notifications(mocker):
         "APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY": "0"
     }
     sendAppriseNotifications("Myiarchus crinitus_Great Crested Flycatcher",
+                             "0.91",
                              "91",
                              "filename",
                              "1666-06-06",
@@ -64,12 +65,13 @@ def test_notifications(mocker):
                              "test.db")
 
     # No active apprise notifcations configured. Confirm no notifications.
-    assert(notify_call.call_count == 0)  # No notification should be sent.
+    assert (notify_call.call_count == 0)  # No notification should be sent.
 
     # Add daily notification.
     notify_call.reset_mock()
     settings_dict["APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY"] = "1"
     sendAppriseNotifications("Myiarchus crinitus_Great Crested Flycatcher",
+                             "0.91",
                              "91",
                              "filename",
                              "1666-06-06",
@@ -83,8 +85,8 @@ def test_notifications(mocker):
                              settings_dict,
                              "test.db")
 
-    assert(notify_call.call_count == 1)
-    assert(
+    assert (notify_call.call_count == 1)
+    assert (
         notify_call.call_args_list[0][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence of 91 (first time today)"
     )
 
@@ -92,6 +94,7 @@ def test_notifications(mocker):
     notify_call.reset_mock()
     settings_dict["APPRISE_NOTIFY_NEW_SPECIES"] = "1"
     sendAppriseNotifications("Myiarchus crinitus_Great Crested Flycatcher",
+                             "0.91",
                              "91",
                              "filename",
                              "1666-06-06",
@@ -105,18 +108,20 @@ def test_notifications(mocker):
                              settings_dict,
                              "test.db")
 
-    assert(notify_call.call_count == 2)
-    assert(
+    assert (notify_call.call_count == 2)
+    assert (
         notify_call.call_args_list[0][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence of 91 (first time today)"
     )
-    assert(
-        notify_call.call_args_list[1][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence of 91 (only seen 1 times in last 7d)"
+    assert (
+        notify_call.call_args_list[1][0][0] == "A Great Crested Flycatcher (Myiarchus crinitus) was just detected with a confidence \
+            of 91 (only seen 1 times in last 7d)"
     )
 
     # Add each species notification.
     notify_call.reset_mock()
     settings_dict["APPRISE_NOTIFY_EACH_DETECTION"] = "1"
     sendAppriseNotifications("Myiarchus crinitus_Great Crested Flycatcher",
+                             "0.91",
                              "91",
                              "filename",
                              "1666-06-06",
@@ -130,4 +135,4 @@ def test_notifications(mocker):
                              settings_dict,
                              "test.db")
 
-    assert(notify_call.call_count == 3)
+    assert (notify_call.call_count == 3)
