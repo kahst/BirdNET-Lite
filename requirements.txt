@@ -8,9 +8,11 @@ pytz
 tzlocal
 pandas
 seaborn
-streamlit
+streamlit==1.19.0
 plotly
-apprise
+apprise==1.2.1
 paho-mqtt
 pytest==7.1.2
 pytest-mock==3.7.0
+suntime
+altair<5

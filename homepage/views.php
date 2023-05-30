@@ -1,4 +1,29 @@
-<?php 
+<?php
+
+/* Prevent XSS input */
+$_GET   = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+$sys_timezone = "";
+// If we can get the timezome from the systems timezone file ust that
+if (file_exists('/etc/timezone')) {
+	$tz_data = file_get_contents('/etc/timezone');
+	if ($tz_data !== false) {
+		$sys_timezone = trim($tz_data);
+	}
+} else {
+// else get timezone from the timedatectl command
+	$tz_data = shell_exec('timedatectl show');
+	$tz_data_array = parse_ini_string($tz_data);
+	if (is_array($tz_data_array) && array_key_exists('Timezone', $tz_data_array)) {
+		$sys_timezone = $tz_data_array['Timezone'];
+	}
+}
+// finally if we have a valod timezone, set it as the one PHP uses
+if ($sys_timezone !== "") {
+	date_default_timezone_set($sys_timezone);
+}
+
 session_start();
 $user = shell_exec("awk -F: '/1000/{print $1}' /etc/passwd");
 $user = trim($user);
@@ -11,21 +36,38 @@ if(!isset($_SESSION['behind'])) {
     $num_commits_behind = $matches[1];
     $_SESSION['behind'] = $num_commits_behind; 
   }
-  if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>
+  if (preg_match('/\b(\d+)\b and \b(\d+)\b different commits each/', $str, $matches)) {
+      $num1 = (int) $matches[1];
+      $num2 = (int) $matches[2];
+      $sum = $num1 + $num2;
+      $_SESSION['behind'] = $sum; 
+  }
+}
+if(isset($_SESSION['behind'])&&intval($_SESSION['behind']) >= 99) {?>
   <style>
   .updatenumber { 
     width:30px !important;
   }
   </style>
-<?php }}
+<?php }
 
 if (file_exists('./scripts/thisrun.txt')) {
   $config = parse_ini_file('./scripts/thisrun.txt');
 } elseif (file_exists('./scripts/firstrun.ini')) {
   $config = parse_ini_file('./scripts/firstrun.ini');
 }
+
+if ($config["LATITUDE"] == "0.000" && $config["LONGITUDE"] == "0.000") {
+  echo "<center style='color:red'><b>WARNING: Your latitude and longitude are not set properly. Please do so now in Tools -> Settings.</center></b>";
+}
+elseif ($config["LATITUDE"] == "0.000") {
+  echo "<center style='color:red'><b>WARNING: Your latitude is not set properly. Please do so now in Tools -> Settings.</center></b>";
+}
+elseif ($config["LONGITUDE"] == "0.000") {
+  echo "<center style='color:red'><b>WARNING: Your longitude is not set properly. Please do so now in Tools -> Settings.</center></b>";
+}
 ?>
-<link rel="stylesheet" href="style.css?v=1.20.23">
+<link rel="stylesheet" href="style.css?v=<?php echo date ('n.d.y', filemtime('style.css')); ?>">
 <style>
 body::-webkit-scrollbar {
   display:none
@@ -37,7 +79,7 @@ body::-webkit-scrollbar {
   <button type="submit" name="view" value="Overview" form="views">Overview</button>
 </form>
 <form action="" method="GET" id="views">
-  <button type="submit" name="view" value="Today's Detections" form="views">Today's Detections</button>
+  <button type="submit" name="view" value="Todays Detections" form="views">Today's Detections</button>
 </form>
 <form action="" method="GET" id="views">
   <button type="submit" name="view" value="Spectrogram" form="views">Spectrogram</button>
@@ -107,7 +149,7 @@ if(isset($_GET['view'])){
   if($_GET['view'] == "Spectrogram"){include('spectrogram.php');}
   if($_GET['view'] == "View Log"){echo "<body style=\"scroll:no;overflow-x:hidden;\"><iframe style=\"width:calc( 100% + 1em);\" src=\"/log\"></iframe></body>";}
   if($_GET['view'] == "Overview"){include('overview.php');}
-  if($_GET['view'] == "Today's Detections"){include('todays_detections.php');}
+  if($_GET['view'] == "Todays Detections"){include('todays_detections.php');}
   if($_GET['view'] == "Kiosk"){$kiosk = true;include('todays_detections.php');}
   if($_GET['view'] == "Species Stats"){include('stats.php');}
   if($_GET['view'] == "Weekly Report"){include('weekly_report.php');}
@@ -245,10 +287,10 @@ if(isset($_GET['view'])){
   } else {
     $submittedpwd = $_SERVER['PHP_AUTH_PW'];
     $submitteduser = $_SERVER['PHP_AUTH_USER'];
-    $allowedCommands = array('sudo systemctl stop livestream.service && sudo /etc/init.d/icecast2 stop',
-                       'sudo systemctl restart livestream.service && sudo /etc/init.d/icecast2 restart',
-                       'sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo /etc/init.d/icecast2 stop',
-                       'sudo systemctl enable icecast2 && sudo /etc/init.d/icecast2 start && sudo systemctl enable --now livestream.service',
+    $allowedCommands = array('sudo systemctl stop livestream.service && sudo systemctl stop icecast2.service',
+                       'sudo systemctl restart livestream.service && sudo systemctl restart icecast2.service',
+                       'sudo systemctl disable --now livestream.service && sudo systemctl disable icecast2 && sudo systemctl stop icecast2.service',
+                       'sudo systemctl enable icecast2 && sudo systemctl start icecast2.service && sudo systemctl enable --now livestream.service',
                        'sudo systemctl stop web_terminal.service',
                        'sudo systemctl restart web_terminal.service',
                        'sudo systemctl disable --now web_terminal.service',
@@ -295,9 +337,28 @@ if(isset($_GET['view'])){
     if($submittedpwd == $caddypwd && $submitteduser == 'birdnet' && in_array($command,$allowedCommands)){
       if(isset($command)){
         $initcommand = $command;
-        if (strpos($command, "systemctl") !== false) {
-          $tmp = explode(" ",trim($command));
-          $command .= "& sleep 3;sudo systemctl status ".end($tmp);
+		  if (strpos($command, "systemctl") !== false) {
+			  //If there more than one command to execute, processes then separately
+			  //currently only livestream service uses multiple commands to interact with the required services
+			  if (strpos($command, " && ") !== false) {
+				  $separate_commands = explode("&&", trim($command));
+				  $new_multiservice_status_command = "";
+				  foreach ($separate_commands as $indiv_service_command) {
+					  //explode the string by " " space so we can get each individual component of the command
+					  //and eventually the service name at the end
+					  $separate_command_tmp = explode(" ", trim($indiv_service_command));
+					  //get the service names
+					  $new_multiservice_status_command .= " " . trim(end($separate_command_tmp));
+				  }
+
+				  $service_names = $new_multiservice_status_command;
+			  } else {
+                  //only one service needs restarting so we only need to query the status of one service
+				  $tmp = explode(" ", trim($command));
+				  $service_names = end($tmp);
+			  }
+
+          $command .= " & sleep 3;sudo systemctl status " . $service_names;
         }
         if($initcommand == "update_birdnet.sh") {
           unset($_SESSION['behind']);
@@ -307,10 +368,52 @@ if(isset($_GET['view'])){
         $results = str_replace("failed", "<span style='color:red'>failed</span>",$results);
         $results = str_replace("active (running)", "<span style='color:green'><b>active (running)</b></span>",$results);
         $results = str_replace("Your branch is up to date", "<span style='color:limegreen'><b>Your branch is up to date</b></span>",$results);
+
+        $results = str_replace("(+)", "(<span style='color:lime;font-weight:bold'>+</span>)",$results);
+        $results = str_replace("(-)", "(<span style='color:red;font-weight:bold'>-</span>)",$results);
+
+        // split the input string into lines
+        $lines = explode("\n", $results);
+
+        // iterate over each line
+        foreach ($lines as &$line) {
+            // check if the line matches the pattern
+            if (preg_match('/^(.+?)\s*\|\s*(\d+)\s*([\+\- ]+)(\d+)?$/', $line, $matches)) {
+                // extract the filename, count, and indicator letters
+                $filename = $matches[1];
+                $count = $matches[2];
+                $diff = $matches[3];
+                $delta = $matches[4] ?? '';
+                // determine the indicator letters
+                $diff_array = str_split($diff);
+                $indicators = array_map(function ($d) use ($delta) {
+                    if ($d === '+') {
+                        return "<span style='color:lime;'><b>+</b></span>";
+                    } elseif ($d === '-') {
+                        return "<span style='color:red;'><b>-</b></span>";
+                    } elseif ($d === ' ') {
+                        if ($delta !== '') {
+                            return 'A';
+                        } else {
+                            return ' ';
+                        }
+                    }
+                }, $diff_array);
+                // modify the line with the new indicator letters
+                $line = sprintf('%-35s|%3d %s%s', $filename, $count, implode('', $indicators), $delta);
+            }
+        }
+
+        // rejoin the modified lines into a string
+        $output = implode("\n", $lines);
+        $results = $output;
+
+        // remove script tags (xss)
+        $results = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $results);
         if(strlen($results) == 0) {
           $results = "This command has no output.";
         }
-        echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$initcommand."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td><pre style='text-align:left'>$results</pre></td></tr></table>"; 
+        echo "<table style='min-width:70%;'><tr class='relative'><th>Output of command:`".$initcommand."`<button class='copyimage' style='right:40px' onclick='copyOutput(this);'>Copy</button></th></tr><tr><td style='padding-left: 0px;padding-right: 0px;padding-bottom: 0px;padding-top: 0px;'><pre class='bash' style='text-align:left;margin:0px'>$results</pre></td></tr></table>"; 
       } else {
         header('WWW-Authenticate: Basic realm="My Realm"');
         header('HTTP/1.0 401 Unauthorized');

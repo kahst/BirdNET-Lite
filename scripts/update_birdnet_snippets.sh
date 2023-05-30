@@ -7,8 +7,17 @@ HOME=$(awk -F: '/1000/ {print $6}' /etc/passwd)
 my_dir=$HOME/BirdNET-Pi/scripts
 
 # Sets proper permissions and ownership
-sudo -E chown -R $USER:$USER $HOME/*
-sudo chmod -R g+wr $HOME/*
+#sudo -E chown -R $USER:$USER $HOME/*
+#sudo chmod -R g+wr $HOME/*
+find $HOME/Bird* -type f ! -perm -g+wr -exec chmod g+wr {} + 2>/dev/null
+find $HOME/Bird* -not -user $USER -execdir sudo -E chown $USER:$USER {} \+
+chmod 666 ~/BirdNET-Pi/scripts/*.txt
+chmod 666 ~/BirdNET-Pi/*.txt
+find $HOME/BirdNET-Pi -path "$HOME/BirdNET-Pi/birdnet" -prune -o -type f ! -perm /o=w -exec chmod a+w {} \;
+
+# remove world-writable perms
+chmod -R o-w ~/BirdNET-Pi/templates/*
+
 
 # Create blank sitename as it's optional. First time install will use $HOSTNAME.
 if ! grep SITE_NAME /etc/birdnet/birdnet.conf &>/dev/null;then
@@ -66,7 +75,7 @@ fi
 apprise_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("apprise") else "not installed")')
 if [[ "$apprise_installation_status" = "not installed" ]];then
   $HOME/BirdNET-Pi/birdnet/bin/pip3 install -U pip
-  $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1
 fi
 [ -f $HOME/BirdNET-Pi/apprise.txt ] || sudo -E -ucaddy touch $HOME/BirdNET-Pi/apprise.txt
 if ! which lsof &>/dev/null;then
@@ -125,8 +134,7 @@ if ! grep '\-\-browser.gatherUsageStats false' $HOME/BirdNET-Pi/templates/birdne
 fi
 
 # Make IceCast2 a little more secure
-sudo sed -i 's|<!-- <bind-address>.*|<bind-address>127.0.0.1</bind-address>|;s|<!-- <shoutcast-mount>.*|<shoutcast-mount>/stream</shoutcast-mount>|' /etc/icecast2/icecast.xml
-sudo systemctl restart icecast2
+sudo sed -i.bak -e 's|<!-- <bind-address>.*|<bind-address>127.0.0.1</bind-address>|;s|<!-- <shoutcast-mount>.*|<shoutcast-mount>/stream</shoutcast-mount>|' /etc/icecast2/icecast.xml && if [ -s /etc/icecast2/icecast.xml.bak ] && ! sudo diff /etc/icecast2/icecast.xml /etc/icecast2/icecast.xml.bak > /dev/null; then sudo systemctl restart icecast2; fi
 
 if ! grep FREQSHIFT_TOOL /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "FREQSHIFT_TOOL=sox" >> /etc/birdnet/birdnet.conf
@@ -139,6 +147,12 @@ if ! grep FREQSHIFT_LO /etc/birdnet/birdnet.conf &>/dev/null;then
 fi
 if ! grep FREQSHIFT_PITCH /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "FREQSHIFT_PITCH=-1500" >> /etc/birdnet/birdnet.conf
+fi
+if ! grep ACTIVATE_FREQSHIFT_IN_LIVESTREAM /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "ACTIVATE_FREQSHIFT_IN_LIVESTREAM=\"false\"" >> /etc/birdnet/birdnet.conf
+fi
+if ! grep FREQSHIFT_RECONNECT_DELAY /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "FREQSHIFT_RECONNECT_DELAY=4000" >> /etc/birdnet/birdnet.conf
 fi
 if ! grep HEARTBEAT_URL /etc/birdnet/birdnet.conf &>/dev/null;then
   sudo -u$USER echo "HEARTBEAT_URL=" >> /etc/birdnet/birdnet.conf
@@ -157,12 +171,67 @@ CREATE INDEX IF NOT EXISTS "detections_Com_Name" ON "detections" ("Com_Name");
 CREATE INDEX IF NOT EXISTS "detections_Date_Time" ON "detections" ("Date" DESC, "Time" DESC);
 EOF
 
-$HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1 >/dev/null
+apprise_version=$($HOME/BirdNET-Pi/birdnet/bin/python3 -c "import apprise; print(apprise.__version__)")
+streamlit_version=$($HOME/BirdNET-Pi/birdnet/bin/pip3 show streamlit 2>/dev/null | grep Version | awk '{print $2}')
+
+[[ $apprise_version != "1.2.1" ]] && $HOME/BirdNET-Pi/birdnet/bin/pip3 install apprise==1.2.1
+[[ $streamlit_version != "1.19.0" ]] && $HOME/BirdNET-Pi/birdnet/bin/pip3 install streamlit==1.19.0
 
 if ! grep -q 'RuntimeMaxSec=' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"&>/dev/null; then
     sudo -E sed -i '/\[Service\]/a RuntimeMaxSec=3600' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"
     sudo systemctl daemon-reload && restart_services.sh
 fi
+
+if ! grep RAW_SPECTROGRAM /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "RAW_SPECTROGRAM=0" >> /etc/birdnet/birdnet.conf
+fi
+
+if ! grep CUSTOM_IMAGE /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "CUSTOM_IMAGE=" >> /etc/birdnet/birdnet.conf
+fi
+if ! grep CUSTOM_IMAGE_TITLE /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "CUSTOM_IMAGE_TITLE=\"\"" >> /etc/birdnet/birdnet.conf
+fi
+
+if ! grep APPRISE_ONLY_NOTIFY_SPECIES_NAMES /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "APPRISE_ONLY_NOTIFY_SPECIES_NAMES=\"\"" >> /etc/birdnet/birdnet.conf
+fi
+if ! grep APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2 /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2=\"\"" >> /etc/birdnet/birdnet.conf
+fi
+
+if ! grep RTSP_STREAM_TO_LIVESTREAM /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "RTSP_STREAM_TO_LIVESTREAM=\"0\"" >> /etc/birdnet/birdnet.conf
+fi
+
+suntime_installation_status=$(~/BirdNET-Pi/birdnet/bin/python3 -c 'import pkgutil; print("installed" if pkgutil.find_loader("suntime") else "not installed")')
+if [[ "$suntime_installation_status" = "not installed" ]];then
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install -U pip
+  $HOME/BirdNET-Pi/birdnet/bin/pip3 install suntime
+fi
+
+# For new Advanced Setting Logging level options
+if ! grep LogLevel_BirdnetRecordingService /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "LogLevel_BirdnetRecordingService=\"error\"" >> /etc/birdnet/birdnet.conf
+fi
+
+if ! grep LogLevel_LiveAudioStreamService /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "LogLevel_LiveAudioStreamService=\"error\"" >> /etc/birdnet/birdnet.conf
+fi
+
+if ! grep LogLevel_SpectrogramViewerService /etc/birdnet/birdnet.conf &>/dev/null;then
+  sudo -u$USER echo "LogLevel_SpectrogramViewerService=\"error\"" >> /etc/birdnet/birdnet.conf
+fi
+
+if grep -q '^MODEL=BirdNET_GLOBAL_3K_V2.2_Model_FP16$' /etc/birdnet/birdnet.conf;then
+  language=$(grep "^DATABASE_LANG=" /etc/birdnet/birdnet.conf | cut -d= -f2)
+  sed -i 's/BirdNET_GLOBAL_3K_V2.2_Model_FP16/BirdNET_GLOBAL_3K_V2.3_Model_FP16/' /etc/birdnet/birdnet.conf
+  sed -i 's/BirdNET_GLOBAL_3K_V2.2_Model_FP16/BirdNET_GLOBAL_3K_V2.3_Model_FP16/' $HOME/BirdNET-Pi/scripts/thisrun.txt
+  sed -i 's/BirdNET_GLOBAL_3K_V2.2_Model_FP16/BirdNET_GLOBAL_3K_V2.3_Model_FP16/' $HOME/BirdNET-Pi/birdnet.conf
+  cp -f $HOME/BirdNET-Pi/model/labels.txt $HOME/BirdNET-Pi/model/labels.txt.old
+  sudo chmod +x $HOME/BirdNET-Pi/scripts/install_language_label_nm.sh && $HOME/BirdNET-Pi/scripts/install_language_label_nm.sh -l "$language"
+fi
+
 
 sudo systemctl daemon-reload
 restart_services.sh

@@ -1,4 +1,10 @@
 <?php
+
+/* Prevent XSS input */
+$_GET   = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+ini_set('user_agent', 'PHP_Flickr/1.0');
 error_reporting(0);
 ini_set('display_errors', 0);
 
@@ -87,28 +93,62 @@ if(!file_exists($home."/BirdNET-Pi/scripts/disk_check_exclude.txt") || strpos(fi
       </button>
    </form>
 </div>
-<table>
-<?php
-while($results=$result2->fetchArray(SQLITE3_ASSOC))
-{
-$comname = preg_replace('/ /', '_', $results['Com_Name']);
-$comname = preg_replace('/\'/', '', $comname);
-$filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
-?>
-  <tr>
-  <form action="" method="GET">
-  <td><input type="hidden" name="sort" value="<?php if(isset($_GET['sort'])){echo $_GET['sort'];}?>">
-    <input type="hidden" name="view" value="Species Stats">
-    <button type="submit" name="species" value="<?php echo $results['Com_Name'];?>"><?php echo $results['Com_Name'];?></button>
-  </td>
-<?php
-}
-?>
-  </form>
-  </tr>
+<table style="padding-top:10px">
+  <?php
+  $birds = array();
+  while($results=$result2->fetchArray(SQLITE3_ASSOC))
+  {
+    $comname = preg_replace('/ /', '_', $results['Com_Name']);
+    $comname = preg_replace('/\'/', '', $comname);
+    $filename = "/By_Date/".$results['Date']."/".$comname."/".$results['File_Name'];
+    $birds[] = $results['Com_Name'];
+  }
+
+  if(count($birds) > 45) {
+    $num_cols = 3;
+  } else {
+    $num_cols = 1;
+  }
+  $num_rows = ceil(count($birds) / $num_cols);
+
+  for ($row = 0; $row < $num_rows; $row++) {
+    echo "<tr>";
+
+    for ($col = 0; $col < $num_cols; $col++) {
+      $index = $row + $col * $num_rows;
+
+      if ($index < count($birds)) {
+        ?>
+        <td>
+          <form action="" method="GET">
+            <input type="hidden" name="sort" value="<?php if(isset($_GET['sort'])){echo $_GET['sort'];}?>">
+            <input type="hidden" name="view" value="Species Stats">
+            <button type="submit" name="species" value="<?php echo $birds[$index];?>"><?php echo $birds[$index];?></button>
+          </form>
+        </td>
+        <?php
+      } else {
+        echo "<td></td>";
+      }
+    }
+
+    echo "</tr>";
+  }
+  ?>
 </table>
+<style>
+td {
+  padding: 0px;
+  width: calc(100% / <?php echo $num_cols;?>);
+}
+tr:first-child td {
+  padding-top: 10px;
+}
+</style>
+
 </div>
-<dialog id="attribution-dialog">
+<dialog style="margin-top: 5px;max-height: 95vh;
+  overflow-y: auto;overscroll-behavior:contain" id="attribution-dialog">
   <h1 id="modalHeading"></h1>
   <p id="modalText"></p>
   <button onclick="hideDialog()">Close</button>
@@ -128,7 +168,7 @@ function hideDialog() {
 
 function setModalText(iter, title, text, authorlink) {
   document.getElementById('modalHeading').innerHTML = "Photo "+iter+": \""+title+"\" Attribution";
-  document.getElementById('modalText').innerHTML = "Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a>";
+  document.getElementById('modalText').innerHTML = "<div style='white-space:nowrap'>Image link: <a target='_blank' href="+text+">"+text+"</a><br>Author link: <a target='_blank' href="+authorlink+">"+authorlink+"</a></div>";
   showDialog();
 }
 </script>  

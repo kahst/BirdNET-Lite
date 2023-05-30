@@ -50,6 +50,16 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
         body = settings_dict.get('APPRISE_NOTIFICATION_BODY')
         sciName, comName = species.split("_")
 
+        APPRISE_ONLY_NOTIFY_SPECIES_NAMES = settings_dict.get('APPRISE_ONLY_NOTIFY_SPECIES_NAMES')
+        if APPRISE_ONLY_NOTIFY_SPECIES_NAMES is not None and APPRISE_ONLY_NOTIFY_SPECIES_NAMES.strip() != "":
+            if any(bird.lower().replace(" ", "") in comName.lower().replace(" ", "") for bird in APPRISE_ONLY_NOTIFY_SPECIES_NAMES.split(",")):
+                return
+                
+        APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2 = settings_dict.get('APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2')
+        if APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2 is not None and APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2.strip() != "":
+            if not any(bird.lower().replace(" ", "") in comName.lower().replace(" ", "") for bird in APPRISE_ONLY_NOTIFY_SPECIES_NAMES_2.split(",")):
+                return
+
         APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES = settings_dict.get('APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES')
         if APPRISE_MINIMUM_SECONDS_BETWEEN_NOTIFICATIONS_PER_SPECIES != "0":
             if species_last_notified.get(comName) is not None:
@@ -75,9 +85,10 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
             if comName not in flickr_images:
                 try:
                     # TODO: Make this work with non-english comnames. Implement the "// convert sci name to English name" logic from overview.php here
-                    url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key='+str(settings_dict.get('FLICKR_API_KEY'))+'&text='+str(
-                        comName)+' bird&sort=relevance&per_page=5&media=photos&format=json&license=2%2C3%2C4%2C5%2C6%2C9&nojsoncallback=1'
-                    resp = requests.get(url=url)
+                    headers = {'User-Agent': 'Python_Flickr/1.0'}
+                    url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key='+str(settings_dict.get('FLICKR_API_KEY'))+'&text='+str(comName)+' bird&sort=relevance&per_page=5&media=photos&format=json&license=2%2C3%2C4%2C5%2C6%2C9&nojsoncallback=1'
+                    resp = requests.get(url=url, headers=headers)
+                    
                     resp.encoding = "utf-8"
                     data = resp.json()["photos"]["photo"][0]
 
@@ -171,7 +182,7 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
             except sqlite3.Error as e:
                 print(e)
                 print("Database busy")
-                time.sleep(2)
+                timeim.sleep(2)
 
         if settings_dict.get('APPRISE_NOTIFY_NEW_SPECIES') == "1":
             try:
@@ -220,7 +231,7 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
                 con.close()
             except sqlite3.Error:
                 print("Database busy")
-                time.sleep(2)
+                timeim.sleep(2)
 
 
 if __name__ == "__main__":

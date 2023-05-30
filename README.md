@@ -14,23 +14,10 @@ Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from 
 </p>
 
 ## Introduction
-BirdNET-Pi is built on the (deprecated) [TFLite version of BirdNET](https://github.com/kahst/BirdNET-Lite) by [**@kahst**](https://github.com/kahst) <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg"></a> using [pre-built TFLite binaries](https://github.com/PINTO0309/TensorflowLite-bin) by [**@PINTO0309**](https://github.com/PINTO0309) . It is able to recognize bird sounds from a USB microphone or sound card in realtime and share its data with the rest of the world.
+BirdNET-Pi is built on the [BirdNET framework](https://github.com/kahst/BirdNET-Analyzer) by [**@kahst**](https://github.com/kahst) <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg"></a> using [pre-built TFLite binaries](https://github.com/PINTO0309/TensorflowLite-bin) by [**@PINTO0309**](https://github.com/PINTO0309) . It is able to recognize bird sounds from a USB microphone or sound card in realtime and share its data with the rest of the world.
 
 Check out birds from around the world
 - [BirdWeather](https://app.birdweather.com)<br>
-- [Johannesburg, South Africa](https://joburg.birdnetpi.com)<br>
-- [Öringe, Tyresö, Sweden](https://tyreso.birdnetpi.com)<br>
-- [Berowra, New South Wales, Australia](https://berowra.birdnetpi.com)
-- [Dundas, Ontario, Canada](https://dundasontario.birdnetpi.com)
-- [Bungendore, New South Wales, Australia](https://bungendorensw.birdnetpi.com)
-- [Rivers Bend, Ohio, United States](https://riversbendoh.birdnetpi.com)
-- [Vienna, Virginia, United States](https://viennava.birdnetpi.com)
-- [Grevenbroich, Elsen, Germany](https://grevenbroich-elsen.birdnetpi.com)
-- [Occoquan, Virginia, United States](https://occoquanva.birdnetpi.com)
-- [Cambridge, Massachusetts, United States](https://cambridgema.birdnetpi.com)
-
-[Share your installation!!](https://github.com/mcguirepr89/BirdNET-Pi/wiki/Sharing-Your-BirdNET-Pi)
-Have a public installation not in the list above? Let me know!! I'd be happy to add it.
 
 Currently listening in these countries . . . that I know of . . .
 - The United States
@@ -62,13 +49,19 @@ Currently listening in these countries . . . that I know of . . .
 - South Sudan
 - Argentina
 - Brazil
+- Thailand
+- Colombia
+- Estonia
+- Tasmania
+- Luxembourgh
+- Crete
 
 ## Features
-* 24/7 recording and automatic identification of bird songs using BirdNET machine learning
-* Bird sounds are automatically extracted and catalogued  
-* Visualize your recorded bird data and analyze trends
-* Live audio stream & spectrogram
-* Automatic disk space management, where old audio files are periodically purged
+* **24/7 recording and automatic identification** of bird songs, chirps, and peeps using BirdNET machine learning
+* **Automatic extraction and cataloguing** of bird clips from full-length recordings
+* **Tools to visualize your recorded bird data** and analyze trends
+* **Live audio stream and spectrogram**
+* **Automatic disk space management** that periodically purges old audio files
 * [BirdWeather](https://app.birdweather.com) integration -- you can request a BirdWeather ID from BirdNET-Pi's "Tools" > "Settings" page
 * Web interface access to all data and logs provided by [Caddy](https://caddyserver.com)
 * [GoTTY](https://github.com/yudai/gotty) Web Terminal
@@ -101,7 +94,7 @@ The installer takes care of any and all necessary updates, so you can run that a
 The installation creates a log in `$HOME/installation-$(date "+%F").txt`.
 ## Access
 The BirdNET-Pi can be accessed from any web browser on the same network:
-- http://birdnetpi.local
+- http://birdnetpi.local OR your Pi's IP address
 - Default Basic Authentication Username: birdnet
 - Password is empty by default. Set this in "Tools" > "Settings" > "Advanced Settings"
 

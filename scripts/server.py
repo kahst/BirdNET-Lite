@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from tzlocal import get_localzone
 import datetime
@@ -12,6 +13,7 @@ import operator
 import socket
 import threading
 import os
+import gzip
 
 from utils.notifications import sendAppriseNotifications
 from utils.parse_settings import config_to_settings
@@ -70,7 +72,7 @@ def loadModel():
     print('LOADING TF LITE MODEL...', end=' ')
 
     # Load TFLite model and allocate tensors.
-    # model will either be BirdNET_GLOBAL_3K_V2.2_Model_FP16 (new) or BirdNET_6K_GLOBAL_MODEL (old)
+    # model will either be BirdNET_GLOBAL_3K_V2.3_Model_FP16 (new) or BirdNET_6K_GLOBAL_MODEL (old)
     modelpath = userDir + '/BirdNET-Pi/model/'+model+'.tflite'
     myinterpreter = tflite.Interpreter(model_path=modelpath, num_threads=2)
     myinterpreter.allocate_tensors()
@@ -104,7 +106,7 @@ def loadMetaModel():
     global M_OUTPUT_LAYER_INDEX
 
     # Load TFLite model and allocate tensors.
-    M_INTERPRETER = tflite.Interpreter(model_path=userDir + '/BirdNET-Pi/model/BirdNET_GLOBAL_3K_V2.2_MData_Model_FP16.tflite')
+    M_INTERPRETER = tflite.Interpreter(model_path=userDir + '/BirdNET-Pi/model/BirdNET_GLOBAL_3K_V2.3_MData_Model_FP16.tflite')
     M_INTERPRETER.allocate_tensors()
 
     # Get input and output tensors.
@@ -276,7 +278,7 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
     start = time.time()
     print('ANALYZING AUDIO...', end=' ', flush=True)
 
-    if model == "BirdNET_GLOBAL_3K_V2.2_Model_FP16":
+    if model == "BirdNET_GLOBAL_3K_V2.3_Model_FP16":
         if len(PREDICTED_SPECIES_LIST) == 0 or len(INCLUDE_LIST) != 0:
             predictSpeciesList(lat, lon, week)
 
@@ -402,16 +404,40 @@ def handle_client(conn, addr):
 
                 birdweather_id = args.birdweather_id
 
-                # Read audio data
-                audioData = readAudioData(args.i, args.overlap)
+                # Read audio data & handle errors
+                try:
+                    audioData = readAudioData(args.i, args.overlap)
+
+                except (NameError, TypeError) as e:
+                    print(f"Error with the following info: {e}")
+                    open('~/BirdNET-Pi/analyzing_now.txt', 'w').close()
+
+                finally:
+                    pass
 
                 # Get Date/Time from filename in case Pi gets behind
                 # now = datetime.now()
                 full_file_name = args.i
                 # print('FULL FILENAME: -' + full_file_name + '-')
                 file_name = Path(full_file_name).stem
+
+                # Get the RSTP stream identifier from the filename if it exists
+                RTSP_ident_for_fn = ""
+                RTSP_ident = re.search("RTSP_[0-9]+-", file_name)
+                if RTSP_ident is not None:
+                    RTSP_ident_for_fn = RTSP_ident.group()
+
+                # Find and remove the identifier for the RSTP stream url it was from that is added when more than one
+                # RSTP stream is recorded simultaneously, in order to make the filenames unique as filenames are all
+                # generated at the same time
+                file_name = re.sub("RTSP_[0-9]+-", "", file_name)
+
+                # Now we can read the date and time as normal
+                # First portion of the filename contaning the date in Y m d
                 file_date = file_name.split('-birdnet-')[0]
+                # Second portion of the filename containing the time in H:M:S
                 file_time = file_name.split('-birdnet-')[1]
+                # Join the date and time together to get a complete string representing when the audio was recorded
                 date_time_str = file_date + ' ' + file_time
                 date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
                 # print('Date:', date_time_obj.date())
@@ -471,7 +497,7 @@ def handle_client(conn, addr):
                                 Overlap = str(args.overlap)
                                 Com_Name = Com_Name.replace("'", "")
                                 File_Name = Com_Name.replace(" ", "_") + '-' + Confidence + '-' + \
-                                    Date.replace("/", "-") + '-birdnet-' + Time + audiofmt
+                                    Date.replace("/", "-") + '-birdnet-' + RTSP_ident_for_fn + Time + audiofmt
 
                                 # Connect to SQLite Database
                                 for attempt_number in range(3):
@@ -543,7 +569,9 @@ def handle_client(conn, addr):
 
                                             with open(args.i, 'rb') as f:
                                                 wav_data = f.read()
-                                            response = requests.post(url=soundscape_url, data=wav_data, headers={'Content-Type': 'application/octet-stream'})
+                                            gzip_wav_data = gzip.compress(wav_data)
+                                            response = requests.post(url=soundscape_url, data=gzip_wav_data, headers={'Content-Type': 'application/octet-stream',
+                                                                                                                      'Content-Encoding': 'gzip'})
                                             print("Soundscape POST Response Status - ", response.status_code)
                                             sdata = response.json()
                                             soundscape_id = sdata['soundscape']['id']
@@ -565,8 +593,8 @@ def handle_client(conn, addr):
                                         post_commonName = "\"commonName\": \"" + entry[0].split('_')[1].split("/")[0] + "\","
                                         post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
 
-                                        if model == "BirdNET_GLOBAL_3K_V2.2_Model_FP16":
-                                            post_algorithm = "\"algorithm\": " + "\"2p2\"" + ","
+                                        if model == "BirdNET_GLOBAL_3K_V2.3_Model_FP16":
+                                            post_algorithm = "\"algorithm\": " + "\"2p3\"" + ","
                                         else:
                                             post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
 

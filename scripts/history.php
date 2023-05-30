@@ -1,4 +1,9 @@
 <?php
+
+/* Prevent XSS input */
+$_GET   = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
 error_reporting(E_ALL);
 ini_set('display_errors',1);
 ini_set('display_startup_errors',1);
@@ -148,14 +153,16 @@ function submitID() {
 		</table>
     	<?php // <br><button type="button" onclick="showDialog()">Export as CSV for eBird</button><br><br> ?>
 <?php
+$time = time();
+
 if (file_exists('./Charts/'.$chart)) {
-  echo "<img src=\"/Charts/$chart?nocache=time()\" >";
+  echo "<img src=\"/Charts/$chart?nocache=$time\" >";
 } else {
   echo "<p>No Charts for $theDate</p>";
 }
 echo "<hr>";
 if (file_exists('./Charts/'.$chart2)) {
-  echo "<img src=\"/Charts/$chart2?nocache=time()\">";
+  echo "<img src=\"/Charts/$chart2?nocache=$time\">";
 } else {
   echo "<p>No Charts For $theDate</p>";
 }?>

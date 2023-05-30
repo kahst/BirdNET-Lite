@@ -41,6 +41,9 @@ sudo_with_user () {
   set +x
 }
 
+# Get current HEAD hash
+commit_hash=$(sudo_with_user git -C $HOME/BirdNET-Pi rev-parse HEAD)
+
 # Reset current HEAD to remove any local changes
 sudo_with_user git -C $HOME/BirdNET-Pi reset --hard
 
@@ -49,6 +52,9 @@ sudo_with_user git -C $HOME/BirdNET-Pi fetch $remote $branch
 
 # Switches git to specified branch
 sudo_with_user git -C $HOME/BirdNET-Pi switch -C $branch --track $remote/$branch
+
+# Prints out changes
+sudo_with_user git -C $HOME/BirdNET-Pi diff --stat $commit_hash HEAD
 
 sudo systemctl daemon-reload
 sudo ln -sf $my_dir/* /usr/local/bin/

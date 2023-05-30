@@ -1,4 +1,29 @@
 <?php
+
+/* Prevent XSS input */
+$_GET   = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+$sys_timezone = "";
+// If we can get the timezome from the systems timezone file ust that
+if (file_exists('/etc/timezone')) {
+	$tz_data = file_get_contents('/etc/timezone');
+	if ($tz_data !== false) {
+		$sys_timezone = trim($tz_data);
+	}
+} else {
+// Else get timezone from the timedatectl command
+	$tz_data = shell_exec('timedatectl show');
+	$tz_data_array = parse_ini_string($tz_data);
+	if (is_array($tz_data_array) && array_key_exists('Timezone', $tz_data_array)) {
+		$sys_timezone = $tz_data_array['Timezone'];
+	}
+}
+//Finally if we have a valod timezone, set it as the one PHP uses
+if ($sys_timezone !== "") {
+	date_default_timezone_set($sys_timezone);
+}
+
   if (file_exists('./scripts/thisrun.txt')) {
     $config = parse_ini_file('./scripts/thisrun.txt');
   } elseif (file_exists('./scripts/firstrun.ini')) {
@@ -17,7 +42,7 @@ body::-webkit-scrollbar {
   display:none
 }
 </style>
-<link rel="stylesheet" href="style.css?v=1.20.23">
+<link rel="stylesheet" href="style.css?v=<?php echo date ('n.d.y', filemtime('style.css')); ?>">
 <link rel="stylesheet" type="text/css" href="static/dialog-polyfill.css" />
 <body>
 <div class="banner">
@@ -79,4 +104,4 @@ echo "
 <iframe src=\"/views.php\"></iframe>
 </div>";
 }
-
+?>
