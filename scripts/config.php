@@ -282,6 +282,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
 
   $title = str_replace("\$sciname", $sciname, $title);
   $title = str_replace("\$comname", $comname, $title);
+  $title = str_replace("\$confidencepct", round($confidence*100), $title);
   $title = str_replace("\$confidence", $confidence, $title);
   $title = str_replace("\$listenurl", $filename, $title);
   $title = str_replace("\$date", $date, $title);
@@ -296,6 +297,7 @@ if(isset($_GET['sendtest']) && $_GET['sendtest'] == "true") {
 
   $body = str_replace("\$sciname", $sciname, $body);
   $body = str_replace("\$comname", $comname, $body);
+  $body = str_replace("\$confidencepct", round($confidence*100), $body);
   $body = str_replace("\$confidence", $confidence, $body);
   $body = str_replace("\$listenurl", $filename, $body);
   $body = str_replace("\$date", $date, $body);
