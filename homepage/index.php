@@ -41,6 +41,10 @@ if ($sys_timezone !== "") {
 body::-webkit-scrollbar {
   display:none
 }
+html{
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
 </style>
 <link rel="stylesheet" href="style.css?v=<?php echo date ('n.d.y', filemtime('style.css')); ?>">
 <link rel="stylesheet" type="text/css" href="static/dialog-polyfill.css" />
