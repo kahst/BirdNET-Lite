@@ -169,6 +169,9 @@ FREQSHIFT_HI=6000
 ## FREQSHIFT_LO
 FREQSHIFT_LO=3000
 
+## FREQSHIFT_RECONNECT_DELAY
+FREQSHIFT_RECONNECT_DELAY=4000
+
 ## If the tool is sox, you have to define the pitch shift (amount of 100ths of semintone)
 ## FREQSHIFT_PITCH
 FREQSHIFT_PITCH=-1500

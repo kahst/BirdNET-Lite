@@ -8,6 +8,12 @@ if (file_exists('./scripts/thisrun.txt')) {
 	$config = parse_ini_file('./scripts/firstrun.ini');
 }
 
+if(!empty($config['FREQSHIFT_RECONNECT_DELAY']) && is_numeric($config['FREQSHIFT_RECONNECT_DELAY'])){
+    $FREQSHIFT_RECONNECT_DELAY = ($config['FREQSHIFT_RECONNECT_DELAY']);
+}else{
+    $FREQSHIFT_RECONNECT_DELAY = 4000;
+}
+
 if(isset($_GET['ajax_csv'])) {
 $RECS_DIR = $config["RECS_DIR"];
 
@@ -323,6 +329,8 @@ function toggleFreqshift(state) {
     console.log("freqshift deactivated")
   }
 
+  freqShiftReconnectDelay = <?php echo $FREQSHIFT_RECONNECT_DELAY; ?>;
+
   var livestream_freqshift_spinner = document.getElementById('livestream_freqshift_spinner');
   livestream_freqshift_spinner.style.display = "inline"; 
   // Create the XMLHttpRequest object.
@@ -349,7 +357,7 @@ function toggleFreqshift(state) {
 
           livestream_freqshift_spinner.style.display = "none"; 
         },
-        2000
+        freqShiftReconnectDelay
         )
       }
     }

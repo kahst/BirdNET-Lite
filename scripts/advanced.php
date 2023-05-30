@@ -168,6 +168,14 @@ if(isset($_GET['submit'])) {
     }
   }
 
+  if(isset($_GET["freqshift_reconnect_delay"]) && is_numeric($_GET['freqshift_reconnect_delay'])) {
+    $freqshift_reconnect_delay = $_GET["freqshift_reconnect_delay"];
+    if(strcmp($freqshift_hi,$config['FREQSHIFT_RECONNECT_DELAY']) !== 0) {
+      $contents = preg_replace("/FREQSHIFT_RECONNECT_DELAY=.*/", "FREQSHIFT_RECONNECT_DELAY=$freqshift_reconnect_delay", $contents);
+      $contents2 = preg_replace("/FREQSHIFT_RECONNECT_DELAY=.*/", "FREQSHIFT_RECONNECT_DELAY=$freqshift_reconnect_delay", $contents2);
+    }
+  }
+
   if(isset($_GET["full_disk"])) {
     $full_disk = $_GET["full_disk"];
     if(strcmp($full_disk,$config['FULL_DISK']) !== 0) {
@@ -614,6 +622,10 @@ foreach($formats as $format){
         <input name="freqshift_hi" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_HI']);?>" required/><br>
         <label for="freqshift_lo">Target [Hz]: </label>
         <input name="freqshift_lo" type="number" min="0" max="20000" step="1" value="<?php print($newconfig['FREQSHIFT_LO']);?>" required/>
+        </p>
+        <p style="margin-left: 40px">
+        <label for="freqshift_reconnect_delay">Livestream reconnection delay (in ms): </label>
+        <input name="freqshift_reconnect_delay" type="number" min="1000" max="10000" step="100" value="<?php print($newconfig['FREQSHIFT_RECONNECT_DELAY']);?>" required/>
         </p>
 
         <p style="margin-left: 40px">
