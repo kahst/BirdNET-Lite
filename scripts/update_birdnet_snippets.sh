@@ -223,11 +223,11 @@ if ! grep LogLevel_SpectrogramViewerService /etc/birdnet/birdnet.conf &>/dev/nul
   sudo -u$USER echo "LogLevel_SpectrogramViewerService=\"error\"" >> /etc/birdnet/birdnet.conf
 fi
 
-if grep -q '^MODEL=BirdNET_GLOBAL_3K_V2.2_Model_FP16$' /etc/birdnet/birdnet.conf;then
+if grep -q '^MODEL=BirdNET_GLOBAL_3K_V2.3_Model_FP16$' /etc/birdnet/birdnet.conf;then
   language=$(grep "^DATABASE_LANG=" /etc/birdnet/birdnet.conf | cut -d= -f2)
-  sed -i 's/BirdNET_GLOBAL_3K_V2.2_Model_FP16/BirdNET_GLOBAL_6K_V2.4_Model_FP16/' /etc/birdnet/birdnet.conf
-  sed -i 's/BirdNET_GLOBAL_3K_V2.2_Model_FP16/BirdNET_GLOBAL_6K_V2.4_Model_FP16/' $HOME/BirdNET-Pi/scripts/thisrun.txt
-  sed -i 's/BirdNET_GLOBAL_3K_V2.2_Model_FP16/BirdNET_GLOBAL_6K_V2.4_Model_FP16/' $HOME/BirdNET-Pi/birdnet.conf
+  sed -i 's/BirdNET_GLOBAL_3K_V2.3_Model_FP16/BirdNET_GLOBAL_6K_V2.4_Model_FP16/' /etc/birdnet/birdnet.conf
+  sed -i 's/BirdNET_GLOBAL_3K_V2.3_Model_FP16/BirdNET_GLOBAL_6K_V2.4_Model_FP16/' $HOME/BirdNET-Pi/scripts/thisrun.txt
+  sed -i 's/BirdNET_GLOBAL_3K_V2.3_Model_FP16/BirdNET_GLOBAL_6K_V2.4_Model_FP16/' $HOME/BirdNET-Pi/birdnet.conf
   cp -f $HOME/BirdNET-Pi/model/labels.txt $HOME/BirdNET-Pi/model/labels.txt.old
   sudo chmod +x $HOME/BirdNET-Pi/scripts/install_language_label_nm.sh && $HOME/BirdNET-Pi/scripts/install_language_label_nm.sh -l "$language"
 fi
