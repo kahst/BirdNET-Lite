@@ -72,7 +72,7 @@ def loadModel():
     print('LOADING TF LITE MODEL...', end=' ')
 
     # Load TFLite model and allocate tensors.
-    # model will either be BirdNET_GLOBAL_3K_V2.3_Model_FP16 (new) or BirdNET_6K_GLOBAL_MODEL (old)
+    # model will either be BirdNET_GLOBAL_6K_V2.4_Model_FP16 (new) or BirdNET_6K_GLOBAL_MODEL (old)
     modelpath = userDir + '/BirdNET-Pi/model/'+model+'.tflite'
     myinterpreter = tflite.Interpreter(model_path=modelpath, num_threads=2)
     myinterpreter.allocate_tensors()
@@ -278,7 +278,7 @@ def analyzeAudioData(chunks, lat, lon, week, sensitivity, overlap,):
     start = time.time()
     print('ANALYZING AUDIO...', end=' ', flush=True)
 
-    if model == "BirdNET_GLOBAL_3K_V2.3_Model_FP16":
+    if model == "BirdNET_GLOBAL_6K_V2.4_Model_FP16":
         if len(PREDICTED_SPECIES_LIST) == 0 or len(INCLUDE_LIST) != 0:
             predictSpeciesList(lat, lon, week)
 
@@ -593,7 +593,7 @@ def handle_client(conn, addr):
                                         post_commonName = "\"commonName\": \"" + entry[0].split('_')[1].split("/")[0] + "\","
                                         post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
 
-                                        if model == "BirdNET_GLOBAL_3K_V2.3_Model_FP16":
+                                        if model == "BirdNET_GLOBAL_6K_V2.4_Model_FP16":
                                             post_algorithm = "\"algorithm\": " + "\"2p3\"" + ","
                                         else:
                                             post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
