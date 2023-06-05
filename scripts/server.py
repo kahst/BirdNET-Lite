@@ -594,7 +594,7 @@ def handle_client(conn, addr):
                                         post_scientificName = "\"scientificName\": \"" + entry[0].split('_')[0] + "\","
 
                                         if model == "BirdNET_GLOBAL_6K_V2.4_Model_FP16":
-                                            post_algorithm = "\"algorithm\": " + "\"2p3\"" + ","
+                                            post_algorithm = "\"algorithm\": " + "\"2p4\"" + ","
                                         else:
                                             post_algorithm = "\"algorithm\": " + "\"alpha\"" + ","
 
