@@ -178,7 +178,7 @@ streamlit_version=$($HOME/BirdNET-Pi/birdnet/bin/pip3 show streamlit 2>/dev/null
 [[ $streamlit_version != "1.19.0" ]] && $HOME/BirdNET-Pi/birdnet/bin/pip3 install streamlit==1.19.0
 
 if ! grep -q 'RuntimeMaxSec=' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"&>/dev/null; then
-    sudo -E sed -i '/\[Service\]/a RuntimeMaxSec=300' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"
+    sudo -E sed -i '/\[Service\]/a RuntimeMaxSec=900' "$HOME/BirdNET-Pi/templates/birdnet_analysis.service"
     sudo systemctl daemon-reload && restart_services.sh
 fi
 
