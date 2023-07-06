@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -x
-used="$(df -h / | tail -n1 | awk '{print $5}')"
+
+source /etc/birdnet/birdnet.conf
+used="$(df -h ${EXTRACTED} | tail -n1 | awk '{print $5}')"
 
 if [ "${used//%}" -ge 95 ]; then
-  source /etc/birdnet/birdnet.conf
 
   case $FULL_DISK in
     purge) echo "Removing oldest data"
