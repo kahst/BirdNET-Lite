@@ -8,14 +8,11 @@ echo "Beginning $0"
 birdnet_conf=$my_dir/birdnet.conf
 
 # Retrieve latitude and longitude from web
-LATITUDE=$(curl -s4 http://ip-api.com/json?fields=lat,lon | jq .lat)
-LONGITUDE=$(curl -s4 http://ip-api.com/json?fields=lat,lon | jq .lon)
-
-# Define regular expression pattern
-pattern='^[+-]?[0-9]{2}\.[0-9]{4}$'
-
-# Check if latitude and longitude match the pattern
-if ! [[ $LATITUDE =~ $pattern ]] || ! [[ $LONGITUDE =~ $pattern ]]; then
+json=$(curl -s4 http://ip-api.com/json)
+if [ "$(echo "$json" | jq -r .status)" = "success" ]; then
+  LATITUDE=$(echo "$json" | jq .lat)
+  LONGITUDE=$(echo "$json" | jq .lon)
+else
   echo -e "\033[33mCouldn't set latitude and longitude automatically, you will need to do this manually from the web interface by navigating to Tools -> Settings -> Location.\033[0m"
   LATITUDE=0.0000
   LONGITUDE=0.0000
