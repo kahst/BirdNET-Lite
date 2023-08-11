@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S --default-signal=PIPE bash
 # Runs BirdNET-Lite
 #set -x
 source /etc/birdnet/birdnet.conf
@@ -52,6 +52,7 @@ fi
 get_files() {
   files=($( find ${1} -maxdepth 1 -name '*wav' ! -size 0\
   | sort \
+  | head -n 20 \
   | awk -F "/" '{print $NF}' ))
   [ -n "${files[1]}" ] && echo "Files loaded"
 }
